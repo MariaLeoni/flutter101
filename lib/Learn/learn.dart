@@ -12,6 +12,7 @@ import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../message/sendmessage.dart';
 import '../owner_details/owner_details.dart';
+import '../owner_details/video_player.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
 import'package:video_player/video_player.dart';
@@ -105,8 +106,8 @@ class _LearnScreenState extends State<LearnScreen> {
     }
   }
 
-    void _getFromGallery() async
-    {
+  void _getFromGallery() async
+  {
       XFile? pickedFile = await ImagePicker().pickVideo(
           source: ImageSource.gallery);
       if (pickedFile != null) {
@@ -150,7 +151,7 @@ class _LearnScreenState extends State<LearnScreen> {
     }
   }
 
-  void read_userInfo()async
+  void read_userInfo() async
   {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -262,14 +263,14 @@ class _LearnScreenState extends State<LearnScreen> {
               onTap:()
               {
                 Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                  vid: vid,
-                  userImg: userImg,
-                  name: name,
-                  date: date,
-                  docId: docId,
-                  userId: userId,
-                  downloads: downloads,
-                )));
+                   vid: vid,
+                   userImg: userImg,
+                   name: name,
+                   date: date,
+                   docId: docId,
+                   userId: userId,
+                   downloads: downloads,
+                 )));
               },
               child: Center(
                 child: Image.network(vid, fit: BoxFit.fill,),

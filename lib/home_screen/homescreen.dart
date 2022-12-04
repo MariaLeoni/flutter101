@@ -9,6 +9,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/Learn/learn.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import 'package:sharedstudent1/owner_details/video_player.dart';
 import '../message/sendmessage.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
@@ -407,7 +408,7 @@ void read_userInfo()async
            ),
           IconButton(
             onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LearnScreen(),),);
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoApp(),),);
             },
             icon: const Icon(Icons.apartment),
           ),
