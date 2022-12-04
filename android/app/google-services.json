@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "462259146837",
+    "project_id": "studentshared1",
+    "storage_bucket": "studentshared1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462259146837:android:397e12673e680754fac4dc",
+        "android_client_info": {
+          "package_name": "com.example.sharedstudent1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "462259146837-c8jqjh7t2uk9dmu9gncbe4ro4un4i7vc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd9qT9isS9DdEgI91GrFBT73OzcShPek8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "462259146837-c8jqjh7t2uk9dmu9gncbe4ro4un4i7vc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
