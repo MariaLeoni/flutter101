@@ -435,25 +435,18 @@ void read_userInfo()async
             }
             else if (snapshot.connectionState == ConnectionState.active)
             {
-              if(snapshot.data!.docs.isNotEmpty)
-              {
+              if(snapshot.data!.docs.isNotEmpty){
                 if(checkView == true)
                 {
                   return ListView.builder(
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (BuildContext context, int index)
                     {
-                      return listViewWidget(
-                        snapshot.data!.docs[index]["id"],
-                        snapshot.data!.docs[index]['Image'],
-                        snapshot.data!.docs[index]['userImage'],
-                        snapshot.data!.docs[index]['name'],
-                        snapshot.data!.docs[index]['createdAt'].toDate(),
-                        snapshot.data!.docs[index]['email'],
-                        snapshot.data!.docs[index]['downloads'],
-                        snapshot.data!.docs[index]['postId'],
-                        List.from(snapshot.data!.docs[index]['likes']),
-                      );
+                      Post post = Post.getPost(snapshot, index);
+
+                      return listViewWidget(post.id, post.image, post.userImage,
+                                           post.userName, post.createdAt, post.email,
+                        post.downloads, post.postId, post.likes,);
                     },
                   );
                 }
@@ -466,18 +459,11 @@ void read_userInfo()async
                       ),
                       itemBuilder: (BuildContext context, int index)
                       {
-                        //Post myPost = Post();
-                        return gridViewWidget(
-                          snapshot.data!.docs[index]["id"],
-                          snapshot.data!.docs[index]['Image'],
-                          snapshot.data!.docs[index]['userImage'],
-                          snapshot.data!.docs[index]['name'],
-                          snapshot.data!.docs[index]['createdAt'].toDate(),
-                          snapshot.data!.docs[index]['email'],
-                          snapshot.data!.docs[index]['downloads'],
-                          snapshot.data!.docs[index]['postId'],
-                          List.from(snapshot.data!.docs[index]['likes']),
-                        );
+                        Post post = Post.getPost(snapshot, index);
+
+                        return gridViewWidget(post.id, post.image, post.userImage,
+                          post.userName, post.createdAt, post.email,
+                          post.downloads, post.postId, post.likes,);
                       }
                   );
                 }

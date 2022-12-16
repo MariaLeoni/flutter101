@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+
 class Post {
   String id = "";
   String image = "";
@@ -21,5 +24,17 @@ class Post {
     required this.likes
   });
 
-  //Post getPost = Post();
+  static Post getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index){
+
+    return Post(id: snapshot.data?.docs[index]["id"],
+        image: snapshot.data!.docs[index]['Image'],
+        userImage: snapshot.data!.docs[index]['userImage'] ,
+        createdAt:snapshot.data!.docs[index]['createdAt'].toDate(),
+        userName: snapshot.data!.docs[index]['name'],
+        email:  snapshot.data!.docs[index]['email'],
+        postId:snapshot.data!.docs[index]['postId'],
+        downloads:snapshot.data!.docs[index]['downloads'],
+        likes: List.from(snapshot.data!.docs[index]['likes'])
+    );
+  }
 }
