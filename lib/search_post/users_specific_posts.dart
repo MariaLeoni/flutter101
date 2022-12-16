@@ -7,14 +7,23 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
-class  UsersSpecificPostsScreen extends StatefulWidget {
+import'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
 
+
+class  UsersSpecificPostsScreen extends StatefulWidget {
+  String? followeruserId;
   String? userId;
   String? userName;
+  String? docId;
+  List<String>? followers = List.empty(growable: true);
 
   UsersSpecificPostsScreen({
     this.userId,
     this.userName,
+    this.followers,
+    this.docId,
+    this.followeruserId,
 });
 
   @override
@@ -22,11 +31,38 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
 }
 
 class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
-
+  String? followuserId;
   String? myImage;
   String? myName;
+  int followersCount = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void read_userInfo()async
+
+  handlefollowerPost() {
+
+    if (widget.followers!= null && widget.followers!.contains(followuserId)) {
+      Fluttertoast.showToast(msg: "You unfollowed this person");
+      widget.followers!.remove(followuserId);
+    }
+    else {
+      Fluttertoast.showToast(msg: "You followed this person");
+      widget.followers!.add(followuserId!);
+    }
+
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+       .update({'followers': widget.followers!,
+   }).then((value) {
+     setState(() {
+        followersCount = (widget.followers?.length ?? 0);
+      });
+    });
+  }
+
+
+  void readUserInfo()async
   {
     FirebaseFirestore.instance.collection('users')
         .doc(widget.userId)
@@ -35,13 +71,17 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
+      widget.followers = List.from(snapshot.get('followers'));
+
+      setState(() {
+        followersCount = (widget.followers?.length ?? 0);
+      });
     });
   }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    read_userInfo();
+    readUserInfo();
   }
 
   Widget listViewWidget (String docId, String img, String userImg, String name, DateTime date, String userId, int downloads, )
@@ -119,6 +159,12 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    followuserId = _auth.currentUser?.uid;
+    followersCount = (widget.followers?.length ?? 0);
+
+    var followerText = Text(followersCount.toString(),
+        style: const TextStyle(fontSize: 28.0,
+            color: Colors.white, fontWeight: FontWeight.bold));
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -155,6 +201,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                   Icons.login_outlined
               ),
             ),
+
             actions: <Widget>[
               IconButton(
                 onPressed: (){
@@ -162,6 +209,14 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 },
                 icon: const Icon(Icons.person_search),
               ),
+
+              IconButton(
+                onPressed: (){
+                 handlefollowerPost();
+                },
+                icon: const Icon(Icons.follow_the_signs),
+              ),
+              followerText,
               IconButton(
                 onPressed: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);

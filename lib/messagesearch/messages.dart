@@ -5,23 +5,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
-class Comment extends StatefulWidget {
+import '../search_post/user.dart';
+
+class message extends StatefulWidget {
 
   String? userId;
+  String?userName;
   String? postId;
   String? docId;
 
-  Comment({super.key, this.userId, this.postId,
-    this.docId,});
+
+  message({super.key, this.userId, this.postId,
+    this.docId,this.userName});
 
   @override
-  State<Comment> createState() => CommentState(
+  State<message> createState() => messageState(
     postId: this.postId,
     userId: this.userId,);
 }
 
 
-class CommentState extends State<Comment> {
+class messageState extends State<message> {
   String? postId;
   String? userId;
   String? myImage;
@@ -31,7 +35,7 @@ class CommentState extends State<Comment> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? myUserId;
 
-  CommentState({
+  messageState({
     String? postId,
     String? userId,
   });
@@ -46,13 +50,13 @@ class CommentState extends State<Comment> {
         if(!snapshot.hasData){
           return circularProgress();
         }
-        List<Comments> comment =[];
+        List<Comments> message =[];
         snapshot.data!.docs.forEach((doc){
-          comment.add(Comments.fromDocument(doc));
+          message.add(Comments.fromDocument(doc));
         });
 
         return ListView(
-          children: comment,
+          children: message,
         );
       },
 
@@ -91,59 +95,62 @@ class CommentState extends State<Comment> {
   }
 
 
-    @override
-    Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
 
-      return Scaffold(
-          appBar: AppBar(
-            flexibleSpace: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.black],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: const [0.2, 0.9],
-                ),
+    return Scaffold(
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: const [0.2, 0.9],
               ),
             ),
-            title: Text("Comments"),
           ),
-          body: Column(
-            children: <Widget>[
-              Expanded(child: buildComments()),
-              const Divider(),
+          title: Text(
+            widget.userName!,
+        ),
+      centerTitle: true,
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(child: buildComments()),
+            const Divider(),
 
             //
 
-              ListTile(
-                  title: TextFormField(
-                    controller: commentController,
-                    decoration: InputDecoration(labelText: "Write a comment.."),
-                  ),
-                  trailing: OutlinedButton(
-                    onPressed: addComment,
-                    //  borderSide: BorderSide.none,
-                    child: Text("Post"),
-                  )
-              ),
-            ],
-          )
-      );
-    }
+            ListTile(
+                title: TextFormField(
+                  controller: commentController,
+                  decoration: InputDecoration(labelText: "Write a comment.."),
+                ),
+                trailing: OutlinedButton(
+                  onPressed: addComment,
+                  //  borderSide: BorderSide.none,
+                  child: Text("Post"),
+                )
+            ),
+          ],
+        )
+    );
+  }
 
 }
 
 class Comments extends StatelessWidget {
-   String? userName;
-   String? userImage;
-   String? userId;
+  String? userName;
+  String? userImage;
+  String? userId;
   String? comment;
-   Timestamp? timestamp;
+  Timestamp? timestamp;
 
   Comments({
     this.userName,
     this.userImage,
-     this.userId,
+    this.userId,
     this.comment,
     this.timestamp,
   });
@@ -168,13 +175,13 @@ class Comments extends StatelessWidget {
             CachedNetworkImageProvider
               (userImage!),
           ),
-         // subtitle: Text(timeago.format(timestamp?.toDate())),
+          // subtitle: Text(timeago.format(timestamp?.toDate())),
         ),
         Divider(),
       ],
     );
   }
-  }
+}
 
 
 

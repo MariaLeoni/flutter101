@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sharedstudent1/messagesearch/users_design_widget.dart';
 import 'package:sharedstudent1/search_post/user.dart';
-import 'package:sharedstudent1/search_post/users_design_widget.dart';
-
 import '../home_screen/homescreen.dart';
 
-class SearchPost extends StatefulWidget {
+class messageSearchPost extends StatefulWidget {
 
   @override
-  State<SearchPost> createState() => _SearchPostState();
+  State<messageSearchPost> createState() => _messageSearchPostState();
 }
 
-class _SearchPostState extends State<SearchPost> {
+class _messageSearchPostState extends State<messageSearchPost> {
 
   Future<QuerySnapshot>? postDocumentsList;
   String userNameText= '';
@@ -84,11 +83,10 @@ class _SearchPostState extends State<SearchPost> {
                         snapshot.data!.docs[index].data()! as Map<String, dynamic>
                     );
 
-                    return UsersDesignWidget(
+                    return messageUsersDesignWidget(
                       model: model,
                       context: context,
                     );
-
                   }
               )
               :

@@ -2,29 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:sharedstudent1/search_post/user.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 
-class UsersDesignWidget extends StatefulWidget {
+import 'messages.dart';
+
+class messageUsersDesignWidget extends StatefulWidget {
 
   Users? model;
   BuildContext? context;
 
-  UsersDesignWidget({
+  messageUsersDesignWidget({
     this.model,
     this.context,
 });
 
 
   @override
-  State<UsersDesignWidget> createState() => _UsersDesignWidgetState();
+  State<messageUsersDesignWidget> createState() => _messageUsersDesignWidgetState();
 }
 
-class _UsersDesignWidgetState extends State<UsersDesignWidget> {
+class _messageUsersDesignWidgetState extends State<messageUsersDesignWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: ()
         {
-          print("id ${widget.model!.id} name${widget.model!.name}");
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => message(
             userId: widget.model!.id,
             userName: widget.model!.name,
           )));

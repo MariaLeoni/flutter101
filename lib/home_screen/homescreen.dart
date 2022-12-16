@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/Learn/learn.dart';
+import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
 import '../message/sendmessage.dart';
@@ -17,7 +18,7 @@ import '../search_post/search_post.dart';
 import'package:uuid/uuid.dart';
 import 'package:flutter/widgets.dart';
 
-final commentsRef = FirebaseFirestore.instance.collection('comments');
+
 
 class  HomeScreen extends StatefulWidget {
 String? docId;
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? myImage;
   String? myName;
   String? docId;
-  String postId = Uuid().v4();
+  String postId = const Uuid().v4();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
@@ -143,21 +144,22 @@ void _upload_image() async
       imageUrl = await ref.getDownloadURL();
 
       FirebaseFirestore.instance.collection('wallpaper').doc(DateTime.now().toString()).set({
-      'id': _auth.currentUser!.uid,
-      'userImage': myImage,
+        'id': _auth.currentUser!.uid,
+        'userImage': myImage,
         'name': myName,
         'email': _auth.currentUser!.email,
         'Image': imageUrl,
         'downloads': 0,
         'createdAt': DateTime.now(),
+        'postId': postId,
+        'likes': <String>[],
+        'followers':<String>[],
       });
 
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       imageFile = null;
-
-
-
     }
+
     catch(error)
   {
     Fluttertoast.showToast(msg: error.toString());
@@ -176,13 +178,12 @@ void read_userInfo()async
 }
 @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     read_userInfo();
   }
 
-  Widget listViewWidget (String docId, String img, String userImg, String name, DateTime date, String userId, int downloads, )
-  {
+  Widget listViewWidget (String docId, String img, String userImg, String name,
+      DateTime date, String userId, int downloads, String postId, List<String>? likes) {
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -203,6 +204,7 @@ void read_userInfo()async
               GestureDetector(
                 onTap:()
                     {
+
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
                         img: img,
                         userImg: userImg,
@@ -211,6 +213,8 @@ void read_userInfo()async
                         docId: docId,
                         userId: userId,
                         downloads: downloads,
+                        postId: postId,
+                        likes: likes,
                       )));
                     },
                 child: Image.network(
@@ -253,7 +257,9 @@ void read_userInfo()async
       ),
     );
   }
-  Widget gridViewWidget (String docId, String img, String userImg, String name, DateTime date, String userId, int downloads, )
+
+  Widget gridViewWidget (String docId, String img, String userImg, String name,
+      DateTime date, String userId, int downloads, String postId, List<String>? likes)
   {
     return GridView.count(
       primary: false,
@@ -274,6 +280,7 @@ void read_userInfo()async
           child: GestureDetector(
             onTap:()
             {
+              print("go to ownerDetails  id $userId name $name");
               Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
                 img: img,
                 userImg: userImg,
@@ -282,6 +289,8 @@ void read_userInfo()async
                 docId: docId,
                 userId: userId,
                 downloads: downloads,
+                postId: postId,
+                likes: likes,
               )));
             },
             child: Center(
@@ -416,7 +425,8 @@ void read_userInfo()async
 
       ),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('wallpaper').orderBy('createdAt',descending: true).snapshots(),
+          stream: FirebaseFirestore.instance.collection('wallpaper')
+              .orderBy('createdAt',descending: true).snapshots(),
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
           {
             if(snapshot.connectionState == ConnectionState.waiting )
@@ -434,13 +444,15 @@ void read_userInfo()async
                     itemBuilder: (BuildContext context, int index)
                     {
                       return listViewWidget(
-                        snapshot.data!.docs[index].id,
+                        snapshot.data!.docs[index]["id"],
                         snapshot.data!.docs[index]['Image'],
                         snapshot.data!.docs[index]['userImage'],
                         snapshot.data!.docs[index]['name'],
                         snapshot.data!.docs[index]['createdAt'].toDate(),
                         snapshot.data!.docs[index]['email'],
                         snapshot.data!.docs[index]['downloads'],
+                        snapshot.data!.docs[index]['postId'],
+                        List.from(snapshot.data!.docs[index]['likes']),
                       );
                     },
                   );
@@ -454,18 +466,19 @@ void read_userInfo()async
                       ),
                       itemBuilder: (BuildContext context, int index)
                       {
+                        //Post myPost = Post();
                         return gridViewWidget(
-                          snapshot.data!.docs[index].id,
+                          snapshot.data!.docs[index]["id"],
                           snapshot.data!.docs[index]['Image'],
                           snapshot.data!.docs[index]['userImage'],
                           snapshot.data!.docs[index]['name'],
                           snapshot.data!.docs[index]['createdAt'].toDate(),
                           snapshot.data!.docs[index]['email'],
                           snapshot.data!.docs[index]['downloads'],
+                          snapshot.data!.docs[index]['postId'],
+                          List.from(snapshot.data!.docs[index]['likes']),
                         );
                       }
-
-
                   );
                 }
               }
@@ -490,4 +503,6 @@ void read_userInfo()async
 
   }
 }
+
+
 

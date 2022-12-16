@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   File? imageXFile;
   String? userNameInput = '';
   String? userImageURL;
-
+  bool isFollowing = false;
   Future _getDataFromDatabase() async
   {
     await FirebaseFirestore.instance.collection("users")

@@ -203,6 +203,7 @@ class _CredentialsState extends State<Credentials> {
                     'email': _emailTextController.text,
                     'phoneNumber': _phoneNumController.text,
                     'CreateAt': Timestamp.now(),
+                    'followers': <String>[],
                   });
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
                 } catch (error) {

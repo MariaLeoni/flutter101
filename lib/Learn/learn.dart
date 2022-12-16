@@ -191,15 +191,15 @@ class _LearnScreenState extends State<LearnScreen> {
                 GestureDetector(
                   onTap:()
                   {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                      vid: vid,
-                      userImg: userImg,
-                      name: name,
-                      date: date,
-                      docId: docId,
-                      userId: userId,
-                      downloads: downloads,
-                    )));
+                    // Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                    //   vid: vid,
+                    //   userImg: userImg,
+                    //   name: name,
+                    //   date: date,
+                    //   docId: docId,
+                    //   userId: userId,
+                    //   downloads: downloads,
+                    // )));
                   },
                   child: Image.network(
                     vid,
@@ -262,16 +262,16 @@ class _LearnScreenState extends State<LearnScreen> {
             child: GestureDetector(
               onTap:()
               {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                   vid: vid,
-                   userImg: userImg,
-                   name: name,
-                   date: date,
-                   docId: docId,
-                   userId: userId,
-                   downloads: downloads,
-                 )));
-              },
+                //Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+              //      vid: vid,
+              //      userImg: userImg,
+              //      name: name,
+              //      date: date,
+              //      docId: docId,
+              //      userId: userId,
+              //      downloads: downloads,
+              //    )));
+               },
               child: Center(
                 child: Image.network(vid, fit: BoxFit.fill,),
               ),

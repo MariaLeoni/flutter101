@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../home_screen/homescreen.dart';
-import '../search_post/search_post.dart';
+import '../messagesearch/messagesearch_post.dart';
 
 class Message extends StatefulWidget {
 
@@ -45,7 +45,7 @@ class _MessageState extends State<Message> {
                   actions: <Widget>[
               IconButton(
               onPressed: (){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => messageSearchPost(),),);
           },
             icon: const Icon(Icons.person_search),
           ),
