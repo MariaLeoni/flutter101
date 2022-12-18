@@ -4,6 +4,7 @@ import 'package:sharedstudent1/Comments/Commentx.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uuid/uuid.dart';
 
 class Comment extends StatefulWidget {
 
@@ -27,12 +28,13 @@ class CommentState extends State<Comment> {
   String? myImage;
   String? myName;
   String? Id;
-
+  String commentId = const Uuid().v4();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? myUserId;
 
   CommentState({
     String? postId,
+    String? commentId,
     String? userId,
   });
 
@@ -59,12 +61,14 @@ class CommentState extends State<Comment> {
     );
   }
   addComment() {
+
     FirebaseFirestore.instance.collection('comment').doc(widget.postId).collection('comments').add({
       "comment": commentController.text,
       "userImage": myImage,
       "userName" : myName,
       "timestamp": DateTime.now(),
       "userId": Id,
+      "commentId":commentId,
     });
 
     commentController.clear();
@@ -133,11 +137,13 @@ class CommentState extends State<Comment> {
 
 }
 
+
 class Comments extends StatelessWidget {
    String? userName;
    String? userImage;
    String? userId;
   String? comment;
+   String? commentId;
    Timestamp? timestamp;
 
   Comments({
@@ -145,9 +151,22 @@ class Comments extends StatelessWidget {
     this.userImage,
      this.userId,
     this.comment,
+    this.commentId,
     this.timestamp,
   });
+   TextEditingController commentController1 = TextEditingController();
+   addComment() {
+     FirebaseFirestore.instance.collection('comment').doc(commentId).collection('comments').add({
+       "comment": commentController1.text,
+       "userImage": userImage,
+       "userName" : userName,
+       "timestamp": DateTime.now(),
+       "userId": userId,
+       "commentId":commentId,
+     });
 
+     commentController1.clear();
+   }
   factory Comments.fromDocument(DocumentSnapshot doc){
     return Comments(
       userName: doc.data().toString().contains('userName')? doc.get('userName'):'',
@@ -157,12 +176,25 @@ class Comments extends StatelessWidget {
       userImage: doc.data().toString().contains('userImage')?doc.get('userImage'):'',
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         ListTile(
           title: Text(comment!),
+          subtitle: Text(userName!),
+          trailing: Icon
+            (Icons.arrow_drop_down),
+    onTap: (){
+            addComment;
+         //  trailing: OutlinedButton(
+            // onPressed: addComment,
+             //  borderSide: BorderSide.none,
+           //  child: Text("Post"),
+           //);
+
+    },
           leading: CircleAvatar(
             backgroundImage:
             CachedNetworkImageProvider
