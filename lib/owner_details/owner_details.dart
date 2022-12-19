@@ -9,7 +9,6 @@ import '../home_screen/homescreen.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
-import 'package:sharedstudent1/search_post/user.dart';
 
 class  OwnerDetails extends StatefulWidget {
   String? followuserId;
@@ -72,6 +71,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
       });
     });
   }
+
   handleLikePost(){
 
     if (widget.likes != null && widget.likes!.contains(userId)) {
@@ -149,7 +149,6 @@ class _OwnerDetailsState extends State<OwnerDetails> {
 
                 GestureDetector(
                   onTap:(){
-                    print("ownerDetails  id ${widget.docId} name ${widget.name}");
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
                       userId:widget.docId,
                       userName:widget.name,

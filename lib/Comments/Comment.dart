@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:sharedstudent1/Comments/Commentx.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/widgets.dart';
 import 'package:uuid/uuid.dart';
 
 class Comment extends StatefulWidget {
@@ -17,7 +16,7 @@ class Comment extends StatefulWidget {
 
   @override
   State<Comment> createState() => CommentState(
-    postId: this.postId,
+    postId: postId,
     userId: this.userId,);
 }
 
@@ -42,35 +41,39 @@ class CommentState extends State<Comment> {
 
 
   buildComments(){
+    final firebaseCollection = FirebaseFirestore.instance.collection('comment');
+    final some = firebaseCollection.where("postId", isEqualTo: widget.postId);
+
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('comment').doc(widget.postId).collection('comments').orderBy("timestamp", descending: false).snapshots(),
+      stream: firebaseCollection.where("postId", isEqualTo: widget.postId)
+          .orderBy("timestamp", descending: false).snapshots(),
       builder: (context, snapshot){
         if(!snapshot.hasData){
           return circularProgress();
         }
-        List<Comments> comment =[];
-        snapshot.data!.docs.forEach((doc){
+        List<Comments> comment = [];
+        for (var doc in snapshot.data!.docs) {
           comment.add(Comments.fromDocument(doc));
-        });
-
+        }
         return ListView(
           children: comment,
         );
       },
-
     );
   }
+
   addComment() {
-
-    FirebaseFirestore.instance.collection('comment').doc(widget.postId).collection('comments').add({
+    FirebaseFirestore.instance.collection('comment').add({
       "comment": commentController.text,
-      "userImage": myImage,
-      "userName" : myName,
+      "commenterImage": myImage,
+      "commenterName" : myName,
       "timestamp": DateTime.now(),
-      "userId": Id,
-      "commentId":commentId,
+      "commenterId": Id,
+      "originalCommentId": null,
+      "commentId": commentId,
+      "postId": widget.postId,
+      'subCommentIds': <String>[],
     });
-
     commentController.clear();
   }
 
@@ -87,6 +90,15 @@ class CommentState extends State<Comment> {
   }
 
 
+  // void read() async {
+  //   final firebaseCollection = FirebaseFirestore.instance.collection('comment');
+  //   final some = firebaseCollection.where("postId", isEqualTo: widget.postId);
+  //   some.get().then<dynamic>((DocumentSnapshot snapshot) {
+  //     snapshot.get('userImage');
+  //   });
+  // }
+
+
   @override
   void initState() {
     super.initState();
@@ -95,78 +107,88 @@ class CommentState extends State<Comment> {
   }
 
 
-    @override
-    Widget build(BuildContext context) {
-
-      return Scaffold(
-          appBar: AppBar(
-            flexibleSpace: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.black],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: const [0.2, 0.9],
-                ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.2, 0.9],
               ),
             ),
-            title: Text("Comments"),
           ),
-          body: Column(
-            children: <Widget>[
-              Expanded(child: buildComments()),
-              const Divider(),
+          title: const Text("Comments"),
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(child: buildComments()),
+            const Divider(),
 
-            //
-
-              ListTile(
-                  title: TextFormField(
-                    controller: commentController,
-                    decoration: InputDecoration(labelText: "Write a comment.."),
-                  ),
-                  trailing: OutlinedButton(
-                    onPressed: addComment,
-                    //  borderSide: BorderSide.none,
-                    child: Text("Post"),
-                  )
-              ),
-            ],
-          )
-      );
-    }
-
+            ListTile(
+                title: TextFormField(
+                  controller: commentController,
+                  decoration: const InputDecoration(labelText: "Write a comment.."),
+                ),
+                trailing: OutlinedButton(
+                  onPressed: addComment,
+                  //  borderSide: BorderSide.none,
+                  child: const Text("Post"),
+                )
+            ),
+          ],
+        )
+    );
+  }
 }
 
-
 class Comments extends StatelessWidget {
-   String? userName;
-   String? userImage;
-   String? userId;
+  String? userName;
+  String? userImage;
+  String? userId;
   String? comment;
-   String? commentId;
-   Timestamp? timestamp;
+  String? commentId;
+  Timestamp? timestamp;
+  String? originalCommentId;
 
   Comments({
     this.userName,
     this.userImage,
-     this.userId,
+    this.userId,
     this.comment,
     this.commentId,
     this.timestamp,
   });
-   TextEditingController commentController1 = TextEditingController();
-   addComment() {
-     FirebaseFirestore.instance.collection('comment').doc(commentId).collection('comments').add({
-       "comment": commentController1.text,
-       "userImage": userImage,
-       "userName" : userName,
-       "timestamp": DateTime.now(),
-       "userId": userId,
-       "commentId":commentId,
-     });
+  TextEditingController commentController1 = TextEditingController();
 
-     commentController1.clear();
-   }
+  addComment() {
+    originalCommentId = commentId;
+
+    String replyCommentId = const Uuid().v4();
+
+    FirebaseFirestore.instance.collection('comment').add({
+      "comment": commentController1.text,
+      "commenterImage": userImage,
+      "commenterName" : userName,
+      "timestamp": DateTime.now(),
+      "commenterId": userId,
+
+      "originalCommentId": originalCommentId,
+      "commentId":replyCommentId,
+      "postId":null,
+      'subCommentIds': <String>[],
+    });
+
+    FirebaseFirestore.instance.collection('comment').doc(originalCommentId)
+        .update({'subCommentIds': replyCommentId,
+    });
+
+    commentController1.clear();
+  }
+
   factory Comments.fromDocument(DocumentSnapshot doc){
     return Comments(
       userName: doc.data().toString().contains('userName')? doc.get('userName'):'',
@@ -177,6 +199,38 @@ class Comments extends StatelessWidget {
     );
   }
 
+  Future<void> displayAddCommentDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Replay to comment'),
+          content: TextField(
+            controller: commentController1,
+            decoration: const InputDecoration(hintText: "Add your comment..."),
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+              child: const Text('OK'),
+              onPressed: () {
+                print(commentController1.text);
+                addComment();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -184,29 +238,23 @@ class Comments extends StatelessWidget {
         ListTile(
           title: Text(comment!),
           subtitle: Text(userName!),
-          trailing: Icon
+          trailing: const Icon
             (Icons.arrow_drop_down),
-    onTap: (){
-            addComment;
-         //  trailing: OutlinedButton(
-            // onPressed: addComment,
-             //  borderSide: BorderSide.none,
-           //  child: Text("Post"),
-           //);
-
-    },
+          onTap: (){
+            displayAddCommentDialog(context);
+          },
           leading: CircleAvatar(
             backgroundImage:
             CachedNetworkImageProvider
               (userImage!),
           ),
-         // subtitle: Text(timeago.format(timestamp?.toDate())),
+          // subtitle: Text(timeago.format(timestamp?.toDate())),
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }
-  }
+}
 
 
 
