@@ -15,3 +15,13 @@ class _SystemPadding extends StatelessWidget {
         child: child);
   }
 }
+
+// void read() async {
+//   FirebaseFirestore.instance.collection('comment').where("postId", isEqualTo: widget.postId)
+//       .get().then(
+//         (res) => res.docs.forEach((element) {
+//           print("Successfully fetched: ${element.get("comment")}");
+//         }),
+//         onError: (e) => print("Error completing: $e"),
+//   );
+// }

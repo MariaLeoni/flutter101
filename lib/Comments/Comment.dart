@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/Comments/Commentx.dart';
@@ -42,14 +44,15 @@ class CommentState extends State<Comment> {
 
   buildComments(){
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
-    final some = firebaseCollection.where("postId", isEqualTo: widget.postId);
 
     return StreamBuilder(
-      stream: firebaseCollection.where("postId", isEqualTo: widget.postId)
-          .orderBy("timestamp", descending: false).snapshots(),
+      stream: firebaseCollection.where("postId", isEqualTo: widget.postId).snapshots(),
       builder: (context, snapshot){
-        if(!snapshot.hasData){
-          return circularProgress();
+        if (snapshot.hasError) {
+          return const Text('Something went wrong');
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Text('Loading');
         }
         List<Comments> comment = [];
         for (var doc in snapshot.data!.docs) {
@@ -63,7 +66,7 @@ class CommentState extends State<Comment> {
   }
 
   addComment() {
-    FirebaseFirestore.instance.collection('comment').add({
+    FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
       "commenterName" : myName,
@@ -77,26 +80,16 @@ class CommentState extends State<Comment> {
     commentController.clear();
   }
 
-  void read_userInfo()async
+  void read_userInfo() async
   {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get().then<dynamic>((DocumentSnapshot snapshot)
-    {
+        .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
       Id = snapshot.get('id');
     });
   }
-
-
-  // void read() async {
-  //   final firebaseCollection = FirebaseFirestore.instance.collection('comment');
-  //   final some = firebaseCollection.where("postId", isEqualTo: widget.postId);
-  //   some.get().then<dynamic>((DocumentSnapshot snapshot) {
-  //     snapshot.get('userImage');
-  //   });
-  // }
 
 
   @override
@@ -109,6 +102,13 @@ class CommentState extends State<Comment> {
 
   @override
   Widget build(BuildContext context) {
+
+
+  //
+  //   FirebaseFirestore.instance.collection('comment').where("commentId", isEqualTo: "bbcebf93-5adf-46eb-8a8f-2a1b55e78448")
+  //       .update({'subCommentIds': "69009d20-c189-464d-9167-5ca1ffebcf39",
+  //   });
+
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
@@ -156,20 +156,23 @@ class Comments extends StatelessWidget {
 
   Comments({
     this.userName,
-    this.userImage,
     this.userId,
     this.comment,
-    this.commentId,
     this.timestamp,
+    this.userImage,
+    this.commentId,
+
   });
   TextEditingController commentController1 = TextEditingController();
+
+  final firebase = FirebaseFirestore.instance;
 
   addComment() {
     originalCommentId = commentId;
 
     String replyCommentId = const Uuid().v4();
 
-    FirebaseFirestore.instance.collection('comment').add({
+    firebase.collection('comment').doc(replyCommentId).set({
       "comment": commentController1.text,
       "commenterImage": userImage,
       "commenterName" : userName,
@@ -177,13 +180,13 @@ class Comments extends StatelessWidget {
       "commenterId": userId,
 
       "originalCommentId": originalCommentId,
-      "commentId":replyCommentId,
-      "postId":null,
+      "commentId": replyCommentId,
+      "postId": null,
       'subCommentIds': <String>[],
     });
 
-    FirebaseFirestore.instance.collection('comment').doc(originalCommentId)
-        .update({'subCommentIds': replyCommentId,
+    firebase.collection('comment').doc(originalCommentId)
+        .update({'subCommentIds': FieldValue.arrayUnion(List<String>.filled(1, replyCommentId)),
     });
 
     commentController1.clear();
@@ -191,11 +194,12 @@ class Comments extends StatelessWidget {
 
   factory Comments.fromDocument(DocumentSnapshot doc){
     return Comments(
-      userName: doc.data().toString().contains('userName')? doc.get('userName'):'',
-      userId: doc.data().toString().contains('userId')?doc.get('userId'):'',
-      comment: doc.data().toString().contains('comment')?doc.get('comment'):'',
-      timestamp: doc.data().toString().contains('timestamp')?doc.get('timestamp'):'',
-      userImage: doc.data().toString().contains('userImage')?doc.get('userImage'):'',
+      userName: doc.data().toString().contains('commenterName') ? doc.get('commenterName') : '',
+      userId: doc.data().toString().contains('commenterId') ? doc.get('commenterId') : '',
+      comment: doc.data().toString().contains('comment') ? doc.get('comment') : '',
+      timestamp: doc.data().toString().contains('timestamp') ? doc.get('timestamp') : '',
+      userImage: doc.data().toString().contains('commenterImage') ? doc.get('commenterImage') : '',
+      commentId: doc.data().toString().contains('commentId') ? doc.get('commentId') : '',
     );
   }
 
@@ -204,7 +208,7 @@ class Comments extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Replay to comment'),
+          title: const Text('Reply to comment'),
           content: TextField(
             controller: commentController1,
             decoration: const InputDecoration(hintText: "Add your comment..."),
@@ -219,7 +223,6 @@ class Comments extends StatelessWidget {
             MaterialButton(
               child: const Text('OK'),
               onPressed: () {
-                print(commentController1.text);
                 addComment();
                 Navigator.pop(context);
               },
@@ -229,7 +232,6 @@ class Comments extends StatelessWidget {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -241,6 +243,7 @@ class Comments extends StatelessWidget {
           trailing: const Icon
             (Icons.arrow_drop_down),
           onTap: (){
+            print("Original Comment Id $originalCommentId and commentId $commentId");
             displayAddCommentDialog(context);
           },
           leading: CircleAvatar(
