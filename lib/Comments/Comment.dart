@@ -2,7 +2,6 @@ import 'dart:ffi';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/Comments/Commentx.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import'package:cached_network_image/cached_network_image.dart';
 import 'package:uuid/uuid.dart';
@@ -28,18 +27,17 @@ class CommentState extends State<Comment> {
   String? userId;
   String? myImage;
   String? myName;
-  String? Id;
+  String? id;
   String commentId = const Uuid().v4();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   String? myUserId;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  TextEditingController commentController = TextEditingController();
 
   CommentState({
     String? postId,
     String? commentId,
     String? userId,
   });
-
-  TextEditingController commentController = TextEditingController();
 
 
   buildComments(){
@@ -54,12 +52,12 @@ class CommentState extends State<Comment> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text('Loading');
         }
-        List<Comments> comment = [];
+        List<Comments> comments = [];
         for (var doc in snapshot.data!.docs) {
-          comment.add(Comments.fromDocument(doc));
+          comments.add(Comments.fromDocument(doc));
         }
         return ListView(
-          children: comment,
+          children: comments,
         );
       },
     );
@@ -71,7 +69,7 @@ class CommentState extends State<Comment> {
       "commenterImage": myImage,
       "commenterName" : myName,
       "timestamp": DateTime.now(),
-      "commenterId": Id,
+      "commenterId": id,
       "originalCommentId": null,
       "commentId": commentId,
       "postId": widget.postId,
@@ -80,14 +78,12 @@ class CommentState extends State<Comment> {
     commentController.clear();
   }
 
-  void read_userInfo() async
-  {
-    FirebaseFirestore.instance.collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+  void readUserInfo() async {
+    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
-      Id = snapshot.get('id');
+      id = snapshot.get('id');
     });
   }
 
@@ -96,19 +92,12 @@ class CommentState extends State<Comment> {
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
-    read_userInfo();
+    readUserInfo();
   }
 
 
   @override
   Widget build(BuildContext context) {
-
-
-  //
-  //   FirebaseFirestore.instance.collection('comment').where("commentId", isEqualTo: "bbcebf93-5adf-46eb-8a8f-2a1b55e78448")
-  //       .update({'subCommentIds': "69009d20-c189-464d-9167-5ca1ffebcf39",
-  //   });
-
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
@@ -127,7 +116,6 @@ class CommentState extends State<Comment> {
           children: <Widget>[
             Expanded(child: buildComments()),
             const Divider(),
-
             ListTile(
                 title: TextFormField(
                   controller: commentController,
@@ -146,6 +134,11 @@ class CommentState extends State<Comment> {
 }
 
 class Comments extends StatelessWidget {
+
+  TextEditingController commentController1 = TextEditingController();
+
+  final firebase = FirebaseFirestore.instance;
+
   String? userName;
   String? userImage;
   String? userId;
@@ -161,11 +154,7 @@ class Comments extends StatelessWidget {
     this.timestamp,
     this.userImage,
     this.commentId,
-
   });
-  TextEditingController commentController1 = TextEditingController();
-
-  final firebase = FirebaseFirestore.instance;
 
   addComment() {
     originalCommentId = commentId;
@@ -243,13 +232,10 @@ class Comments extends StatelessWidget {
           trailing: const Icon
             (Icons.arrow_drop_down),
           onTap: (){
-            print("Original Comment Id $originalCommentId and commentId $commentId");
             displayAddCommentDialog(context);
           },
           leading: CircleAvatar(
-            backgroundImage:
-            CachedNetworkImageProvider
-              (userImage!),
+            backgroundImage: CachedNetworkImageProvider(userImage!),
           ),
           // subtitle: Text(timeago.format(timestamp?.toDate())),
         ),

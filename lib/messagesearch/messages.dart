@@ -1,11 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/Comments/Commentx.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/widgets.dart';
 
-import '../search_post/user.dart';
 
 class message extends StatefulWidget {
 
@@ -48,7 +45,7 @@ class messageState extends State<message> {
       stream: FirebaseFirestore.instance.collection('comment').doc(widget.postId).collection('comments').orderBy("timestamp", descending: false).snapshots(),
       builder: (context, snapshot){
         if(!snapshot.hasData){
-          return circularProgress();
+          return const Text('Loading');
         }
         List<Comments> message =[];
         snapshot.data!.docs.forEach((doc){
