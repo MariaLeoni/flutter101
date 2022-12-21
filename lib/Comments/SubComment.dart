@@ -59,7 +59,9 @@ class CommentState extends State<SubComment> {
   }
 
   addComment() {
-    FirebaseFirestore.instance.collection('comment').doc(commentId).set({
+    FirebaseFirestore firebase = FirebaseFirestore.instance;
+
+    firebase.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
       "commenterName" : myName,
@@ -68,6 +70,15 @@ class CommentState extends State<SubComment> {
       "originalCommentId": widget.commentItem?.commentId,
       "commentId": commentId,
       'subCommentIds': <String>[],
+    });
+
+    setState(() {
+        widget.commentItem?.subCommentsIds!.add(commentId);
+    });
+
+    firebase.collection('comment')
+        .doc(widget.commentItem?.commentId)
+        .update({'subCommentIds': widget.commentItem!.subCommentsIds!
     });
     commentController.clear();
   }
