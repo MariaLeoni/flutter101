@@ -75,8 +75,8 @@ class _OwnerDetailsState extends State<OwnerDetails> {
   handleLikePost(){
 
     if (widget.likes != null && widget.likes!.contains(userId)) {
-          Fluttertoast.showToast(msg: "You unliked this image!");
-          widget.likes!.remove(userId);
+      Fluttertoast.showToast(msg: "You unliked this image!");
+      widget.likes!.remove(userId);
     }
     else {
       Fluttertoast.showToast(msg: "You liked this image!");
@@ -85,7 +85,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
 
 
     FirebaseFirestore.instance.collection('wallpaper').doc(widget.docId)
-       .update({'likes': widget.likes!,
+        .update({'likes': widget.likes!,
     }).then((value){
       setState(() {
         likesCount = (widget.likes?.length ?? 0);
@@ -114,10 +114,10 @@ class _OwnerDetailsState extends State<OwnerDetails> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors:[Colors.purple, Colors.deepPurple.shade300],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            stops: const[0.2,0.9]
+              colors:[Colors.purple, Colors.deepPurple.shade300],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              stops: const[0.2,0.9]
           ),
         ),
         child: ListView(
@@ -129,22 +129,22 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                   child: Column(
                     children: [
                       Image.network(
-                    widget.img!,
-                    width: MediaQuery.of(context).size.width,
+                        widget.img!,
+                        width: MediaQuery.of(context).size.width,
+                      ),
+                    ],
                   ),
-                  ],
                 ),
-        ),
                 const SizedBox(height: 30.0,),
 
-               const Text(
-                 'Owner Information',
-                 style: TextStyle(
-                   fontSize: 30.0,
-                   color: Colors.white54,
-                   fontWeight: FontWeight.bold,
-                 ),
-               ) ,
+                const Text(
+                  'Owner Information',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    color: Colors.white54,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ) ,
                 const SizedBox(height: 30.0,),
 
                 GestureDetector(
@@ -155,29 +155,29 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                     )));
                   },
                   child: Image(image: NetworkImage(
-                        widget.userImg!,
+                    widget.userImg!,
 
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                    ),
+                  ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
 
 
-    const SizedBox(height:70.0,),
+                const SizedBox(height:70.0,),
 
-    Text('Uploaded by:${widget.name!}',
-    style: const TextStyle(
-    fontSize: 18.0,
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-    ),
-    ),
-      const SizedBox(height: 10.0,),
+                Text('Uploaded by:${widget.name!}',
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10.0,),
 
-      Text(
-        DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
-        style: const TextStyle( color: Colors.white, fontWeight: FontWeight.bold,)
-      ),
+                Text(
+                    DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
+                    style: const TextStyle( color: Colors.white, fontWeight: FontWeight.bold,)
+                ),
 
                 const SizedBox(height: 50.0,),
 
@@ -202,11 +202,11 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                         handleLikePost();
                       },
 
-                        child: const Icon (
-                          Icons.thumb_up_sharp,
-                          size:20.0,
-                          color: Colors.white,
-                        ),
+                      child: const Icon (
+                        Icons.thumb_up_sharp,
+                        size:20.0,
+                        color: Colors.white,
+                      ),
                     ),
                     likeText,
                     IconButton(
@@ -221,57 +221,57 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                 const SizedBox(height: 50.0,),
 
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0,),
-                  child: ButtonSquare(
-                      text: "Download",
-                      colors1: Colors.green,
-                      colors2: Colors.lightGreen,
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0,),
+                    child: ButtonSquare(
+                        text: "Download",
+                        colors1: Colors.green,
+                        colors2: Colors.lightGreen,
 
-                      press: () async
-                    {
-                        try{
-                          var imageId = await ImageDownloader.downloadImage(widget.img!);
-                          if(imageId == null)
-                          {
-                            return;
-                          }
-                          Fluttertoast.showToast(msg: "Image saved to Gallery");
-                         total= widget.downloads! +1;
-
-                         FirebaseFirestore.instance.collection('wallpaper')
-                              .doc(widget.docId).update({'downloads': total,
-                          }).then((value)
-                              {
-                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
-                              });
-                        } on PlatformException catch (error)
+                        press: () async
                         {
-                          print(error);
+                          try{
+                            var imageId = await ImageDownloader.downloadImage(widget.img!);
+                            if(imageId == null)
+                            {
+                              return;
+                            }
+                            Fluttertoast.showToast(msg: "Image saved to Gallery");
+                            total= widget.downloads! +1;
+
+                            FirebaseFirestore.instance.collection('wallpaper')
+                                .doc(widget.docId).update({'downloads': total,
+                            }).then((value)
+                            {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
+                            });
+                          } on PlatformException catch (error)
+                          {
+                            print(error);
+                          }
                         }
-                    }
-                  )
+                    )
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right:8.0,),
                   child: ButtonSquare(
-                    text:"Delete",
-                    colors1: Colors.green,
-                    colors2: Colors.lightGreen,
+                      text:"Delete",
+                      colors1: Colors.green,
+                      colors2: Colors.lightGreen,
 
-                    press: () async 
-                    {
-                      FirebaseFirestore.instance.collection('wallpaper')
-                          .doc(widget.docId).delete()
-                          .then((value)
+                      press: () async
                       {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
-                      });
-                    }
+                        FirebaseFirestore.instance.collection('wallpaper')
+                            .doc(widget.docId).delete()
+                            .then((value)
+                        {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                        });
+                      }
 
                   ),
                 ),
 
-                    Container(),
+                Container(),
 
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right:8.0,),
@@ -282,32 +282,28 @@ class _OwnerDetailsState extends State<OwnerDetails> {
 
                       press: () async
                       {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                       }
 
                   ),
 
-                  ),
+                ),
                 Padding(padding: const EdgeInsets.only(left: 8.0, right:8.0,),
                   child: ButtonSquare(
-                  text:"Comment",
-                  colors1: Colors.green,
-                  colors2: Colors.lightGreen,
-
-                  press: () async
-                  {
-
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
-
-                  }
-              ),
-              ),
-             
-              ],
+                      text:"Comment",
+                      colors1: Colors.green,
+                      colors2: Colors.lightGreen,
+                      press: () async {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
+                      }
+                  ),
                 ),
-        ],
+
+              ],
             ),
+          ],
         ),
+      ),
     );
   }
 }

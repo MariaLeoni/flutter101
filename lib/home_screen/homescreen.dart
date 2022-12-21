@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     try
     {
-      final ref = FirebaseStorage.instance.ref().child('userImages').child(DateTime.now().toString()+'jpg');
+      final ref = FirebaseStorage.instance.ref().child('userImages').child('${DateTime.now()}jpg');
       await ref.putFile(imageFile!);
       imageUrl = await ref.getDownloadURL();
 
@@ -199,20 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap:()
-                  {
-
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                      img: img,
-                      userImg: userImg,
-                      name: name,
-                      date: date,
-                      docId: docId,
-                      userId: userId,
-                      downloads: downloads,
-                      postId: postId,
-                      likes: likes,
-                    )));
+                  onTap:() {
+                    goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes);
                   },
                   child: Image.network(
                     img,
@@ -255,6 +243,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void goToDetails(String img, String userImg, String name, DateTime date,
+                  String docId, String userId, int downloads, String postId, List<String>? likes) {
+    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+      img: img,
+      userImg: userImg,
+      name: name,
+      date: date,
+      docId: docId,
+      userId: userId,
+      downloads: downloads,
+      postId: postId,
+      likes: likes,
+    )));
+  }
+
   Widget gridViewWidget (String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId, List<String>? likes) {
     return GridView.count(
@@ -276,17 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap:()
               {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                  img: img,
-                  userImg: userImg,
-                  name: name,
-                  date: date,
-                  docId: docId,
-                  userId: userId,
-                  downloads: downloads,
-                  postId: postId,
-                  likes: likes,
-                )));
+                goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes);
               },
               child: Center(
                 child: Image.network(img, fit: BoxFit.fill,),
@@ -484,6 +477,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-
-

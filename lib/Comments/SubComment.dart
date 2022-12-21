@@ -1,25 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import'package:cached_network_image/cached_network_image.dart';
 import 'package:uuid/uuid.dart';
 
 import 'CommentItem.dart';
 
-class Comment extends StatefulWidget {
+class SubComment extends StatefulWidget {
 
-  String? userId;
-  String? postId;
-  String? docId;
+  CommentItem? commentItem;
 
-  Comment({super.key, this.userId, this.postId,
-    this.docId,});
+  SubComment({super.key, this.commentItem});
 
   @override
-  State<Comment> createState() => CommentState();
+  CommentState createState() => CommentState();
 }
 
 
-class CommentState extends State<Comment> {
+class CommentState extends State<SubComment> {
   String? postId;
   String? userId;
   String? myImage;
@@ -41,7 +39,7 @@ class CommentState extends State<Comment> {
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
     return StreamBuilder(
-      stream: firebaseCollection.where("postId", isEqualTo: widget.postId).snapshots(),
+      stream: firebaseCollection.where(FieldPath.documentId, whereIn: widget.commentItem!.subCommentsIds!).snapshots(),
       builder: (context, snapshot){
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -67,16 +65,15 @@ class CommentState extends State<Comment> {
       "commenterName" : myName,
       "timestamp": DateTime.now(),
       "commenterId": id,
-      "originalCommentId": null,
+      "originalCommentId": widget.commentItem?.commentId,
       "commentId": commentId,
-      "postId": widget.postId,
       'subCommentIds': <String>[],
     });
     commentController.clear();
   }
 
   void readUserInfo() async {
-    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+    FirebaseFirestore.instance.collection('users').doc(myUserId)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
@@ -96,36 +93,47 @@ class CommentState extends State<Comment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2],
-              ),
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.black],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              stops: [0.2],
             ),
           ),
-          title: const Text("Comments"),
         ),
-        body: Column(
-          children: <Widget>[
-            Expanded(child: buildComments()),
-            const Divider(),
+        title: const Text("Comments"),
+      ),
+      body: Column(
+        children: <Widget>[
+          Column(children: <Widget>[
             ListTile(
-                title: TextFormField(
-                  controller: commentController,
-                  decoration: const InputDecoration(labelText: "Write a comment.."),
-                ),
-                trailing: OutlinedButton(
-                  onPressed: addComment,
-                  //  borderSide: BorderSide.none,
-                  child: const Text("Post"),
-                )
-            ),
-          ],
-        )
+              contentPadding: const EdgeInsets.only(left: 2.0, right: 0.0),
+              title: Text(widget.commentItem!.comment!),
+              subtitle: Text(widget.commentItem!.userName!),
+              leading: CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(widget.commentItem!.userImage!),
+              ),
+            )
+          ]
+          ),
+          const Divider(),
+          Expanded(child: buildComments()),
+          const Divider(),
+          ListTile(
+              title: TextFormField(
+                controller: commentController,
+                decoration: const InputDecoration(labelText: "Write a comment.."),
+              ),
+              trailing: OutlinedButton(
+                onPressed: addComment,
+                child: const Text("Post"),
+              )
+          ),
+        ],
+      ),
     );
   }
 }
