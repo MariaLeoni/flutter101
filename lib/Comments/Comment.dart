@@ -106,7 +106,7 @@ class CommentState extends State<Comment> {
                 colors: [Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                stops: [0.2, 0.9],
+                stops: [0.2],
               ),
             ),
           ),
@@ -145,6 +145,7 @@ class Comments extends StatelessWidget {
   String? comment;
   String? commentId;
   Timestamp? timestamp;
+  List<String>? subCommentsIds = List.empty(growable: true);
   String? originalCommentId;
 
   Comments({
@@ -154,11 +155,11 @@ class Comments extends StatelessWidget {
     this.timestamp,
     this.userImage,
     this.commentId,
+    this.subCommentsIds,
   });
 
   addComment() {
     originalCommentId = commentId;
-
     String replyCommentId = const Uuid().v4();
 
     firebase.collection('comment').doc(replyCommentId).set({
@@ -189,6 +190,7 @@ class Comments extends StatelessWidget {
       timestamp: doc.data().toString().contains('timestamp') ? doc.get('timestamp') : '',
       userImage: doc.data().toString().contains('commenterImage') ? doc.get('commenterImage') : '',
       commentId: doc.data().toString().contains('commentId') ? doc.get('commentId') : '',
+      subCommentsIds: doc.data().toString().contains('subCommentIds') ? List.from(doc.get('subCommentIds')) : List.empty(),
     );
   }
 
@@ -229,15 +231,23 @@ class Comments extends StatelessWidget {
         ListTile(
           title: Text(comment!),
           subtitle: Text(userName!),
-          trailing: const Icon
-            (Icons.arrow_drop_down),
+          trailing: IconButton(icon: const Icon(Icons.arrow_drop_down), onPressed: () {
+            print("IconButton tapped");
+
+            ListView.builder(
+                itemCount: 2,
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index) {
+                  return const Text('Child');
+                });
+          }),
           onTap: (){
             displayAddCommentDialog(context);
           },
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(userImage!),
           ),
-          // subtitle: Text(timeago.format(timestamp?.toDate())),
         ),
         const Divider(),
       ],

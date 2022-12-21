@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/Learn/learn.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
@@ -21,11 +20,11 @@ import 'package:flutter/widgets.dart';
 
 
 class  HomeScreen extends StatefulWidget {
-String? docId;
+  String? docId;
 
-HomeScreen({
-  this.docId,
-});
+  HomeScreen({
+    this.docId,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -45,8 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? docId;
   String postId = const Uuid().v4();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-
 
   void _showImageDialog() {
     showDialog(
@@ -131,8 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-void _upload_image() async
-    {
+  void _upload_image() async
+  {
     if(imageFile == null) {
       Fluttertoast.showToast(msg: 'Please select an Image');
       return;
@@ -161,13 +158,13 @@ void _upload_image() async
     }
 
     catch(error)
-  {
-    Fluttertoast.showToast(msg: error.toString());
+    {
+      Fluttertoast.showToast(msg: error.toString());
+    }
   }
-}
 
-void read_userInfo()async
-{
+  void read_userInfo()async
+  {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot)
@@ -175,8 +172,8 @@ void read_userInfo()async
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
     });
-}
-@override
+  }
+  @override
   void initState() {
     super.initState();
     read_userInfo();
@@ -191,239 +188,238 @@ void read_userInfo()async
         shadowColor: Colors.white10,
         child: Container(
             decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.purple, Colors.deepPurple.shade300],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            stops: const [0.2, 0.9],
-          ),
-        ),
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap:()
-                    {
-
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                        img: img,
-                        userImg: userImg,
-                        name: name,
-                        date: date,
-                        docId: docId,
-                        userId: userId,
-                        downloads: downloads,
-                        postId: postId,
-                        likes: likes,
-                      )));
-                    },
-                child: Image.network(
-                  img,
-                  fit: BoxFit.cover,
-                ) ,
+              gradient: LinearGradient(
+                colors: [Colors.purple, Colors.deepPurple.shade300],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: const [0.2, 0.9],
               ),
-              const SizedBox(height: 15.0,),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                child: Row(
-                  children:[
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundImage: NetworkImage(
-                        userImg,
-                      ),
-                    ),
-                    const SizedBox(width: 10.0,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap:()
+                  {
+
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                      img: img,
+                      userImg: userImg,
+                      name: name,
+                      date: date,
+                      docId: docId,
+                      userId: userId,
+                      downloads: downloads,
+                      postId: postId,
+                      likes: likes,
+                    )));
+                  },
+                  child: Image.network(
+                    img,
+                    fit: BoxFit.cover,
+                  ) ,
+                ),
+                const SizedBox(height: 15.0,),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                  child: Row(
                       children:[
-                        Text(
-                          name,
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        CircleAvatar(
+                          radius: 35,
+                          backgroundImage: NetworkImage(
+                            userImg,
+                          ),
                         ),
-                        const SizedBox(height: 10.0),
-                        Text(
-                        DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
-                          style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                        const SizedBox(width: 10.0,),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:[
+                              Text(
+                                name,
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
+                                style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                              )
+                            ]
                         )
                       ]
-                    )
-                  ]
-                ),
-              )
-            ],
-          )
+                  ),
+                )
+              ],
+            )
         ),
       ),
     );
   }
 
   Widget gridViewWidget (String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId, List<String>? likes)
-  {
+      DateTime date, String userId, int downloads, String postId, List<String>? likes) {
     return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(6.0),
-      crossAxisSpacing: 1,
-      crossAxisCount: 1,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.purple, Colors.deepPurple.shade300],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              stops: const [0.2, 0.9],
+        primary: false,
+        padding: const EdgeInsets.all(6.0),
+        crossAxisSpacing: 1,
+        crossAxisCount: 1,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.purple, Colors.deepPurple.shade300],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: const [0.2, 0.9],
+              ),
             ),
-          ),
-          padding: const EdgeInsets.all(10.0),
-          child: GestureDetector(
-            onTap:()
-            {
-              print("go to ownerDetails  id $userId name $name");
-              Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                img: img,
-                userImg: userImg,
-                name: name,
-                date: date,
-                docId: docId,
-                userId: userId,
-                downloads: downloads,
-                postId: postId,
-                likes: likes,
-              )));
-            },
-            child: Center(
-              child: Image.network(img, fit: BoxFit.fill,),
+            padding: const EdgeInsets.all(10.0),
+            child: GestureDetector(
+              onTap:()
+              {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                  img: img,
+                  userImg: userImg,
+                  name: name,
+                  date: date,
+                  docId: docId,
+                  userId: userId,
+                  downloads: downloads,
+                  postId: postId,
+                  likes: likes,
+                )));
+              },
+              child: Center(
+                child: Image.network(img, fit: BoxFit.fill,),
+              ),
             ),
-          ),
 
-        ),
-      ]
+          ),
+        ]
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: [Colors.purple, Colors.deepPurple.shade300],
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        stops: const [0.2, 0.9],
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.purple, Colors.deepPurple.shade300],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          stops: const [0.2, 0.9],
+        ),
       ),
-    ),
-    child: Scaffold(
-      floatingActionButton: Wrap(
-        direction: Axis.horizontal,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(10.0),
-            child: FloatingActionButton(
-              heroTag: "1",
-              backgroundColor: Colors.deepPurple,
-              onPressed: ()
+      child: Scaffold(
+        floatingActionButton: Wrap(
+          direction: Axis.horizontal,
+          children: [
+            Container(
+              margin: const EdgeInsets.all(10.0),
+              child: FloatingActionButton(
+                heroTag: "1",
+                backgroundColor: Colors.deepPurple,
+                onPressed: ()
                 {
                   _showImageDialog();
                 },
                 child: const Icon(Icons.camera_enhance),
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(10.0),
-            child: FloatingActionButton(
-              heroTag: "2",
-              backgroundColor: Colors.purple,
-              onPressed: ()
+            Container(
+              margin: const EdgeInsets.all(10.0),
+              child: FloatingActionButton(
+                  heroTag: "2",
+                  backgroundColor: Colors.purple,
+                  onPressed: ()
+                  {
+                    _upload_image();
+                  },
+                  child: const Icon(Icons.cloud_upload)
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(10.0),
+              child: FloatingActionButton(
+                heroTag: "1",
+                backgroundColor: Colors.deepPurple,
+                onPressed: ()
                 {
-                  _upload_image();
+                  _showImageDialog();
                 },
-                child: const Icon(Icons.cloud_upload)
+                child: const Icon(Icons.video_camera_back_outlined),
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(10.0),
-            child: FloatingActionButton(
-              heroTag: "1",
-              backgroundColor: Colors.deepPurple,
-              onPressed: ()
+          ],
+        ),
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+            flexibleSpace:Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2],
+                ),
+              ),
+            ),
+            title: GestureDetector(
+              onTap: ()
               {
-                _showImageDialog();
+                setState(()
+                {
+                  changeTitle = "List View";
+                  checkView = true;
+                });
               },
-              child: const Icon(Icons.video_camera_back_outlined),
+              onDoubleTap: ()
+              {
+                setState(() {
+                  changeTitle= "Grid View";
+                  checkView = false;
+                });
+              },
+              child: Text(changeTitle),
             ),
-          ),
-        ],
-      ),
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        flexibleSpace:Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.black],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              stops: const [0.2, 0.9],
+            centerTitle: true,
+            leading: GestureDetector(
+              onTap: ()
+              {
+                FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+              },
+              child: const Icon(
+                  Icons.login_outlined
+              ),
             ),
-          ),
-        ),
-        title: GestureDetector(
-          onTap: ()
-          {
-            setState(()
-            {
-              changeTitle = "List View";
-              checkView = true;
-            });
-          },
-          onDoubleTap: ()
-            {
-              setState(() {
-                changeTitle= "Grid View";
-                checkView = false;
-              });
-            },
-          child: Text(changeTitle),
-        ),
-        centerTitle: true,
-        leading: GestureDetector(
-          onTap: ()
-          {
-            FirebaseAuth.instance.signOut();
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
-          },
-          child: const Icon(
-            Icons.login_outlined
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
-            },
-            icon: const Icon(Icons.person_search),
-          ),
-          IconButton(
-            onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
-            },
-            icon: const Icon(Icons.person),
-          ),
-           IconButton(
-          onPressed: (){
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Message(),),);
-          },
-          icon: const Icon(Icons.message_rounded),
-           ),
-          IconButton(
-            onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoApp(),),);
-            },
-            icon: const Icon(Icons.apartment),
-          ),
-        ]
+            actions: <Widget>[
+              IconButton(
+                onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+                },
+                icon: const Icon(Icons.person_search),
+              ),
+              IconButton(
+                onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                },
+                icon: const Icon(Icons.person),
+              ),
+              IconButton(
+                onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Message(),),);
+                },
+                icon: const Icon(Icons.message_rounded),
+              ),
+              IconButton(
+                onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoApp(),),);
+                },
+                icon: const Icon(Icons.apartment),
+              ),
+            ]
 
-      ),
+        ),
         body: StreamBuilder(
           stream: FirebaseFirestore.instance.collection('wallpaper')
               .orderBy('createdAt',descending: true).snapshots(),
@@ -431,7 +427,7 @@ void read_userInfo()async
           {
             if(snapshot.connectionState == ConnectionState.waiting )
             {
-              return Center(child: CircularProgressIndicator(),);
+              return const Center(child: CircularProgressIndicator(),);
             }
             else if (snapshot.connectionState == ConnectionState.active)
             {
@@ -445,7 +441,7 @@ void read_userInfo()async
                       Post post = Post.getPost(snapshot, index);
 
                       return listViewWidget(post.id, post.image, post.userImage,
-                                           post.userName, post.createdAt, post.email,
+                        post.userName, post.createdAt, post.email,
                         post.downloads, post.postId, post.likes,);
                     },
                   );
@@ -484,9 +480,8 @@ void read_userInfo()async
           },
         ),
 
-    ),
+      ),
     );
-
   }
 }
 
