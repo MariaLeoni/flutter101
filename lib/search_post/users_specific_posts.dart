@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import '../followers.dart';
+import '../following/followers.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
 import'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter/services.dart';
 
 
 class  UsersSpecificPostsScreen extends StatefulWidget {
@@ -19,12 +17,12 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
   String? docId;
   List<String>? followers = List.empty(growable: true);
 
-  UsersSpecificPostsScreen({
+  UsersSpecificPostsScreen({super.key,
     this.userId,
     this.userName,
     this.followers,
     this.docId,
-});
+  });
 
   @override
   State<UsersSpecificPostsScreen> createState() => _UsersSpecificPostsScreenState();
@@ -177,12 +175,12 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
             flexibleSpace:Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.black],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  stops: const [0.2, 0.9],
+                  stops: [0.2, 0.9],
                 ),
               ),
             ),
@@ -219,10 +217,9 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               IconButton(
                 onPressed: (){
 
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => Followers(
-                      userId: widget.userId,
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Followers(
+                      followers: widget.followers,
                     )));
-
                 },
                 icon: const Icon(Icons.check_circle_sharp),
               ),

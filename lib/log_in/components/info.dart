@@ -38,7 +38,7 @@ class Credentials extends StatelessWidget {
           const SizedBox(height: 15.0,),
           InputField(
             hintText: "Enter Email",
-            icon: Icon(Icons.email_rounded, color: ,)s.email_rounded,
+            icon: Icons.email,
             obscureText: false,
             textEditingController: _emailTextController,
           ),
