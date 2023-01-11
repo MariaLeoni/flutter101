@@ -27,7 +27,7 @@ class  HeadText extends StatelessWidget {
           const Center(
             child: Text("Login", style: TextStyle(
               fontSize: 30,
-              color: Colors.white30,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
               fontFamily: "Bebas",
             ),),

@@ -1,3 +1,4 @@
+import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,10 @@ import '../home_screen/homescreen.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
-
+import 'package:video_player/video_player.dart';
 class  OwnerDetails extends StatefulWidget {
   String? likeruserId;
-  String? img;
+  String? vid;
   String? userImg;
   String? name;
   DateTime? date;
@@ -21,17 +22,19 @@ class  OwnerDetails extends StatefulWidget {
   int? downloads;
   //String? vid;
   String? postId;
+
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
   //String?id;
 
 
-  OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
+  OwnerDetails({super.key, this.likeruserId,this.vid, this.userImg, this.name, this.date,
     this.docId, this.userId, this.downloads, this.postId, this.likes,
   });
 
   @override
   State<OwnerDetails> createState() => _OwnerDetailsState();
+
 }
 
 class _OwnerDetailsState extends State<OwnerDetails> {
@@ -43,11 +46,16 @@ class _OwnerDetailsState extends State<OwnerDetails> {
   String? likeruserId;
   String? followuserId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  VideoPlayerController? _videoPlayerController1;
+  VideoPlayerController? _videoPlayerController2;
+  ChewieController? _chewieController;
+  ChewieController? _chewieController2;
   _OwnerDetailsState({
     String? postId,
     String? userId,
   });
+
+
 
   handlefollowerPost() {
 
@@ -109,6 +117,17 @@ class _OwnerDetailsState extends State<OwnerDetails> {
         style: const TextStyle(fontSize: 28.0,
             color: Colors.white, fontWeight: FontWeight.bold));
 
+    _videoPlayerController1 = VideoPlayerController.network(widget.vid!);
+    _videoPlayerController2 = VideoPlayerController.network(
+        'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4');
+
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController1!,
+      aspectRatio: 4 / 3,
+      autoPlay: true,
+      looping: false,
+    );
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -124,15 +143,12 @@ class _OwnerDetailsState extends State<OwnerDetails> {
             Column(
               children: [
                 Container(
-                  color: Colors.red,
                   child: Column(
                     children: [
-                      Image.network(
-                        widget.img!,
-                        width: MediaQuery.of(context).size.width,
-                      ),
+                       Chewie( controller: _chewieController!)
                     ],
                   ),
+
                 ),
                 const SizedBox(height: 30.0,),
 
@@ -147,18 +163,18 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                 const SizedBox(height: 30.0,),
 
                 GestureDetector(
-                  onTap:(){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
-                      userId:widget.docId,
-                      userName:widget.name,
-                    )));
-                  },
-                  child: CircleAvatar(
-                    radius:35,
-                    backgroundImage: NetworkImage(
-                      widget.userImg!,
-                    ),
-                  )
+                    onTap:(){
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                        userId:widget.docId,
+                        userName:widget.name,
+                      )));
+                    },
+                    child: CircleAvatar(
+                      radius:35,
+                      backgroundImage: NetworkImage(
+                        widget.userImg!,
+                      ),
+                    )
                 ),
 
 
@@ -229,7 +245,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                         press: () async
                         {
                           try{
-                            var imageId = await ImageDownloader.downloadImage(widget.img!);
+                            var imageId = await ImageDownloader.downloadImage(widget.userImg!);
                             if(imageId == null)
                             {
                               return;

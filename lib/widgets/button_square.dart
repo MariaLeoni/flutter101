@@ -28,22 +28,21 @@ class ButtonSquare extends StatelessWidget {
               begin:Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
-                Colors.purpleAccent,
-                Colors.purple,
-              ]
+                Colors.red,]
+
             ),
             boxShadow:const [
             BoxShadow(
               offset: Offset(3,3),
               spreadRadius:1,
-              blurRadius: 4,
+              blurRadius: 2,
               color: Colors.red,
             ) ,
             BoxShadow(
               offset: Offset(-5,-5),
               spreadRadius: 1,
-              blurRadius: 4,
-              color: Colors.purpleAccent,
+              blurRadius: 2,
+              color: Colors.black,
             ),
            ]
           ),

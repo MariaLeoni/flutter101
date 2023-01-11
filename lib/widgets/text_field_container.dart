@@ -15,7 +15,7 @@ class  TextFieldContainer extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Colors.blueAccent,Colors.white,]
+          colors: [Colors.red,]
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
@@ -29,10 +29,10 @@ class  TextFieldContainer extends StatelessWidget {
             offset: Offset(2,2),
             spreadRadius: 1,
             blurRadius: 4,
-            color: Colors.blueAccent,
+            color: Colors.white,
           )
         ]
-      ),
+       ),
       child: child,
     );
   }

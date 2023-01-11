@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
-
+import '../search_post/users_specific_posts.dart';
 import 'SubComment.dart';
 
 class CommentItem extends StatelessWidget {
@@ -119,9 +119,22 @@ class CommentItem extends StatelessWidget {
           onTap: (){
             displayAddCommentDialog(context);
           },
-          leading: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(userImage!),
+          leading:
+          GestureDetector(
+              onTap:(){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                  userId:userId,
+                  userName:userName,
+                )));
+              },
+              child: CircleAvatar(
+                radius:35,
+                backgroundImage:  CachedNetworkImageProvider(userImage!),
+              )
           ),
+          //leading: CircleAvatar(
+          //  backgroundImage: CachedNetworkImageProvider(userImage!),
+        //  ),
         ),
         const Divider(),
       ],

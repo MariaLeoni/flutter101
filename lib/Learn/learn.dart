@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,10 +9,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/Learn/learn.dart';
+import 'package:sharedstudent1/Learn/learnpost.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../message/sendmessage.dart';
-import '../owner_details/owner_details.dart';
+import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../owner_details/video_player.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
@@ -24,8 +26,11 @@ class  LearnScreen extends StatefulWidget {
 }
 
 class _LearnScreenState extends State<LearnScreen> {
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  late TargetPlatform _platform;
+   VideoPlayerController? _videoPlayerController1;
+   VideoPlayerController? _videoPlayerController2;
+   ChewieController? _chewieController;
+   ChewieController? _chewieController2;
   String changeTitle="Grid View";
   bool checkView =false;
 
@@ -37,6 +42,8 @@ class _LearnScreenState extends State<LearnScreen> {
   String? myName;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String?  vid;
 
   void _showImageDialog() {
     showDialog(
@@ -111,11 +118,10 @@ class _LearnScreenState extends State<LearnScreen> {
       XFile? pickedFile = await ImagePicker().pickVideo(
           source: ImageSource.gallery);
       if (pickedFile != null) {
-        setState(() {
+        setState(() async {
           videoFile = File(pickedFile.path);
-          _controller = VideoPlayerController.file(videoFile!);
-          _initializeVideoPlayerFuture = _controller.initialize();
-          _controller.setLooping(true);
+        //  _controller = VideoPlayerController.file(videoFile!);
+        //  _controller.setLooping(true);
         });
         Navigator.pop(context);
       }
@@ -129,9 +135,26 @@ class _LearnScreenState extends State<LearnScreen> {
     }
     try
     {
+
       final ref = FirebaseStorage.instance.ref().child('userVideos').child(DateTime.now().toString()+'mp4');
       await ref.putFile(videoFile!);
       videoUrl = await ref.getDownloadURL();
+      // _videoPlayerController1 = VideoPlayerController.network(videoUrl! );
+      // _videoPlayerController2 = VideoPlayerController.network(videoUrl!);
+      //
+      // _chewieController = ChewieController(
+      //   videoPlayerController: _videoPlayerController1,
+      //   aspectRatio: 1.0,
+      //   autoPlay: true,
+      //   looping: false,
+      // );
+      //
+      // _chewieController2 = ChewieController(
+      //   videoPlayerController: _videoPlayerController2,
+      //   aspectRatio: 4 / 3,
+      //   autoPlay: true,
+      //   looping: false,);
+      //
       FirebaseFirestore.instance.collection('wallpaper2').doc(DateTime.now().toString()).set({
         'id': _auth.currentUser!.uid,
         'userImage': myImage,
@@ -141,6 +164,7 @@ class _LearnScreenState extends State<LearnScreen> {
         'downloads': 0,
         'createdAt': DateTime.now(),
       });
+
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       videoFile = null;
 
@@ -150,6 +174,7 @@ class _LearnScreenState extends State<LearnScreen> {
       Fluttertoast.showToast(msg: error.toString());
     }
   }
+
 
   void read_userInfo() async
   {
@@ -161,16 +186,58 @@ class _LearnScreenState extends State<LearnScreen> {
       myName = snapshot.get('name');
     });
   }
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     read_userInfo();
+    // chewie();
+    _upload_image();
+
+
   }
 
+  // @override
+  // void chewie() {
+  //
+  //   _videoPlayerController1 = VideoPlayerController.network(
+  //       'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' );
+  //   _videoPlayerController2 = VideoPlayerController.network();
+  //
+  //   _chewieController = ChewieController(
+  //     videoPlayerController: _videoPlayerController1,
+  //     aspectRatio: 1.0,
+  //     autoPlay: true,
+  //     looping: false,
+  //   );
+  //
+  //   _chewieController2 = ChewieController(
+  //     videoPlayerController: _videoPlayerController2,
+  //     aspectRatio: 4 / 3,
+  //     autoPlay: true,
+  //     looping: false,);}
   Widget listViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId, int downloads, )
   {
+
+
+      _videoPlayerController1 = VideoPlayerController.network(vid);
+      _videoPlayerController2 = VideoPlayerController.network(
+          'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4');
+
+      _chewieController = ChewieController(
+        videoPlayerController: _videoPlayerController1!,
+        aspectRatio: 4 / 3,
+        autoPlay: true,
+        looping: false,
+      );
+
+      // _chewieController2 = ChewieController(
+      //   videoPlayerController: _videoPlayerController2,
+      //   aspectRatio: 4 / 3,
+      //   autoPlay: true,
+      //   looping: false,);
+
+
+
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -189,23 +256,14 @@ class _LearnScreenState extends State<LearnScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap:()
+                  onDoubleTap:()
                   {
-                    // Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                    //   vid: vid,
-                    //   userImg: userImg,
-                    //   name: name,
-                    //   date: date,
-                    //   docId: docId,
-                    //   userId: userId,
-                    //   downloads: downloads,
-                    // )));
+                    goToDetails(vid, userImg, name, date, docId, userId, downloads,);
                   },
-                  child: Image.network(
-                    vid,
-                    fit: BoxFit.cover,
-                  ) ,
-                ),
+                  child: Chewie( controller: _chewieController!)
+
+                  ),
+
                 const SizedBox(height: 15.0,),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
@@ -241,8 +299,32 @@ class _LearnScreenState extends State<LearnScreen> {
       ),
     );
   }
-  Widget gridViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId, int downloads, )
+
+  void goToDetails(String vid, String userImg, String name, DateTime date,
+      String docId, String userId, int downloads,) {
+    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+      vid:vid,
+      userImg: userImg,
+      name: name,
+      date: date,
+      docId: docId,
+      userId: userId,
+      downloads: downloads,
+    )));
+  }
+  Widget gridViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId,int downloads,)
   {
+    _videoPlayerController1 = VideoPlayerController.network(vid);
+    _videoPlayerController2 = VideoPlayerController.network(
+        'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4');
+
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController1!,
+      aspectRatio: 4 / 3,
+      autoPlay: true,
+      looping: false,
+    );
+
     return GridView.count(
         primary: false,
         padding: const EdgeInsets.all(6.0),
@@ -256,28 +338,30 @@ class _LearnScreenState extends State<LearnScreen> {
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 stops: const [0.2, 0.9],
+
               ),
             ),
             padding: const EdgeInsets.all(10.0),
-            child: GestureDetector(
-              onTap:()
-              {
-                //Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-              //      vid: vid,
-              //      userImg: userImg,
-              //      name: name,
-              //      date: date,
-              //      docId: docId,
-              //      userId: userId,
-              //      downloads: downloads,
-              //    )));
-               },
-              child: Center(
-                child: Image.network(vid, fit: BoxFit.fill,),
-              ),
-            ),
 
-          ),
+            child: GestureDetector(
+              onDoubleTap:()
+              {
+                goToDetails(vid, userImg, name, date, docId, userId, downloads,);
+                 },
+              child: Chewie( controller: _chewieController!,)
+
+
+
+
+
+
+  ),
+
+
+
+              ),
+
+
         ]
     );
   }
@@ -421,14 +505,9 @@ class _LearnScreenState extends State<LearnScreen> {
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (BuildContext context, int index)
                     {
-                      return listViewWidget(
-                        snapshot.data!.docs[index].id,
-                        snapshot.data!.docs[index]['Video'],
-                        snapshot.data!.docs[index]['userImage'],
-                        snapshot.data!.docs[index]['name'],
-                        snapshot.data!.docs[index]['createdAt'].toDate(),
-                        snapshot.data!.docs[index]['email'],
-                        snapshot.data!.docs[index]['downloads'],
+                      Post post = Post.getPost(snapshot, index);
+                      return listViewWidget( post.id, post.video, post.userImage, post.userName,
+                        post.createdAt, post.email, post.downloads,
                       );
                     },
                   );
@@ -438,25 +517,21 @@ class _LearnScreenState extends State<LearnScreen> {
                   return GridView.builder(
                       itemCount: snapshot.data!.docs.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount:3
+                          crossAxisCount:2
                       ),
                       itemBuilder: (BuildContext context, int index)
-                      {
-                        return gridViewWidget(
-                          snapshot.data!.docs[index].id,
-                          snapshot.data!.docs[index]['Video'],
-                          snapshot.data!.docs[index]['userImage'],
-                          snapshot.data!.docs[index]['name'],
-                          snapshot.data!.docs[index]['createdAt'].toDate(),
-                          snapshot.data!.docs[index]['email'],
-                          snapshot.data!.docs[index]['downloads'],
+                {
+
+                  Post post = Post.getPost(snapshot, index);
+                return gridViewWidget( post.id, post.video, post.userImage, post.userName,
+                post.createdAt, post.email, post.downloads,);
+                }
                         );
                       }
+}
 
 
-                  );
-                }
-              }
+
               else{
                 return const Center(
                     child: Text("There is no tasks",

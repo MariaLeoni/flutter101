@@ -27,17 +27,18 @@ class Credentials extends StatelessWidget {
         children: [
           const Center(
             child: CircleAvatar(
-              radius: 100,
-              backgroundImage: AssetImage(
-                "images/logo1.png"
+              radius: 150,
+              backgroundColor: Colors.red,
+              child: CircleAvatar(
+                radius: 140,
+                backgroundImage: AssetImage('assets/images/wolf.webp'),
               ),
-              backgroundColor: Colors.purpleAccent,
-            ),
+            )
           ),
           const SizedBox(height: 15.0,),
           InputField(
             hintText: "Enter Email",
-            icon: Icons.email_rounded,
+            icon: Icon(Icons.email_rounded, color: ,)s.email_rounded,
             obscureText: false,
             textEditingController: _emailTextController,
           ),
@@ -71,13 +72,16 @@ class Credentials extends StatelessWidget {
           ButtonSquare(
             text:"Login",
             colors1: Colors.purple,
-            colors2: Colors.purpleAccent,
+            colors2: Colors.red,
 
             press:() async{
               try{
                 await _auth.signInWithEmailAndPassword(
                   email: _emailTextController.text.trim().toLowerCase(),
                   password: _passTextController.text.trim(),
+
+
+
                 );
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
               }catch(error)

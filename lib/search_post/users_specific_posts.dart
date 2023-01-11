@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import '../followers.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
@@ -12,7 +14,6 @@ import 'package:flutter/services.dart';
 
 
 class  UsersSpecificPostsScreen extends StatefulWidget {
-  String? followeruserId;
   String? userId;
   String? userName;
   String? docId;
@@ -23,7 +24,6 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
     this.userName,
     this.followers,
     this.docId,
-    this.followeruserId,
 });
 
   @override
@@ -48,7 +48,6 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       Fluttertoast.showToast(msg: "You followed this person");
       widget.followers!.add(followuserId!);
     }
-
 
     FirebaseFirestore.instance
         .collection('users')
@@ -219,9 +218,26 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               followerText,
               IconButton(
                 onPressed: (){
+
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => Followers(
+                      userId: widget.userId,
+                    )));
+
+                },
+                icon: const Icon(Icons.check_circle_sharp),
+              ),
+              followerText,
+              IconButton(
+                onPressed: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
+              ),
+              IconButton(
+                onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
+                },
+                icon: const Icon(Icons.home),
               ),
             ]
 

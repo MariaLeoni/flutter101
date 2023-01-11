@@ -7,9 +7,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:sharedstudent1/DailyWord/Word.dart';
+import 'package:sharedstudent1/Learn/learn.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
+import 'package:sharedstudent1/poll.dart';
 import '../message/sendmessage.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
@@ -17,13 +20,18 @@ import '../search_post/search_post.dart';
 import'package:uuid/uuid.dart';
 import 'package:flutter/widgets.dart';
 
+import '../search_post/users_specific_posts.dart';
+
 
 
 class  HomeScreen extends StatefulWidget {
   String? docId;
-
+  String? name;
+  String? userImg;
   HomeScreen({
     this.docId,
+    this.name,
+    this.userImg,
   });
 
   @override
@@ -140,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
       await ref.putFile(imageFile!);
       imageUrl = await ref.getDownloadURL();
 
-      FirebaseFirestore.instance.collection('wallpaper').doc(DateTime.now().toString()).set({
+      FirebaseFirestore.instance.collection('wallpaper').doc(postId).set({
         'id': _auth.currentUser!.uid,
         'userImage': myImage,
         'name': myName,
@@ -212,13 +220,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                   child: Row(
                       children:[
-                        CircleAvatar(
-                          radius: 35,
-                          backgroundImage: NetworkImage(
-                            userImg,
-                          ),
+                        GestureDetector(
+                            onTap:(){
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                                userId:docId,
+                                userName:name,
+                              )));
+                            },
+                            child: CircleAvatar(
+                              radius:35,
+                              backgroundImage: NetworkImage(
+                                userImg!,
+                              ),
+                            )
                         ),
-                        const SizedBox(width: 10.0,),
+                       // CircleAvatar(
+                        //  radius: 35,
+                       //   backgroundImage: NetworkImage(
+                        //    userImg,
+                       //   ),
+                       // ),
+                      //  const SizedBox(width: 10.0,),
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children:[
@@ -400,15 +422,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Message(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Pollsx(),),);
                 },
                 icon: const Icon(Icons.message_rounded),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoApp(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LearnScreen(),),);
                 },
                 icon: const Icon(Icons.apartment),
+              ),
+              IconButton(
+                onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => CarouselDemo(),),);
+                },
+                icon: const Icon(Icons.stream_outlined),
               ),
             ]
 
