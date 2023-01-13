@@ -12,7 +12,7 @@ class HeadText extends StatelessWidget {
         children: [
           SizedBox(height: size.height * 0.05),
           const Center(
-            child: Text(" Student Shared", style: TextStyle(
+            child: Text("Campus", style: TextStyle(
               fontSize: 55,
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -24,7 +24,7 @@ class HeadText extends StatelessWidget {
           const Center(
             child: Text("Create Account", style: TextStyle(
               fontSize: 30,
-              color: Colors.white30,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
               fontFamily: "Bebas",
             ),),

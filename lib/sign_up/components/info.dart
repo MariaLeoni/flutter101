@@ -12,7 +12,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../VerifyEmail/VerifyEmail.dart';
 import '../../home_screen/homescreen.dart';
+import '../sign_up_screen.dart';
 
 class Credentials extends StatefulWidget {
   const Credentials({super.key});
@@ -58,12 +60,12 @@ class _CredentialsState extends State<Credentials> {
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
                           Icons.camera,
-                          color: Colors.deepPurple,
+                          color: Colors.redAccent,
                         ),
                       ),
                       Text(
                         "Camera",
-                        style: TextStyle(color: Colors.purple),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -78,12 +80,12 @@ class _CredentialsState extends State<Credentials> {
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
                             Icons.image,
-                            color: Colors.purpleAccent
+                            color: Colors.redAccent
                         ),
                       ),
                       Text(
                         "Gallery",
-                        style: TextStyle(color: Colors.purple),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -137,7 +139,7 @@ class _CredentialsState extends State<Credentials> {
               radius: 90,
               backgroundImage: imageFile == null
                   ?
-              const AssetImage("images/avatar.png")
+              const AssetImage("assets/images/login.jpg")
                   :
               Image
                   .file(imageFile!)
@@ -206,10 +208,17 @@ class _CredentialsState extends State<Credentials> {
                     'followers': <String>[],
                   });
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'weak-password') {
+                    Fluttertoast.showToast(msg: "The password provided is too weak.");
+                  } else if (e.code == 'email-already-in-use') {
+                    Fluttertoast.showToast(msg: "The account already exists for that email. Please log in");
+                    Navigator.canPop(context) ? Navigator.pop(context) : null;
+                  }
                 } catch (error) {
                   Fluttertoast.showToast(msg: error.toString());
                 }
-                Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
               }
           ),
           AccountCheck(

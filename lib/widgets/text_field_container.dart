@@ -15,21 +15,21 @@ class  TextFieldContainer extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Colors.red,]
+          colors: [Colors.white30 ,Colors.white54]
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(
             offset: Offset(-2,-2),
             spreadRadius: 1,
-            blurRadius: 4,
-            color: Colors.white,
+            blurRadius: 2,
+            color: Colors.redAccent ,
           ),
           BoxShadow(
             offset: Offset(2,2),
             spreadRadius: 1,
-            blurRadius: 4,
-            color: Colors.white,
+            blurRadius: 2,
+            color: Colors.redAccent,
           )
         ]
        ),

@@ -24,7 +24,7 @@ final TextEditingController _emailTextController = TextEditingController(text:''
           Center(
             child: Center(
               child: Image.asset(
-                "images/forget.png",
+                "assets/images/forget.png",
                 width: 300.0,
               ),
             ),

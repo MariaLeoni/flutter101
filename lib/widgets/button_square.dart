@@ -28,7 +28,7 @@ class ButtonSquare extends StatelessWidget {
               begin:Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
-                Colors.red,]
+                Colors.black,Colors.black]
 
             ),
             boxShadow:const [
