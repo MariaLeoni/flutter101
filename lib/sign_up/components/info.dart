@@ -126,7 +126,11 @@ class _CredentialsState extends State<Credentials> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return InkWell(
+        onTap: (){
+      FocusScope.of(context).unfocus();
+    },
+    child: Padding(
       padding: const EdgeInsets.all(50.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -228,6 +232,7 @@ class _CredentialsState extends State<Credentials> {
           )
         ],
       ),
+    )
     );
   }
 }
