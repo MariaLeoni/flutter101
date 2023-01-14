@@ -188,7 +188,6 @@ class _CredentialsState extends State<Credentials> {
                 try {
                   final ref = FirebaseStorage.instance.ref()
                       .child('userImages')
-                  
                       .child('${DateTime.now()}.jpg');
                   await ref.putFile(imageFile!);
                   imageUrl = await ref.getDownloadURL();
@@ -218,7 +217,7 @@ class _CredentialsState extends State<Credentials> {
                 } catch (error) {
                   Fluttertoast.showToast(msg: error.toString());
                 }
-                Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
+                //Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
               }
           ),
           AccountCheck(

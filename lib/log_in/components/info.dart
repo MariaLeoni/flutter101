@@ -56,7 +56,7 @@ class Credentials extends StatelessWidget {
               GestureDetector(
                 onTap: ()
                   {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()));
                   },
                   child: const Text(
                     "Forgot Password?",
@@ -94,7 +94,7 @@ class Credentials extends StatelessWidget {
             login: true,
             press:()
             {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignUpScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => SignUpScreen()));
             }
           )
         ],
