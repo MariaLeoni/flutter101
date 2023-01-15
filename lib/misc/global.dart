@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
@@ -19,4 +20,11 @@ Future<File> getImageFileFromAssets(String path) async {
         .asUint8List(byteData.offsetInBytes,
         byteData.lengthInBytes));
   }
+}
+
+Future<bool> usernameExist(String username) async {
+  final usersWithUserName = FirebaseFirestore.instance.collection('users')
+                            .where("name", isEqualTo: username).count();
+  final AggregateQuerySnapshot snapshot = await usersWithUserName.get();
+  return snapshot.count > 0 ? true : false;
 }

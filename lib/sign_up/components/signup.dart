@@ -177,9 +177,19 @@ class _CredentialsState extends State<Credentials> {
               ButtonSquare(text: "Create Account",
                   colors1: Colors.red, colors2: Colors.redAccent,
                   press: () async {
+                    if (_fullNameController.text.isEmpty){
+                      Fluttertoast.showToast(msg: "User name is required");
+                      return;
+                    }
+
+                    bool userExist = await usernameExist(_fullNameController.text.trim());
+                    if (userExist){
+                      Fluttertoast.showToast(msg: "Sorry username ${_fullNameController.text.trim()} already exist.");
+                      return;
+                    }
 
                     try {
-                      imageFile ??= await getImageFileFromAssets("images/avatar.png");
+                      imageFile ??= await getImageFileFromAssets("images/login.jpg");
 
                       final ref = FirebaseStorage.instance.ref()
                           .child('userImages').child('${DateTime.now()}.jpg');
@@ -189,7 +199,7 @@ class _CredentialsState extends State<Credentials> {
 
                       await _auth.createUserWithEmailAndPassword(
                         email: _emailTextController.text.trim().toLowerCase(),
-                        password: _passTextController.text.trim(),);
+                        password: _passTextController.text.trim());
 
                       final User? user = _auth.currentUser;
                       final uid = user!.uid;
@@ -208,12 +218,20 @@ class _CredentialsState extends State<Credentials> {
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'weak-password') {
                         Fluttertoast.showToast(msg: "The password provided is too weak.");
-                      } else if (e.code == 'email-already-in-use') {
-                        Fluttertoast.showToast(msg: "An account exists for this email. Please log in");
+                      }
+                      else if (e.code == 'invalid-email') {
+                        Fluttertoast.showToast(msg: "Looks like email provided is not valid");
+                      }
+                      else if (e.code == 'email-already-in-use') {
+                        Fluttertoast.showToast(msg: "An account exists for this email. Please log in.");
                         Navigator.canPop(context) ? Navigator.pop(context) : null;
                       }
+                      else{
+                        Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
+                      }
                     } catch (error) {
-                      Fluttertoast.showToast(msg: error.toString());
+                      //Fluttertoast.showToast(msg: error.toString());
+                      Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
                     }
                   }
               ),

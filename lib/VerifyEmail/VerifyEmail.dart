@@ -3,7 +3,6 @@ import'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import 'package:sharedstudent1/sign_up/sign_up_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 

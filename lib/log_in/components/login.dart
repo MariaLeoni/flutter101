@@ -74,14 +74,31 @@ class Credentials extends StatelessWidget {
                   colors2: Colors.red,
                   press:() async{
                     try{
+
                       await _auth.signInWithEmailAndPassword(
                           email: _emailTextController.text.trim().toLowerCase(),
                           password: _passTextController.text.trim());
 
                       if (!mounted) return;
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-                    }catch(error) {
-                      Fluttertoast.showToast(msg: error.toString());
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'wrong-password') {
+                        Fluttertoast.showToast(msg: "The password provided is wrong.");
+                      }
+                      else if (e.code == 'invalid-email') {
+                        Fluttertoast.showToast(msg: "Looks like email provided is not valid.");
+                      }
+                      else if (e.code == 'user-not-found') {
+                        Fluttertoast.showToast(msg: "No account found for this email. Please check details and try again.");
+                        //Navigator.canPop(context) ? Navigator.pop(context) : null;
+                      }
+                      else{
+                        Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
+                      }
+                    }
+                    catch(error) {
+                      //Fluttertoast.showToast(msg: error.toString());
+                      Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
                     }
                   }
               ),

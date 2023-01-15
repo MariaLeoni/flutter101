@@ -14,6 +14,7 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
 import 'package:sharedstudent1/poll.dart';
 import '../message/sendmessage.dart';
+import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
@@ -28,7 +29,8 @@ class  HomeScreen extends StatefulWidget {
   String? docId;
   String? name;
   String? userImg;
-  HomeScreen({
+
+  HomeScreen({super.key,
     this.docId,
     this.name,
     this.userImg,
@@ -160,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'likes': <String>[],
         'followers':<String>[],
       });
-
+      if (!mounted) return;
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       imageFile = null;
     }
@@ -171,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void read_userInfo()async
+  void readUserInfo() async
   {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -184,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    read_userInfo();
+    readUserInfo();
   }
 
   Widget listViewWidget (String docId, String img, String userImg, String name,

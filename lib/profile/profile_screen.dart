@@ -3,12 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-class ProfileScreen extends StatefulWidget {
 
+import '../misc/global.dart';
+
+class ProfileScreen extends StatefulWidget {
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -134,16 +137,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future _updateUserName() async {
+
+    bool userExist = await usernameExist(userNameInput!);
+    if (userExist){
+      Fluttertoast.showToast(msg: "Sorry username $userNameInput already exist.");
+      return;
+    }
+
     await FirebaseFirestore.instance.collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update(
-        {
+        .doc(FirebaseAuth.instance.currentUser!.uid).update({
           'name': userNameInput,
-        });
+    });
   }
 
-  _displayTextInputDialog(BuildContext context) async
-  {
+  _displayTextInputDialog(BuildContext context) async {
     return showDialog(
         context: context,
         builder: (context) {
