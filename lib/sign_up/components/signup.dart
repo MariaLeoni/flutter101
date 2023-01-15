@@ -13,9 +13,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../VerifyEmail/VerifyEmail.dart';
-import '../../home_screen/homescreen.dart';
 import '../../misc/global.dart';
-import '../sign_up_screen.dart';
 
 class Credentials extends StatefulWidget {
   const Credentials({super.key});
@@ -181,7 +179,7 @@ class _CredentialsState extends State<Credentials> {
                   press: () async {
 
                     try {
-                      imageFile ??= await copyAssetToLocal("images/login.jpg");
+                      imageFile ??= await getImageFileFromAssets("images/avatar.png");
 
                       final ref = FirebaseStorage.instance.ref()
                           .child('userImages').child('${DateTime.now()}.jpg');
