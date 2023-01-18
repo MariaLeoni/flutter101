@@ -43,11 +43,11 @@ class CommentItem extends StatelessWidget {
 
   handleLikeComment() {
     if (likes != null && likes!.contains(likeruserId)) {
-      Fluttertoast.showToast(msg: "You unliked this image!");
+      Fluttertoast.showToast(msg: "You unliked this comment!");
       likes!.remove(likeruserId);
     }
     else {
-      Fluttertoast.showToast(msg: "You liked this image!");
+      Fluttertoast.showToast(msg: "You liked this comment!");
       likes!.add(likeruserId!);
     }
 
@@ -141,7 +141,7 @@ class CommentItem extends StatelessWidget {
 
     var likeText = Text(likesCount.toString(),
         style: const TextStyle(fontSize: 28.0,
-            color: Colors.white, fontWeight: FontWeight.bold));
+            color: Colors.black, fontWeight: FontWeight.bold));
     return Column(
       children: <Widget>[
         ListTile(

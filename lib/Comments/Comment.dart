@@ -70,6 +70,7 @@ class CommentState extends State<Comment> {
       "commentId": commentId,
       "postId": widget.postId,
       'subCommentIds': <String>[],
+      'likes': <String>[],
     });
     commentController.clear();
   }
