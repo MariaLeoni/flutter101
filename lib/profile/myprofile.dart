@@ -11,13 +11,13 @@ import '../search_post/search_post.dart';
 import'package:fluttertoast/fluttertoast.dart';
 
 
-class  UsersSpecificPostsScreen extends StatefulWidget {
+class  myprofile extends StatefulWidget {
   String? userId;
   String? userName;
   String? docId;
   List<String>? followers = List.empty(growable: true);
 
-  UsersSpecificPostsScreen({super.key,
+  myprofile({super.key,
     this.userId,
     this.userName,
     this.followers,
@@ -25,10 +25,10 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
   });
 
   @override
-  State<UsersSpecificPostsScreen> createState() => _UsersSpecificPostsScreenState();
+  State<myprofile> createState() => _myprofileState();
 }
 
-class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
+class _myprofileState extends State<myprofile> {
   String? followuserId;
   String? myImage;
   String? myName;
@@ -49,10 +49,10 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
 
     FirebaseFirestore.instance
         .collection('users')
-        .doc(widget.userId)
-       .update({'followers': widget.followers!,
-   }).then((value) {
-     setState(() {
+        .doc(_auth.currentUser!.uid)
+        .update({'followers': widget.followers!,
+    }).then((value) {
+      setState(() {
         followersCount = (widget.followers?.length ?? 0);
       });
     });
@@ -62,7 +62,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   void readUserInfo()async
   {
     FirebaseFirestore.instance.collection('users')
-        .doc(widget.userId)
+        .doc(_auth.currentUser!.uid)
         .get()
         .then<dynamic>((DocumentSnapshot snapshot) async
     {
@@ -185,7 +185,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               ),
             ),
             title: Text(
-              widget.userName!,
+              myName!,
             ),
             centerTitle: true,
             leading: GestureDetector(
@@ -206,27 +206,18 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 },
                 icon: const Icon(Icons.person_search),
               ),
-              FirebaseAuth.instance.currentUser!.uid == widget.userId
-                  ?
               IconButton(
                 onPressed: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
-              ):
-              IconButton(
-                onPressed: (){
-                 handlefollowerPost();
-                 followerText;
-                },
-                icon: const Icon(Icons.follow_the_signs),
               ),
               IconButton(
                 onPressed: (){
 
                   Navigator.push(context, MaterialPageRoute(builder: (_) => Followers(
-                      followers: widget.followers,
-                    )));
+                    followers: widget.followers,
+                  )));
                 },
                 icon: const Icon(Icons.check_circle_sharp),
               ),
@@ -244,7 +235,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
         body: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('wallpaper')
-              .where("id", isEqualTo: widget.userId)
+              .where("id", isEqualTo: _auth.currentUser!.uid)
               .orderBy('createdAt',descending: true)
               .snapshots(),
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
@@ -259,21 +250,21 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               {
 
 
-                  return ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (BuildContext context, int index)
-                    {
-                      return listViewWidget(
-                        snapshot.data!.docs[index].id,
-                        snapshot.data!.docs[index]['Image'],
-                        snapshot.data!.docs[index]['userImage'],
-                        snapshot.data!.docs[index]['name'],
-                        snapshot.data!.docs[index]['createdAt'].toDate(),
-                        snapshot.data!.docs[index]['email'],
-                        snapshot.data!.docs[index]['downloads'],
-                      );
-                    },
-                  );
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (BuildContext context, int index)
+                  {
+                    return listViewWidget(
+                      snapshot.data!.docs[index].id,
+                      snapshot.data!.docs[index]['Image'],
+                      snapshot.data!.docs[index]['userImage'],
+                      snapshot.data!.docs[index]['name'],
+                      snapshot.data!.docs[index]['createdAt'].toDate(),
+                      snapshot.data!.docs[index]['email'],
+                      snapshot.data!.docs[index]['downloads'],
+                    );
+                  },
+                );
               }
               else{
                 return const Center(
@@ -296,4 +287,3 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
 
   }
 }
-

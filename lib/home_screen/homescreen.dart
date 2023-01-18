@@ -13,18 +13,16 @@ import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
 import 'package:sharedstudent1/poll.dart';
-import '../message/sendmessage.dart';
+import 'package:sharedstudent1/profile/myprofile.dart';
 import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
 import'package:uuid/uuid.dart';
 import 'package:flutter/widgets.dart';
-
 import '../search_post/users_specific_posts.dart';
 
-
-
+final themeMode = ValueNotifier(2);
 class  HomeScreen extends StatefulWidget {
   String? docId;
   String? name;
@@ -60,26 +58,26 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text(" Please choose an option"),
+            title: const Text("Please choose an option"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 InkWell(
                   onTap: () {
                     _getFromCamera();
-                  },
+                    },
                   child: Row(
                     children: const [
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
                           Icons.camera,
-                          color: Colors.deepPurple,
+                          color: Colors.red,
                         ),
                       ),
                       Text(
                         "Camera",
-                        style: TextStyle(color: Colors.purple),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -94,12 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
                             Icons.image,
-                            color: Colors.purpleAccent
+                            color: Colors.redAccent,
                         ),
                       ),
                       Text(
                         "Gallery",
-                        style: TextStyle(color: Colors.purple),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -199,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple.shade300],
+                colors: [Colors.black, Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 stops: const [0.2, 0.9],
@@ -286,20 +284,20 @@ class _HomeScreenState extends State<HomeScreen> {
       DateTime date, String userId, int downloads, String postId, List<String>? likes) {
     return GridView.count(
         primary: false,
-        padding: const EdgeInsets.all(6.0),
-        crossAxisSpacing: 1,
+        padding: const EdgeInsets.all(2.0),
+        crossAxisSpacing: 0,
         crossAxisCount: 1,
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple.shade300],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
-              ),
+              // gradient: LinearGradient(
+              //   colors: [Colors.grey.shade900, Colors.grey.shade900],
+              //   begin: Alignment.centerLeft,
+              //   end: Alignment.centerRight,
+              //   stops: const [0.2, 0.9],
+              // ),
             ),
-            padding: const EdgeInsets.all(10.0),
+           padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
               onTap:()
               {
@@ -320,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.purple, Colors.deepPurple.shade300],
+          colors: [Colors.black, Colors.black],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           stops: const [0.2, 0.9],
@@ -334,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.all(10.0),
               child: FloatingActionButton(
                 heroTag: "1",
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Colors.red,
                 onPressed: ()
                 {
                   _showImageDialog();
@@ -346,24 +344,12 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.all(10.0),
               child: FloatingActionButton(
                   heroTag: "2",
-                  backgroundColor: Colors.purple,
+                  backgroundColor: Colors.white,
                   onPressed: ()
                   {
                     _upload_image();
                   },
-                  child: const Icon(Icons.cloud_upload)
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(10.0),
-              child: FloatingActionButton(
-                heroTag: "1",
-                backgroundColor: Colors.deepPurple,
-                onPressed: ()
-                {
-                  _showImageDialog();
-                },
-                child: const Icon(Icons.video_camera_back_outlined),
+                  child: const Icon(Icons.cloud_upload, color: Colors.redAccent,)
               ),
             ),
           ],
@@ -418,22 +404,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => myprofile(
+                    // userId:docId,
+                    // userName:'name',
+                  ),),);
                 },
                 icon: const Icon(Icons.person),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Pollsx(),),);
-                },
-                icon: const Icon(Icons.message_rounded),
-              ),
-              IconButton(
-                onPressed: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LearnScreen(),),);
                 },
-                icon: const Icon(Icons.apartment),
+                icon: const Icon(Icons.play_circle_outlined ),
               ),
+
               IconButton(
                 onPressed: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => CarouselDemo(),),);
@@ -505,5 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       ),
     );
+
   }
+
 }

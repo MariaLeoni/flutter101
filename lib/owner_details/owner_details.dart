@@ -49,27 +49,6 @@ class _OwnerDetailsState extends State<OwnerDetails> {
     String? userId,
   });
 
-  handlefollowerPost() {
-
-    if (widget.followers!= null && widget.followers!.contains(followuserId)) {
-      Fluttertoast.showToast(msg: "You unfollowed this person");
-      widget.followers!.remove(followuserId);
-    }
-    else {
-      Fluttertoast.showToast(msg: "You followed this person");
-      widget.followers!.add(followuserId!);
-    }
-
-    FirebaseFirestore.instance
-        .collection('wallpaper')
-        .doc(widget.docId)
-        .update({'followers': widget.followers!,
-    }).then((value) {
-      setState(() {
-        followersCount = (widget.followers?.length ?? 0);
-      });
-    });
-  }
 
   handleLikePost(){
 
@@ -103,17 +82,11 @@ class _OwnerDetailsState extends State<OwnerDetails> {
         style: const TextStyle(fontSize: 28.0,
             color: Colors.white, fontWeight: FontWeight.bold));
 
-    followuserId = _auth.currentUser?.uid;
-    followersCount = (widget.followers?.length ?? 0);
-    var followerText = Text(followersCount.toString(),
-        style: const TextStyle(fontSize: 28.0,
-            color: Colors.white, fontWeight: FontWeight.bold));
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors:[Colors.purple, Colors.deepPurple.shade300],
+              colors:[Colors.black, Colors.black],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               stops: const[0.2,0.9]
@@ -145,48 +118,126 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                   ),
                 ) ,
                 const SizedBox(height: 30.0,),
-
-                GestureDetector(
-                  onTap:(){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
-                      userId:widget.docId,
-                      userName:widget.name,
-                    )));
-                  },
-                  child: CircleAvatar(
-                    radius:35,
-                    backgroundImage: NetworkImage(
-                      widget.userImg!,
-                    ),
-                  )
-                ),
-
-
-                const SizedBox(height:70.0,),
-
-                Text('Uploaded by:${widget.name!}',
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                  child: Row(
+                      children:[
+                        GestureDetector(
+                            onTap:(){
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                                userId:widget.docId,
+                                userName:widget.name,
+                              )));
+                            },
+                            child: CircleAvatar(
+                              radius:35,
+                              backgroundImage: NetworkImage(
+                                widget.userImg!,
+                              ),
+                            )
+                        ),
+                        // CircleAvatar(
+                        //  radius: 35,
+                        //   backgroundImage: NetworkImage(
+                        //    userImg,
+                        //   ),
+                        // ),
+                        //  const SizedBox(width: 10.0,),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:[
+                              Text(
+                                widget.name!,
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                DateFormat("dd MMM, yyyy - hh:mn a").format(widget.date!).toString(),
+                                style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                              )
+                            ]
+                        )
+                      ]
                   ),
                 ),
-                const SizedBox(height: 10.0,),
 
-                Text(
-                    DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
-                    style: const TextStyle( color: Colors.white, fontWeight: FontWeight.bold,)
-                ),
+                // GestureDetector(
+                //   onTap:(){
+                //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                //       userId:widget.docId,
+                //       userName:widget.name,
+                //     )));
+                //   },
+                //   child: CircleAvatar(
+                //     radius:35,
+                //     backgroundImage: NetworkImage(
+                //       widget.userImg!,
+                //     ),
+                //   )
+                // ),
+                // Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children:[
+                //       Text(
+                //         widget.name!,
+                //         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                //       ),
+                //       const SizedBox(height: 10.0),
+                //       Text(
+                //         DateFormat("dd MMM, yyyy - hh:mn a").format(widget.date!).toString(),
+                //         style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                //       )
+                //     ]
+                // ),
 
-                const SizedBox(height: 50.0,),
+
+
+                //const SizedBox(height:70.0,),
+
+                // Text('Uploaded by:${widget.name!}',
+                //   style: const TextStyle(
+                //     fontSize: 18.0,
+                //     color: Colors.white,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+                // const SizedBox(height: 10.0,),
+                //
+                // Text(
+                //     DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
+                //     style: const TextStyle( color: Colors.white, fontWeight: FontWeight.bold,)
+                // ),
+
+                //const SizedBox(height: 50.0,),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.download_outlined,
-                      size:40,
-                      color: Colors.white,
+                    IconButton(
+                      onPressed: () async
+                        {
+                          try{
+                            var imageId = await ImageDownloader.downloadImage(widget.img!);
+                            if(imageId == null)
+                            {
+                              return;
+                            }
+                            Fluttertoast.showToast(msg: "Image saved to Gallery");
+                            total= widget.downloads! +1;
+
+                            FirebaseFirestore.instance.collection('wallpaper')
+                                .doc(widget.postId).update({'downloads': total,
+                            }).then((value)
+                            {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
+                            });
+                          } on PlatformException catch (error)
+                          {
+                            print(error);
+                          }
+
+                      },
+                      icon: const Icon(Icons.download, color:Colors.white,),
                     ),
                     Text(
                       "${widget.downloads}",
@@ -209,94 +260,42 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                     ),
                     likeText,
                     IconButton(
-                      onPressed: (){
-                        handlefollowerPost();
-                      },
-                      icon: const Icon(Icons.follow_the_signs),
+                      onPressed: () async {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
+                        },
+                      icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
                     ),
-                    followerText,
+                    IconButton(onPressed: () async{
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                    }, icon: Icon(Icons.home, color: Colors.white))
                   ],
                 ),
                 const SizedBox(height: 50.0,),
 
-                Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0,),
-                    child: ButtonSquare(
-                        text: "Download",
-                        colors1: Colors.green,
-                        colors2: Colors.lightGreen,
 
-                        press: () async
-                        {
-                          try{
-                            var imageId = await ImageDownloader.downloadImage(widget.img!);
-                            if(imageId == null)
-                            {
-                              return;
-                            }
-                            Fluttertoast.showToast(msg: "Image saved to Gallery");
-                            total= widget.downloads! +1;
-
-                            FirebaseFirestore.instance.collection('wallpaper')
-                                .doc(widget.postId).update({'downloads': total,
-                            }).then((value)
-                            {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
-                            });
-                          } on PlatformException catch (error)
-                          {
-                            print(error);
-                          }
-                        }
-                    )
-                ),
+                FirebaseAuth.instance.currentUser!.uid == widget.docId
+                ?
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right:8.0,),
                   child: ButtonSquare(
                       text:"Delete",
-                      colors1: Colors.green,
-                      colors2: Colors.lightGreen,
+                      colors1: Colors.black,
+                      colors2: Colors.black,
 
                       press: () async
                       {
                         FirebaseFirestore.instance.collection('wallpaper')
-                            .doc(widget.docId).delete()
+                            .doc(widget.postId).delete()
                             .then((value)
                         {
+                          Fluttertoast.showToast(msg: 'Your post has been deleted');
                           Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                         });
                       }
 
-                  ),
-                ),
-
-                Container(),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                  child: ButtonSquare(
-                      text:"Go Back",
-                      colors1: Colors.green,
-                      colors2: Colors.lightGreen,
-
-                      press: () async
-                      {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
-                      }
-
-                  ),
-
-                ),
-                Padding(padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                  child: ButtonSquare(
-                      text:"Comment",
-                      colors1: Colors.green,
-                      colors2: Colors.lightGreen,
-                      press: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
-                      }
-                  ),
-                ),
+                  )
+                ):
+                    Container(),
 
               ],
             ),
