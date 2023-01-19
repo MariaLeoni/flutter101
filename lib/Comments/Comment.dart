@@ -52,9 +52,13 @@ class CommentState extends State<Comment> {
         for (var doc in snapshot.data!.docs) {
           comments.add(CommentItem.fromDocument(doc));
         }
-        return ListView(
-          children: comments,
-        );
+
+        comments.sort((a,b) {
+          var aTimeStamp = a.timestamp;
+          var bTimeStamp = b.timestamp;
+          return aTimeStamp!.compareTo(bTimeStamp!);
+        });
+        return ListView(children: comments);
       },
     );
   }

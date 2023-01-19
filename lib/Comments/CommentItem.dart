@@ -20,7 +20,7 @@ class CommentItem extends StatelessWidget {
 
   int? total;
   int likesCount = 0;
-  String? likeruserId;
+  String? likerUserId;
   String? userName;
   String? userImage;
   String? userId;
@@ -39,19 +39,21 @@ class CommentItem extends StatelessWidget {
     this.userImage,
     this.commentId,
     this.subCommentsIds,
+    this.likes
   });
 
   handleLikeComment() {
-    if (likes != null && likes!.contains(likeruserId)) {
+    if (likes != null && likes!.contains(likerUserId)) {
       Fluttertoast.showToast(msg: "You unliked this comment!");
-      likes!.remove(likeruserId);
+      likes!.remove(likerUserId);
     }
     else {
       Fluttertoast.showToast(msg: "You liked this comment!");
-      likes!.add(likeruserId!);
+      likes!.add(likerUserId!);
     }
 
-    FirebaseFirestore.instance.collection('comments').doc(commentId)
+    print("CommentId $commentId");
+    FirebaseFirestore.instance.collection('comment').doc(commentId)
         .update({'likes': likes!,
     }).then((value) {
       likesCount = (likes?.length ?? 0);
@@ -84,6 +86,7 @@ class CommentItem extends StatelessWidget {
 
     commentController1.clear();
   }
+
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
       userName: doc.data().toString().contains('commenterName') ? doc.get(
@@ -101,6 +104,8 @@ class CommentItem extends StatelessWidget {
           'commentId') : '',
       subCommentsIds: doc.data().toString().contains('subCommentIds') ? List
           .from(doc.get('subCommentIds')) : List.empty(),
+      likes: doc.data().toString().contains('likes') ? List
+          .from(doc.get('likes')) : List.empty(),
     );
   }
 
@@ -136,12 +141,13 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    likeruserId = _auth.currentUser?.uid;
+    likerUserId = _auth.currentUser?.uid;
     likesCount = (likes?.length ?? 0);
 
     var likeText = Text(likesCount.toString(),
         style: const TextStyle(fontSize: 28.0,
             color: Colors.black, fontWeight: FontWeight.bold));
+
     return Column(
       children: <Widget>[
         ListTile(
@@ -154,12 +160,10 @@ class CommentItem extends StatelessWidget {
                   icon: const Icon(Icons.arrow_drop_down), onPressed: () {
                 if (subCommentsIds != null && subCommentsIds!.isNotEmpty) {
                   CommentItem commentItem = CommentItem(userName: userName,
-                      userId: userId,
-                      comment: comment,
-                      timestamp: timestamp,
-                      userImage: userImage,
-                      commentId: commentId,
-                      subCommentsIds: subCommentsIds);
+                      userId: userId, comment: comment, timestamp: timestamp,
+                      userImage: userImage, commentId: commentId,
+                      subCommentsIds: subCommentsIds, likes: likes,);
+
                   Navigator.push(context, MaterialPageRoute(
                       builder: (_) => SubComment(commentItem: commentItem)));
                 }
@@ -178,7 +182,7 @@ class CommentItem extends StatelessWidget {
               //         MaterialPageRoute(builder: (_) => CommentItem()));
               //   });
               // },) :
-              IconButton(icon: Icon(Icons.thumb_up_sharp),
+              IconButton(icon: const Icon(Icons.thumb_up_sharp),
                   onPressed: () => handleLikeComment()),
               likeText,
               // icon-2

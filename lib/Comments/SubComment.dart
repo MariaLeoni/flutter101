@@ -9,7 +9,6 @@ import 'CommentItem.dart';
 class SubComment extends StatefulWidget {
 
   CommentItem? commentItem;
-
   SubComment({super.key, this.commentItem});
 
   @override
@@ -39,7 +38,8 @@ class CommentState extends State<SubComment> {
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
     return StreamBuilder(
-      stream: firebaseCollection.where(FieldPath.documentId, whereIn: widget.commentItem!.subCommentsIds!).snapshots(),
+      stream: firebaseCollection.where(FieldPath.documentId,
+          whereIn: widget.commentItem!.subCommentsIds!).snapshots(),
       builder: (context, snapshot){
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -51,10 +51,14 @@ class CommentState extends State<SubComment> {
         for (var doc in snapshot.data!.docs) {
           comments.add(CommentItem.fromDocument(doc));
         }
-        return ListView(
-          children: comments,
-        );
 
+        comments.sort((a,b) {
+          var aTimeStamp = a.timestamp;
+          var bTimeStamp = b.timestamp;
+          return aTimeStamp!.compareTo(bTimeStamp!);
+        });
+
+        return ListView(children: comments);
       },
     );
   }
@@ -82,14 +86,12 @@ class CommentState extends State<SubComment> {
     });
   }
 
-
   @override
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
     readUserInfo();
   }
-
 
   @override
   Widget build(BuildContext context) {
