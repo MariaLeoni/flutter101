@@ -85,7 +85,9 @@ class Credentials extends StatelessWidget {
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
                       }
                       else{
-                        Fluttertoast.showToast(msg: "Please verify your email address and try again");
+                        //Fluttertoast.showToast(msg: "Please verify your email address and try again");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("Please verify your email address and try again")));
                       }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'wrong-password') {
