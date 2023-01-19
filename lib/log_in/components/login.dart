@@ -21,10 +21,10 @@ class Credentials extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-          onTap: (){
-            FocusScope.of(context).unfocus();
-          },
-          child: Padding(padding: const EdgeInsets.all(50.0),
+        onTap: (){
+          FocusScope.of(context).unfocus();
+        },
+        child: Padding(padding: const EdgeInsets.all(50.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -80,7 +80,13 @@ class Credentials extends StatelessWidget {
                           password: _passTextController.text.trim());
 
                       if (!mounted) return;
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                      User? me = _auth.currentUser;
+                      if (me != null && me.emailVerified) {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                      }
+                      else{
+                        Fluttertoast.showToast(msg: "Please verify your email address and try again");
+                      }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'wrong-password') {
                         Fluttertoast.showToast(msg: "The password provided is wrong.");
@@ -90,25 +96,23 @@ class Credentials extends StatelessWidget {
                       }
                       else if (e.code == 'user-not-found') {
                         Fluttertoast.showToast(msg: "No account found for this email. Please check details and try again.");
-                        //Navigator.canPop(context) ? Navigator.pop(context) : null;
                       }
                       else{
                         Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
                       }
                     }
                     catch(error) {
-                      //Fluttertoast.showToast(msg: error.toString());
                       Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
                     }
                   }
               ),
-              AccountCheck(login: true,
-                  press:() {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SignUpScreen()));
-                  }
+              AccountCheck(login: true, press:() {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SignUpScreen()));
+              }
               )
             ],
-          ),)
+          ),
+        )
     );
   }
 }

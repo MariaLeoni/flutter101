@@ -52,7 +52,6 @@ class CommentItem extends StatelessWidget {
       likes!.add(likerUserId!);
     }
 
-    print("CommentId $commentId");
     FirebaseFirestore.instance.collection('comment').doc(commentId)
         .update({'likes': likes!,
     }).then((value) {
