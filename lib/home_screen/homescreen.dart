@@ -28,11 +28,7 @@ class  HomeScreen extends StatefulWidget {
   String? name;
   String? userImg;
 
-  HomeScreen({super.key,
-    this.docId,
-    this.name,
-    this.userImg,
-  });
+  HomeScreen({super.key, this.docId, this.name, this.userImg,});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -65,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 InkWell(
                   onTap: () {
                     _getFromCamera();
-                    },
+                  },
                   child: Row(
                     children: const [
                       Padding(
@@ -91,8 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
-                            Icons.image,
-                            color: Colors.redAccent,
+                          Icons.image,
+                          color: Colors.redAccent,
                         ),
                       ),
                       Text(
@@ -181,6 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
       myName = snapshot.get('name');
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -195,12 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 16.0,
         shadowColor: Colors.white10,
         child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.black, Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
+                stops: [0.2, 0.9],
               ),
             ),
             padding: const EdgeInsets.all(5.0),
@@ -229,32 +226,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: CircleAvatar(
                               radius:35,
-                              backgroundImage: NetworkImage(
-                                userImg!,
-                              ),
+                              backgroundImage: NetworkImage(userImg,),
                             )
                         ),
-                       // CircleAvatar(
-                        //  radius: 35,
-                       //   backgroundImage: NetworkImage(
-                        //    userImg,
-                       //   ),
-                       // ),
-                      //  const SizedBox(width: 10.0,),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:[
-                              Text(
-                                name,
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
-                                style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                              )
-                            ]
-                        )
+                        Padding(padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:[
+                                Text(name,
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 10.0),
+                                Text(
+                                  DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
+                                  style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                                )
+                              ]
+                          ),
+                        ),
                       ]
                   ),
                 )
@@ -266,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void goToDetails(String img, String userImg, String name, DateTime date,
-                  String docId, String userId, int downloads, String postId, List<String>? likes) {
+      String docId, String userId, int downloads, String postId, List<String>? likes) {
     Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
       img: img,
       userImg: userImg,
@@ -297,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
               //   stops: const [0.2, 0.9],
               // ),
             ),
-           padding: const EdgeInsets.all(2.0),
+            padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
               onTap:()
               {
@@ -489,7 +478,5 @@ class _HomeScreenState extends State<HomeScreen> {
 
       ),
     );
-
   }
-
 }

@@ -156,12 +156,12 @@ class CommentItem extends StatelessWidget {
             spacing: 2, // space between two icons
             children: <Widget>[
               IconButton(
-                  icon: const Icon(Icons.arrow_drop_down), onPressed: () {
+                  icon: const Icon(Icons.arrow_forward), onPressed: () {
                 if (subCommentsIds != null && subCommentsIds!.isNotEmpty) {
                   CommentItem commentItem = CommentItem(userName: userName,
-                      userId: userId, comment: comment, timestamp: timestamp,
-                      userImage: userImage, commentId: commentId,
-                      subCommentsIds: subCommentsIds, likes: likes,);
+                    userId: userId, comment: comment, timestamp: timestamp,
+                    userImage: userImage, commentId: commentId,
+                    subCommentsIds: subCommentsIds, likes: likes,);
 
                   Navigator.push(context, MaterialPageRoute(
                       builder: (_) => SubComment(commentItem: commentItem)));
@@ -170,21 +170,9 @@ class CommentItem extends StatelessWidget {
                   Fluttertoast.showToast(msg: 'No more comments under this');
                 }
               }),
-
-              // FirebaseAuth.instance.currentUser!.uid == userId ? // icon-1
-              // IconButton(icon: const Icon(Icons.delete), onPressed: () async {
-              //   FirebaseFirestore.instance.collection('comment')
-              //       .doc(commentId).delete()
-              //       .then((value) {
-              //     Fluttertoast.showToast(msg: 'Your comment has been deleted');
-              //     Navigator.pushReplacement(context,
-              //         MaterialPageRoute(builder: (_) => CommentItem()));
-              //   });
-              // },) :
               IconButton(icon: const Icon(Icons.thumb_up_sharp),
                   onPressed: () => handleLikeComment()),
               likeText,
-              // icon-2
             ],
           ),
           onTap: () {
@@ -193,12 +181,9 @@ class CommentItem extends StatelessWidget {
           leading:
           GestureDetector(
               onTap: () {
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (_) =>
-                    UsersSpecificPostsScreen(
-                      userId: userId,
-                      userName: userName,
-                    )));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                  userId: userId, userName: userName,
+                )));
               },
               child: CircleAvatar(
                 radius: 35,
@@ -210,8 +195,4 @@ class CommentItem extends StatelessWidget {
       ],
     );
   }
-
-
 }
-
-

@@ -11,6 +11,7 @@ import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 import 'package:video_player/video_player.dart';
+
 class  OwnerDetails extends StatefulWidget {
   String? likeruserId;
   String? vid;
@@ -57,7 +58,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
 
 
 
-  handlefollowerPost() {
+  handleFollowerPost() {
 
     if (widget.followers!= null && widget.followers!.contains(followuserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
@@ -142,18 +143,14 @@ class _OwnerDetailsState extends State<OwnerDetails> {
           children: [
             Column(
               children: [
-                Container(
-                  child: Column(
-                    children: [
-                       Chewie( controller: _chewieController!)
-                    ],
-                  ),
-
+                Column(
+                  children: [
+                     Chewie( controller: _chewieController!)
+                  ],
                 ),
                 const SizedBox(height: 30.0,),
 
-                const Text(
-                  'Owner Information',
+                const Text('Owner Information',
                   style: TextStyle(
                     fontSize: 30.0,
                     color: Colors.white54,
@@ -226,7 +223,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                     likeText,
                     IconButton(
                       onPressed: (){
-                        handlefollowerPost();
+                        handleFollowerPost();
                       },
                       icon: const Icon(Icons.follow_the_signs),
                     ),

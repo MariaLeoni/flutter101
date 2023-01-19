@@ -4,6 +4,7 @@ import 'package:sharedstudent1/forgot_password/forgot_password.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/widgets/input_field.dart';
 
+import '../../VerifyEmail/VerifyEmail.dart';
 import '../../account_check/account_check.dart';
 import '../../sign_up/sign_up_screen.dart';
 import '../../widgets/button_square.dart';
@@ -86,6 +87,7 @@ class Credentials extends StatelessWidget {
                       else{
                         ScaffoldMessenger.of(context)
                             .showSnackBar(const SnackBar(content: Text("Please verify your email address and try again")));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
                       }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'wrong-password') {
