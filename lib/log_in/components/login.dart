@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sharedstudent1/forgot_password/forgot_password.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/widgets/input_field.dart';
@@ -85,26 +84,30 @@ class Credentials extends StatelessWidget {
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
                       }
                       else{
-                        //Fluttertoast.showToast(msg: "Please verify your email address and try again");
                         ScaffoldMessenger.of(context)
                             .showSnackBar(const SnackBar(content: Text("Please verify your email address and try again")));
                       }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'wrong-password') {
-                        Fluttertoast.showToast(msg: "The password provided is wrong.");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("The password provided is wrong.")));
                       }
                       else if (e.code == 'invalid-email') {
-                        Fluttertoast.showToast(msg: "Looks like email provided is not valid.");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("Looks like email provided is not valid.")));
                       }
                       else if (e.code == 'user-not-found') {
-                        Fluttertoast.showToast(msg: "No account found for this email. Please check details and try again.");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("No account found for this email. Please check details and try again.")));
                       }
                       else{
-                        Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("An error has occurred. Please check details and try again.")));
                       }
                     }
                     catch(error) {
-                      Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text("An error has occurred. Please check details and try again.")));
                     }
                   }
               ),

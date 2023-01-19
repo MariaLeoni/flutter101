@@ -10,7 +10,6 @@ import 'package:sharedstudent1/widgets/input_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../VerifyEmail/VerifyEmail.dart';
 import '../../misc/global.dart';
@@ -178,13 +177,16 @@ class _CredentialsState extends State<Credentials> {
                   colors1: Colors.red, colors2: Colors.redAccent,
                   press: () async {
                     if (_fullNameController.text.isEmpty){
-                      Fluttertoast.showToast(msg: "User name is required");
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text("User name is required")));
                       return;
                     }
 
                     bool userExist = await usernameExist(_fullNameController.text.trim());
                     if (userExist){
-                      Fluttertoast.showToast(msg: "Sorry username ${_fullNameController.text.trim()} already exist.");
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text("Sorry username ${_fullNameController.text.trim()} already exist.")));
                       return;
                     }
 
@@ -218,22 +220,28 @@ class _CredentialsState extends State<Credentials> {
                       if (!mounted) return;
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
                     } on FirebaseAuthException catch (e) {
+                      if (!mounted) return;
                       if (e.code == 'weak-password') {
-                        Fluttertoast.showToast(msg: "The password provided is too weak.");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("The password provided is too weak.")));
                       }
                       else if (e.code == 'invalid-email') {
-                        Fluttertoast.showToast(msg: "Looks like email provided is not valid");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("Looks like email provided is not valid")));
                       }
                       else if (e.code == 'email-already-in-use') {
-                        Fluttertoast.showToast(msg: "An account exists for this email. Please log in.");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("An account exists for this email. Please log in.")));
                         Navigator.canPop(context) ? Navigator.pop(context) : null;
                       }
                       else{
-                        Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("An error has occurred. Please check details and try again.")));
                       }
                     } catch (error) {
-                      //Fluttertoast.showToast(msg: error.toString());
-                      Fluttertoast.showToast(msg: "An error has occurred. Please check details and try again.");
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text("An error has occurred. Please check details and try again.")));
                     }
                   }
               ),
