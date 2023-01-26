@@ -34,7 +34,7 @@ class _SearchPostState extends State<SearchPost> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.deepPurple.shade300, Colors.purple,],
+            colors: [Colors.red.shade800, Colors.red,],
           ),
         ),
         ),
@@ -60,7 +60,7 @@ class _SearchPostState extends State<SearchPost> {
             prefixIcon: IconButton(
           icon: const Padding(
             padding: EdgeInsets.only(right: 12.0, bottom:4.0),
-           // child: Icon(Icons.arrow_back, color: Colors.white,),
+           child: Icon(Icons.arrow_back, color: Colors.white,),
             ),
             onPressed: ()
           {

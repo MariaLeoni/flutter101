@@ -10,7 +10,7 @@ import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 
-class  OwnerDetails extends StatefulWidget {
+class OwnerDetails extends StatefulWidget {
   String? likeruserId;
   String? img;
   String? userImg;
@@ -18,6 +18,7 @@ class  OwnerDetails extends StatefulWidget {
   DateTime? date;
   String? docId;
   String? userId;
+  String? description;
   int? downloads;
   //String? vid;
   String? postId;
@@ -27,7 +28,7 @@ class  OwnerDetails extends StatefulWidget {
 
 
   OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.postId, this.likes,
+    this.docId, this.userId, this.downloads, this.postId, this.likes, this.description
   });
 
   @override
@@ -147,6 +148,19 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                                   const SizedBox(height: 10.0),
                                   Text(
                                     DateFormat("dd MMM, yyyy - hh:mn a").format(widget.date!).toString(),
+                                    style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height:10.0),
+                                  Text(
+                                    'Description',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.description!,
                                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                                   )
                                 ]

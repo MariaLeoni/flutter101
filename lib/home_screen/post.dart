@@ -10,6 +10,7 @@ class Post {
   String email = "";
   int downloads = 0;
   String postId = "";
+  String description ="";
   List<String>? likes = List.empty(growable: true);
 
   Post({
@@ -20,6 +21,7 @@ class Post {
     required this.userName,
     required this.email,
     required this.postId,
+    required this.description,
     required this.downloads,
     required this.likes
   });
@@ -34,6 +36,7 @@ class Post {
         email:  snapshot.data!.docs[index]['email'],
         postId:snapshot.data!.docs[index]['postId'],
         downloads:snapshot.data!.docs[index]['downloads'],
+        description:snapshot.data!.docs[index]['description'],
         likes: List.from(snapshot.data!.docs[index]['likes'])
     );
   }

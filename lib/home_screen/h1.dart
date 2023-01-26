@@ -36,7 +36,7 @@ class  HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
+  TextEditingController commentController = TextEditingController();
   String changeTitle="Grid View";
   bool checkView =false;
 
@@ -135,45 +135,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _upload_image() async
   {
-    if (imageFile == null) {
+    if(imageFile == null) {
       Fluttertoast.showToast(msg: 'Please select an Image');
       return;
     }
-
+    try
     {
-      final ref = FirebaseStorage.instance.ref().child('userImages').child(
-          '${DateTime.now()}jpg');
+      final ref = FirebaseStorage.instance.ref().child('userImages').child('${DateTime.now()}jpg');
       await ref.putFile(imageFile!);
       imageUrl = await ref.getDownloadURL();
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
-          Description(
-              imageFile: imageUrl
-          )));
 
-      //   FirebaseFirestore.instance.collection('wallpaper').doc(postId).set({
-      //     'id': _auth.currentUser!.uid,
-      //     'userImage': myImage,
-      //     'name': myName,
-      //     'email': _auth.currentUser!.email,
-      //     'Image': imageUrl,
-      //     'downloads': 0,
-      //     'createdAt': DateTime.now(),
-      //     'postId': postId,
-      //     'likes': <String>[],
-      //     'followers':<String>[],
-      //   });
-      //   if (!mounted) return;
-      //   Navigator.canPop(context) ? Navigator.pop(context) : null;
-      //   imageFile = null;
-      // }
-      //
-      //  catch(error)
-      //  {
-      //   Fluttertoast.showToast(msg: error.toString());
-      //  }
+      FirebaseFirestore.instance.collection('wallpaper').doc(postId).set({
+        'id': _auth.currentUser!.uid,
+        'userImage': myImage,
+        'name': myName,
+        'email': _auth.currentUser!.email,
+        'Image': imageUrl,
+        'downloads': 0,
+        'createdAt': DateTime.now(),
+        'postId': postId,
+        'likes': <String>[],
+        'followers':<String>[],
+        'description':commentController,
+        // }).then((value){
+        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Description(
+        //     postId: postId
+        //   ),),);
+      });
+      if (!mounted) return;
+      Navigator.canPop(context) ? Navigator.pop(context) : null;
+      imageFile = null;
+    }
 
+    catch(error)
+    {
+      Fluttertoast.showToast(msg: error.toString());
     }
   }
+
   void readUserInfo() async
   {
     FirebaseFirestore.instance.collection('users')
@@ -191,23 +190,8 @@ class _HomeScreenState extends State<HomeScreen> {
     readUserInfo();
   }
 
-    void goToDetails(String img, String userImg, String name, DateTime date,
-        String docId, String userId, int downloads, String postId, List<String>? likes, String description) {
-      Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-        img: img,
-        userImg: userImg,
-        name: name,
-        date: date,
-        docId: docId,
-        userId: userId,
-        downloads: downloads,
-        postId: postId,
-        likes: likes,
-        description: description,
-      )));
-    }
   Widget listViewWidget (String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId, List<String>? likes, String description) {
+      DateTime date, String userId, int downloads, String postId, List<String>? likes, String description){
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -227,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 GestureDetector(
                   onTap:() {
-                    goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes, description);
+                    goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes);
                   },
                   child: Image.network(
                     img,
@@ -276,9 +260,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void goToDetails(String img, String userImg, String name, DateTime date,
+      String docId, String userId, int downloads, String postId, List<String>? likes) {
+    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+      img: img,
+      userImg: userImg,
+      name: name,
+      date: date,
+      docId: docId,
+      userId: userId,
+      downloads: downloads,
+      postId: postId,
+      likes: likes,
+    )));
+  }
 
   Widget gridViewWidget (String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId, List<String>? likes, String description) {
+      DateTime date, String userId, int downloads, String postId, List<String>? likes, String description,) {
     return GridView.count(
         primary: false,
         padding: const EdgeInsets.all(2.0),
@@ -298,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap:()
               {
-                goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes, description);
+                goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes);
               },
               child: Center(
                 child: Image.network(img, fit: BoxFit.fill,),
@@ -445,8 +443,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Post post = Post.getPost(snapshot, index);
 
                       return listViewWidget(post.id, post.image, post.userImage,
-                        post.userName, post.createdAt, post.email,
-                        post.downloads, post.postId, post.likes,post.description);
+                          post.userName, post.createdAt, post.email,
+                          post.downloads, post.postId,  post.likes, post.description);
                     },
                   );
                 }
@@ -462,8 +460,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Post post = Post.getPost(snapshot, index);
 
                         return gridViewWidget(post.id, post.image, post.userImage,
-                          post.userName, post.createdAt, post.email,
-                          post.downloads, post.postId, post.likes, post.description);
+                            post.userName, post.createdAt, post.email,
+                            post.downloads, post.postId, post.likes,post.description);
                       }
                   );
                 }
@@ -488,5 +486,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

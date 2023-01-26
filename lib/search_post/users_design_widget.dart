@@ -38,7 +38,7 @@ class _UsersDesignWidgetState extends State<UsersDesignWidget> {
             child: Column(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.amberAccent,
+                  backgroundColor: Colors.red.shade600,
                   minRadius: 90.0,
                   child: CircleAvatar(
                     radius:80.0,

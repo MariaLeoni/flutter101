@@ -241,55 +241,59 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             ]
 
         ),
-        body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('wallpaper')
-              .where("id", isEqualTo: widget.userId)
-              .orderBy('createdAt',descending: true)
-              .snapshots(),
-          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
-          {
-            if(snapshot.connectionState == ConnectionState.waiting )
-            {
-              return Center(child: CircularProgressIndicator(),);
-            }
-            else if (snapshot.connectionState == ConnectionState.active)
-            {
-              if(snapshot.data!.docs.isNotEmpty)
-              {
 
 
-                  return ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (BuildContext context, int index)
+        body:
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('wallpaper')
+                    .where("id", isEqualTo: widget.userId)
+                    .orderBy('createdAt',descending: true)
+                    .snapshots(),
+                builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
+                {
+                  if(snapshot.connectionState == ConnectionState.waiting )
+                  {
+                    return Center(child: CircularProgressIndicator(),);
+                  }
+                  else if (snapshot.connectionState == ConnectionState.active)
+                  {
+                    if(snapshot.data!.docs.isNotEmpty)
                     {
-                      return listViewWidget(
-                        snapshot.data!.docs[index].id,
-                        snapshot.data!.docs[index]['Image'],
-                        snapshot.data!.docs[index]['userImage'],
-                        snapshot.data!.docs[index]['name'],
-                        snapshot.data!.docs[index]['createdAt'].toDate(),
-                        snapshot.data!.docs[index]['email'],
-                        snapshot.data!.docs[index]['downloads'],
+
+
+                        return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (BuildContext context, int index)
+                          {
+                            return listViewWidget(
+                              snapshot.data!.docs[index].id,
+                              snapshot.data!.docs[index]['Image'],
+                              snapshot.data!.docs[index]['userImage'],
+                              snapshot.data!.docs[index]['name'],
+                              snapshot.data!.docs[index]['createdAt'].toDate(),
+                              snapshot.data!.docs[index]['email'],
+                              snapshot.data!.docs[index]['downloads'],
+                            );
+                          },
+                        );
+
+                    }
+                    else{
+                      return const Center(
+                          child: Text("There is no tasks",
+                            style: TextStyle(fontSize: 20),)
                       );
-                    },
+                    }
+                  }
+                  return const Center(
+                    child: Text(
+                      'Something went wrong',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                    ),
                   );
-              }
-              else{
-                return const Center(
-                    child: Text("There is no tasks",
-                      style: TextStyle(fontSize: 20),)
-                );
-              }
-            }
-            return const Center(
-              child: Text(
-                'Something went wrong',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                },
               ),
-            );
-          },
-        ),
 
       ),
     );
