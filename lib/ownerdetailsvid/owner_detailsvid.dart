@@ -23,6 +23,7 @@ class  OwnerDetails extends StatefulWidget {
   int? downloads;
   //String? vid;
   String? postId;
+  String? description;
 
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
@@ -30,7 +31,7 @@ class  OwnerDetails extends StatefulWidget {
 
 
   OwnerDetails({super.key, this.likeruserId,this.vid, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.postId, this.likes,
+    this.docId, this.userId, this.downloads, this.postId, this.likes, this. description,
   });
 
   @override
@@ -92,7 +93,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
     }
 
 
-    FirebaseFirestore.instance.collection('wallpaper').doc(widget.postId)
+    FirebaseFirestore.instance.collection('wallpaper2').doc(widget.postId)
         .update({'likes': widget.likes!,
     }).then((value){
       setState(() {
@@ -222,94 +223,39 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                     ),
                     likeText,
                     IconButton(
-                      onPressed: (){
-                        handleFollowerPost();
+                      onPressed: () async {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
                       },
-                      icon: const Icon(Icons.follow_the_signs),
+                      icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
                     ),
-                    followerText,
+                    IconButton(onPressed: () async{
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                    }, icon: const Icon(Icons.home, color: Colors.white))
                   ],
                 ),
                 const SizedBox(height: 50.0,),
-
+                FirebaseAuth.instance.currentUser!.uid == widget.docId
+                    ?
                 Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0,),
+                    padding: const EdgeInsets.only(left: 8.0, right:8.0,),
                     child: ButtonSquare(
-                        text: "Download",
-                        colors1: Colors.green,
-                        colors2: Colors.lightGreen,
+                        text:"Delete",
+                        colors1: Colors.black,
+                        colors2: Colors.black,
 
-                        press: () async
-                        {
-                          try{
-                            var imageId = await ImageDownloader.downloadImage(widget.userImg!);
-                            if(imageId == null)
-                            {
-                              return;
-                            }
-                            Fluttertoast.showToast(msg: "Image saved to Gallery");
-                            total= widget.downloads! +1;
-
-                            FirebaseFirestore.instance.collection('wallpaper')
-                                .doc(widget.postId).update({'downloads': total,
-                            }).then((value)
-                            {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
-                            });
-                          } on PlatformException catch (error)
+                        press: () async {
+                          FirebaseFirestore.instance.collection('wallpaper')
+                              .doc(widget.postId).delete()
+                              .then((value)
                           {
-                            print(error);
-                          }
+                            Fluttertoast.showToast(msg: 'Your post has been deleted');
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                          });
                         }
+
                     )
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                  child: ButtonSquare(
-                      text:"Delete",
-                      colors1: Colors.green,
-                      colors2: Colors.lightGreen,
-
-                      press: () async
-                      {
-                        FirebaseFirestore.instance.collection('wallpaper')
-                            .doc(widget.docId).delete()
-                            .then((value)
-                        {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
-                        });
-                      }
-
-                  ),
-                ),
-
+                ):
                 Container(),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                  child: ButtonSquare(
-                      text:"Go Back",
-                      colors1: Colors.green,
-                      colors2: Colors.lightGreen,
-
-                      press: () async
-                      {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
-                      }
-
-                  ),
-
-                ),
-                Padding(padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                  child: ButtonSquare(
-                      text:"Comment",
-                      colors1: Colors.green,
-                      colors2: Colors.lightGreen,
-                      press: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
-                      }
-                  ),
-                ),
 
               ],
             ),

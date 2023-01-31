@@ -9,6 +9,11 @@ import '../home_screen/homescreen.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
+import 'package:flutter_animated_icons/icons8.dart';
+import 'package:flutter_animated_icons/lottiefiles.dart';
+import 'package:flutter_animated_icons/useanimations.dart';
+import 'package:lottie/lottie.dart';
+
 
 class OwnerDetails extends StatefulWidget {
   String? likeruserId;
@@ -35,7 +40,8 @@ class OwnerDetails extends StatefulWidget {
   State<OwnerDetails> createState() => _OwnerDetailsState();
 }
 
-class _OwnerDetailsState extends State<OwnerDetails> {
+class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMixin {
+  late AnimationController _favoriteController;
 
   int? total;
   int likesCount = 0;
@@ -50,7 +56,20 @@ class _OwnerDetailsState extends State<OwnerDetails> {
     String? userId,
   });
 
+  @override
+  void initState() {
+    super.initState();
+    _favoriteController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
+  }
+  //
+  // @override
+  // void dispose() {
+  //   _favoriteController.dispose();
+  //   super.dispose();
+  //   super.dispose();
+  // }
   handleLikePost(){
 
     if (widget.likes != null && widget.likes!.contains(likeruserId)) {
@@ -206,17 +225,34 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
+                    IconButton(
+                      splashRadius: 50,
+                      iconSize: 50,
+                      onPressed: () {
+                        if (_favoriteController.status ==
+                            AnimationStatus.dismissed) {
+                          _favoriteController.reset();
+                          _favoriteController.animateTo(0.6);
+                        } else {
+                          _favoriteController.reverse();
+                        }
                         handleLikePost();
                       },
-
-                      child: const Icon (
-                        Icons.thumb_up_sharp,
-                        size:20.0,
-                        color: Colors.white,
-                      ),
+                      icon: Lottie.asset(Icons8.heart_color,
+                          controller: _favoriteController),
                     ),
+
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     handleLikePost();
+                    //   },
+                    //
+                    //   child: const Icon (
+                    //     Icons.thumb_up_sharp,
+                    //     size:20.0,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                     likeText,
                     IconButton(
                       onPressed: () async {

@@ -1,44 +1,47 @@
 
-
+import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sharedstudent1/Learn/learn.dart';
 import 'package:uuid/uuid.dart';
+import 'package:video_player/video_player.dart';
 
-import 'home_screen/homescreen.dart';
 
-class Description extends StatefulWidget {
 
-  String? imageFile;
+class Description2 extends StatefulWidget {
 
-  Description({
+  String? videoFile;
 
-    this.imageFile,
+  Description2({
+
+    this.videoFile,
 
 
   });
 
 
   @override
-  State<Description> createState() => _DescriptionState();
+  State<Description2> createState() => _Description2State();
 
 }
 
-class _DescriptionState extends State<Description> {
+class _Description2State extends State<Description2> {
   TextEditingController commentController = TextEditingController();
   String postId = const Uuid().v4();
   FirebaseAuth _auth = FirebaseAuth.instance;
-
+  VideoPlayerController? _videoPlayerController1;
+  ChewieController? _chewieController;
   String? myImage;
   String? myName;
 
   addComment() {
-    FirebaseFirestore.instance.collection('wallpaper').doc(postId).set({
+    FirebaseFirestore.instance.collection('wallpaper2').doc(postId).set({
       'id': _auth.currentUser!.uid,
       'userImage': myImage,
       'name': myName,
       'email': _auth.currentUser!.email,
-      'Image': widget.imageFile,
+      'video': widget.videoFile,
       'downloads': 0,
       'createdAt': DateTime.now(),
       'postId': postId,
@@ -46,11 +49,11 @@ class _DescriptionState extends State<Description> {
       'description': commentController.text,
     });
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
-        HomeScreen(
+        LearnScreen(
         )));
     if (!mounted) return;
     Navigator.canPop(context) ? Navigator.pop(context) : null;
-    widget.imageFile = null;
+    widget.videoFile = null;
   }
   void readUserInfo() async
   {
@@ -66,9 +69,17 @@ class _DescriptionState extends State<Description> {
   void initState() {
     super.initState();
     readUserInfo();
+
   }
   @override
   Widget build(BuildContext context) {
+    _videoPlayerController1 = VideoPlayerController.network(widget.videoFile!);
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController1!,
+      aspectRatio: 1,
+      autoPlay: true,
+      looping: false,
+    );
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
@@ -81,15 +92,13 @@ class _DescriptionState extends State<Description> {
               ),
             ),
           ),
-          title: const Text("Comments"),
+          title: const Text(" View "),
         ),
         body: Column(
           children: <Widget>[
-            Image.network(
-              widget.imageFile!,
-              width: MediaQuery.of(context).size.width,
-            ),
-        //    Expanded(child: buildComments()),
+            Expanded(
+        child: Chewie( controller: _chewieController!,),),
+            //    Expanded(child: buildComments()),
             const Divider(),
             ListTile(
                 title: TextFormField(
@@ -97,7 +106,7 @@ class _DescriptionState extends State<Description> {
                   decoration: const InputDecoration(labelText: "Write a comment.."),
                 ),
                 trailing: OutlinedButton(
-                 onPressed: addComment,
+                  onPressed: addComment,
                   child: const Text("Post"),
                 )
             ),
@@ -107,4 +116,5 @@ class _DescriptionState extends State<Description> {
   }
 
 }
+
 

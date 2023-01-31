@@ -14,7 +14,9 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
 import 'package:sharedstudent1/poll.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
+import '../Search.dart';
 import '../description.dart';
+import '../likepost.dart';
 import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
@@ -22,6 +24,7 @@ import '../search_post/search_post.dart';
 import'package:uuid/uuid.dart';
 import 'package:flutter/widgets.dart';
 import '../search_post/users_specific_posts.dart';
+import '../search_userpost/search_post.dart';
 
 final themeMode = ValueNotifier(2);
 class  HomeScreen extends StatefulWidget {
@@ -372,6 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   checkView = true;
                 });
               },
+
               onDoubleTap: ()
               {
                 setState(() {
@@ -395,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Search(),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
@@ -417,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => CarouselDemo(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => likes(),),);
                 },
                 icon: const Icon(Icons.stream_outlined),
               ),

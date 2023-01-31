@@ -1,54 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/ownerdetailsvid/owner_detailsvid.dart';
 import 'package:sharedstudent1/search_post/user.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
+import 'package:sharedstudent1/search_userpost/userx.dart';
 
-class UsersDesignWidget extends StatefulWidget {
+class UsersDesignWidgetx extends StatefulWidget {
 
-  Users? model;
+  Posts? model;
   BuildContext? context;
 
-  UsersDesignWidget({
+  UsersDesignWidgetx({
     this.model,
     this.context,
 });
 
 
   @override
-  State<UsersDesignWidget> createState() => _UsersDesignWidgetState();
+  State<UsersDesignWidgetx> createState() => _UsersDesignWidgetxState();
 }
 
-class _UsersDesignWidgetState extends State<UsersDesignWidget> {
+class _UsersDesignWidgetxState extends State<UsersDesignWidgetx> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: ()
         {
-          print("id ${widget.model!.id} name${widget.model!.name}");
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => OwnerDetails(
-            userId: widget.model!.id,
-
+          print("postId ${widget.model!.postId} description${widget.model!.description}");
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+            userId: widget.model!.postId,
+            userName: widget.model!.name,
 
           )));
         },
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(0.0),
           child: Container(
-            height: 240,
+            height: 600,
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: [
-                CircleAvatar(
-                  backgroundColor: Colors.red.shade600,
-                  minRadius: 90.0,
-                  child: CircleAvatar(
-                    radius:80.0,
-                    backgroundImage: NetworkImage(
-                      widget.model!.userImage!,
-                    )
-                  )
-                ),
+                Image.network(
+                      widget.model!.Image!,
+                    ),
+
                 SizedBox(height: 10.0,),
                 Text(
                   widget.model!.name!,

@@ -18,6 +18,8 @@ import '../owner_details/video_player.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
 import'package:video_player/video_player.dart';
+
+import 'description2.dart';
 class  LearnScreen extends StatefulWidget {
 
 
@@ -139,6 +141,10 @@ class _LearnScreenState extends State<LearnScreen> {
       final ref = FirebaseStorage.instance.ref().child('userVideos').child(DateTime.now().toString()+'mp4');
       await ref.putFile(videoFile!);
       videoUrl = await ref.getDownloadURL();
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
+          Description2(
+              videoFile: videoUrl,
+          )));
       // _videoPlayerController1 = VideoPlayerController.network(videoUrl! );
       // _videoPlayerController2 = VideoPlayerController.network(videoUrl!);
       //
@@ -155,15 +161,15 @@ class _LearnScreenState extends State<LearnScreen> {
       //   autoPlay: true,
       //   looping: false,);
       //
-      FirebaseFirestore.instance.collection('wallpaper2').doc(DateTime.now().toString()).set({
-        'id': _auth.currentUser!.uid,
-        'userImage': myImage,
-        'name': myName,
-        'email': _auth.currentUser!.email,
-        'Video': videoUrl,
-        'downloads': 0,
-        'createdAt': DateTime.now(),
-      });
+      // FirebaseFirestore.instance.collection('wallpaper2').doc(DateTime.now().toString()).set({
+      //   'id': _auth.currentUser!.uid,
+      //   'userImage': myImage,
+      //   'name': myName,
+      //   'email': _auth.currentUser!.email,
+      //   'Video': videoUrl,
+      //   'downloads': 0,
+      //   'createdAt': DateTime.now(),
+      // });
 
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       videoFile = null;
@@ -215,7 +221,7 @@ class _LearnScreenState extends State<LearnScreen> {
   //     aspectRatio: 4 / 3,
   //     autoPlay: true,
   //     looping: false,);}
-  Widget listViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId, int downloads, )
+  Widget listViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId, int downloads, String description, List<String>? likes , String postId  )
   {
 
 
@@ -258,7 +264,7 @@ class _LearnScreenState extends State<LearnScreen> {
                 GestureDetector(
                   onDoubleTap:()
                   {
-                    goToDetails(vid, userImg, name, date, docId, userId, downloads,);
+                    goToDetails(vid, userImg, name, date, docId, userId, downloads, description, likes, postId);
                   },
                   child: Chewie( controller: _chewieController!)
 
@@ -301,7 +307,7 @@ class _LearnScreenState extends State<LearnScreen> {
   }
 
   void goToDetails(String vid, String userImg, String name, DateTime date,
-      String docId, String userId, int downloads,) {
+      String docId, String userId, int downloads, String description, List<String>? likes, String postId) {
     Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
       vid:vid,
       userImg: userImg,
@@ -310,9 +316,12 @@ class _LearnScreenState extends State<LearnScreen> {
       docId: docId,
       userId: userId,
       downloads: downloads,
+      description: description,
+      likes: [],
+      postId: postId,
     )));
   }
-  Widget gridViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId,int downloads,)
+  Widget gridViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId,int downloads, String description, List<String>? likes, String postId)
   {
     _videoPlayerController1 = VideoPlayerController.network(vid);
     _videoPlayerController2 = VideoPlayerController.network(
@@ -346,7 +355,7 @@ class _LearnScreenState extends State<LearnScreen> {
             child: GestureDetector(
               onDoubleTap:()
               {
-                goToDetails(vid, userImg, name, date, docId, userId, downloads,);
+                goToDetails(vid, userImg, name, date, docId, userId, downloads, description , likes, postId);
                  },
               child: Chewie( controller: _chewieController!,)
 
@@ -506,8 +515,8 @@ class _LearnScreenState extends State<LearnScreen> {
                     itemBuilder: (BuildContext context, int index)
                     {
                       Post post = Post.getPost(snapshot, index);
-                      return listViewWidget( post.id, post.video, post.userImage, post.userName,
-                        post.createdAt, post.email, post.downloads,
+                      return listViewWidget( post.id, post.video, post.userImage, post.name,
+                        post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
                       );
                     },
                   );
@@ -523,8 +532,9 @@ class _LearnScreenState extends State<LearnScreen> {
                 {
 
                   Post post = Post.getPost(snapshot, index);
-                return gridViewWidget( post.id, post.video, post.userImage, post.userName,
-                post.createdAt, post.email, post.downloads,);
+                return gridViewWidget( post.id, post.video, post.userImage, post.name,
+                post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
+                );
                 }
                         );
                       }
