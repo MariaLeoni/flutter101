@@ -11,13 +11,13 @@ import '../search_post/search_post.dart';
 import'package:fluttertoast/fluttertoast.dart';
 
 
-class  myprofile extends StatefulWidget {
+class  MyProfile extends StatefulWidget {
   String? userId;
   String? userName;
   String? docId;
   List<String>? followers = List.empty(growable: true);
 
-  myprofile({super.key,
+  MyProfile({super.key,
     this.userId,
     this.userName,
     this.followers,
@@ -25,10 +25,10 @@ class  myprofile extends StatefulWidget {
   });
 
   @override
-  State<myprofile> createState() => _myprofileState();
+  State<MyProfile> createState() => _MyProfileState();
 }
 
-class _myprofileState extends State<myprofile> {
+class _MyProfileState extends State<MyProfile> {
   String? followuserId;
   String? myImage;
   String? myName;

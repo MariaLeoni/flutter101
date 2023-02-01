@@ -399,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => myprofile(
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MyProfile(
                     // userId:docId,
                     // userName:'name',
                   ),),);

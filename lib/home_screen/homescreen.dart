@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +9,7 @@ import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
 import '../Search.dart';
+import '../misc/alertbox.dart';
 import '../uploader.dart';
 import '../likepost.dart';
 import '../owner_details/owner_details.dart';
@@ -54,6 +56,27 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     readUserInfo();
+
+    Timer.run(() {
+      FancyAlertDialog.showFancyAlertDialog(
+        context, 'Info Fancy Alert Dialog Box',
+        'This is a info alert dialog box. This plugin is used to help you easily create fancy dialog',
+        icon: const Icon(
+          Icons.clear,
+          color: Colors.black,
+        ),
+        labelPositiveButton: 'OKAY',
+        onTapPositiveButton: () {
+          Navigator.of(context).pop(false);
+          print('tap positive button');
+        },
+        labelNegativeButton: 'Cancel',
+        onTapNegativeButton: () {
+          Navigator.of(context, rootNavigator: true).pop();
+          print('tap negative button');
+        },
+      );
+    });
   }
 
   void goToDetails(String img, String userImg, String name, DateTime date,
@@ -182,9 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: FloatingActionButton(
                 heroTag: "1",
                 backgroundColor: Colors.red,
-                onPressed: ()
-                {
-                  //_showImageDialog();
+                onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) =>
                       Uploader(imageFrom: "Camera")));
                 },
@@ -206,17 +227,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             title: GestureDetector(
-              onTap: ()
-              {
-                setState(()
-                {
+              onTap: () {
+                setState(() {
                   changeTitle = "List View";
                   checkView = true;
                 });
               },
 
-              onDoubleTap: ()
-              {
+              onDoubleTap: () {
                 setState(() {
                   changeTitle= "Grid View";
                   checkView = false;
@@ -226,25 +244,22 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             centerTitle: true,
             leading: GestureDetector(
-              onTap: ()
-              {
+              onTap: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
               },
-              child: const Icon(
-                  Icons.login_outlined
-              ),
+              child: const Icon(Icons.login_outlined),
             ),
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Search(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Search(),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => myprofile(
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MyProfile(
                     // userId:docId,
                     // userName:'name',
                   ),),);
@@ -260,24 +275,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => likes(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const likes(),),);
                 },
                 icon: const Icon(Icons.stream_outlined),
               ),
             ]
-
         ),
         body: StreamBuilder(
           stream: FirebaseFirestore.instance.collection('wallpaper')
               .orderBy('createdAt',descending: true).snapshots(),
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
           {
-            if(snapshot.connectionState == ConnectionState.waiting )
-            {
+            if(snapshot.connectionState == ConnectionState.waiting ) {
               return const Center(child: CircularProgressIndicator(),);
             }
-            else if (snapshot.connectionState == ConnectionState.active)
-            {
+            else if (snapshot.connectionState == ConnectionState.active) {
               if(snapshot.data!.docs.isNotEmpty){
                 if(checkView == true)
                 {
@@ -300,8 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount:3
                       ),
-                      itemBuilder: (BuildContext context, int index)
-                      {
+                      itemBuilder: (BuildContext context, int index) {
                         Post post = Post.getPost(snapshot, index);
 
                         return gridViewWidget(post.id, post.image, post.userImage,
@@ -311,9 +322,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
               }
-              else{
+              else {
                 return const Center(
-                    child: Text("There is no tasks",
+                    child: Text("There are no Posts",
                       style: TextStyle(fontSize: 20),)
                 );
               }
@@ -326,7 +337,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
-
       ),
     );
   }

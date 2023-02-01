@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -64,54 +65,58 @@ class _UploaderState extends State<Uploader> {
 
     readUserInfo();
 
-    Timer.run(() {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Please choose an option"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                onTap: () {
-                  // if (!mounted) return;
-                  // Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                  //     Uploader(imageFrom: "Camera")));
-                  getFromCamera();
-                },
-                child: Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(4.0,),
-                      child: Icon(Icons.camera, color: Colors.red,),
-                    ),
-                    Text("Camera", style: TextStyle(color: Colors.black),),
-                  ],
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  getFromGallery();
-                  // if (!mounted) return;
-                  //
-                  // Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                  //     Uploader(imageFrom: "Gallery")));
-                },
-                child: Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(4.0,),
-                      child: Icon(Icons.image, color: Colors.redAccent,),
-                    ),
-                    Text("Gallery", style: TextStyle(color: Colors.black),),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
+    // Timer.run(() {
+    //   showGeneralDialog(
+    //     barrierDismissible: true,
+    //     barrierLabel: '',
+    //     barrierColor: Colors.black38,
+    //     transitionDuration: const Duration(milliseconds: 500),
+    //     pageBuilder: (ctx, anim1, anim2) => AlertDialog(
+    //       title: const Text("Please choose an option"),
+    //       content: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           InkWell(
+    //             onTap: () {
+    //               getFromCamera();
+    //             },
+    //             child: Row(
+    //               children: const [
+    //                 Padding(
+    //                   padding: EdgeInsets.all(4.0,),
+    //                   child: Icon(Icons.camera, color: Colors.red,),
+    //                 ),
+    //                 Text("Camera", style: TextStyle(color: Colors.black),),
+    //               ],
+    //             ),
+    //           ),
+    //           InkWell(
+    //             onTap: () {
+    //               getFromGallery();
+    //             },
+    //             child: Row(
+    //               children: const [
+    //                 Padding(
+    //                   padding: EdgeInsets.all(4.0,),
+    //                   child: Icon(Icons.image, color: Colors.redAccent,),
+    //                 ),
+    //                 Text("Gallery", style: TextStyle(color: Colors.black),),
+    //               ],
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //     transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
+    //       filter: ImageFilter.blur(sigmaX: 4 * anim1.value, sigmaY: 4 * anim1.value),
+    //       child: FadeTransition(
+    //         opacity: anim1,
+    //         child: child,
+    //       ),
+    //     ),
+    //     context: context,
+    //   );
+    // });
   }
 
   void getFromCamera() async {
@@ -193,7 +198,6 @@ class _UploaderState extends State<Uploader> {
                     ),
                   ],
                 )
-
             )
         )
     );
