@@ -1,33 +1,22 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/DailyWord/Word.dart';
 import 'package:sharedstudent1/Learn/learn.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import 'package:sharedstudent1/owner_details/video_player.dart';
-import 'package:sharedstudent1/poll.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
 import '../Search.dart';
-import '../description.dart';
+import '../uploader.dart';
 import '../likepost.dart';
-import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
-import '../profile/profile_screen.dart';
-import '../search_post/search_post.dart';
 import'package:uuid/uuid.dart';
-import 'package:flutter/widgets.dart';
 import '../search_post/users_specific_posts.dart';
-import '../search_userpost/search_post.dart';
 
 final themeMode = ValueNotifier(2);
-class  HomeScreen extends StatefulWidget {
+
+class HomeScreen extends StatefulWidget {
   String? docId;
   String? name;
   String? userImg;
@@ -51,138 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String? myName;
   String? docId;
   String postId = const Uuid().v4();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _showImageDialog() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Please choose an option"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  onTap: () {
-                    _getFromCamera();
-                  },
-                  child: Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.all(4.0,),
-                        child: Icon(
-                          Icons.camera,
-                          color: Colors.red,
-                        ),
-                      ),
-                      Text(
-                        "Camera",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    _getFromGallery();
-                  },
-                  child: Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.all(4.0,),
-                        child: Icon(
-                          Icons.image,
-                          color: Colors.redAccent,
-                        ),
-                      ),
-                      Text(
-                        "Gallery",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-    );
-  }
-
-  void _getFromCamera() async
-  {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.camera);
-    _cropImage(pickedFile!.path);
-    Navigator.pop(context);
-  }
-
-  void _getFromGallery() async
-  {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery);
-    _cropImage(pickedFile!.path);
-    Navigator.pop(context);
-  }
-
-  void _cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper().cropImage
-      (sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
-
-    if (croppedImage != null) {
-      setState(() {
-        imageFile = File(croppedImage.path);
-      });
-    }
-  }
-
-  void _upload_image() async
-  {
-    if (imageFile == null) {
-      Fluttertoast.showToast(msg: 'Please select an Image');
-      return;
-    }
-
-    {
-      final ref = FirebaseStorage.instance.ref().child('userImages').child(
-          '${DateTime.now()}jpg');
-      await ref.putFile(imageFile!);
-      imageUrl = await ref.getDownloadURL();
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
-          Description(
-              imageFile: imageUrl
-          )));
-
-      //   FirebaseFirestore.instance.collection('wallpaper').doc(postId).set({
-      //     'id': _auth.currentUser!.uid,
-      //     'userImage': myImage,
-      //     'name': myName,
-      //     'email': _auth.currentUser!.email,
-      //     'Image': imageUrl,
-      //     'downloads': 0,
-      //     'createdAt': DateTime.now(),
-      //     'postId': postId,
-      //     'likes': <String>[],
-      //     'followers':<String>[],
-      //   });
-      //   if (!mounted) return;
-      //   Navigator.canPop(context) ? Navigator.pop(context) : null;
-      //   imageFile = null;
-      // }
-      //
-      //  catch(error)
-      //  {
-      //   Fluttertoast.showToast(msg: error.toString());
-      //  }
-
-    }
-  }
-  void readUserInfo() async
-  {
+  void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get().then<dynamic>((DocumentSnapshot snapshot)
-    {
+        .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
     });
@@ -194,21 +56,16 @@ class _HomeScreenState extends State<HomeScreen> {
     readUserInfo();
   }
 
-    void goToDetails(String img, String userImg, String name, DateTime date,
-        String docId, String userId, int downloads, String postId, List<String>? likes, String description) {
-      Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-        img: img,
-        userImg: userImg,
-        name: name,
-        date: date,
-        docId: docId,
-        userId: userId,
-        downloads: downloads,
-        postId: postId,
-        likes: likes,
-        description: description,
-      )));
-    }
+  void goToDetails(String img, String userImg, String name, DateTime date,
+      String docId, String userId, int downloads, String postId, List<String>? likes, String description) {
+
+    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+      img: img, userImg: userImg, name: name, date: date, docId: docId,
+      userId: userId, downloads: downloads, postId: postId, likes: likes,
+      description: description,
+    )));
+  }
+
   Widget listViewWidget (String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId, List<String>? likes, String description) {
     return Padding(
@@ -279,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget gridViewWidget (String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId, List<String>? likes, String description) {
     return GridView.count(
@@ -289,14 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisCount: 1,
         children: [
           Container(
-            decoration: BoxDecoration(
-              // gradient: LinearGradient(
-              //   colors: [Colors.grey.shade900, Colors.grey.shade900],
-              //   begin: Alignment.centerLeft,
-              //   end: Alignment.centerRight,
-              //   stops: const [0.2, 0.9],
-              // ),
-            ),
+            decoration: const BoxDecoration(),
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
               onTap:()
@@ -316,12 +165,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.black, Colors.black],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          stops: const [0.2, 0.9],
+          stops: [0.2, 0.9],
         ),
       ),
       child: Scaffold(
@@ -335,21 +184,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.red,
                 onPressed: ()
                 {
-                  _showImageDialog();
+                  //_showImageDialog();
+                  Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                      Uploader(imageFrom: "Camera")));
                 },
                 child: const Icon(Icons.camera_enhance),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(10.0),
-              child: FloatingActionButton(
-                  heroTag: "2",
-                  backgroundColor: Colors.white,
-                  onPressed: ()
-                  {
-                    _upload_image();
-                  },
-                  child: const Icon(Icons.cloud_upload, color: Colors.redAccent,)
               ),
             ),
           ],
@@ -449,8 +288,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Post post = Post.getPost(snapshot, index);
 
                       return listViewWidget(post.id, post.image, post.userImage,
-                        post.userName, post.createdAt, post.email,
-                        post.downloads, post.postId, post.likes,post.description);
+                          post.userName, post.createdAt, post.email,
+                          post.downloads, post.postId, post.likes,post.description);
                     },
                   );
                 }
@@ -466,8 +305,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Post post = Post.getPost(snapshot, index);
 
                         return gridViewWidget(post.id, post.image, post.userImage,
-                          post.userName, post.createdAt, post.email,
-                          post.downloads, post.postId, post.likes, post.description);
+                            post.userName, post.createdAt, post.email,
+                            post.downloads, post.postId, post.likes, post.description);
                       }
                   );
                 }

@@ -14,7 +14,7 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
 import 'package:sharedstudent1/poll.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
-import '../description.dart';
+import '../uploader.dart';
 import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';

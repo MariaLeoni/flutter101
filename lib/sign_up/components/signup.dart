@@ -191,9 +191,7 @@ class _CredentialsState extends State<Credentials> {
                     }
 
                     try {
-                      if (imageFile == null){
-                        imageFile = await getImageFileFromAssets("images/login.jpg");
-                      }
+                      imageFile ??= await getImageFileFromAssets("images/login.jpg");
 
                       final ref = FirebaseStorage.instance.ref()
                           .child('userImages').child('${DateTime.now()}.jpg');
