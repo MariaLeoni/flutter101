@@ -6,33 +6,29 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/Learn/learn.dart';
 import 'package:sharedstudent1/Learn/learnpost.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../message/sendmessage.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
-import '../owner_details/video_player.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
 import'package:video_player/video_player.dart';
 
 import 'description2.dart';
-class  LearnScreen extends StatefulWidget {
+
+
+class  VideoHomeScreen extends StatefulWidget {
 
 
   @override
-  State<LearnScreen> createState() => _LearnScreenState();
+  State<VideoHomeScreen> createState() => _VideoHomeScreenState();
 }
 
-class _LearnScreenState extends State<LearnScreen> {
-  late TargetPlatform _platform;
+class _VideoHomeScreenState extends State<VideoHomeScreen> {
    VideoPlayerController? _videoPlayerController1;
-   VideoPlayerController? _videoPlayerController2;
    ChewieController? _chewieController;
-   ChewieController? _chewieController2;
   String changeTitle="Grid View";
   bool checkView =false;
 
@@ -43,7 +39,6 @@ class _LearnScreenState extends State<LearnScreen> {
   String? myImage;
   String? myName;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String?  vid;
 
@@ -226,8 +221,6 @@ class _LearnScreenState extends State<LearnScreen> {
 
 
       _videoPlayerController1 = VideoPlayerController.network(vid);
-      _videoPlayerController2 = VideoPlayerController.network(
-          'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4');
 
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController1!,
@@ -324,8 +317,6 @@ class _LearnScreenState extends State<LearnScreen> {
   Widget gridViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId,int downloads, String description, List<String>? likes, String postId)
   {
     _videoPlayerController1 = VideoPlayerController.network(vid);
-    _videoPlayerController2 = VideoPlayerController.network(
-        'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4');
 
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController1!,

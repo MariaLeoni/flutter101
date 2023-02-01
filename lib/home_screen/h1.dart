@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/DailyWord/Word.dart';
-import 'package:sharedstudent1/Learn/learn.dart';
+import 'package:sharedstudent1/Learn/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
@@ -408,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LearnScreen(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoHomeScreen(),),);
                 },
                 icon: const Icon(Icons.play_circle_outlined ),
               ),

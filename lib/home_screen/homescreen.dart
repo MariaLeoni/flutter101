@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/Learn/learn.dart';
+import 'package:sharedstudent1/Learn/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LearnScreen(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen(),),);
                 },
                 icon: const Icon(Icons.play_circle_outlined ),
               ),
