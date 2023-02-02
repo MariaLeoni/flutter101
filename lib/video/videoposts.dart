@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/Learn/learnpost.dart';
+import 'package:sharedstudent1/video/videopost.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../message/sendmessage.dart';
@@ -23,12 +23,12 @@ class  VideoHomeScreen extends StatefulWidget {
 
 
   @override
-  State<VideoHomeScreen> createState() => _VideoHomeScreenState();
+  State<VideoHomeScreen> createState() => VideoHomeScreenState();
 }
 
-class _VideoHomeScreenState extends State<VideoHomeScreen> {
-   VideoPlayerController? _videoPlayerController1;
-   ChewieController? _chewieController;
+class VideoHomeScreenState extends State<VideoHomeScreen> {
+  VideoPlayerController? _videoPlayerController1;
+  ChewieController? _chewieController;
   String changeTitle="Grid View";
   bool checkView =false;
 
@@ -112,17 +112,17 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
 
   void _getFromGallery() async
   {
-      XFile? pickedFile = await ImagePicker().pickVideo(
-          source: ImageSource.gallery);
-      if (pickedFile != null) {
-        setState(() async {
-          videoFile = File(pickedFile.path);
+    XFile? pickedFile = await ImagePicker().pickVideo(
+        source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() async {
+        videoFile = File(pickedFile.path);
         //  _controller = VideoPlayerController.file(videoFile!);
         //  _controller.setLooping(true);
-        });
-        Navigator.pop(context);
-      }
+      });
+      Navigator.pop(context);
     }
+  }
 
   void _upload_image() async
   {
@@ -138,7 +138,7 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
       videoUrl = await ref.getDownloadURL();
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
           Description2(
-              videoFile: videoUrl,
+            videoFile: videoUrl,
           )));
       // _videoPlayerController1 = VideoPlayerController.network(videoUrl! );
       // _videoPlayerController2 = VideoPlayerController.network(videoUrl!);
@@ -191,116 +191,78 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
   void initState() {
     super.initState();
     read_userInfo();
-    // chewie();
     _upload_image();
-
-
   }
 
-  // @override
-  // void chewie() {
-  //
-  //   _videoPlayerController1 = VideoPlayerController.network(
-  //       'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' );
-  //   _videoPlayerController2 = VideoPlayerController.network();
-  //
-  //   _chewieController = ChewieController(
-  //     videoPlayerController: _videoPlayerController1,
-  //     aspectRatio: 1.0,
-  //     autoPlay: true,
-  //     looping: false,
-  //   );
-  //
-  //   _chewieController2 = ChewieController(
-  //     videoPlayerController: _videoPlayerController2,
-  //     aspectRatio: 4 / 3,
-  //     autoPlay: true,
-  //     looping: false,);}
-  Widget listViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId, int downloads, String description, List<String>? likes , String postId  )
-  {
+  Widget listViewWidget (String docId, String vid, String userImg, String name,
+      DateTime date, String userId, int downloads, String description,
+      List<String>? likes , String postId  ) {
 
+    _videoPlayerController1 = VideoPlayerController.network(vid);
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController1!,
+      aspectRatio:5/8,
+      autoPlay: true,
+      looping: false,
+    );
 
-      _videoPlayerController1 = VideoPlayerController.network(vid);
-
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController1!,
-        aspectRatio: 4 / 3,
-        autoPlay: true,
-        looping: false,
-      );
-
-      // _chewieController2 = ChewieController(
-      //   videoPlayerController: _videoPlayerController2,
-      //   aspectRatio: 4 / 3,
-      //   autoPlay: true,
-      //   looping: false,);
-
-
-
-    return Padding(
-      padding: const EdgeInsets.all (8.0),
-      child: Card(
-        elevation: 16.0,
-        shadowColor: Colors.white10,
-        child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple.shade300],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
-              ),
+    return Card(
+      elevation: 16.0,
+      shadowColor: Colors.white10,
+      child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.black, Colors.black],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              stops: [0.2, 0.9],
             ),
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
-                GestureDetector(
-                  onDoubleTap:()
-                  {
-                    goToDetails(vid, userImg, name, date, docId, userId, downloads, description, likes, postId);
+          ),
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            children: [
+              GestureDetector(
+                  onTap:() {
+                    goToDetails(vid, userImg, name, date, docId, userId,
+                        downloads, description, likes, postId);
                   },
                   child: Chewie( controller: _chewieController!)
-
-                  ),
-
-                const SizedBox(height: 15.0,),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                  child: Row(
-                      children:[
-                        CircleAvatar(
-                          radius: 35,
-                          backgroundImage: NetworkImage(
-                            userImg,
-                          ),
-                        ),
-                        const SizedBox(width: 10.0,),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:[
-                              Text(
-                                name,
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
-                                style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                              )
-                            ]
-                        )
-                      ]
-                  ),
-                )
-              ],
-            )
-        ),
+              ),
+              const SizedBox(height: 15.0,),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                child: Row(
+                    children:[
+                      CircleAvatar(radius: 35,
+                        backgroundImage: NetworkImage(
+                          userImg,),
+                      ),
+                      const SizedBox(width: 10.0,),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:[
+                            Text(name,
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 10.0),
+                            Text(DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
+                              style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                            )
+                          ]
+                      )
+                    ]
+                ),
+              )
+            ],
+          )
       ),
     );
   }
 
   void goToDetails(String vid, String userImg, String name, DateTime date,
-      String docId, String userId, int downloads, String description, List<String>? likes, String postId) {
+      String docId, String userId, int downloads, String description,
+      List<String>? likes, String postId) {
+
     Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
       vid:vid,
       userImg: userImg,
@@ -310,70 +272,60 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
       userId: userId,
       downloads: downloads,
       description: description,
-      likes: [],
+      likes: const [],
       postId: postId,
     )));
   }
-  Widget gridViewWidget (String docId, String vid, String userImg, String name, DateTime date, String userId,int downloads, String description, List<String>? likes, String postId)
-  {
-    _videoPlayerController1 = VideoPlayerController.network(vid);
 
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController1!,
-      aspectRatio: 4 / 3,
-      autoPlay: true,
-      looping: false,
+  Widget gridViewWidget (String docId, String vid, String userImg, String name,
+      DateTime date, String userId,int downloads, String description,
+      List<String>? likes, String postId) {
+    _videoPlayerController1 = VideoPlayerController.network(vid);
+    _chewieController = ChewieController(videoPlayerController: _videoPlayerController1!,
+      aspectRatio: 3/2, autoPlay: true, looping: false,
     );
 
     return GridView.count(
         primary: false,
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.all(2.0),
         crossAxisSpacing: 1,
         crossAxisCount: 1,
         children: [
           Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple.shade300],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
-
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black, Colors.black],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2, 0.9],
+                ),
               ),
-            ),
-            padding: const EdgeInsets.all(10.0),
-
-            child: GestureDetector(
-              onDoubleTap:()
-              {
-                goToDetails(vid, userImg, name, date, docId, userId, downloads, description , likes, postId);
-                 },
-              child: Chewie( controller: _chewieController!,)
-
-
-
-
-
-
-  ),
-
-
-
-              ),
-
-
+              padding: const EdgeInsets.all(2.0),
+              child: GestureDetector(
+                onTap:() {
+                  print("tap tap");
+                  goToDetails(vid, userImg, name, date, docId, userId, downloads,
+                      description , likes, postId);
+                },
+                child: SizedBox.fromSize(
+                    size: const Size(200, 300), // Image radius
+                    child: Chewie(controller: _chewieController!,)
+                ),
+              )
+          ),
         ]
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.purple, Colors.deepPurple.shade300],
+          colors: [Colors.black, Colors.black],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          stops: const [0.2, 0.9],
+          stops: [0.2, 0.9],
         ),
       ),
       child: Scaffold(
@@ -383,22 +335,9 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
             Container(
               margin: const EdgeInsets.all(10.0),
               child: FloatingActionButton(
-                heroTag: "1",
-                backgroundColor: Colors.deepPurple,
-                onPressed: ()
-                {
-                  _showImageDialog();
-                },
-                child: const Icon(Icons.camera_enhance),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(10.0),
-              child: FloatingActionButton(
                   heroTag: "2",
                   backgroundColor: Colors.purple,
-                  onPressed: ()
-                  {
+                  onPressed: () {
                     _upload_image();
                   },
                   child: const Icon(Icons.cloud_upload)
@@ -409,8 +348,7 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
               child: FloatingActionButton(
                 heroTag: "1",
                 backgroundColor: Colors.deepPurple,
-                onPressed: ()
-                {
+                onPressed: () {
                   _showImageDialog();
                 },
                 child: const Icon(Icons.video_camera_back_outlined),
@@ -421,20 +359,18 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
             flexibleSpace:Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.black],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  stops: const [0.2, 0.9],
+                  stops: [0.2, 0.9],
                 ),
               ),
             ),
             title: GestureDetector(
-              onTap: ()
-              {
-                setState(()
-                {
+              onTap: () {
+                setState(() {
                   changeTitle = "List View";
                   checkView = true;
                 });
@@ -450,8 +386,7 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
             ),
             centerTitle: true,
             leading: GestureDetector(
-              onTap: ()
-              {
+              onTap: () {
                 FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
               },
@@ -488,12 +423,14 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
 
         ),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('wallpaper2').orderBy('createdAt',descending: true).snapshots(),
+          stream: FirebaseFirestore.instance.collection('wallpaper2')
+              .orderBy('createdAt',descending: true).snapshots(),
+
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
           {
             if(snapshot.connectionState == ConnectionState.waiting )
             {
-              return Center(child: CircularProgressIndicator(),);
+              return const Center(child: CircularProgressIndicator(),);
             }
             else if (snapshot.connectionState == ConnectionState.active)
             {
@@ -520,22 +457,19 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
                           crossAxisCount:2
                       ),
                       itemBuilder: (BuildContext context, int index)
-                {
+                      {
 
-                  Post post = Post.getPost(snapshot, index);
-                return gridViewWidget( post.id, post.video, post.userImage, post.name,
-                post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
-                );
-                }
+                        Post post = Post.getPost(snapshot, index);
+                        return gridViewWidget( post.id, post.video, post.userImage, post.name,
+                          post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
                         );
                       }
-}
-
-
-
+                  );
+                }
+              }
               else{
                 return const Center(
-                    child: Text("There is no tasks",
+                    child: Text("There are no Posts",
                       style: TextStyle(fontSize: 20),)
                 );
               }
@@ -548,10 +482,8 @@ class _VideoHomeScreenState extends State<VideoHomeScreen> {
             );
           },
         ),
-
       ),
     );
-
   }
 }
 

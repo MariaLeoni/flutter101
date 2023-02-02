@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/Learn/videoposts.dart';
+import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
@@ -57,26 +57,26 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     readUserInfo();
 
-    Timer.run(() {
-      FancyAlertDialog.showFancyAlertDialog(
-        context, 'Info Fancy Alert Dialog Box',
-        'This is a info alert dialog box. This plugin is used to help you easily create fancy dialog',
-        icon: const Icon(
-          Icons.clear,
-          color: Colors.black,
-        ),
-        labelPositiveButton: 'OKAY',
-        onTapPositiveButton: () {
-          Navigator.of(context).pop(false);
-          print('tap positive button');
-        },
-        labelNegativeButton: 'Cancel',
-        onTapNegativeButton: () {
-          Navigator.of(context, rootNavigator: true).pop();
-          print('tap negative button');
-        },
-      );
-    });
+    // Timer.run(() {
+    //   FancyAlertDialog.showFancyAlertDialog(
+    //     context, 'Info Fancy Alert Dialog Box',
+    //     'This is a info alert dialog box. This plugin is used to help you easily create fancy dialog',
+    //     icon: const Icon(
+    //       Icons.clear,
+    //       color: Colors.black,
+    //     ),
+    //     labelPositiveButton: 'OKAY',
+    //     onTapPositiveButton: () {
+    //       Navigator.of(context).pop(false);
+    //       print('tap positive button');
+    //     },
+    //     labelNegativeButton: 'Cancel',
+    //     onTapNegativeButton: () {
+    //       Navigator.of(context, rootNavigator: true).pop();
+    //       print('tap negative button');
+    //     },
+    //   );
+    // });
   }
 
   void goToDetails(String img, String userImg, String name, DateTime date,
@@ -91,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget listViewWidget (String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId, List<String>? likes, String description) {
+
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -112,10 +113,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap:() {
                     goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes, description);
                   },
-                  child: Image.network(
-                    img,
-                    fit: BoxFit.cover,
-                  ) ,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Image border
+                    child: SizedBox.fromSize(
+                        size: const Size(500.0, 400.0), // Image radius
+                        child: Image.network(img, fit: BoxFit.cover)
+                    ),
+                  )
                 ),
                 const SizedBox(height: 15.0,),
                 Padding(
@@ -160,7 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget gridViewWidget (String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId, List<String>? likes, String description) {
+      DateTime date, String userId, int downloads, String postId,
+      List<String>? likes, String description) {
+
     return GridView.count(
         primary: false,
         padding: const EdgeInsets.all(2.0),
@@ -171,15 +177,17 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: const BoxDecoration(),
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
-              onTap:()
-              {
-                goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes, description);
-              },
-              child: Center(
-                child: Image.network(img, fit: BoxFit.fill,),
-              ),
+                onTap:() {
+                  goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes, description);
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10), // Image border
+                  child: SizedBox.fromSize(
+                      size: const Size.fromRadius(48), // Image radius
+                      child: Image.network(img, fit: BoxFit.fill, width: 200, height: 300,)
+                  ),
+                )
             ),
-
           ),
         ]
     );
@@ -310,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return GridView.builder(
                       itemCount: snapshot.data!.docs.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount:3
+                          crossAxisCount:2
                       ),
                       itemBuilder: (BuildContext context, int index) {
                         Post post = Post.getPost(snapshot, index);
