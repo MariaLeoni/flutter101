@@ -216,6 +216,7 @@ class _CredentialsState extends State<Credentials> {
                         'phoneNumber': _phoneNumController.text,
                         'CreateAt': Timestamp.now(),
                         'followers': <String>[],
+                        'Campuses':<String>[],
                       });
                       if (!mounted) return;
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));

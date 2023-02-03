@@ -9,10 +9,7 @@ import '../home_screen/homescreen.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
-import 'package:flutter_animated_icons/icons8.dart';
-import 'package:flutter_animated_icons/lottiefiles.dart';
-import 'package:flutter_animated_icons/useanimations.dart';
-import 'package:lottie/lottie.dart';
+
 
 
 class OwnerDetails extends StatefulWidget {
@@ -225,22 +222,22 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    IconButton(
-                      splashRadius: 50,
-                      iconSize: 50,
-                      onPressed: () {
-                        if (_favoriteController.status ==
-                            AnimationStatus.dismissed) {
-                          _favoriteController.reset();
-                          _favoriteController.animateTo(0.6);
-                        } else {
-                          _favoriteController.reverse();
-                        }
-                        handleLikePost();
-                      },
-                      icon: Lottie.asset(Icons8.heart_color,
-                          controller: _favoriteController),
-                    ),
+                    // IconButton(
+                    //   splashRadius: 50,
+                    //   iconSize: 50,
+                    //   onPressed: () {
+                    //     if (_favoriteController.status ==
+                    //         AnimationStatus.dismissed) {
+                    //       _favoriteController.reset();
+                    //       _favoriteController.animateTo(0.6);
+                    //     } else {
+                    //       _favoriteController.reverse();
+                    //     }
+                    //     handleLikePost();
+                    //   },
+                    //  icon: Lottie.asset(Icons8.heart_color,
+                    //       controller: _favoriteController),
+                    // ),
 
                     // GestureDetector(
                     //   onTap: () {

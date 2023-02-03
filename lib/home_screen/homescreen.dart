@@ -9,11 +9,13 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/DailyWord/Word.dart';
 import 'package:sharedstudent1/Learn/learn.dart';
+import 'package:sharedstudent1/campuses.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/owner_details/video_player.dart';
 import 'package:sharedstudent1/poll.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
+import '../Campuses1.dart';
 import '../Search.dart';
 import '../description.dart';
 import '../likepost.dart';
@@ -405,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => myprofile(
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Campuses(
                     // userId:docId,
                     // userName:'name',
                   ),),);
@@ -421,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => likes(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Campuses1(),),);
                 },
                 icon: const Icon(Icons.stream_outlined),
               ),
