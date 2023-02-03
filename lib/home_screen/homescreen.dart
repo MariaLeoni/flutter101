@@ -10,6 +10,7 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
 import '../Search.dart';
 import '../misc/alertbox.dart';
+import '../misc/progressIndicator.dart';
 import '../uploader.dart';
 import '../likepost.dart';
 import '../owner_details/owner_details.dart';
@@ -215,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.red,
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                      Uploader(imageFrom: "Camera")));
+                      Uploader()));
                 },
                 child: const Icon(Icons.camera_enhance),
               ),

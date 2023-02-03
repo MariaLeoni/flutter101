@@ -1,41 +1,49 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:uuid/uuid.dart';
-import 'home_screen/homescreen.dart';
+import 'package:video_player/video_player.dart';
 
-class Uploader extends StatefulWidget {
+import 'misc/progressIndicator.dart';
 
-  Uploader({super.key,});
+class VideoUploader extends StatefulWidget {
+
+  String? imageFrom;
+  VideoUploader({super.key, this.imageFrom,});
 
   @override
-  State<Uploader> createState() => UploaderState();
+  State<VideoUploader> createState() => VideoUploaderState();
 }
 
-class UploaderState extends State<Uploader> {
+class VideoUploaderState extends State<VideoUploader> {
   TextEditingController commentController = TextEditingController();
   String postId = const Uuid().v4();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String? myImage;
   String? myName;
-  File? imageFile;
-  String? imageUrl;
+  File? videoFile;
+  String? videoUrl;
+
+  late VideoPlayerController videoPlayerController1;
+  late ChewieController chewieController;
+
 
   addComment() {
-    FirebaseFirestore.instance.collection('wallpaper').doc(postId).set({
+    FirebaseFirestore.instance.collection('wallpaper2').doc(postId).set({
       'id': _auth.currentUser!.uid,
       'userImage': myImage,
       'name': myName,
       'email': _auth.currentUser!.email,
-      'Image': imageUrl,
+      'video': videoFile,
       'downloads': 0,
       'createdAt': DateTime.now(),
       'postId': postId,
@@ -43,7 +51,7 @@ class UploaderState extends State<Uploader> {
       'description': commentController.text,
     });
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoHomeScreen()));
     if (!mounted) return;
     Navigator.canPop(context) ? Navigator.pop(context) : null;
   }
@@ -122,47 +130,56 @@ class UploaderState extends State<Uploader> {
   }
 
   void getFromCamera() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
+    XFile? pickedFile = await ImagePicker().pickVideo(
         source: ImageSource.camera);
-    cropImage(pickedFile!.path);
-    if (!mounted) return;
-    Navigator.pop(context);
+    if (pickedFile != null) {
+      setState(() {
+        videoFile = File(pickedFile.path);
+      });
+
+      uploadVideo();
+      if (!mounted) return;
+      Navigator.pop(context);
+    }
   }
 
   void getFromGallery() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
+    XFile? pickedFile = await ImagePicker().pickVideo(
         source: ImageSource.gallery);
-    cropImage(pickedFile!.path);
-
-    if (!mounted) return;
-    Navigator.pop(context);
-  }
-
-  void cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper().cropImage
-      (sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
-
-    if (croppedImage != null) {
-      setState(() {
-        imageFile = File(croppedImage.path);
+    if (pickedFile != null) {
+      setState(() async {
+        videoFile = File(pickedFile.path);
       });
-      uploadImage();
+
+      uploadVideo();
+      if (!mounted) return;
+      Navigator.pop(context);
     }
   }
 
-  void uploadImage() async {
-    if (imageFile == null) {
-      Fluttertoast.showToast(msg: 'Please select an Image');
+  void uploadVideo() async {
+    if(videoFile == null) {
+      Fluttertoast.showToast(msg: 'Please select a Video');
       return;
     }
-    final ref = FirebaseStorage.instance.ref().child('userImages')
-        .child('${DateTime.now()}jpg');
+    try {
+      LoadingIndicatorDialog().show(context);
 
-    await ref.putFile(imageFile!);
-    String path = await ref.getDownloadURL();
-    setState(() {
-      imageUrl = path;
-    });
+      final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}mp4');
+      await ref.putFile(videoFile!);
+      String path = await ref.getDownloadURL();
+      setState(() {
+        videoUrl = path;
+      });
+
+      LoadingIndicatorDialog().dismiss();
+      videoPlayerController1 = VideoPlayerController.network(videoUrl!!);
+      chewieController = ChewieController(videoPlayerController: videoPlayerController1,
+                          aspectRatio:5/8, autoPlay: true, looping: false,);
+    }
+    catch(error) {
+      Fluttertoast.showToast(msg: error.toString());
+    }
   }
 
   @override
@@ -189,8 +206,8 @@ class UploaderState extends State<Uploader> {
                       onTap:() {
                         showAlert();
                       },
-                      child: imageUrl == null ? Image.asset("assets/images/wolf.webp") :
-                              Image.network(imageUrl!, width: MediaQuery.of(context).size.width,),),
+                      child: videoUrl == null ? Image.asset("assets/images/wolf.webp") :
+                              Chewie(controller: chewieController!)),
                     const SizedBox(height: 10.0,),
                     SizedBox.fromSize(
                         size: const Size(300, 50), // Image radius

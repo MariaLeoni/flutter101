@@ -2,10 +2,7 @@ import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/video/videopost.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
@@ -15,142 +12,31 @@ import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
 import'package:video_player/video_player.dart';
-
-import 'description2.dart';
+import '../uploaderVideo.dart';
 
 
 class  VideoHomeScreen extends StatefulWidget {
 
-
   @override
   State<VideoHomeScreen> createState() => VideoHomeScreenState();
+
 }
 
 class VideoHomeScreenState extends State<VideoHomeScreen> {
   VideoPlayerController? _videoPlayerController1;
   ChewieController? _chewieController;
   String changeTitle="Grid View";
-  bool checkView =false;
+  bool checkView = false;
 
   File? imageFile;
   File? videoFile;
   String? videoUrl;
-  String? imageUrl;
   String? myImage;
   String? myName;
+  String? vid;
 
 
-  String?  vid;
-
-  void _showImageDialog() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text(" Please choose an option"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  onTap: () {
-                    _getFromCamera();
-                  },
-                  child: Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.all(4.0,),
-                        child: Icon(
-                          Icons.camera,
-                          color: Colors.deepPurple,
-                        ),
-                      ),
-                      Text(
-                        "Camera",
-                        style: TextStyle(color: Colors.purple),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    _getFromGallery();
-                  },
-                  child: Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.all(4.0,),
-                        child: Icon(
-                            Icons.image,
-                            color: Colors.purpleAccent
-                        ),
-                      ),
-                      Text(
-                        "Gallery",
-                        style: TextStyle(color: Colors.purple),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-    );
-  }
-
-  void _getFromCamera() async
-  {
-    XFile? pickedFile = await ImagePicker().pickVideo(
-        source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        videoFile = File(pickedFile.path);
-      });
-      Navigator.pop(context);
-    }
-  }
-
-  void _getFromGallery() async
-  {
-    XFile? pickedFile = await ImagePicker().pickVideo(
-        source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() async {
-        videoFile = File(pickedFile.path);
-      });
-      Navigator.pop(context);
-    }
-  }
-
-  void _upload_image() async
-  {
-    if(videoFile == null) {
-      Fluttertoast.showToast(msg: 'Please select a Video');
-      return;
-    }
-    try
-    {
-
-      final ref = FirebaseStorage.instance.ref().child('userVideos').child(DateTime.now().toString()+'mp4');
-      await ref.putFile(videoFile!);
-      videoUrl = await ref.getDownloadURL();
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
-          Description2(
-            videoFile: videoUrl,
-          )));
-
-      Navigator.canPop(context) ? Navigator.pop(context) : null;
-      videoFile = null;
-
-    }
-    catch(error)
-    {
-      Fluttertoast.showToast(msg: error.toString());
-    }
-  }
-
-
-  void read_userInfo() async
+  void readUserInfo() async
   {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -163,8 +49,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   @override
   void initState() {
     super.initState();
-    read_userInfo();
-    _upload_image();
+    readUserInfo();
   }
 
   Widget listViewWidget (String docId, String vid, String userImg, String name,
@@ -308,21 +193,10 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             Container(
               margin: const EdgeInsets.all(10.0),
               child: FloatingActionButton(
-                  heroTag: "2",
-                  backgroundColor: Colors.purple,
-                  onPressed: () {
-                    _upload_image();
-                  },
-                  child: const Icon(Icons.cloud_upload)
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(10.0),
-              child: FloatingActionButton(
                 heroTag: "1",
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  _showImageDialog();
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => VideoUploader()));
                 },
                 child: const Icon(Icons.video_camera_back_outlined),
               ),
@@ -399,8 +273,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
           stream: FirebaseFirestore.instance.collection('wallpaper2')
               .orderBy('createdAt',descending: true).snapshots(),
 
-          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
-          {
+          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting )
             {
               return const Center(child: CircularProgressIndicator(),);
