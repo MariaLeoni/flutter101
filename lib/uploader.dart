@@ -59,64 +59,68 @@ class _UploaderState extends State<Uploader> {
     });
   }
 
+  void showAlert(){
+    showGeneralDialog(
+      barrierDismissible: true,
+      barrierLabel: '',
+      barrierColor: Colors.black38,
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (ctx, anim1, anim2) => AlertDialog(
+        title: const Text("Please choose an option"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+              onTap: () {
+                getFromCamera();
+              },
+              child: Row(
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.all(4.0,),
+                    child: Icon(Icons.camera, color: Colors.red,),
+                  ),
+                  Text("Camera", style: TextStyle(color: Colors.black),),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                getFromGallery();
+              },
+              child: Row(
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.all(4.0,),
+                    child: Icon(Icons.image, color: Colors.redAccent,),
+                  ),
+                  Text("Gallery", style: TextStyle(color: Colors.black),),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 4 * anim1.value, sigmaY: 4 * anim1.value),
+        child: FadeTransition(
+          opacity: anim1,
+          child: child,
+        ),
+      ),
+      context: context,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
 
     readUserInfo();
 
-    // Timer.run(() {
-    //   showGeneralDialog(
-    //     barrierDismissible: true,
-    //     barrierLabel: '',
-    //     barrierColor: Colors.black38,
-    //     transitionDuration: const Duration(milliseconds: 500),
-    //     pageBuilder: (ctx, anim1, anim2) => AlertDialog(
-    //       title: const Text("Please choose an option"),
-    //       content: Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           InkWell(
-    //             onTap: () {
-    //               getFromCamera();
-    //             },
-    //             child: Row(
-    //               children: const [
-    //                 Padding(
-    //                   padding: EdgeInsets.all(4.0,),
-    //                   child: Icon(Icons.camera, color: Colors.red,),
-    //                 ),
-    //                 Text("Camera", style: TextStyle(color: Colors.black),),
-    //               ],
-    //             ),
-    //           ),
-    //           InkWell(
-    //             onTap: () {
-    //               getFromGallery();
-    //             },
-    //             child: Row(
-    //               children: const [
-    //                 Padding(
-    //                   padding: EdgeInsets.all(4.0,),
-    //                   child: Icon(Icons.image, color: Colors.redAccent,),
-    //                 ),
-    //                 Text("Gallery", style: TextStyle(color: Colors.black),),
-    //               ],
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //     transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
-    //       filter: ImageFilter.blur(sigmaX: 4 * anim1.value, sigmaY: 4 * anim1.value),
-    //       child: FadeTransition(
-    //         opacity: anim1,
-    //         child: child,
-    //       ),
-    //     ),
-    //     context: context,
-    //   );
-    // });
+    Timer.run(() {
+      showAlert();
+    });
   }
 
   void getFromCamera() async {
@@ -182,19 +186,25 @@ class _UploaderState extends State<Uploader> {
         body: SingleChildScrollView(
             child: ConstrainedBox(constraints: const BoxConstraints(),
                 child: Column(
-                  children: <Widget>[imageUrl == null ?
-                  Image.asset("assets/images/wolf.webp") :
-                  Image.network(imageUrl!, width: MediaQuery.of(context).size.width,),
-                    const Divider(),
-                    ListTile(
-                        title: TextFormField(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap:() {
+                        showAlert();
+                      },
+                      child: imageUrl == null ? Image.asset("assets/images/wolf.webp") :
+                              Image.network(imageUrl!, width: MediaQuery.of(context).size.width,),),
+                    const SizedBox(height: 10.0,),
+                    SizedBox.fromSize(
+                        size: const Size(300, 50), // Image radius
+                        child: TextFormField(
                           controller: commentController,
                           decoration: const InputDecoration(labelText: "Add a description..."),
-                        ),
-                        trailing: OutlinedButton(
-                          onPressed: addComment,
-                          child: const Text("Post"),
                         )
+                    ),
+                    const SizedBox(height: 10.0,),
+                    OutlinedButton(
+                      onPressed: addComment,
+                      child: const Text("Post"),
                     ),
                   ],
                 )

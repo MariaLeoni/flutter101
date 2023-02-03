@@ -117,8 +117,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     if (pickedFile != null) {
       setState(() async {
         videoFile = File(pickedFile.path);
-        //  _controller = VideoPlayerController.file(videoFile!);
-        //  _controller.setLooping(true);
       });
       Navigator.pop(context);
     }
@@ -140,31 +138,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
           Description2(
             videoFile: videoUrl,
           )));
-      // _videoPlayerController1 = VideoPlayerController.network(videoUrl! );
-      // _videoPlayerController2 = VideoPlayerController.network(videoUrl!);
-      //
-      // _chewieController = ChewieController(
-      //   videoPlayerController: _videoPlayerController1,
-      //   aspectRatio: 1.0,
-      //   autoPlay: true,
-      //   looping: false,
-      // );
-      //
-      // _chewieController2 = ChewieController(
-      //   videoPlayerController: _videoPlayerController2,
-      //   aspectRatio: 4 / 3,
-      //   autoPlay: true,
-      //   looping: false,);
-      //
-      // FirebaseFirestore.instance.collection('wallpaper2').doc(DateTime.now().toString()).set({
-      //   'id': _auth.currentUser!.uid,
-      //   'userImage': myImage,
-      //   'name': myName,
-      //   'email': _auth.currentUser!.email,
-      //   'Video': videoUrl,
-      //   'downloads': 0,
-      //   'createdAt': DateTime.now(),
-      // });
 
       Navigator.canPop(context) ? Navigator.pop(context) : null;
       videoFile = null;
