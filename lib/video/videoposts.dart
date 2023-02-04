@@ -59,7 +59,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     _videoPlayerController1 = VideoPlayerController.network(vid);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController1!,
-      aspectRatio:5/8,
+      aspectRatio:5/6,
       autoPlay: true,
       looping: false,
     );

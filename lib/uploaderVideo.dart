@@ -43,7 +43,7 @@ class VideoUploaderState extends State<VideoUploader> {
       'userImage': myImage,
       'name': myName,
       'email': _auth.currentUser!.email,
-      'video': videoFile,
+      'video': videoUrl,
       'downloads': 0,
       'createdAt': DateTime.now(),
       'postId': postId,
@@ -137,9 +137,10 @@ class VideoUploaderState extends State<VideoUploader> {
         videoFile = File(pickedFile.path);
       });
 
-      uploadVideo();
       if (!mounted) return;
       Navigator.pop(context);
+
+      uploadVideo();
     }
   }
 
@@ -151,9 +152,10 @@ class VideoUploaderState extends State<VideoUploader> {
         videoFile = File(pickedFile.path);
       });
 
-      uploadVideo();
       if (!mounted) return;
       Navigator.pop(context);
+
+      uploadVideo();
     }
   }
 
@@ -173,7 +175,8 @@ class VideoUploaderState extends State<VideoUploader> {
       });
 
       LoadingIndicatorDialog().dismiss();
-      videoPlayerController1 = VideoPlayerController.network(videoUrl!!);
+
+      videoPlayerController1 = VideoPlayerController.network(videoUrl!);
       chewieController = ChewieController(videoPlayerController: videoPlayerController1,
                           aspectRatio:5/8, autoPlay: true, looping: false,);
     }

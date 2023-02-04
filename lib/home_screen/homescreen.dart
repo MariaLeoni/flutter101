@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,10 +8,7 @@ import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
 import '../Search.dart';
-import '../misc/alertbox.dart';
-import '../misc/progressIndicator.dart';
 import '../uploader.dart';
-import '../likepost.dart';
 import '../owner_details/owner_details.dart';
 import'package:uuid/uuid.dart';
 import '../search_post/users_specific_posts.dart';
@@ -91,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget listViewWidget (String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId, List<String>? likes, String description) {
+      DateTime date, String userId, int downloads, String postId,
+      List<String>? likes, String description) {
 
     return Padding(
       padding: const EdgeInsets.all (8.0),
@@ -242,7 +239,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   checkView = true;
                 });
               },
-
               onDoubleTap: () {
                 setState(() {
                   changeTitle= "Grid View";
@@ -281,20 +277,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 icon: const Icon(Icons.play_circle_outlined ),
               ),
-
-              IconButton(
-                onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const likes(),),);
-                },
-                icon: const Icon(Icons.stream_outlined),
-              ),
             ]
         ),
         body: StreamBuilder(
           stream: FirebaseFirestore.instance.collection('wallpaper')
               .orderBy('createdAt',descending: true).snapshots(),
-          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
-          {
+          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting ) {
               return const Center(child: CircularProgressIndicator(),);
             }

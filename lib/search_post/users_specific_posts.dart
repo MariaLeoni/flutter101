@@ -26,10 +26,10 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
   });
 
   @override
-  State<UsersSpecificPostsScreen> createState() => _UsersSpecificPostsScreenState();
+  State<UsersSpecificPostsScreen> createState() => UsersSpecificPostsScreenState();
 }
 
-class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
+class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   String? followuserId;
   String? myImage;
   String? myName;
@@ -37,7 +37,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
-  handlefollowerPost() {
+  handleFollowerPost() {
 
     if (widget.followers!= null && widget.followers!.contains(followuserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
@@ -60,8 +60,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   }
 
 
-  void readUserInfo()async
-  {
+  void readUserInfo()async {
     FirebaseFirestore.instance.collection('users')
         .doc(widget.userId)
         .get()
@@ -76,6 +75,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       });
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -90,12 +90,12 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
         elevation: 16.0,
         shadowColor: Colors.white10,
         child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.black, Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
+                stops: [0.2, 0.9],
               ),
             ),
             padding: const EdgeInsets.all(5.0),
@@ -163,13 +163,14 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     var followerText = Text(followersCount.toString(),
         style: const TextStyle(fontSize: 20.0,
             color: Colors.white, fontWeight: FontWeight.bold));
+
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.black, Colors.black],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          stops: const [0.2, 0.9],
+          stops: [0.2, 0.9],
         ),
       ),
       child: Scaffold(
@@ -217,7 +218,7 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               ):
               IconButton(
                 onPressed: (){
-                  handlefollowerPost();
+                  handleFollowerPost();
                   followerText;
                 },
                 icon: const Icon(Icons.person_add_alt_outlined, color: Colors.red),
@@ -247,22 +248,16 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
         body:
         StreamBuilder(
           stream: FirebaseFirestore.instance
-              .collection('wallpaper')
-              .where("id", isEqualTo: widget.userId)
-              .orderBy('createdAt',descending: true)
-              .snapshots(),
-          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot)
-          {
-            if(snapshot.connectionState == ConnectionState.waiting )
-            {
-              return Center(child: CircularProgressIndicator(),);
+              .collection('wallpaper').where("id", isEqualTo: widget.userId)
+              .orderBy('createdAt',descending: true).snapshots(),
+
+          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting ) {
+              return const Center(child: CircularProgressIndicator(),);
             }
-            else if (snapshot.connectionState == ConnectionState.active)
-            {
+            else if (snapshot.connectionState == ConnectionState.active) {
               if(snapshot.data!.docs.isNotEmpty)
               {
-
-
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index)
@@ -278,11 +273,10 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                     );
                   },
                 );
-
               }
               else{
                 return const Center(
-                    child: Text("There is no tasks",
+                    child: Text("There is no Posts",
                       style: TextStyle(fontSize: 20),)
                 );
               }
@@ -295,12 +289,8 @@ class _UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             );
           },
         ),
-
-
       ),
-
     );
-
   }
 }
 
