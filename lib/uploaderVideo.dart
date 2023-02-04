@@ -6,12 +6,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_player/video_player.dart';
-
 import 'misc/progressIndicator.dart';
 
 class VideoUploader extends StatefulWidget {
@@ -33,11 +31,10 @@ class VideoUploaderState extends State<VideoUploader> {
   File? videoFile;
   String? videoUrl;
 
-  late VideoPlayerController videoPlayerController1;
-  late ChewieController chewieController;
+  VideoPlayerController? videoPlayerController;
+  ChewieController? chewieController;
 
-
-  addComment() {
+  postVideo() {
     FirebaseFirestore.instance.collection('wallpaper2').doc(postId).set({
       'id': _auth.currentUser!.uid,
       'userImage': myImage,
@@ -51,9 +48,10 @@ class VideoUploaderState extends State<VideoUploader> {
       'description': commentController.text,
     });
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoHomeScreen()));
+    LoadingIndicatorDialog().dismiss();
+
     if (!mounted) return;
-    Navigator.canPop(context) ? Navigator.pop(context) : null;
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoHomeScreen()));
   }
 
   void readUserInfo() async {
@@ -135,12 +133,11 @@ class VideoUploaderState extends State<VideoUploader> {
     if (pickedFile != null) {
       setState(() {
         videoFile = File(pickedFile.path);
+        setVideo();
       });
 
       if (!mounted) return;
       Navigator.pop(context);
-
-      uploadVideo();
     }
   }
 
@@ -150,18 +147,40 @@ class VideoUploaderState extends State<VideoUploader> {
     if (pickedFile != null) {
       setState(() async {
         videoFile = File(pickedFile.path);
+        setVideo();
       });
 
       if (!mounted) return;
       Navigator.pop(context);
-
-      uploadVideo();
     }
+  }
+
+  void setVideo(){
+    if(videoFile == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Looks like no video was selected or captured")));
+        return;
+    }
+
+    if(videoPlayerController != null) {
+      videoPlayerController!.dispose();
+      chewieController?.dispose();
+    }
+
+    videoPlayerController = VideoPlayerController.file(videoFile!);
+    videoPlayerController?.initialize().then((_) =>
+        setState(() =>
+        chewieController = ChewieController(videoPlayerController: videoPlayerController!,
+          aspectRatio: 5/6,
+        ),
+      ),
+    );
   }
 
   void uploadVideo() async {
     if(videoFile == null) {
-      Fluttertoast.showToast(msg: 'Please select a Video');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Looks like no video was selected or captured")));
       return;
     }
     try {
@@ -172,16 +191,12 @@ class VideoUploaderState extends State<VideoUploader> {
       String path = await ref.getDownloadURL();
       setState(() {
         videoUrl = path;
+        postVideo();
       });
-
-      LoadingIndicatorDialog().dismiss();
-
-      videoPlayerController1 = VideoPlayerController.network(videoUrl!);
-      chewieController = ChewieController(videoPlayerController: videoPlayerController1,
-                          aspectRatio:5/8, autoPlay: true, looping: false,);
     }
     catch(error) {
-      Fluttertoast.showToast(msg: error.toString());
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.toString())));
     }
   }
 
@@ -209,8 +224,11 @@ class VideoUploaderState extends State<VideoUploader> {
                       onTap:() {
                         showAlert();
                       },
-                      child: videoUrl == null ? Image.asset("assets/images/wolf.webp") :
-                              Chewie(controller: chewieController!)),
+                      child: chewieController == null ? Image.asset("assets/images/wolf.webp") :
+                      AspectRatio(aspectRatio: videoPlayerController!.value.aspectRatio,
+                        child: Chewie(controller: chewieController!),
+                      )
+                    ),
                     const SizedBox(height: 10.0,),
                     SizedBox.fromSize(
                         size: const Size(300, 50), // Image radius
@@ -221,7 +239,7 @@ class VideoUploaderState extends State<VideoUploader> {
                     ),
                     const SizedBox(height: 10.0,),
                     OutlinedButton(
-                      onPressed: addComment,
+                      onPressed: uploadVideo,
                       child: const Text("Post"),
                     ),
                   ],

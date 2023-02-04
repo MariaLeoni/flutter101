@@ -10,8 +10,6 @@ import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 import 'package:flutter_animated_icons/icons8.dart';
-import 'package:flutter_animated_icons/lottiefiles.dart';
-import 'package:flutter_animated_icons/useanimations.dart';
 import 'package:lottie/lottie.dart';
 
 
@@ -25,11 +23,9 @@ class OwnerDetails extends StatefulWidget {
   String? userId;
   String? description;
   int? downloads;
-  //String? vid;
   String? postId;
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
-  //String?id;
 
 
   OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
@@ -63,15 +59,8 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
   }
-  //
-  // @override
-  // void dispose() {
-  //   _favoriteController.dispose();
-  //   super.dispose();
-  //   super.dispose();
-  // }
-  handleLikePost(){
 
+  handleLikePost(){
     if (widget.likes != null && widget.likes!.contains(likeruserId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
       widget.likes!.remove(likeruserId);
@@ -129,8 +118,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                 ),
                 const SizedBox(height: 30.0,),
 
-                const Text(
-                  'Owner Information',
+                const Text('Owner Information',
                   style: TextStyle(
                     fontSize: 30.0,
                     color: Colors.white54,
@@ -170,8 +158,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height:10.0),
-                                  Text(
-                                    'Description',
+                                  const Text('Description',
                                     style: TextStyle(
                                       fontSize: 15.0,
                                       color: Colors.white,

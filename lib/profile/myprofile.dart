@@ -14,37 +14,34 @@ import'package:fluttertoast/fluttertoast.dart';
 class  MyProfile extends StatefulWidget {
   String? userId;
   String? userName;
-  String? docId;
   List<String>? followers = List.empty(growable: true);
 
   MyProfile({super.key,
     this.userId,
     this.userName,
     this.followers,
-    this.docId,
   });
 
   @override
-  State<MyProfile> createState() => _MyProfileState();
+  State<MyProfile> createState() => MyProfileState();
 }
 
-class _MyProfileState extends State<MyProfile> {
-  String? followuserId;
+class MyProfileState extends State<MyProfile> {
+  String? followUserId;
   String? myImage;
   String? myName;
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
-  handlefollowerPost() {
-
-    if (widget.followers!= null && widget.followers!.contains(followuserId)) {
+  handleFollowerPost() {
+    if (widget.followers!= null && widget.followers!.contains(followUserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
-      widget.followers!.remove(followuserId);
+      widget.followers!.remove(followUserId);
     }
     else {
       Fluttertoast.showToast(msg: "You followed this person");
-      widget.followers!.add(followuserId!);
+      widget.followers!.add(followUserId!);
     }
 
     FirebaseFirestore.instance
@@ -64,8 +61,7 @@ class _MyProfileState extends State<MyProfile> {
     FirebaseFirestore.instance.collection('users')
         .doc(_auth.currentUser!.uid)
         .get()
-        .then<dynamic>((DocumentSnapshot snapshot) async
-    {
+        .then<dynamic>((DocumentSnapshot snapshot) async {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
       widget.followers = List.from(snapshot.get('followers'));
@@ -81,7 +77,8 @@ class _MyProfileState extends State<MyProfile> {
     readUserInfo();
   }
 
-  Widget listViewWidget (String docId, String img, String userImg, String name, DateTime date, String userId, int downloads, )
+  Widget listViewWidget (String docId, String img, String userImg, String name,
+      DateTime date, String userId, int downloads, )
   {
     return Padding(
       padding: const EdgeInsets.all (8.0),
@@ -89,34 +86,31 @@ class _MyProfileState extends State<MyProfile> {
         elevation: 16.0,
         shadowColor: Colors.white10,
         child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple.shade300],
+                colors: [Colors.black, Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
+                stops: [0.2, 0.9],
               ),
             ),
             padding: const EdgeInsets.all(5.0),
             child: Column(
               children: [
                 GestureDetector(
-                  onTap:()
-                  {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                      img: img,
-                      userImg: userImg,
-                      name: name,
-                      date: date,
-                      docId: docId,
-                      userId: userId,
-                      downloads: downloads,
+                  onTap:() {
+                    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                      img: img, userImg: userImg, name: name, date: date,
+                      docId: docId, userId: userId, downloads: downloads,
                     )));
                   },
-                  child: Image.network(
-                    img,
-                    fit: BoxFit.cover,
-                  ) ,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Image border
+                    child: SizedBox.fromSize(
+                        size: const Size(500.0, 400.0), // Image radius
+                        child: Image.network(img, fit: BoxFit.cover)
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 15.0,),
                 Padding(
@@ -156,7 +150,7 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    followuserId = _auth.currentUser?.uid;
+    followUserId = _auth.currentUser?.uid;
     followersCount = (widget.followers?.length ?? 0);
 
     var followerText = Text(followersCount.toString(),

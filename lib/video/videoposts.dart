@@ -36,16 +36,15 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   String? vid;
 
 
-  void readUserInfo() async
-  {
+  void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get().then<dynamic>((DocumentSnapshot snapshot)
-    {
+        .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -57,11 +56,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       List<String>? likes , String postId  ) {
 
     _videoPlayerController1 = VideoPlayerController.network(vid);
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController1!,
-      aspectRatio:5/6,
-      autoPlay: true,
-      looping: false,
+    _chewieController = ChewieController(videoPlayerController: _videoPlayerController1!,
+      aspectRatio:5/6, autoPlay: true, looping: false,
     );
 
     return Card(

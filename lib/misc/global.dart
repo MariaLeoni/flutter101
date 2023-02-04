@@ -28,3 +28,9 @@ Future<bool> usernameExist(String username) async {
   final AggregateQuerySnapshot snapshot = await usersWithUserName.get();
   return snapshot.count > 0 ? true : false;
 }
+
+enum PostType{
+  image,
+  video,
+  text
+}

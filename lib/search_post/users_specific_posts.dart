@@ -6,6 +6,7 @@ import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../following/followers.dart';
 import '../forgot_password/components/heading_text.dart';
+import '../home_screen/post.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import '../search_post/search_post.dart';
@@ -82,8 +83,10 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     readUserInfo();
   }
 
-  Widget listViewWidget (String docId, String img, String userImg, String name, DateTime date, String userId, int downloads, )
-  {
+  Widget listViewWidget (String docId, String img, String userImg, String name,
+      DateTime date, String userId, int downloads, String postId,
+      List<String>? likes, String description) {
+
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -102,22 +105,20 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap:()
-                  {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                      img: img,
-                      userImg: userImg,
-                      name: name,
-                      date: date,
-                      docId: docId,
-                      userId: userId,
-                      downloads: downloads,
+                  onTap:() {
+                    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                      img: img, userImg: userImg, name: name, date: date, docId: docId,
+                      userId: userId, downloads: downloads, postId: postId, likes: likes,
+                    description: description,
                     )));
                   },
-                  child: Image.network(
-                    img,
-                    fit: BoxFit.cover,
-                  ) ,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Image border
+                    child: SizedBox.fromSize(
+                        size: const Size(500.0, 400.0), // Image radius
+                        child: Image.network(img, fit: BoxFit.cover)
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 15.0,),
                 Padding(
@@ -186,13 +187,10 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 ),
               ),
             ),
-            title: Text(
-              widget.userName!,
-            ),
+            title: Text(widget.userName!,),
             centerTitle: true,
             leading: GestureDetector(
-              onTap: ()
-              {
+              onTap: () {
                 FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
               },
@@ -204,7 +202,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
                 },
                 icon: const Icon(Icons.search),
               ),
@@ -212,7 +210,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                   ?
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
               ):
@@ -225,7 +223,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               ),
               IconButton(
                 onPressed: (){
-
                   Navigator.push(context, MaterialPageRoute(builder: (_) => Followers(
                     followers: widget.followers,
                   )));
@@ -241,12 +238,8 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 icon: const Icon(Icons.home),
               ),
             ]
-
         ),
-
-
-        body:
-        StreamBuilder(
+        body: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('wallpaper').where("id", isEqualTo: widget.userId)
               .orderBy('createdAt',descending: true).snapshots(),
@@ -258,31 +251,24 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             else if (snapshot.connectionState == ConnectionState.active) {
               if(snapshot.data!.docs.isNotEmpty)
               {
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index)
-                  {
-                    return listViewWidget(
-                      snapshot.data!.docs[index].id,
-                      snapshot.data!.docs[index]['Image'],
-                      snapshot.data!.docs[index]['userImage'],
-                      snapshot.data!.docs[index]['name'],
-                      snapshot.data!.docs[index]['createdAt'].toDate(),
-                      snapshot.data!.docs[index]['email'],
-                      snapshot.data!.docs[index]['downloads'],
-                    );
+                return ListView.builder(itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (BuildContext context, int index) {
+
+                    Post post = Post.getPost(snapshot, index);
+
+                    return listViewWidget(post.id, post.image, post.userImage,
+                        post.userName, post.createdAt, post.email,
+                        post.downloads, post.postId, post.likes, post.description);
                   },
                 );
               }
               else{
-                return const Center(
-                    child: Text("There is no Posts",
+                return const Center(child: Text("There is no Posts",
                       style: TextStyle(fontSize: 20),)
                 );
               }
             }
-            return const Center(
-              child: Text(
+            return const Center(child: Text(
                 'Something went wrong',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),

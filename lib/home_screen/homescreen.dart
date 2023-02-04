@@ -16,11 +16,11 @@ import '../search_post/users_specific_posts.dart';
 final themeMode = ValueNotifier(2);
 
 class HomeScreen extends StatefulWidget {
-  String? docId;
+  String? userId;
   String? name;
   String? userImg;
 
-  HomeScreen({super.key, this.docId, this.name, this.userImg,});
+  HomeScreen({super.key, this.userId, this.name, this.userImg,});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? imageUrl;
   String? myImage;
   String? myName;
-  String? docId;
+  String? userId;
   String postId = const Uuid().v4();
 
   void readUserInfo() async {
@@ -46,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
+      userId = FirebaseAuth.instance.currentUser!.uid;
     });
   }
 
@@ -109,7 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 GestureDetector(
                   onTap:() {
-                    goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes, description);
+                    goToDetails(img, userImg, name, date, docId, userId,
+                        downloads, postId, likes, description);
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10), // Image border
@@ -258,15 +260,14 @@ class _HomeScreenState extends State<HomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Search(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const Search(),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MyProfile(
-                    // userId:docId,
-                    // userName:'name',
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => MyProfile(
+                    userId: widget.userId, userName: myName, followers: const [],
                   ),),);
                 },
                 icon: const Icon(Icons.person),
