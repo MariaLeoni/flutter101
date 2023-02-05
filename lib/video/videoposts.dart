@@ -10,16 +10,15 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../message/sendmessage.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
-import '../search_post/search_post.dart';
 import'package:video_player/video_player.dart';
+import '../search_userpost/searchView.dart';
 import '../uploaderVideo.dart';
 
 
-class  VideoHomeScreen extends StatefulWidget {
+class VideoHomeScreen extends StatefulWidget {
 
   @override
   State<VideoHomeScreen> createState() => VideoHomeScreenState();
-
 }
 
 class VideoHomeScreenState extends State<VideoHomeScreen> {
@@ -231,7 +230,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             leading: GestureDetector(
               onTap: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
               },
               child: const Icon(
                   Icons.login_outlined
@@ -240,7 +239,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchScreen(),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),

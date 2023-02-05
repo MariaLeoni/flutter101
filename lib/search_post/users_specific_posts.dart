@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import 'package:sharedstudent1/search_userpost/searchView.dart';
 import '../following/followers.dart';
-import '../forgot_password/components/heading_text.dart';
 import '../home_screen/post.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
-import '../search_post/search_post.dart';
 import'package:fluttertoast/fluttertoast.dart';
 
 
@@ -39,7 +38,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
 
 
   handleFollowerPost() {
-
     if (widget.followers!= null && widget.followers!.contains(followuserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
       widget.followers!.remove(followuserId);
@@ -60,13 +58,10 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     });
   }
 
-
   void readUserInfo()async {
-    FirebaseFirestore.instance.collection('users')
-        .doc(widget.userId)
+    FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .get()
-        .then<dynamic>((DocumentSnapshot snapshot) async
-    {
+        .then<dynamic>((DocumentSnapshot snapshot) async {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
       widget.followers = List.from(snapshot.get('followers'));
@@ -192,7 +187,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             leading: GestureDetector(
               onTap: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
               },
               child: const Icon(
                   Icons.login_outlined
@@ -202,7 +197,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => SearchScreen(),),);
                 },
                 icon: const Icon(Icons.search),
               ),

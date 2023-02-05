@@ -5,34 +5,34 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../following/followers.dart';
+import '../home_screen/post.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
-import '../search_post/search_post.dart';
 import'package:fluttertoast/fluttertoast.dart';
+import '../search_userpost/searchView.dart';
 
 
-class  MyProfile extends StatefulWidget {
+class UserProfile extends StatefulWidget {
   String? userId;
   String? userName;
   List<String>? followers = List.empty(growable: true);
 
-  MyProfile({super.key,
+  UserProfile({super.key,
     this.userId,
     this.userName,
     this.followers,
   });
 
   @override
-  State<MyProfile> createState() => MyProfileState();
+  State<UserProfile> createState() => UserProfileState();
 }
 
-class MyProfileState extends State<MyProfile> {
+class UserProfileState extends State<UserProfile> {
   String? followUserId;
   String? myImage;
   String? myName;
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
 
   handleFollowerPost() {
     if (widget.followers!= null && widget.followers!.contains(followUserId)) {
@@ -55,22 +55,19 @@ class MyProfileState extends State<MyProfile> {
     });
   }
 
+  void readUserInfo() async {
+    FirebaseFirestore.instance.collection('users').doc(widget.userId)
+        .get().then<dynamic>((DocumentSnapshot snapshot) async {
+            myImage = snapshot.get('userImage');
+            myName = snapshot.get('name');
+            widget.followers = List.from(snapshot.get('followers'));
 
-  void readUserInfo()async
-  {
-    FirebaseFirestore.instance.collection('users')
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then<dynamic>((DocumentSnapshot snapshot) async {
-      myImage = snapshot.get('userImage');
-      myName = snapshot.get('name');
-      widget.followers = List.from(snapshot.get('followers'));
-
-      setState(() {
-        followersCount = (widget.followers?.length ?? 0);
-      });
+            setState(() {
+              followersCount = (widget.followers?.length ?? 0);
+            });
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -78,8 +75,8 @@ class MyProfileState extends State<MyProfile> {
   }
 
   Widget listViewWidget (String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, )
-  {
+      DateTime date, String userId, int downloads, String postId,
+  List<String>? likes, String description) {
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -100,8 +97,9 @@ class MyProfileState extends State<MyProfile> {
                 GestureDetector(
                   onTap:() {
                     Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                      img: img, userImg: userImg, name: name, date: date,
-                      docId: docId, userId: userId, downloads: downloads,
+                      img: img, userImg: userImg, name: name, date: date, docId: docId,
+                      userId: userId, downloads: downloads, postId: postId, likes: likes,
+                      description: description,
                     )));
                   },
                   child: ClipRRect(
@@ -132,8 +130,7 @@ class MyProfileState extends State<MyProfile> {
                                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10.0),
-                              Text(
-                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
+                              Text(DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
                                 style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                               )
                             ]
@@ -156,13 +153,14 @@ class MyProfileState extends State<MyProfile> {
     var followerText = Text(followersCount.toString(),
         style: const TextStyle(fontSize: 28.0,
             color: Colors.white, fontWeight: FontWeight.bold));
+
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.purple, Colors.deepPurple.shade300],
+          colors: [Colors.black, Colors.black],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          stops: const [0.2, 0.9],
+          stops: [0.2, 0.9],
         ),
       ),
       child: Scaffold(
@@ -178,15 +176,12 @@ class MyProfileState extends State<MyProfile> {
                 ),
               ),
             ),
-            title: Text(
-              myName!,
-            ),
+            title: Text(myName!,),
             centerTitle: true,
             leading: GestureDetector(
-              onTap: ()
-              {
+              onTap: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
               },
               child: const Icon(
                   Icons.login_outlined
@@ -196,13 +191,13 @@ class MyProfileState extends State<MyProfile> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => SearchScreen(),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
               ),
@@ -227,8 +222,7 @@ class MyProfileState extends State<MyProfile> {
 
         ),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('wallpaper')
+          stream: FirebaseFirestore.instance.collection('wallpaper')
               .where("id", isEqualTo: _auth.currentUser!.uid)
               .orderBy('createdAt',descending: true)
               .snapshots(),
@@ -236,27 +230,19 @@ class MyProfileState extends State<MyProfile> {
           {
             if(snapshot.connectionState == ConnectionState.waiting )
             {
-              return Center(child: CircularProgressIndicator(),);
+              return const Center(child: CircularProgressIndicator(),);
             }
-            else if (snapshot.connectionState == ConnectionState.active)
-            {
-              if(snapshot.data!.docs.isNotEmpty)
-              {
-
-
+            else if (snapshot.connectionState == ConnectionState.active) {
+              if(snapshot.data!.docs.isNotEmpty) {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index)
-                  {
-                    return listViewWidget(
-                      snapshot.data!.docs[index].id,
-                      snapshot.data!.docs[index]['Image'],
-                      snapshot.data!.docs[index]['userImage'],
-                      snapshot.data!.docs[index]['name'],
-                      snapshot.data!.docs[index]['createdAt'].toDate(),
-                      snapshot.data!.docs[index]['email'],
-                      snapshot.data!.docs[index]['downloads'],
-                    );
+                  itemBuilder: (BuildContext context, int index) {
+
+                    Post post = Post.getPost(snapshot, index);
+
+                    return listViewWidget(post.id, post.image, post.userImage,
+                        post.userName, post.createdAt, post.email,
+                        post.downloads, post.postId, post.likes,post.description);
                   },
                 );
               }
@@ -275,9 +261,7 @@ class MyProfileState extends State<MyProfile> {
             );
           },
         ),
-
       ),
     );
-
   }
 }

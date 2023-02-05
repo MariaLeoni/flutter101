@@ -7,7 +7,7 @@ import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/profile/myprofile.dart';
-import '../Search.dart';
+import '../search.dart';
 import '../uploader.dart';
 import '../owner_details/owner_details.dart';
 import'package:uuid/uuid.dart';
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => MyProfile(
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => UserProfile(
                     userId: widget.userId, userName: myName, followers: const [],
                   ),),);
                 },

@@ -34,3 +34,8 @@ enum PostType{
   video,
   text
 }
+
+enum SearchType{
+  user,
+  post,
+}

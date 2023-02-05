@@ -229,17 +229,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                           controller: _favoriteController),
                     ),
 
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     handleLikePost();
-                    //   },
-                    //
-                    //   child: const Icon (
-                    //     Icons.thumb_up_sharp,
-                    //     size:20.0,
-                    //     color: Colors.white,
-                    //   ),
-                    // ),
                     likeText,
                     IconButton(
                       onPressed: () async {
