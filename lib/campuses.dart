@@ -853,7 +853,7 @@ class _CampusesState extends State<Campuses>
           title: item,
           pressEnabled: true,
           activeColor: Colors.blueGrey[600],
-          singleItem: _singleItem,
+          singleItem: false,
           splashColor: Colors.green,
           combine: ItemTagsCombine.withTextBefore,
           image: index > 0 && index < 5
@@ -891,10 +891,15 @@ class _CampusesState extends State<Campuses>
             fontSize: _fontSize,
           ),
           onPressed: (item) {
-            FirebaseFirestore.instance.collection('Campuses').doc(memberuserId).set({
-              "campuses": _items,
+            List<String> interest = List.empty(growable: true);
+            _items.forEach((element) {
+              interest.add(element.toString());
             });
-            Fluttertoast.showToast(msg: 'added to FB');
+            FirebaseFirestore.instance.collection('tags').doc(memberuserId).set({
+                "tagName": interest,
+              });
+            //
+            // Fluttertoast.showToast(msg: 'added to FB - ${item.title}');
            }
           //> print(item),
         );

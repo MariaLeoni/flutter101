@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -176,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
       //  {
       //   Fluttertoast.showToast(msg: error.toString());
       //  }
-
     }
   }
   void readUserInfo() async
@@ -188,6 +188,11 @@ class _HomeScreenState extends State<HomeScreen> {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
     });
+
+    FirebaseFirestore.instance.collection('category').get().then(
+            (QuerySnapshot snapshot) => snapshot.docs.forEach((f) => {
+              print("Found ${(List.from(f.get("subCategory"))).toString()}")
+    }));
   }
 
   @override
