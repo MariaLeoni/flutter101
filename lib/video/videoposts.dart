@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/video/videopost.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import '../Search.dart';
 import '../message/sendmessage.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
@@ -183,13 +184,13 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchScreen(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const Search(),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
               ),

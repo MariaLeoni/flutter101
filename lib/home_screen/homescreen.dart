@@ -8,6 +8,7 @@ import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Campuses1.dart';
 import '../profile/myprofile.dart';
+import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../uploader.dart';
 import '../owner_details/owner_details.dart';
@@ -274,10 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
               IconButton(
                 onPressed: (){
                   //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Campuses()));
-
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => UserProfile(
-                    userId: widget.userId, userName: myName, followers: const [],
-                  ),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
               ),
