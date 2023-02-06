@@ -14,9 +14,9 @@ import '../misc/global.dart';
 class ProfileScreen extends StatefulWidget {
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => ProfileScreenState();
 }
-class _ProfileScreenState extends State<ProfileScreen> {
+class ProfileScreenState extends State<ProfileScreen> {
 
   String? name = '';
   String? email = '';
@@ -26,14 +26,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? userNameInput = '';
   String? userImageURL;
   bool isFollowing = false;
-  Future _getDataFromDatabase() async
-  {
+
+  Future getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
-        .then((snapshot) async
-    {
-      if (snapshot.exists) {
+        .then((snapshot) async { if (snapshot.exists) {
         setState(() {
           name = snapshot.data()!["name"];
           email = snapshot.data()!["email"];
@@ -46,13 +44,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    //TODO: implement initState
     super.initState();
-    _getDataFromDatabase();
+    getDataFromDatabase();
   }
 
-
-  void _showImageDialog() {
+  void showImageDialog() {
     showDialog(
         context: context,
         builder: (context) {
@@ -63,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 InkWell(
                   onTap: () {
-                    _getFromCamera();
+                    getFromCamera();
                   },
                   child: Row(
                     children: const [
@@ -74,8 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: Colors.deepPurple,
                         ),
                       ),
-                      Text(
-                        "Camera",
+                      Text("Camera",
                         style: TextStyle(color: Colors.purple),
                       ),
                     ],
@@ -83,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                    _getFromGallery();
+                    getFromGallery();
                   },
                   child: Row(
                     children: const [
@@ -108,35 +103,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _getFromCamera() async
-  {
+  void getFromCamera() async {
     XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.camera);
-    _cropImage(pickedFile!.path);
+    cropImage(pickedFile!.path);
+
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
-  void _getFromGallery() async
-  {
+  void getFromGallery() async {
     XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery);
-    _cropImage(pickedFile!.path);
+    cropImage(pickedFile!.path);
+
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
-  void _cropImage(filePath) async {
+  void cropImage(filePath) async {
     CroppedFile? croppedImage = await ImageCropper().cropImage
       (sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
 
     if (croppedImage != null) {
       setState(() {
         imageXFile = File(croppedImage.path);
-        _updateImageInFirestore();
+        updateImageInFirestore();
       });
     }
   }
 
-  Future _updateUserName() async {
+  Future updateUserName() async {
 
     bool userExist = await usernameExist(userNameInput!);
     if (userExist){
@@ -146,11 +143,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid).update({
-          'name': userNameInput,
+      'name': userNameInput,
     });
   }
 
-  _displayTextInputDialog(BuildContext context) async {
+  displayTextInputDialog(BuildContext context) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -166,7 +163,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               actions: [
                 ElevatedButton(
-                  child: Text('Cancel', style: TextStyle(color: Colors.white),),
                   onPressed: () {
                     setState(() {
                       Navigator.pop(context);
@@ -175,17 +171,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red,
                   ),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.white),),
                 ),
                 ElevatedButton(
-                  child: Text('Save', style: TextStyle(color: Colors.white),),
                   onPressed: () {
-                    _updateUserName();
+                    updateUserName();
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => HomeScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.amber,
                   ),
+                  child: const Text('Save', style: TextStyle(color: Colors.white),),
                 )
               ]
           );
@@ -193,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _updateImageInFirestore() async
+  void updateImageInFirestore() async
   {
     String fileName = DateTime.now().microsecondsSinceEpoch.toString();
     fStorage.Reference reference = fStorage.FirebaseStorage.instance.ref()
@@ -204,115 +201,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
       userImageURL = url;
     });
     await FirebaseFirestore.instance.collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .update(
-      {
-        'userImage': userImageURL,
-      });
+        .doc(FirebaseAuth.instance.currentUser!.uid).update({
+          'userImage': userImageURL,
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.purple, Colors.deepPurple.shade300],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              stops: const [0.2, 0.9],
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.2, 0.9],
+              ),
             ),
           ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.purple.shade400,
-        title: const Center(
-          child: Text('Profile Screen', style: TextStyle(
-            fontSize: 35,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontFamily: "Signatra",
-          ),),
-        ),
-        leading: IconButton(
-          icon:Icon(Icons.arrow_back, color: Colors.white,),
-          onPressed: (){
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-          }
-        )
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          title: const Center(
+            child: Text('Profile', style: TextStyle(
+              fontSize: 35,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontFamily: "Signatra",
+            ),),
+          ),
+          leading: IconButton(
+              icon:const Icon(Icons.arrow_back, color: Colors.white,),
+              onPressed: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+              }
+          )
       ),
       body: Container(
         decoration: BoxDecoration(
-         gradient: LinearGradient(
-        colors: [Colors.purple, Colors.deepPurple.shade300],
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        stops: const [0.2, 0.9],
-    ),
-      ),
+          gradient: LinearGradient(
+            colors: [Colors.purple, Colors.deepPurple.shade300],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            stops: const [0.2, 0.9],
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: ()
-                  {
-                    _showImageDialog();
-                  },
-              child: CircleAvatar(
-                backgroundColor: Colors.amberAccent,
-                minRadius: 55.0,
+              onTap: () {
+                showImageDialog();
+              },
+              child: CircleAvatar(backgroundColor: Colors.amberAccent,
+                minRadius: 90.0,
                 child: CircleAvatar(
-                  radius: 50.0,
-                backgroundImage: imageXFile == null
-                ?
-                NetworkImage(
-                    image!
-                )
-                :
-                  Image.file
-                    (imageXFile!).image,
-              ),
+                  radius: 85.0, backgroundImage: imageXFile == null ?
+                  NetworkImage(image!) : Image.file(imageXFile!).image,
+                ),
               ),
             ),
-
-          SizedBox(height: 10.0,),
-
-          Row(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(
-    'Name :' + name!,
-    style: TextStyle(
-    fontSize: 25.0,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-    )
-    ),
-    IconButton(
-      onPressed: ()
-    {
-      _displayTextInputDialog(context);
-    },
-    icon: const Icon(Icons.edit),
-    )
-    ],
-
-    ),
-    const SizedBox( height: 10.0,),
-    Text(
-    'Email: '+ email!,
-    style: const TextStyle(
-    fontSize: 25.0,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-    ),
-    ),
+            const SizedBox(height: 10.0,),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Text('Name: ${name!}',
+                    style: const TextStyle(fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )
+                ),
+                IconButton(
+                  onPressed: () {
+                    displayTextInputDialog(context);
+                  },
+                  icon: const Icon(Icons.edit),
+                )
+              ],
+            ),
+            const SizedBox( height: 10.0,),
+            Text('Email: ${email!}',
+              style: const TextStyle(
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
             const SizedBox( height: 20.0,),
-            Text(
-              'Phone Number: '+ phoneNo!,
+            Text('Phone Number: ${phoneNo!}',
               style: const TextStyle(
                 fontSize: 25.0,
                 fontWeight: FontWeight.bold,
@@ -321,20 +298,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox( height: 10.0,),
             ElevatedButton(
-              onPressed:()
-              {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
-              },
-              child: const Text("Logout"),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.amber,
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              )
+                onPressed:() {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.amberAccent,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                ),
+                child: const Text("Logout")
             )
-      ],
-            ),
+          ],
         ),
-      );
-
+      ),
+    );
   }
 }

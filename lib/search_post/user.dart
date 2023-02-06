@@ -1,7 +1,6 @@
 import'package:cloud_firestore/cloud_firestore.dart';
 
-class Users
-{
+class Users {
   String? email;
   String? name;
   String? userImage;
@@ -14,15 +13,15 @@ class Users
     this.userImage,
     this.createdAt,
     this.id,
-});
+  });
 
   Users.fromJson(Map<String, dynamic> json)
   {
     email = json['email'];
-     name  = json['name'];
-     userImage = json ['userImage'];
-     createdAt = json ['createdAt'];
-     id = json ['id'];
+    name  = json['name'];
+    userImage = json ['userImage'];
+    createdAt = json ['createdAt'];
+    id = json ['id'];
   }
 
   Map<String, dynamic> toJson() {

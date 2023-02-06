@@ -5,46 +5,43 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../following/followers.dart';
+import '../home_screen/post.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
-import '../search_post/search_post.dart';
 import'package:fluttertoast/fluttertoast.dart';
+import '../search_userpost/searchView.dart';
 
 
-class  myprofile extends StatefulWidget {
+class UserProfile extends StatefulWidget {
   String? userId;
   String? userName;
-  String? docId;
   List<String>? followers = List.empty(growable: true);
 
-  myprofile({super.key,
+  UserProfile({super.key,
     this.userId,
     this.userName,
     this.followers,
-    this.docId,
   });
 
   @override
-  State<myprofile> createState() => _myprofileState();
+  State<UserProfile> createState() => UserProfileState();
 }
 
-class _myprofileState extends State<myprofile> {
-  String? followuserId;
+class UserProfileState extends State<UserProfile> {
+  String? followUserId;
   String? myImage;
   String? myName;
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
-  handlefollowerPost() {
-
-    if (widget.followers!= null && widget.followers!.contains(followuserId)) {
+  handleFollowerPost() {
+    if (widget.followers!= null && widget.followers!.contains(followUserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
-      widget.followers!.remove(followuserId);
+      widget.followers!.remove(followUserId);
     }
     else {
       Fluttertoast.showToast(msg: "You followed this person");
-      widget.followers!.add(followuserId!);
+      widget.followers!.add(followUserId!);
     }
 
     FirebaseFirestore.instance
@@ -58,65 +55,60 @@ class _myprofileState extends State<myprofile> {
     });
   }
 
+  void readUserInfo() async {
+    FirebaseFirestore.instance.collection('users').doc(widget.userId)
+        .get().then<dynamic>((DocumentSnapshot snapshot) async {
+            myImage = snapshot.get('userImage');
+            myName = snapshot.get('name');
+            widget.followers = List.from(snapshot.get('followers'));
 
-  void readUserInfo()async
-  {
-    FirebaseFirestore.instance.collection('users')
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then<dynamic>((DocumentSnapshot snapshot) async
-    {
-      myImage = snapshot.get('userImage');
-      myName = snapshot.get('name');
-      widget.followers = List.from(snapshot.get('followers'));
-
-      setState(() {
-        followersCount = (widget.followers?.length ?? 0);
-      });
+            setState(() {
+              followersCount = (widget.followers?.length ?? 0);
+            });
     });
   }
+
   @override
   void initState() {
     super.initState();
     readUserInfo();
   }
 
-  Widget listViewWidget (String docId, String img, String userImg, String name, DateTime date, String userId, int downloads, )
-  {
+  Widget listViewWidget (String docId, String img, String userImg, String name,
+      DateTime date, String userId, int downloads, String postId,
+  List<String>? likes, String description) {
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
         elevation: 16.0,
         shadowColor: Colors.white10,
         child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple.shade300],
+                colors: [Colors.black, Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
+                stops: [0.2, 0.9],
               ),
             ),
             padding: const EdgeInsets.all(5.0),
             child: Column(
               children: [
                 GestureDetector(
-                  onTap:()
-                  {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                      img: img,
-                      userImg: userImg,
-                      name: name,
-                      date: date,
-                      docId: docId,
-                      userId: userId,
-                      downloads: downloads,
+                  onTap:() {
+                    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                      img: img, userImg: userImg, name: name, date: date, docId: docId,
+                      userId: userId, downloads: downloads, postId: postId, likes: likes,
+                      description: description,
                     )));
                   },
-                  child: Image.network(
-                    img,
-                    fit: BoxFit.cover,
-                  ) ,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Image border
+                    child: SizedBox.fromSize(
+                        size: const Size(500.0, 400.0), // Image radius
+                        child: Image.network(img, fit: BoxFit.cover)
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 15.0,),
                 Padding(
@@ -138,8 +130,7 @@ class _myprofileState extends State<myprofile> {
                                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10.0),
-                              Text(
-                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
+                              Text(DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
                                 style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                               )
                             ]
@@ -156,19 +147,20 @@ class _myprofileState extends State<myprofile> {
 
   @override
   Widget build(BuildContext context) {
-    followuserId = _auth.currentUser?.uid;
+    followUserId = _auth.currentUser?.uid;
     followersCount = (widget.followers?.length ?? 0);
 
     var followerText = Text(followersCount.toString(),
         style: const TextStyle(fontSize: 28.0,
             color: Colors.white, fontWeight: FontWeight.bold));
+
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.purple, Colors.deepPurple.shade300],
+          colors: [Colors.black, Colors.black],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          stops: const [0.2, 0.9],
+          stops: [0.2, 0.9],
         ),
       ),
       child: Scaffold(
@@ -184,15 +176,12 @@ class _myprofileState extends State<myprofile> {
                 ),
               ),
             ),
-            title: Text(
-              myName!,
-            ),
+            title: Text(myName!,),
             centerTitle: true,
             leading: GestureDetector(
-              onTap: ()
-              {
+              onTap: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
               },
               child: const Icon(
                   Icons.login_outlined
@@ -202,13 +191,13 @@ class _myprofileState extends State<myprofile> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchPost(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => SearchScreen(),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
               ),
@@ -233,8 +222,7 @@ class _myprofileState extends State<myprofile> {
 
         ),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('wallpaper')
+          stream: FirebaseFirestore.instance.collection('wallpaper')
               .where("id", isEqualTo: _auth.currentUser!.uid)
               .orderBy('createdAt',descending: true)
               .snapshots(),
@@ -242,27 +230,19 @@ class _myprofileState extends State<myprofile> {
           {
             if(snapshot.connectionState == ConnectionState.waiting )
             {
-              return Center(child: CircularProgressIndicator(),);
+              return const Center(child: CircularProgressIndicator(),);
             }
-            else if (snapshot.connectionState == ConnectionState.active)
-            {
-              if(snapshot.data!.docs.isNotEmpty)
-              {
-
-
+            else if (snapshot.connectionState == ConnectionState.active) {
+              if(snapshot.data!.docs.isNotEmpty) {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index)
-                  {
-                    return listViewWidget(
-                      snapshot.data!.docs[index].id,
-                      snapshot.data!.docs[index]['Image'],
-                      snapshot.data!.docs[index]['userImage'],
-                      snapshot.data!.docs[index]['name'],
-                      snapshot.data!.docs[index]['createdAt'].toDate(),
-                      snapshot.data!.docs[index]['email'],
-                      snapshot.data!.docs[index]['downloads'],
-                    );
+                  itemBuilder: (BuildContext context, int index) {
+
+                    Post post = Post.getPost(snapshot, index);
+
+                    return listViewWidget(post.id, post.image, post.userImage,
+                        post.userName, post.createdAt, post.email,
+                        post.downloads, post.postId, post.likes,post.description);
                   },
                 );
               }
@@ -281,9 +261,7 @@ class _myprofileState extends State<myprofile> {
             );
           },
         ),
-
       ),
     );
-
   }
 }
