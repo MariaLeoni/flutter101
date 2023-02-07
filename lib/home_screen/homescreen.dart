@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/misc/category.dart';
 import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
@@ -42,8 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? userId;
   String postId = const Uuid().v4();
 
-  final List <Category> categoryList = [];
-
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -52,15 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
       myName = snapshot.get('name');
       userId = FirebaseAuth.instance.currentUser!.uid;
     });
-
-    FirebaseFirestore.instance.collection('Categories').get().then(
-            (QuerySnapshot snapshot) => snapshot.docs.forEach((f) => {
-              categoryList.add(Category(category: f.get("category"),
-            subCategory: List.from(f.get("subCategories")))),
-              setState(() {
-                categoryList;
-              })
-    }));
   }
 
   @override
