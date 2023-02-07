@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sharedstudent1/misc/category.dart';
 import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import '../Campuses1.dart';
-import '../profile/myprofile.dart';
+import '../categoryWidget.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../uploader.dart';
@@ -42,8 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String? userId;
   String postId = const Uuid().v4();
 
-  void readUserInfo() async
-  {
+  final List <Category> categoryList = [];
+
+  void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
@@ -52,9 +53,13 @@ class _HomeScreenState extends State<HomeScreen> {
       userId = FirebaseAuth.instance.currentUser!.uid;
     });
 
-    FirebaseFirestore.instance.collection('category').get().then(
+    FirebaseFirestore.instance.collection('Categories').get().then(
             (QuerySnapshot snapshot) => snapshot.docs.forEach((f) => {
-              print("Found ${(List.from(f.get("subCategory"))).toString()}")
+              categoryList.add(Category(category: f.get("category"),
+            subCategory: List.from(f.get("subCategories")))),
+              setState(() {
+                categoryList;
+              })
     }));
   }
 
@@ -203,6 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(categoryList.length);
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -274,7 +280,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Campuses()));
                   Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),
@@ -288,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Campuses1(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoryView()));
                 },
                 icon: const Icon(Icons.stream_outlined),
               ),

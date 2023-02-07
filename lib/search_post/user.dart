@@ -15,8 +15,7 @@ class Users {
     this.id,
   });
 
-  Users.fromJson(Map<String, dynamic> json)
-  {
+  Users.fromJson(Map<String, dynamic> json){
     email = json['email'];
     name  = json['name'];
     userImage = json ['userImage'];

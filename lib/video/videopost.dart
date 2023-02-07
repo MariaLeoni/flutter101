@@ -25,8 +25,6 @@ class Post {
     required this.description,
     required this.postId,
     required this.likes,
-
-
   });
 
   static Post getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index) {
@@ -40,7 +38,6 @@ class Post {
        description: snapshot.data!.docs[index]['description'],
       postId: snapshot.data!.docs[index]['postId'],
       likes: List.from(snapshot.data!.docs[index]['likes']),
-
     );
   }
 }
