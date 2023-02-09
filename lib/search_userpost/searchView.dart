@@ -25,11 +25,13 @@ class SearchScreenState extends State<SearchScreen> {
   void startSearch(String searchText) {
     if (widget.type == SearchType.post){
       postDocumentsList = firestore.collection("wallpaper")
-          .where("description", isEqualTo: searchText).get();
+          .where("description", isGreaterThanOrEqualTo: searchText).
+           where("description", isLessThanOrEqualTo: '$searchText\uf8ff').get();
     }
     else{
       postDocumentsList = firestore.collection("users")
-          .where("name", isGreaterThanOrEqualTo: searchText).get();
+          .where("name", isGreaterThanOrEqualTo: searchText)
+          .where("name", isLessThanOrEqualTo: '$searchText\uf8ff').get();
     }
 
     setState(() {

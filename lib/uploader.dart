@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sharedstudent1/categoryWidget.dart';
 import 'package:uuid/uuid.dart';
 import 'home_screen/homescreen.dart';
 
@@ -192,13 +193,7 @@ class UploaderState extends State<Uploader> {
                       child: imageUrl == null ? Image.asset("assets/images/wolf.webp") :
                               Image.network(imageUrl!, width: MediaQuery.of(context).size.width,),),
                     const SizedBox(height: 10.0,),
-                    SizedBox.fromSize(
-                        size: const Size(300, 50), // Image radius
-                        child: TextFormField(
-                          controller: commentController,
-                          decoration: const InputDecoration(labelText: "Add a description..."),
-                        )
-                    ),
+                    const CategoryView(),
                     const SizedBox(height: 10.0,),
                     OutlinedButton(
                       onPressed: addComment,
