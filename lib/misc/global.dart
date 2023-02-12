@@ -39,3 +39,5 @@ enum SearchType{
   user,
   post,
 }
+
+typedef InterestCallback = void Function(Map<String, List<String>?> interests);

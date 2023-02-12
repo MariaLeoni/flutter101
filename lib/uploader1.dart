@@ -9,35 +9,27 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-import 'categoryView.dart';
 import 'home_screen/homescreen.dart';
 
-class Uploader extends StatefulWidget {
+class UploaderCopy extends StatefulWidget {
 
-  Uploader({super.key,});
+  UploaderCopy({super.key,});
 
   @override
-  State<Uploader> createState() => UploaderState();
+  State<UploaderCopy> createState() => UploaderState();
 }
 
-class UploaderState extends State<Uploader> {
+class UploaderState extends State<UploaderCopy> {
   TextEditingController commentController = TextEditingController();
   String postId = const Uuid().v4();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  Map<String, List<String>?> interests = {};
 
   String? myImage;
   String? myName;
   File? imageFile;
   String? imageUrl;
 
-  void updateInterests(Map<String, List<String>?> interests) {
-    setState(() {
-      this.interests = interests;
-    });
-  }
-
-  savePicturePost() {
+  addComment() {
     FirebaseFirestore.instance.collection('wallpaper').doc(postId).set({
       'id': _auth.currentUser!.uid,
       'userImage': myImage,
@@ -49,7 +41,6 @@ class UploaderState extends State<Uploader> {
       'postId': postId,
       'likes': <String>[],
       'description': commentController.text,
-      'category': interests,
     });
 
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
@@ -177,37 +168,44 @@ class UploaderState extends State<Uploader> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[const SliverAppBar(title: Text("Post A Picture",),
-                centerTitle: true, pinned: true, floating: true,),
-              ];
-            },
-            body: Column(
-              children: <Widget>[
-                GestureDetector(
-                  onTap:() {
-                    showAlert();
-                  },
-                  child: imageUrl == null ? Image.asset("assets/images/wolf.webp") :
-                  Image.network(imageUrl!, width: MediaQuery.of(context).size.width,),),
-                Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
-                  updateInterests(interests);
-                },)
-                ),
-                SizedBox.fromSize(
-                    size: const Size(300, 50), // Image radius
-                    child: TextFormField(
-                      controller: commentController,
-                      decoration: const InputDecoration(labelText: "Add a title..."),
-                    )
-                ),
-                const SizedBox(height: 10.0,),
-                OutlinedButton(
-                  onPressed: savePicturePost,
-                  child: const Text("Post"),
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.2],
+              ),
+            ),
+          ),
+          title: const Text("Post"),
+        ),
+        body: SingleChildScrollView(
+            child: ConstrainedBox(constraints: const BoxConstraints(),
+                child: Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap:() {
+                        showAlert();
+                      },
+                      child: imageUrl == null ? Image.asset("assets/images/wolf.webp") :
+                              Image.network(imageUrl!, width: MediaQuery.of(context).size.width,),),
+                    const SizedBox(height: 10.0,),
+                    SizedBox.fromSize(
+                        size: const Size(300, 50), // Image radius
+                        child: TextFormField(
+                          controller: commentController,
+                          decoration: const InputDecoration(labelText: "Add a description..."),
+                        )
+                    ),
+                    const SizedBox(height: 10.0,),
+                    OutlinedButton(
+                      onPressed: addComment,
+                      child: const Text("Post"),
+                    ),
+                  ],
                 )
-              ],
             )
         )
     );

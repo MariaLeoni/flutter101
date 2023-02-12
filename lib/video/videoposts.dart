@@ -9,11 +9,11 @@ import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
 import '../message/sendmessage.dart';
+import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
 import'package:video_player/video_player.dart';
-import '../search_userpost/searchView.dart';
-import '../uploaderVideo.dart';
+import '../postUploader.dart';
 
 
 class VideoHomeScreen extends StatefulWidget {
@@ -151,7 +151,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 heroTag: "1",
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => VideoUploader()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video)));
                 },
                 child: const Icon(Icons.video_camera_back_outlined),
               ),

@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import '../categoryWidget.dart';
+import '../categoryView.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../uploader.dart';
@@ -216,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.red,
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                      Uploader()));
+                      PostUploader(postType: PostType.image,)));
                 },
                 child: const Icon(Icons.camera_enhance),
               ),
@@ -280,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoryView()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryView(interestCallback: (Map<String, List<String>?> interests) {  },)));
                 },
                 icon: const Icon(Icons.stream_outlined),
               ),
