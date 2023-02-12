@@ -14,6 +14,9 @@ import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
 import'package:video_player/video_player.dart';
 import '../postUploader.dart';
+import '../vidlib/ReusableVideoListController.dart';
+import '../vidlib/ReusableVideoListWidget.dart';
+import '../vidlib/VideoListData.dart';
 
 
 class VideoHomeScreen extends StatefulWidget {
@@ -26,6 +29,12 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   VideoPlayerController? _videoPlayerController1;
   ChewieController? _chewieController;
   bool checkView = false;
+
+  var value = 0;
+  final ScrollController _scrollController = ScrollController();
+  ReusableVideoListController videoListController = ReusableVideoListController();
+  int lastMilli = DateTime.now().millisecondsSinceEpoch;
+  final bool _canBuildVideo = true;
 
   File? imageFile;
   File? videoFile;
@@ -130,6 +139,10 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     )));
   }
 
+  bool _checkCanBuildVideo() {
+    return _canBuildVideo;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -224,12 +237,17 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index)
-                  {
+                  itemBuilder: (BuildContext context, int index) {
                     Post post = Post.getPost(snapshot, index);
-                    return listViewWidget( post.id, post.video, post.userImage, post.name,
-                      post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
+                    VideoListData videoListData = VideoListData(post.description, post.video);
+                    return ReusableVideoListWidget(
+                      videoListData: videoListData,
+                      videoListController: videoListController,
+                      canBuildVideo: _checkCanBuildVideo,
                     );
+                    // return listViewWidget( post.id, post.video, post.userImage, post.name,
+                    //   post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
+                    // );
                   },
                 );
               }

@@ -101,9 +101,8 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8),
-            child: Text(
-              videoListData!.videoTitle,
-              style: const TextStyle(fontSize: 50),
+            child: Text(videoListData!.videoTitle,
+              style: const TextStyle(fontSize: 10),
             ),
           ),
           VisibilityDetector(
@@ -151,13 +150,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
           ),
           const Padding(
             padding: EdgeInsets.all(8),
-            child: Text(
-                "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
-                    "town. Plainspoken sheriff Roy Scheider, hippie shark "
-                    "researcher Richard Dreyfuss, and a squirrely boat captain "
-                    "set out to find the beast, but will they escape with their "
-                    "lives? 70's special effects, legendary score, and trademark "
-                    "humor set this classic apart."),
+            child: Text("Categories will be here"),
           ),
           Center(
             child: Wrap(children: [
