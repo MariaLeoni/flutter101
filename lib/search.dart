@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_userpost/searchView.dart';
-import 'home_screen/homescreen.dart';
+import 'home_screen/picturesHomescreen.dart';
 
 
 class Search extends StatefulWidget {
@@ -17,7 +17,7 @@ class SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    
+
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(color: Colors.red,),

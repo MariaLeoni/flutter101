@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/misc/global.dart';
-import 'package:sharedstudent1/home_screen/videoposts.dart';
+import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
-import 'home_screen/homescreen.dart';
+import 'home_screen/picturesHomescreen.dart';
 import 'misc/progressIndicator.dart';
 
 class PostUploader extends StatefulWidget {

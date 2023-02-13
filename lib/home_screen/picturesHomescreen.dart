@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/postUploader.dart';
-import 'package:sharedstudent1/home_screen/videoposts.dart';
+import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../categoryView.dart';

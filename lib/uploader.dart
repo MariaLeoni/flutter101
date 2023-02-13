@@ -10,7 +10,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
-import 'home_screen/homescreen.dart';
+import 'home_screen/picturesHomescreen.dart';
 
 class Uploader extends StatefulWidget {
 
