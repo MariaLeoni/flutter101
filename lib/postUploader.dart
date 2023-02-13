@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:better_player/better_player.dart';
-import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,7 +11,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:uuid/uuid.dart';
-import 'package:video_player/video_player.dart';
 import 'categoryView.dart';
 import 'home_screen/homescreen.dart';
 import 'misc/progressIndicator.dart';
@@ -39,8 +37,6 @@ class PostUploaderState extends State<PostUploader> {
   File? imageFile;
   String title = "";
 
-  VideoPlayerController? videoPlayerController;
-  ChewieController? chewieController;
 
   postVideo() {
     FirebaseFirestore.instance.collection('wallpaper2').doc(postId).set({
@@ -246,20 +242,6 @@ class PostUploaderState extends State<PostUploader> {
             .showSnackBar(const SnackBar(content: Text("Looks like no video was selected or captured")));
         return;
     }
-
-    if(videoPlayerController != null) {
-      videoPlayerController!.dispose();
-      chewieController?.dispose();
-    }
-
-    videoPlayerController = VideoPlayerController.file(videoFile!);
-    videoPlayerController?.initialize().then((_) =>
-        setState(() =>
-        chewieController = ChewieController(videoPlayerController: videoPlayerController!,
-          aspectRatio: 5/6,
-        ),
-      ),
-    );
   }
 
   void uploadPost() async {
@@ -316,7 +298,7 @@ class PostUploaderState extends State<PostUploader> {
                   onTap:() {
                     showAlert();
                   },
-                  child: widget.postType == PostType.video ? (chewieController == null ? Image.asset("assets/images/wolf.webp") :
+                  child: widget.postType == PostType.video ? (videoFile == null ? Image.asset("assets/images/wolf.webp") :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
                     child: BetterPlayer.file(videoFile!.path,
                       betterPlayerConfiguration: const BetterPlayerConfiguration(

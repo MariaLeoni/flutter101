@@ -1,8 +1,9 @@
+import 'package:sharedstudent1/video/videopost.dart';
+
 class VideoListData {
-  final String videoTitle;
-  final String videoUrl;
+  final VideoPost post;
   Duration? lastPosition;
   bool? wasPlaying = false;
 
-  VideoListData(this.videoTitle, this.videoUrl);
+  VideoListData(this.post);
 }

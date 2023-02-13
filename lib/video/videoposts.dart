@@ -26,11 +26,8 @@ class VideoHomeScreen extends StatefulWidget {
 }
 
 class VideoHomeScreenState extends State<VideoHomeScreen> {
-  VideoPlayerController? _videoPlayerController1;
-  ChewieController? _chewieController;
   bool checkView = false;
 
-  var value = 0;
   final ScrollController _scrollController = ScrollController();
   ReusableVideoListController videoListController = ReusableVideoListController();
   int lastMilli = DateTime.now().millisecondsSinceEpoch;
@@ -59,66 +56,10 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     readUserInfo();
   }
 
-  Widget listViewWidget (String docId, String vid, String userImg, String name,
-      DateTime date, String userId, int downloads, String description,
-      List<String>? likes , String postId  ) {
-
-    _videoPlayerController1 = VideoPlayerController.network(vid);
-    _chewieController = ChewieController(videoPlayerController: _videoPlayerController1!,
-      aspectRatio:5/6, autoPlay: true, looping: false,
-    );
-
-    return Card(
-      elevation: 16.0,
-      shadowColor: Colors.white10,
-      child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.black, Colors.black],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              stops: [0.2, 0.9],
-            ),
-          ),
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            children: [
-              GestureDetector(
-                  onTap:() {
-                    goToDetails(vid, userImg, name, date, docId, userId,
-                        downloads, description, likes, postId);
-                  },
-                  child: Chewie( controller: _chewieController!)
-              ),
-              const SizedBox(height: 15.0,),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                child: Row(
-                    children:[
-                      CircleAvatar(radius: 35,
-                        backgroundImage: NetworkImage(
-                          userImg,),
-                      ),
-                      const SizedBox(width: 10.0,),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children:[
-                            Text(name,
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Text(DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
-                              style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                            )
-                          ]
-                      )
-                    ]
-                ),
-              )
-            ],
-          )
-      ),
-    );
+  void videoSelected(VideoListData videoListData){
+    VideoPost post = videoListData.post;
+    goToDetails(post.video, post.userImage, post.name, post.createdAt, post.id, post.email,
+    post.downloads, post.description, post.likes, post.postId);
   }
 
   void goToDetails(String vid, String userImg, String name, DateTime date,
@@ -238,12 +179,14 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Post post = Post.getPost(snapshot, index);
-                    VideoListData videoListData = VideoListData(post.description, post.video);
-                    return ReusableVideoListWidget(
-                      videoListData: videoListData,
+                    VideoPost post = VideoPost.getPost(snapshot, index);
+                    VideoListData videoListData = VideoListData(post);
+
+                    return ReusableVideoListWidget(videoListData: videoListData,
                       videoListController: videoListController,
-                      canBuildVideo: _checkCanBuildVideo,
+                      canBuildVideo: _checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+                      videoSelected(videoListData);
+                      },
                     );
                     // return listViewWidget( post.id, post.video, post.userImage, post.name,
                     //   post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,

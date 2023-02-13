@@ -9,7 +9,7 @@ class ReusableVideoListController {
     for (int index = 0; index < 3; index++) {
       _betterPlayerControllerRegistry.add(
         BetterPlayerController(
-          const BetterPlayerConfiguration(handleLifecycle: false, autoDispose: false),
+          const BetterPlayerConfiguration(autoPlay: true, handleLifecycle: false, autoDispose: false),
         ),
       );
     }
@@ -27,8 +27,7 @@ class ReusableVideoListController {
     return freeController;
   }
 
-  void freeBetterPlayerController(
-      BetterPlayerController? betterPlayerController) {
+  void freeBetterPlayerController(BetterPlayerController? betterPlayerController) {
     _usedBetterPlayerControllerRegistry.remove(betterPlayerController);
   }
 

@@ -1,16 +1,13 @@
-import 'package:chewie/chewie.dart';
+import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:image_downloader/image_downloader.dart';
 import '../home_screen/homescreen.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
-import 'package:video_player/video_player.dart';
 
 class  OwnerDetails extends StatefulWidget {
   String? likeruserId;
@@ -48,15 +45,11 @@ class _OwnerDetailsState extends State<OwnerDetails> {
   String? likeruserId;
   String? followuserId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  VideoPlayerController? _videoPlayerController1;
-  VideoPlayerController? _videoPlayerController2;
-  ChewieController? _chewieController;
-  ChewieController? _chewieController2;
+
   _OwnerDetailsState({
     String? postId,
     String? userId,
   });
-
 
 
   handleFollowerPost() {
@@ -82,7 +75,6 @@ class _OwnerDetailsState extends State<OwnerDetails> {
   }
 
   handleLikePost(){
-
     if (widget.likes != null && widget.likes!.contains(likeruserId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
       widget.likes!.remove(likeruserId);
@@ -102,10 +94,8 @@ class _OwnerDetailsState extends State<OwnerDetails> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     likeruserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
 
@@ -118,17 +108,6 @@ class _OwnerDetailsState extends State<OwnerDetails> {
     var followerText = Text(followersCount.toString(),
         style: const TextStyle(fontSize: 28.0,
             color: Colors.white, fontWeight: FontWeight.bold));
-
-    _videoPlayerController1 = VideoPlayerController.network(widget.vid!);
-    _videoPlayerController2 = VideoPlayerController.network(
-        'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4');
-
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController1!,
-      aspectRatio: 4 / 3,
-      autoPlay: true,
-      looping: false,
-    );
 
     return Scaffold(
       body: Container(
@@ -144,13 +123,14 @@ class _OwnerDetailsState extends State<OwnerDetails> {
           children: [
             Column(
               children: [
-                Column(
-                  children: [
-                     Chewie( controller: _chewieController!)
-                  ],
+                AspectRatio(aspectRatio: 4/3,
+                  child: BetterPlayer.network(widget.vid!,
+                    betterPlayerConfiguration: const BetterPlayerConfiguration(
+                      aspectRatio: 4/3,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 30.0,),
-
                 const Text('Owner Information',
                   style: TextStyle(
                     fontSize: 30.0,
@@ -159,10 +139,9 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                   ),
                 ) ,
                 const SizedBox(height: 30.0,),
-
                 GestureDetector(
                     onTap:(){
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
                         userId:widget.docId,
                         userName:widget.name,
                       )));
@@ -174,10 +153,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                       ),
                     )
                 ),
-
-
-                const SizedBox(height:70.0,),
-
+                const SizedBox(height:30.0,),
                 Text('Uploaded by:${widget.name!}',
                   style: const TextStyle(
                     fontSize: 18.0,
@@ -186,14 +162,11 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                   ),
                 ),
                 const SizedBox(height: 10.0,),
-
                 Text(
                     DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
                     style: const TextStyle( color: Colors.white, fontWeight: FontWeight.bold,)
                 ),
-
                 const SizedBox(height: 50.0,),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -234,8 +207,7 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                   ],
                 ),
                 const SizedBox(height: 50.0,),
-                FirebaseAuth.instance.currentUser!.uid == widget.docId
-                    ?
+                FirebaseAuth.instance.currentUser!.uid == widget.docId  ?
                 Padding(
                     padding: const EdgeInsets.only(left: 8.0, right:8.0,),
                     child: ButtonSquare(
@@ -256,7 +228,6 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                     )
                 ):
                 Container(),
-
               ],
             ),
           ],

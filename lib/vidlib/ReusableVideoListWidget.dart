@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sharedstudent1/misc/global.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'ReusableVideoListController.dart';
@@ -12,12 +14,14 @@ class ReusableVideoListWidget extends StatefulWidget {
   final VideoListData? videoListData;
   final ReusableVideoListController? videoListController;
   final Function? canBuildVideo;
+  final VideoSelected? videoSelected;
 
   const ReusableVideoListWidget({
     Key? key,
     this.videoListData,
     this.videoListController,
     this.canBuildVideo,
+    this.videoSelected
   }) : super(key: key);
 
   @override
@@ -26,6 +30,7 @@ class ReusableVideoListWidget extends StatefulWidget {
 
 class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   VideoListData? get videoListData => widget.videoListData;
+  VideoSelected? get videoSelected => widget.videoSelected;
   BetterPlayerController? controller;
   StreamController<BetterPlayerController?>
   betterPlayerControllerStreamController = StreamController.broadcast();
@@ -48,7 +53,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       controller = widget.videoListController!.getBetterPlayerController();
       if (controller != null) {
         controller!.setupDataSource(BetterPlayerDataSource.network(
-            videoListData!.videoUrl,
+            videoListData!.post.video,
             cacheConfiguration:
             const BetterPlayerCacheConfiguration(useCache: true)));
         if (!betterPlayerControllerStreamController.isClosed) {
@@ -95,13 +100,14 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.deepPurple,
       margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(8),
-            child: Text(videoListData!.videoTitle,
+            child: Text(videoListData!.post.description,
               style: const TextStyle(fontSize: 10),
             ),
           ),
@@ -148,33 +154,39 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
               },
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(8),
-            child: Text("Categories will be here"),
-          ),
-          Center(
-            child: Wrap(children: [
-              ElevatedButton(
-                child: const Text("Play"),
-                onPressed: () {
-                  controller!.play();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: const Text("Pause"),
-                onPressed: () {
-                  controller!.pause();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: const Text("Set max volume"),
-                onPressed: () {
-                  controller!.setVolume(1.0);
-                },
-              ),
-            ]),
+          GestureDetector(
+              onTap:() {
+                videoSelected!(videoListData!);
+              },
+              child: Column(children: [
+                const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text("Categories will be here"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                  child: Row(
+                      children:[
+                        CircleAvatar(radius: 35,
+                          backgroundImage: NetworkImage(videoListData!.post.userImage,),
+                        ),
+                        const SizedBox(width: 10.0,),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:[
+                              Text(videoListData!.post.name,
+                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(DateFormat("dd MMM, yyyy - hh:mn a").format(videoListData!.post.createdAt).toString(),
+                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                              )
+                            ]
+                        )
+                      ]
+                  ),
+                ),
+              ],)
           ),
         ],
       ),
