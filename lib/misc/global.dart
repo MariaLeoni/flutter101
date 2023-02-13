@@ -44,3 +44,7 @@ enum SearchType{
 typedef InterestCallback = void Function(Map<String, List<String>?> interests);
 
 typedef VideoSelected = void Function(VideoListData);
+
+bool checkCanBuildVideo() {
+  return true;
+}

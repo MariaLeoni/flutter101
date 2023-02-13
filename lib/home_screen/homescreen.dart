@@ -11,7 +11,6 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../categoryView.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
-import '../uploader.dart';
 import '../owner_details/owner_details.dart';
 import'package:uuid/uuid.dart';
 import '../search_post/users_specific_posts.dart';
@@ -263,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const Search(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.image,),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
@@ -307,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       return listViewWidget(post.id, post.source, post.userImage,
                           post.userName, post.createdAt, post.email,
-                          post.downloads, post.postId, post.likes,post.description);
+                          post.downloads, post.postId, post.likes, post.description);
                     },
                   );
                 }

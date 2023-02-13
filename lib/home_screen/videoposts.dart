@@ -70,9 +70,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     )));
   }
 
-  bool _checkCanBuildVideo() {
-    return _canBuildVideo;
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +126,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const Search(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.video,),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
@@ -174,7 +172,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
 
                     return ReusableVideoListWidget(videoListData: videoListData,
                       videoListController: videoListController,
-                      canBuildVideo: _checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+                      canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
                       videoSelected(videoListData);
                       },
                     );

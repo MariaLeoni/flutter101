@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sharedstudent1/misc/global.dart';
 
+import '../search_userpost/postmodel.dart';
+
 class Post {
   String id = "";
   String source = "";
@@ -50,6 +52,22 @@ class Post {
         downloads: snapshot.data!.docs[index]['downloads'],
         description:snapshot.data!.docs[index]['description'],
         likes: List.from(snapshot.data!.docs[index]['likes']),
+        category: {}
+    );
+  }
+
+  static Post getPostSnapshot(Map<String, dynamic> data, PostType type){
+    PostModel postModel = PostModel.fromJson(data, type);
+    return Post(id: postModel.id!,
+        source: postModel.source!,
+        userImage: postModel.userImage!,
+        createdAt:postModel.createdAt!.toDate(),
+        userName: postModel.name!,
+        email: postModel.email!,
+        postId: postModel.postId!,
+        downloads: postModel.downloads!,
+        description: postModel.description!,
+        likes: List.empty(),
         category: {}
     );
   }
