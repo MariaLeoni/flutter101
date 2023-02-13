@@ -26,7 +26,7 @@ class SearchScreenState extends State<SearchScreen> {
     if (widget.type == SearchType.post){
       postDocumentsList = firestore.collection("wallpaper")
           .where("description", isGreaterThanOrEqualTo: searchText).
-           where("description", isLessThanOrEqualTo: '$searchText\uf8ff').get();
+      where("description", isLessThanOrEqualTo: '$searchText\uf8ff').get();
     }
     else{
       postDocumentsList = firestore.collection("users")
@@ -83,12 +83,10 @@ class SearchScreenState extends State<SearchScreen> {
                     return UsersPostWidget(model: model, context: context);
                   }
                   else{
-                    Users model = Users.fromJson(
-                        snapshot.data!.docs[index].data()! as Map<String, dynamic>);
+                    Users model = Users.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
                     return UsersDesignWidget(model: model, context: context,);
                   }
-                }
-                )
+                })
             ):
             const Center(child: Text("No Record Exists",
               style: TextStyle(

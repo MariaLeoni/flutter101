@@ -15,8 +15,7 @@ class PostModel {
     this.description, this. downloads, this.email, this.id, this.postId,
   });
 
-  PostModel.fromJson(Map<String, dynamic> json)
-  {
+  PostModel.fromJson(Map<String, dynamic> json){
     email = json['email'];
     name  = json['name'];
     userImage = json ['userImage'];

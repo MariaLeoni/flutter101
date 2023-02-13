@@ -1,7 +1,8 @@
-import 'package:sharedstudent1/video/videopost.dart';
+
+import '../home_screen/post.dart';
 
 class VideoListData {
-  final VideoPost post;
+  final Post post;
   Duration? lastPosition;
   bool? wasPlaying = false;
 

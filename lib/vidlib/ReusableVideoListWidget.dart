@@ -53,7 +53,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       controller = widget.videoListController!.getBetterPlayerController();
       if (controller != null) {
         controller!.setupDataSource(BetterPlayerDataSource.network(
-            videoListData!.post.video,
+            videoListData!.post.source,
             cacheConfiguration:
             const BetterPlayerCacheConfiguration(useCache: true)));
         if (!betterPlayerControllerStreamController.isClosed) {
@@ -174,7 +174,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children:[
-                              Text(videoListData!.post.name,
+                              Text(videoListData!.post.userName,
                                 style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10.0),

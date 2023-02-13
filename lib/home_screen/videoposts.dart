@@ -1,18 +1,15 @@
 import 'dart:io';
-import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:sharedstudent1/video/videopost.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
+import 'post.dart';
 import '../message/sendmessage.dart';
 import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
-import'package:video_player/video_player.dart';
 import '../postUploader.dart';
 import '../vidlib/ReusableVideoListController.dart';
 import '../vidlib/ReusableVideoListWidget.dart';
@@ -57,8 +54,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   }
 
   void videoSelected(VideoListData videoListData){
-    VideoPost post = videoListData.post;
-    goToDetails(post.video, post.userImage, post.name, post.createdAt, post.id, post.email,
+    Post post = videoListData.post;
+    goToDetails(post.source, post.userImage, post.userName, post.createdAt, post.id, post.email,
     post.downloads, post.description, post.likes, post.postId);
   }
 
@@ -67,16 +64,9 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       List<String>? likes, String postId) {
 
     Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-      vid:vid,
-      userImg: userImg,
-      name: name,
-      date: date,
-      docId: docId,
-      userId: userId,
-      downloads: downloads,
-      description: description,
-      likes: const [],
-      postId: postId,
+      vid:vid, userImg: userImg, name: name, date: date,
+      docId: docId, userId: userId, downloads: downloads, description: description,
+      likes: const [], postId: postId,
     )));
   }
 
@@ -179,7 +169,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    VideoPost post = VideoPost.getPost(snapshot, index);
+                    Post post = Post.getPost(snapshot, index, PostType.video);
                     VideoListData videoListData = VideoListData(post);
 
                     return ReusableVideoListWidget(videoListData: videoListData,
@@ -188,9 +178,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                       videoSelected(videoListData);
                       },
                     );
-                    // return listViewWidget( post.id, post.video, post.userImage, post.name,
-                    //   post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
-                    // );
                   },
                 );
               }

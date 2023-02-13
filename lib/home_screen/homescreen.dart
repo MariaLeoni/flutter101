@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/postUploader.dart';
-import 'package:sharedstudent1/video/videoposts.dart';
+import 'package:sharedstudent1/home_screen/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../categoryView.dart';
@@ -303,9 +303,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (BuildContext context, int index)
                     {
-                      Post post = Post.getPost(snapshot, index);
+                      Post post = Post.getPost(snapshot, index, PostType.image);
 
-                      return listViewWidget(post.id, post.image, post.userImage,
+                      return listViewWidget(post.id, post.source, post.userImage,
                           post.userName, post.createdAt, post.email,
                           post.downloads, post.postId, post.likes,post.description);
                     },
@@ -319,9 +319,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisCount:2
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        Post post = Post.getPost(snapshot, index);
+                        Post post = Post.getPost(snapshot, index, PostType.image);
 
-                        return gridViewWidget(post.id, post.image, post.userImage,
+                        return gridViewWidget(post.id, post.source, post.userImage,
                             post.userName, post.createdAt, post.email,
                             post.downloads, post.postId, post.likes, post.description);
                       }

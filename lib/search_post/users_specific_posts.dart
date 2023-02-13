@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/homescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_userpost/searchView.dart';
 import '../following/followers.dart';
 import '../home_screen/post.dart';
@@ -249,9 +250,9 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 return ListView.builder(itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
 
-                    Post post = Post.getPost(snapshot, index);
+                    Post post = Post.getPost(snapshot, index, PostType.image);
 
-                    return listViewWidget(post.id, post.image, post.userImage,
+                    return listViewWidget(post.id, post.source, post.userImage,
                         post.userName, post.createdAt, post.email,
                         post.downloads, post.postId, post.likes, post.description);
                   },

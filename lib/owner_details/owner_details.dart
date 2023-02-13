@@ -25,7 +25,6 @@ class OwnerDetails extends StatefulWidget {
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
 
-
   OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
     this.docId, this.userId, this.downloads, this.postId, this.likes, this.description
   });
@@ -210,23 +209,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // IconButton(
-                    //   splashRadius: 50,
-                    //   iconSize: 50,
-                    //   onPressed: () {
-                    //     if (_favoriteController.status ==
-                    //         AnimationStatus.dismissed) {
-                    //       _favoriteController.reset();
-                    //       _favoriteController.animateTo(0.6);
-                    //     } else {
-                    //       _favoriteController.reverse();
-                    //     }
-                    //     handleLikePost();
-                    //   },
-                    //  icon: Lottie.asset(Icons8.heart_color,
-                    //       controller: _favoriteController),
-                    // ),
-
                     likeText,
                     IconButton(
                       onPressed: () async {
@@ -240,8 +222,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                   ],
                 ),
                 const SizedBox(height: 50.0,),
-
-
                 FirebaseAuth.instance.currentUser!.uid == widget.docId
                     ?
                 Padding(
@@ -254,13 +234,11 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         press: () async {
                           FirebaseFirestore.instance.collection('wallpaper')
                               .doc(widget.postId).delete()
-                              .then((value)
-                          {
+                              .then((value) {
                             Fluttertoast.showToast(msg: 'Your post has been deleted');
                             Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                           });
                         }
-
                     )
                 ):
                 Container(),
