@@ -281,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryView(interestCallback: (Map<String, List<String>?> interests) {  },)));
+                  //Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryView(interestCallback: (Map<String, List<String>?> interests) {  },)));
                 },
                 icon: const Icon(Icons.stream_outlined),
               ),
@@ -310,8 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   );
                 }
-                else
-                {
+                else {
                   return GridView.builder(
                       itemCount: snapshot.data!.docs.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

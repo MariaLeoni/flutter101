@@ -146,7 +146,6 @@ class PostUploaderState extends State<PostUploader> {
   @override
   void initState() {
     super.initState();
-
     readUserInfo();
 
     title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
@@ -309,7 +308,7 @@ class PostUploaderState extends State<PostUploader> {
                   Image.file(imageFile!))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
-                },)
+                }, isEditable: false,)
                 ),
                 SizedBox.fromSize(
                     size: const Size(300, 50), // Image radius

@@ -10,17 +10,16 @@ import 'misc/global.dart';
 class CategoryView extends StatefulWidget {
 
   InterestCallback interestCallback;
-
-  CategoryView({super.key, required this.interestCallback});
+  bool isEditable = false;
+  CategoryView({super.key, required this.interestCallback, required this.isEditable});
 
   @override
-  CategoryViewState createState() => CategoryViewState(interestCallback);
+  CategoryViewState createState() => CategoryViewState();
 }
 
 class CategoryViewState extends State<CategoryView> with SingleTickerProviderStateMixin {
 
-  InterestCallback interestCallback;
-  CategoryViewState(this.interestCallback);
+  InterestCallback get interestCallback => widget.interestCallback;
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   
@@ -38,6 +37,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
   Map<String, List<String>?> catMap = {};
 
   Map<String, List<String>?> selectedInterests = {};
+  Map<String, List<String>?> myInterests = {};
   List<String>? selectedSubInterests = List.empty(growable: true);
   String selectedInterest = "";
 
@@ -54,15 +54,27 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
         }));
   }
 
+  void readUserInfo() async {
+    FirebaseFirestore.instance.collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get().then<dynamic>((DocumentSnapshot snapshot) {
+      myInterests = Map<String, dynamic>.from(snapshot.get('interests')) as Map<String, List<String>>;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
+    readUserInfo();
     loadInterests();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    print("My interests ${myInterests}");
+
     if (interestList.isNotEmpty){
       if (!loaded){
         interestList.forEach((interest) {
@@ -116,7 +128,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             title: item,
             pressEnabled: true,
             activeColor: Colors.blueGrey[600],
-            singleItem: true,
+            singleItem: widget.isEditable ? false : true,
             splashColor: Colors.green,
             combine: ItemTagsCombine.withTextBefore,
             image:  null,
