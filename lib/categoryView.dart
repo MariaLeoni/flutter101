@@ -58,7 +58,14 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
-      myInterests = Map<String, dynamic>.from(snapshot.get('interests')) as Map<String, List<String>>;
+          var data = jsonDecode(jsonEncode(snapshot.get('interests')));
+          data.forEach((key, value) {
+            List<String> subList = List.empty(growable: true);
+            value.forEach((subCategory){
+              subList.add(subCategory);
+            });
+            myInterests[key] = subList;
+          });
     });
   }
 
