@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sharedstudent1/home_screen/homescreen.dart';
+import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 
+import '../categoryView.dart';
 import '../misc/global.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,19 +27,20 @@ class ProfileScreenState extends State<ProfileScreen> {
   String? userNameInput = '';
   String? userImageURL;
   bool isFollowing = false;
+  Map<String, List<String>?> interests = {};
 
   Future getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((snapshot) async { if (snapshot.exists) {
-        setState(() {
-          name = snapshot.data()!["name"];
-          email = snapshot.data()!["email"];
-          image = snapshot.data()!["userImage"];
-          phoneNo = snapshot.data()!["phoneNumber"];
-        });
-      }
+      setState(() {
+        name = snapshot.data()!["name"];
+        email = snapshot.data()!["email"];
+        image = snapshot.data()!["userImage"];
+        phoneNo = snapshot.data()!["phoneNumber"];
+      });
+    }
     });
   }
 
@@ -134,13 +136,11 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future updateUserName() async {
-
     bool userExist = await usernameExist(userNameInput!);
     if (userExist){
       Fluttertoast.showToast(msg: "Sorry username $userNameInput already exist.");
       return;
     }
-
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid).update({
       'name': userNameInput,
@@ -152,7 +152,7 @@ class ProfileScreenState extends State<ProfileScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: const Text('Update your name Here'),
+              title: const Text('Update your name here'),
               content: TextField(
                 onChanged: (value) {
                   setState(() {
@@ -190,8 +190,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void updateImageInFirestore() async
-  {
+  void updateImageInFirestore() async {
     String fileName = DateTime.now().microsecondsSinceEpoch.toString();
     fStorage.Reference reference = fStorage.FirebaseStorage.instance.ref()
         .child("uerImages").child(fileName);
@@ -202,114 +201,112 @@ class ProfileScreenState extends State<ProfileScreen> {
     });
     await FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid).update({
-          'userImage': userImageURL,
-        });
+      'userImage': userImageURL,
+    });
+  }
+
+  Future<bool> onBackPressed() async {
+    print("Going back. save my interests");
+    await FirebaseFirestore.instance.collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid).update({
+      'interests': interests,
+    });
+    return true;
+  }
+
+  void updateInterests(Map<String, List<String>?> interests){
+    this.interests = interests;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.black,
-          title: const Center(
-            child: Text('Profile', style: TextStyle(
-              fontSize: 35,
-              color: Colors.white,
+    return WillPopScope(
+        onWillPop: onBackPressed,
+        child: Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[const SliverAppBar(title: Text('Profile', style: TextStyle(
+              fontSize: 35, color: Colors.white,
               fontWeight: FontWeight.bold,
               fontFamily: "Signatra",
             ),),
-          ),
-          leading: IconButton(
-              icon:const Icon(Icons.arrow_back, color: Colors.white,),
-              onPressed: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-              }
-          )
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.purple, Colors.deepPurple.shade300],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            stops: const [0.2, 0.9],
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: () {
-                showImageDialog();
-              },
-              child: CircleAvatar(backgroundColor: Colors.amberAccent,
-                minRadius: 90.0,
-                child: CircleAvatar(
-                  radius: 85.0, backgroundImage: imageXFile == null ?
-                  NetworkImage(image!) : Image.file(imageXFile!).image,
-                ),
+              centerTitle: true, pinned: true, floating: true,),
+            ];
+          },
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.purple, Colors.deepPurple.shade300],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: const [0.2, 0.9],
               ),
             ),
-            const SizedBox(height: 10.0,),
-            Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('Name: ${name!}',
-                    style: const TextStyle(fontSize: 25.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    )
-                ),
-                IconButton(
-                  onPressed: () {
-                    displayTextInputDialog(context);
+              children: [
+                const SizedBox(height: 10.0,),
+                GestureDetector(
+                  onTap: () {
+                    showImageDialog();
                   },
-                  icon: const Icon(Icons.edit),
+                  child: CircleAvatar(
+                    radius: 85.0, backgroundImage: imageXFile == null ? NetworkImage(image!) : Image.file(imageXFile!).image,
+                  )
+                ),
+                const SizedBox(height: 10.0,),
+                Row(crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Text('Name: ${name!}',
+                      style: const TextStyle(fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )
+                  ),
+                    IconButton(
+                      onPressed: () {
+                        displayTextInputDialog(context);
+                      },
+                      icon: const Icon(Icons.edit),
+                    )
+                  ],
+                ),
+                const SizedBox( height: 10.0,),
+                Text('Email: ${email!}',
+                  style: const TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox( height: 20.0,),
+                Text('Phone Number: ${phoneNo!}',
+                  style: const TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10.0,),
+                Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
+                  updateInterests(interests);
+                }, isEditable: true,)
+                ),
+                ElevatedButton(
+                    onPressed:() {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amberAccent,
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    ),
+                    child: const Text("Logout")
                 )
               ],
             ),
-            const SizedBox( height: 10.0,),
-            Text('Email: ${email!}',
-              style: const TextStyle(
-                fontSize: 25.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox( height: 20.0,),
-            Text('Phone Number: ${phoneNo!}',
-              style: const TextStyle(
-                fontSize: 25.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox( height: 10.0,),
-            ElevatedButton(
-                onPressed:() {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.amberAccent,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                ),
-                child: const Text("Logout")
-            )
-          ],
-        ),
-      ),
+          ),
+        ))
     );
   }
 }

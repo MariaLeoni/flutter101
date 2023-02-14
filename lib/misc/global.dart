@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
+import 'package:sharedstudent1/vidlib/VideoListData.dart';
 
 Future<File> getImageFileFromAssets(String path) async {
   Directory tempDir = await getTemporaryDirectory();
@@ -38,4 +39,12 @@ enum PostType{
 enum SearchType{
   user,
   post,
+}
+
+typedef InterestCallback = void Function(Map<String, List<String>?> interests);
+
+typedef VideoSelected = void Function(VideoListData);
+
+bool checkCanBuildVideo() {
+  return true;
 }

@@ -3,16 +3,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+<<<<<<< HEAD:lib/home_screen/homescreen.dart
 import 'package:sharedstudent1/Activity%20Feed/feed.dart';
 import 'package:sharedstudent1/main.dart';
 import 'package:sharedstudent1/misc/category.dart';
 import 'package:sharedstudent1/video/videoposts.dart';
+=======
+import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/postUploader.dart';
+import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
+>>>>>>> refs/remotes/origin/main:lib/home_screen/picturesHomescreen.dart
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import '../categoryWidget.dart';
+import '../categoryView.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
-import '../uploader.dart';
 import '../owner_details/owner_details.dart';
 import'package:uuid/uuid.dart';
 import '../search_post/users_specific_posts.dart';
@@ -44,8 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? userId;
   String postId = const Uuid().v4();
 
-  final List <Category> categoryList = [];
-
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -54,15 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
       myName = snapshot.get('name');
       userId = FirebaseAuth.instance.currentUser!.uid;
     });
-
-    FirebaseFirestore.instance.collection('Categories').get().then(
-            (QuerySnapshot snapshot) => snapshot.docs.forEach((f) => {
-              categoryList.add(Category(category: f.get("category"),
-            subCategory: List.from(f.get("subCategories")))),
-              setState(() {
-                categoryList;
-              })
-    }));
   }
 
   @override
@@ -213,7 +207,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(categoryList.length);
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -234,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.red,
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                      Uploader()));
+                      PostUploader(postType: PostType.image,)));
                 },
                 child: const Icon(Icons.camera_enhance),
               ),
@@ -279,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const Search(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.image,),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
@@ -298,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoryView()));
+                  //Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryView(interestCallback: (Map<String, List<String>?> interests) {  },)));
                 },
                 icon: const Icon(Icons.stream_outlined),
               ),
@@ -325,25 +318,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (BuildContext context, int index)
                     {
-                      Post post = Post.getPost(snapshot, index);
+                      Post post = Post.getPost(snapshot, index, PostType.image);
 
-                      return listViewWidget(post.id, post.image, post.userImage,
+                      return listViewWidget(post.id, post.source, post.userImage,
                           post.userName, post.createdAt, post.email,
-                          post.downloads, post.postId, post.likes,post.description);
+                          post.downloads, post.postId, post.likes, post.description);
                     },
                   );
                 }
-                else
-                {
+                else {
                   return GridView.builder(
                       itemCount: snapshot.data!.docs.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount:2
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        Post post = Post.getPost(snapshot, index);
+                        Post post = Post.getPost(snapshot, index, PostType.image);
 
-                        return gridViewWidget(post.id, post.image, post.userImage,
+                        return gridViewWidget(post.id, post.source, post.userImage,
                             post.userName, post.createdAt, post.email,
                             post.downloads, post.postId, post.likes, post.description);
                       }

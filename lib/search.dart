@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_userpost/searchView.dart';
-import 'home_screen/homescreen.dart';
+import 'home_screen/picturesHomescreen.dart';
 
 
 class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+
+  PostType? postType;
+  Search({super.key, this.postType});
 
   @override
   State<Search> createState() => SearchState();
@@ -15,6 +17,7 @@ class SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(color: Colors.red,),
@@ -31,7 +34,8 @@ class SearchState extends State<Search> {
         body: ListView(
           children:[
             IconButton(iconSize: 50.0, onPressed: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchScreen(type: SearchType.post,),),);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchScreen(type: SearchType.post,
+                  postType: widget.postType,),),);
               },
               icon: const Icon(Icons.search, color: Colors.black, ),
             ),

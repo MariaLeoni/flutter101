@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/forgot_password/forgot_password.dart';
-import 'package:sharedstudent1/home_screen/homescreen.dart';
+import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/widgets/input_field.dart';
 
 import '../../VerifyEmail/VerifyEmail.dart';

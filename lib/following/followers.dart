@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'FollowerModel.dart';
 
 class Followers extends StatefulWidget {
@@ -29,8 +28,6 @@ class FollowersState extends State<Followers> {
 
   buildFollowers() {
     final firebaseCollection = FirebaseFirestore.instance.collection('users');
-
-    print("Followers ${widget.followers}");
 
     return StreamBuilder(
       stream: firebaseCollection.where(FieldPath.documentId, whereIn:widget.followers).snapshots(),

@@ -1,19 +1,19 @@
 import 'dart:io';
-import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:sharedstudent1/video/videopost.dart';
-import 'package:sharedstudent1/home_screen/homescreen.dart';
+import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
+import 'post.dart';
 import '../message/sendmessage.dart';
+import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
-import'package:video_player/video_player.dart';
-import '../search_userpost/searchView.dart';
-import '../uploaderVideo.dart';
+import '../postUploader.dart';
+import '../vidlib/ReusableVideoListController.dart';
+import '../vidlib/ReusableVideoListWidget.dart';
+import '../vidlib/VideoListData.dart';
 
 
 class VideoHomeScreen extends StatefulWidget {
@@ -23,9 +23,12 @@ class VideoHomeScreen extends StatefulWidget {
 }
 
 class VideoHomeScreenState extends State<VideoHomeScreen> {
-  VideoPlayerController? _videoPlayerController1;
-  ChewieController? _chewieController;
   bool checkView = false;
+
+  final ScrollController _scrollController = ScrollController();
+  ReusableVideoListController videoListController = ReusableVideoListController();
+  int lastMilli = DateTime.now().millisecondsSinceEpoch;
+  final bool _canBuildVideo = true;
 
   File? imageFile;
   File? videoFile;
@@ -50,66 +53,10 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     readUserInfo();
   }
 
-  Widget listViewWidget (String docId, String vid, String userImg, String name,
-      DateTime date, String userId, int downloads, String description,
-      List<String>? likes , String postId  ) {
-
-    _videoPlayerController1 = VideoPlayerController.network(vid);
-    _chewieController = ChewieController(videoPlayerController: _videoPlayerController1!,
-      aspectRatio:5/6, autoPlay: true, looping: false,
-    );
-
-    return Card(
-      elevation: 16.0,
-      shadowColor: Colors.white10,
-      child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.black, Colors.black],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              stops: [0.2, 0.9],
-            ),
-          ),
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            children: [
-              GestureDetector(
-                  onTap:() {
-                    goToDetails(vid, userImg, name, date, docId, userId,
-                        downloads, description, likes, postId);
-                  },
-                  child: Chewie( controller: _chewieController!)
-              ),
-              const SizedBox(height: 15.0,),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                child: Row(
-                    children:[
-                      CircleAvatar(radius: 35,
-                        backgroundImage: NetworkImage(
-                          userImg,),
-                      ),
-                      const SizedBox(width: 10.0,),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children:[
-                            Text(name,
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Text(DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
-                              style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                            )
-                          ]
-                      )
-                    ]
-                ),
-              )
-            ],
-          )
-      ),
-    );
+  void videoSelected(VideoListData videoListData){
+    Post post = videoListData.post;
+    goToDetails(post.source, post.userImage, post.userName, post.createdAt, post.id, post.email,
+    post.downloads, post.description, post.likes, post.postId);
   }
 
   void goToDetails(String vid, String userImg, String name, DateTime date,
@@ -117,18 +64,13 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       List<String>? likes, String postId) {
 
     Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-      vid:vid,
-      userImg: userImg,
-      name: name,
-      date: date,
-      docId: docId,
-      userId: userId,
-      downloads: downloads,
-      description: description,
-      likes: const [],
-      postId: postId,
+      vid:vid, userImg: userImg, name: name, date: date,
+      docId: docId, userId: userId, downloads: downloads, description: description,
+      likes: const [], postId: postId,
     )));
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +93,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 heroTag: "1",
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => VideoUploader()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video)));
                 },
                 child: const Icon(Icons.video_camera_back_outlined),
               ),
@@ -184,7 +126,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const Search(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.video,),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
@@ -224,11 +166,15 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index)
-                  {
-                    Post post = Post.getPost(snapshot, index);
-                    return listViewWidget( post.id, post.video, post.userImage, post.name,
-                      post.createdAt, post.email, post.downloads,post.description,post.likes,post.postId,
+                  itemBuilder: (BuildContext context, int index) {
+                    Post post = Post.getPost(snapshot, index, PostType.video);
+                    VideoListData videoListData = VideoListData(post);
+
+                    return ReusableVideoListWidget(videoListData: videoListData,
+                      videoListController: videoListController,
+                      canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+                      videoSelected(videoListData);
+                      },
                     );
                   },
                 );

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
-import '../home_screen/homescreen.dart';
+import '../home_screen/picturesHomescreen.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
@@ -24,7 +24,6 @@ class OwnerDetails extends StatefulWidget {
   String? postId;
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
-
 
   OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
     this.docId, this.userId, this.downloads, this.postId, this.likes, this.description
@@ -270,6 +269,7 @@ removeLikeFromActivityFeed() {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+<<<<<<< HEAD
                     // IconButton(
                     //   splashRadius: 50,
                     //   iconSize: 50,
@@ -297,6 +297,8 @@ removeLikeFromActivityFeed() {
                         color: Colors.white,
                       ),
                     ),
+=======
+>>>>>>> refs/remotes/origin/main
                     likeText,
                     IconButton(
                       onPressed: () async {
@@ -310,8 +312,6 @@ removeLikeFromActivityFeed() {
                   ],
                 ),
                 const SizedBox(height: 50.0,),
-
-
                 FirebaseAuth.instance.currentUser!.uid == widget.docId
                     ?
                 Padding(
@@ -324,13 +324,11 @@ removeLikeFromActivityFeed() {
                         press: () async {
                           FirebaseFirestore.instance.collection('wallpaper')
                               .doc(widget.postId).delete()
-                              .then((value)
-                          {
+                              .then((value) {
                             Fluttertoast.showToast(msg: 'Your post has been deleted');
                             Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                           });
                         }
-
                     )
                 ):
                 Container(),
