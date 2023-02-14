@@ -43,6 +43,9 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   String? postId;
   String? likeruserId;
   String? followuserId;
+  String? name;
+  String? userImage;
+  String?image;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   _OwnerDetailsState({
@@ -50,22 +53,79 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     String? userId,
   });
 
+  void getDataFromDatabase() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        name = snapshot.data()!["name"];
+        image = snapshot.data()!["userImage"];
+
+      });
+    }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getDataFromDatabase();
     _favoriteController =
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
   }
+AddLikeToActivityFeed() {
+  bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
+  if (isNotPostOwner) {
+    FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
+        .collection('FeedItems').doc(widget.postId)
+        .set({
+      "type": "like",
+      "name": name,
+      "userId": _auth.currentUser!.uid,
+      "userProfileImage": image,
+      "postId": widget.postId,
+      "Image": widget.img,
+      "timestamp": DateTime.now(),
+      "commentData": null,
+      "downloads": widget.downloads,
+       "description":widget.description,
+      "likes": widget.likes,
+      "postOwnerId": widget.docId,
+      "postOwnerImage": widget.img,
+      "postOwnername": widget.name,
+       "likes": widget.likes,
+      "downloads": widget.downloads,
+    });
+  }
+}
 
+removeLikeFromActivityFeed() {
+  bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
+  if (isNotPostOwner) {
+    FirebaseFirestore.instance.collection('Activity Feed')
+        .doc(widget.docId)
+        .collection('FeedItems')
+        .doc(widget.postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+}
   handleLikePost(){
     if (widget.likes != null && widget.likes!.contains(likeruserId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
       widget.likes!.remove(likeruserId);
+      removeLikeFromActivityFeed();
     }
     else {
       Fluttertoast.showToast(msg: "You liked this image!");
       widget.likes!.add(likeruserId!);
+      AddLikeToActivityFeed();
     }
 
 
@@ -226,11 +286,21 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                     //  icon: Lottie.asset(Icons8.heart_color,
                     //       controller: _favoriteController),
                     // ),
+                    GestureDetector(
+                      onTap: () {
+                        handleLikePost();
+                      },
 
+                      child: const Icon (
+                        Icons.thumb_up_sharp,
+                        size:20.0,
+                        color: Colors.white,
+                      ),
+                    ),
                     likeText,
                     IconButton(
                       onPressed: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.docId, Image:widget.img, likes: widget.likes, description: widget.description, downloads: widget.downloads, postOwnerImg: widget.userImg, postOwnername: widget.name, )));
                       },
                       icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
                     ),

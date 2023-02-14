@@ -33,18 +33,58 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   String? followuserId;
   String? myImage;
   String? myName;
+  String? name;
+  String? image;
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-
+  AddFollowToActivityFeed() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
+          .collection('FeedItems').doc(widget.userId).set({
+        "type": "follow",
+        "name": name,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": image,
+        "postId": null,
+        "Image": null,
+        "timestamp": DateTime.now(),
+        "commentData":  null,
+        "description": null,
+        "likes": null,
+        "postOwnerId": null,
+        "postOwnerImage": null,
+        "postOwnername": null,
+        "downloads": null,
+      });
+    }
+  }
+  RemoveFollow() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed')
+          .doc(widget.userId)
+          .collection('FeedItems')
+          .doc(widget.userId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    }
+  }
   handleFollowerPost() {
     if (widget.followers!= null && widget.followers!.contains(followuserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
       widget.followers!.remove(followuserId);
+      RemoveFollow();
     }
     else {
       Fluttertoast.showToast(msg: "You followed this person");
       widget.followers!.add(followuserId!);
+      AddFollowToActivityFeed();
     }
 
     FirebaseFirestore.instance
@@ -71,10 +111,23 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       });
     });
   }
+  void getDataFromDatabase() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        name = snapshot.data()!["name"];
+        image = snapshot.data()!["userImage"];
 
+      });
+    }
+    });
+  }
   @override
   void initState() {
     super.initState();
+    getDataFromDatabase();
     readUserInfo();
   }
 

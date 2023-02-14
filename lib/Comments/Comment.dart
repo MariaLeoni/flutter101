@@ -10,9 +10,14 @@ class Comment extends StatefulWidget {
   String? userId;
   String? postId;
   String? docId;
-
+  String? Image;
+  String? postOwnerImg;
+  String? postOwnername;
+  List<String>? likes = List.empty(growable: true);
+  String? description;
+  int? downloads;
   Comment({super.key, this.userId, this.postId,
-    this.docId,});
+    this.docId,this.Image, this.likes, this.description, this.downloads, this.postOwnerImg, this.postOwnername});
 
   @override
   State<Comment> createState() => CommentState();
@@ -25,6 +30,7 @@ class CommentState extends State<Comment> {
   String? myImage;
   String? myName;
   String? id;
+
   String commentId = const Uuid().v4();
   String? myUserId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -34,6 +40,7 @@ class CommentState extends State<Comment> {
     String? postId,
     String? commentId,
     String? userId,
+
   });
 
   buildComments(){
@@ -62,12 +69,35 @@ class CommentState extends State<Comment> {
       },
     );
   }
-
+  AddLikeToActivityFeed() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
+          .collection('FeedItems').add({
+        "type": "comment",
+        "name": myName,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": myImage,
+        "postId": widget.postId,
+        "Image": widget.Image,
+        "timestamp": DateTime.now(),
+        "commentData":  commentController.text,
+        "description": widget.description,
+         "downloads": widget.downloads,
+         "likes": widget.likes,
+        "postOwnerId": widget.userId,
+        "postOwnerImage": widget.postOwnerImg,
+         "postOwnername": widget.postOwnername,
+        "likes": widget.likes,
+        "downloads": widget.downloads,
+          });
+    }
+  }
   addComment() {
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
-      "commenterName" : myName,
+      "commenterName": myName,
       "timestamp": DateTime.now(),
       "commenterId": id,
       "originalCommentId": null,
@@ -75,8 +105,27 @@ class CommentState extends State<Comment> {
       "postId": widget.postId,
       'subCommentIds': <String>[],
       'likes': <String>[],
+      'Image': widget.Image,
     });
+    AddLikeToActivityFeed();
     commentController.clear();
+    // bool isNotPostOwner = widget.userId != _auth.currentUser!.uid;
+    // if (isNotPostOwner) {
+    //   FirebaseFirestore.instance.collection('Activity Feed')
+    //       .doc(widget.userId)
+    //       .collection('FeedItems')
+    //       .add({
+    //     "type": "comment",
+    //     "commentData": commentController.text,
+    //     "timestamp": DateTime.now(),
+    //     "postId": widget.postId,
+    //     "userId": _auth.currentUser!.uid,
+    //     "name": myName,
+    //     "userProfileImage": myImage,
+    //     "Image": Image,
+    //   });
+    //   commentController.clear();
+   // }
   }
 
   void readUserInfo() async {

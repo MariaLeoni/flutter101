@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sharedstudent1/Activity%20Feed/feed.dart';
+import 'package:sharedstudent1/main.dart';
 import 'package:sharedstudent1/misc/category.dart';
 import 'package:sharedstudent1/video/videoposts.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
@@ -100,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
     )));
   }
 
+
   Widget listViewWidget (String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
@@ -125,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap:() {
                     goToDetails(img, userImg, name, date, docId, userId,
                         downloads, postId, likes, description);
+
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10), // Image border
@@ -192,6 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
                 onTap:() {
                   goToDetails(img, userImg, name, date, docId, userId, downloads, postId, likes, description);
+
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10), // Image border
@@ -296,6 +301,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoryView()));
                 },
                 icon: const Icon(Icons.stream_outlined),
+              ),
+              IconButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
+                },
+                icon: const Icon(Icons.doorbell_outlined),
               ),
             ]
         ),
