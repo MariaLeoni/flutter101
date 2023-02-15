@@ -20,9 +20,10 @@ class CategoryView extends StatefulWidget {
 class CategoryViewState extends State<CategoryView> with SingleTickerProviderStateMixin {
 
   InterestCallback get interestCallback => widget.interestCallback;
-
   final FirebaseAuth auth = FirebaseAuth.instance;
-  
+
+  final ValueNotifier<List<String>?> subCategoryList = ValueNotifier<List<String>?>([]);
+
   bool singleSelection = true;
   bool loaded = false;
   final int column = 0;
@@ -32,8 +33,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
   final GlobalKey<TagsState> subCategoryTagStateKey = GlobalKey<TagsState>();
 
   final List <Category> interestList = [];
-  List<String>? categoryList = List.empty(growable: true);
-  List<String>? subCategoryList = List.empty(growable: true);
+  final List<String>? categoryList = List.empty(growable: true);
   Map<String, List<String>?> catMap = {};
 
   Map<String, List<String>?> selectedInterests = {};
@@ -43,29 +43,30 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
 
   Random random = Random();
 
-  void loadInterests() async {
+  loadInterests() async {
     FirebaseFirestore.instance.collection('Categories').get().then(
             (QuerySnapshot snapshot) => snapshot.docs.forEach((f) => {
-              interestList.add(Category(category: f.get("category"),
+          interestList.add(Category(category: f.get("category"),
               subCategory: List.from(f.get("subCategories")))),
           setState(() {
             interestList;
           })
-        }));
+        })
+    );
   }
 
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
-          var data = jsonDecode(jsonEncode(snapshot.get('interests')));
-          data.forEach((key, value) {
-            List<String> subList = List.empty(growable: true);
-            value.forEach((subCategory){
-              subList.add(subCategory);
-            });
-            myInterests[key] = subList;
-          });
+      var data = jsonDecode(jsonEncode(snapshot.get('interests')));
+      data.forEach((key, value) {
+        List<String> subList = List.empty(growable: true);
+        value.forEach((subCategory){
+          subList.add(subCategory);
+        });
+        myInterests[key] = subList;
+      });
     });
   }
 
@@ -79,44 +80,45 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
 
   @override
   Widget build(BuildContext context) {
-
-    print("My interests ${myInterests}");
-
     if (interestList.isNotEmpty){
       if (!loaded){
         interestList.forEach((interest) {
           categoryList?.add(interest.category);
           catMap[interest.category] = interest.subCategory;
+          loaded = true;
           setState(() {
             categoryList;
-            loaded = true;
           });
         });
       }
     }
-
+    //print("My interests ${myInterests}");
     return CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-                delegate: SliverChildListDelegate([
-                  const Padding(
-                    padding: EdgeInsets.all(20),
-                  ),
-                  categories,
-                  Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: <Widget>[
-                          const Divider(color: Colors.blueGrey,),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: (subCategoryList != null && subCategoryList!.isEmpty) ? const Text('Nothing selected') : subCategories,
-                          ),
-                        ],
-                      )),
-                ])),
-          ],
-        );
+      slivers: <Widget>[
+        SliverList(
+            delegate: SliverChildListDelegate([
+              const Padding(
+                padding: EdgeInsets.all(20),
+              ),
+              categories,
+              Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: <Widget>[
+                      const Divider(color: Colors.blueGrey,),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: ValueListenableBuilder<List<String>?>(
+                              valueListenable: subCategoryList,
+                              builder: (context, value, _) {
+                                return subCategoryList.value == null ? const Text('Nothing selected') :
+                                  subCategories;})
+                      ),
+                    ],
+                  )),
+            ])),
+      ],
+    );
   }
 
   Widget get categories {
@@ -143,14 +145,17 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize),
             onPressed: (item) {
-              if (selectedInterest != item.title){
-                selectedInterest = item.title;
-                selectedSubInterests = List.empty(growable: true);
+              if (!item.active){
+                subCategoryList.value = null;
+                selectedInterests.remove(item.title);
               }
-
-              setState(() {
-                subCategoryList = catMap[item.title];
-              });
+              else{
+                if (selectedInterest != item.title){
+                  selectedInterest = item.title;
+                  selectedSubInterests = List.empty(growable: true);
+                }
+                subCategoryList.value = catMap[item.title];
+              }
             }
         );
       },
@@ -164,9 +169,9 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: subCategoryList?.length,
+      itemCount: subCategoryList.value?.length,
       itemBuilder: (index) {
-        final item = subCategoryList![index];
+        final item = subCategoryList.value?[index];
 
         return ItemTags(
             key: Key(index.toString()),
@@ -180,7 +185,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             combine: ItemTagsCombine.withTextBefore,
             image: null,
             icon: null,
-            textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
+            textScaleFactor: utf8.encode(item!.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize,),
             onPressed: (item) {
               if (!item.active){
