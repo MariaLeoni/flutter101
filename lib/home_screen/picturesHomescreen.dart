@@ -3,19 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-<<<<<<< HEAD:lib/home_screen/homescreen.dart
 import 'package:sharedstudent1/Activity%20Feed/feed.dart';
-import 'package:sharedstudent1/main.dart';
-import 'package:sharedstudent1/misc/category.dart';
-import 'package:sharedstudent1/video/videoposts.dart';
-=======
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
->>>>>>> refs/remotes/origin/main:lib/home_screen/picturesHomescreen.dart
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import '../categoryView.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
@@ -119,18 +112,18 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap:() {
-                    goToDetails(img, userImg, name, date, docId, userId,
-                        downloads, postId, likes, description);
+                    onTap:() {
+                      goToDetails(img, userImg, name, date, docId, userId,
+                          downloads, postId, likes, description);
 
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10), // Image border
-                    child: SizedBox.fromSize(
-                        size: const Size(500.0, 400.0), // Image radius
-                        child: Image.network(img, fit: BoxFit.cover)
-                    ),
-                  )
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10), // Image border
+                      child: SizedBox.fromSize(
+                          size: const Size(500.0, 400.0), // Image radius
+                          child: Image.network(img, fit: BoxFit.cover)
+                      ),
+                    )
                 ),
                 const SizedBox(height: 15.0,),
                 Padding(
@@ -361,5 +354,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

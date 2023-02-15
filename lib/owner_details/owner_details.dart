@@ -269,7 +269,6 @@ removeLikeFromActivityFeed() {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-<<<<<<< HEAD
                     // IconButton(
                     //   splashRadius: 50,
                     //   iconSize: 50,
@@ -297,8 +296,6 @@ removeLikeFromActivityFeed() {
                         color: Colors.white,
                       ),
                     ),
-=======
->>>>>>> refs/remotes/origin/main
                     likeText,
                     IconButton(
                       onPressed: () async {

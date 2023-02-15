@@ -65,15 +65,10 @@ dependencies:
   flutter_svg: ^1.1.6
   flutter_tags: ^0.4.9+1
   multi_select_flutter: ^4.1.3
-<<<<<<< HEAD
   http: ^0.13.5
-=======
-
   better_player:
     git:
       url: https://github.com/tintran-dev/betterplayer.git
-  
->>>>>>> refs/remotes/origin/main
 
   firebase_database: ^10.0.10
 dev_dependencies:
