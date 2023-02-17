@@ -105,7 +105,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             flexibleSpace:Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.black],
+                  colors: [Colors.black, Colors.black],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   stops: [0.2, 0.9],

@@ -32,7 +32,7 @@ class FollowerModel extends StatelessWidget {
     return Column(children: <Widget>[
       ListTile(contentPadding: const EdgeInsets.only(left: 2.0, right: 0.0),
         title: Text(userName!),
-        subtitle: Text(userId!),
+        //subtitle: Text(userId!),
         leading: CircleAvatar(
           backgroundImage: CachedNetworkImageProvider(userImage!),
         ),

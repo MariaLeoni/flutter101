@@ -215,7 +215,8 @@ class _CredentialsState extends State<Credentials> {
                         'phoneNumber': _phoneNumController.text,
                         'CreateAt': Timestamp.now(),
                         'followers': <String>[],
-                      //   'device': FirebaseMessaging.instance.getToken().then((token) {
+                        'categories':Map<String, List<String>?>,
+                        //   'device': FirebaseMessaging.instance.getToken().then((token) {
                       // print("Device Token: $token");
                       // })
                        });

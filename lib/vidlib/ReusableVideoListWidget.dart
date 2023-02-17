@@ -100,7 +100,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.deepPurple,
+      color: Colors.black,
       margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
