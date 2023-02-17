@@ -38,6 +38,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   String? image;
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool amFollowingUser = false;
 
   AddFollowToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
@@ -61,6 +62,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       });
     }
   }
+
   RemoveFollow() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
@@ -76,6 +78,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       });
     }
   }
+
   handleFollowerPost() {
     if (widget.followers!= null && widget.followers!.contains(followuserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
@@ -112,6 +115,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       });
     });
   }
+
   void getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -125,6 +129,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     }
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -209,6 +214,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   Widget build(BuildContext context) {
     followuserId = _auth.currentUser?.uid;
     followersCount = (widget.followers?.length ?? 0);
+    amFollowingUser = widget.followers == null ? false : widget.followers!.contains(followuserId);
 
     var followerText = Text(followersCount.toString(),
         style: const TextStyle(fontSize: 20.0,
@@ -268,7 +274,9 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                   handleFollowerPost();
                   followerText;
                 },
-                icon: const Icon(Icons.person_add_alt_outlined, color: Colors.red),
+                icon: amFollowingUser ?
+                const Icon(Icons.person_remove_alt_1_outlined, color: Colors.red) :
+                const Icon(Icons.person_add_alt_outlined, color: Colors.red),
               ),
               IconButton(
                 onPressed: (){
@@ -312,8 +320,8 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 );
               }
               else{
-                return const Center(child: Text("There is no Posts",
-                      style: TextStyle(fontSize: 20),)
+                return const Center(child: Text("This user has is no Posts.",
+                      style: TextStyle(fontSize: 20, color: Colors.white))
                 );
               }
             }
