@@ -39,6 +39,8 @@ class _CredentialsState extends State<Credentials> {
   File? imageFile;
   String? imageUrl;
 
+  final Map<String, List<String>?> interests = {};
+
 
   void _showImageDialog() {
     showDialog(
@@ -215,7 +217,7 @@ class _CredentialsState extends State<Credentials> {
                         'phoneNumber': _phoneNumController.text,
                         'CreateAt': Timestamp.now(),
                         'followers': <String>[],
-                        'categories':Map<String, List<String>?>,
+                        'categories': interests,
                         //   'device': FirebaseMessaging.instance.getToken().then((token) {
                       // print("Device Token: $token");
                       // })
