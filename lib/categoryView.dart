@@ -128,8 +128,6 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
   }
 
   Widget get categories {
-    print("Category My interests = $myInterests");
-    print("Category Selected interests = $selectedInterests");
     return Tags(
       key: categoryTagStateKey,
       symmetry: false,
