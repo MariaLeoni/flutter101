@@ -189,7 +189,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             key: Key(index.toString()),
             index: index,
             title: item,
-            active: selectedInterests[selectedInterest]!.contains(item) ? true : false,
+            active: selectedInterests[selectedInterest] == null ? false : selectedInterests[selectedInterest]!.contains(item) ? true : false,
             pressEnabled: true,
             activeColor: activeColors[random.nextInt(5)],
             singleItem: false,
