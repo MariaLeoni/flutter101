@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:sharedstudent1/misc/progressIndicator.dart';
 import 'misc/category.dart';
 import 'misc/global.dart';
 
@@ -21,6 +22,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
 
   InterestCallback get interestCallback => widget.interestCallback;
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   final ValueNotifier<List<String>?> subCategoryList = ValueNotifier<List<String>?>([]);
 
@@ -29,6 +31,8 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
   final int column = 0;
   final double fontSize = 16;
   final List icons = [Icons.home, Icons.language, Icons.headset];
+  final List activeColors = [Colors.lightBlueAccent, Colors.deepPurple,
+                            Colors.teal, Colors.indigo, Colors.orange, Colors.brown];
   final GlobalKey<TagsState> categoryTagStateKey = GlobalKey<TagsState>();
   final GlobalKey<TagsState> subCategoryTagStateKey = GlobalKey<TagsState>();
 
@@ -44,7 +48,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
   Random random = Random();
 
   loadInterests() async {
-    FirebaseFirestore.instance.collection('Categories').get().then(
+    fireStore.collection('Categories').get().then(
             (QuerySnapshot snapshot) => snapshot.docs.forEach((f) => {
           interestList.add(Category(category: f.get("category"),
               subCategory: List.from(f.get("subCategories")))),
@@ -55,10 +59,9 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
     );
   }
 
-  void readUserInfo() async {
-    FirebaseFirestore.instance.collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get().then<dynamic>((DocumentSnapshot snapshot) {
+  readUserInfo() async {
+    fireStore.collection('users').doc(auth.currentUser!.uid).get()
+        .then<dynamic>((DocumentSnapshot snapshot) {
       var data = jsonDecode(jsonEncode(snapshot.get('interests')));
       data.forEach((key, value) {
         List<String> subList = List.empty(growable: true);
@@ -67,6 +70,9 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
         });
         myInterests[key] = subList;
       });
+      setState(() {
+        selectedInterests = myInterests;
+      });
     });
   }
 
@@ -74,8 +80,8 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
   void initState() {
     super.initState();
 
-    readUserInfo();
     loadInterests();
+    readUserInfo();
   }
 
   @override
@@ -92,7 +98,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
         });
       }
     }
-    //print("My interests ${myInterests}");
+
     return CustomScrollView(
       slivers: <Widget>[
         SliverList(
@@ -122,6 +128,8 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
   }
 
   Widget get categories {
+    print("Category My interests = $myInterests");
+    print("Category Selected interests = $selectedInterests");
     return Tags(
       key: categoryTagStateKey,
       symmetry: false,
@@ -135,17 +143,21 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             key: Key(index.toString()),
             index: index,
             title: item,
+            active: selectedInterests.keys.contains(item) ? true : false,
             pressEnabled: true,
-            activeColor: Colors.blueGrey[600],
-            singleItem: widget.isEditable ? false : true,
+            activeColor: activeColors[random.nextInt(5)],
+            singleItem: false,
             splashColor: Colors.green,
             combine: ItemTagsCombine.withTextBefore,
             image:  null,
-            icon: ItemTagsIcon(icon: icons[random.nextInt(3)]),
+            icon: null, //ItemTagsIcon(icon: icons[random.nextInt(3)]),
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize),
             onPressed: (item) {
-              if (!item.active){
+              if (!item.active && selectedInterests.keys.contains(item.title)){
+                subCategoryList.value = catMap[item.title];
+              }
+              if (!item.active && !selectedInterests.keys.contains(item.title)){
                 subCategoryList.value = null;
                 selectedInterests.remove(item.title);
               }
@@ -177,9 +189,9 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             key: Key(index.toString()),
             index: index,
             title: item,
-            active: false,
+            active: selectedInterests[selectedInterest]!.contains(item) ? true : false,
             pressEnabled: true,
-            activeColor: Colors.blueGrey[600],
+            activeColor: activeColors[random.nextInt(5)],
             singleItem: false,
             splashColor: Colors.green,
             combine: ItemTagsCombine.withTextBefore,

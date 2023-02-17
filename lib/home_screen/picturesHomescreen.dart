@@ -308,6 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if(checkView == true)
                 {
                   return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (BuildContext context, int index)
                     {
@@ -321,6 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
                 else {
                   return GridView.builder(
+                      physics: const BouncingScrollPhysics(),
                       itemCount: snapshot.data!.docs.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount:2

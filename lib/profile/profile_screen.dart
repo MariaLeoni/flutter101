@@ -215,6 +215,11 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   void updateInterests(Map<String, List<String>?> interests){
+    interests.forEach((key, value) {
+      if (value == null || value.isEmpty) {
+        interests.remove(key);
+      }
+    });
     this.interests = interests;
   }
 
