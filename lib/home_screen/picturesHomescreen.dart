@@ -7,7 +7,6 @@ import 'package:sharedstudent1/Activity%20Feed/feed.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/postUploader.dart';
-
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../profile/profile_screen.dart';
@@ -353,20 +352,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       return ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (BuildContext context, int index) {
-                          Post post = Post.getPost(
-                              snapshot, index, PostType.image);
+                          Post post = Post.getPost(snapshot, index, PostType.image);
 
-                          return listViewWidget(
-                              post.id,
-                              post.source,
-                              post.userImage,
-                              post.userName,
-                              post.createdAt,
-                              post.email,
-                              post.downloads,
-                              post.postId,
-                              post.likes,
-                              post.description);
+                          return listViewWidget(post.id, post.source, post.userImage,
+                              post.userName, post.createdAt, post.email,
+                              post.downloads, post.postId, post.likes, post.description);
                         },
                       );
                     }
@@ -377,20 +367,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisCount: 2
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            Post post = Post.getPost(
-                                snapshot, index, PostType.image);
+                            Post post = Post.getPost(snapshot, index, PostType.image);
 
-                            return gridViewWidget(
-                                post.id,
-                                post.source,
-                                post.userImage,
-                                post.userName,
-                                post.createdAt,
-                                post.email,
-                                post.downloads,
-                                post.postId,
-                                post.likes,
-                                post.description);
+                            return gridViewWidget(post.id, post.source, post.userImage,
+                                post.userName, post.createdAt, post.email, post.downloads,
+                                post.postId, post.likes, post.description);
                           }
                       );
                     }
@@ -403,8 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 }
                 return const Center(
-                  child: Text(
-                    'Something went wrong',
+                  child: Text('Something went wrong',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 30),
                   ),
