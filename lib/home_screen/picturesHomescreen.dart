@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? userId;
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
+
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)

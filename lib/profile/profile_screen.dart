@@ -206,11 +206,12 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<bool> onBackPressed() async {
-    print("Going back. save my interests");
-    await FirebaseFirestore.instance.collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid).update({
-      'interests': interests,
-    });
+    if (interests.isNotEmpty){
+      await FirebaseFirestore.instance.collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid).update({
+        'interests': interests,
+      });
+    }
     return true;
   }
 
