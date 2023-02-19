@@ -85,17 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
       String docId, String userId, int downloads, String postId,
       List<String>? likes, String description) {
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
-        OwnerDetails(
-          img: img,
-          userImg: userImg,
-          name: name,
-          date: date,
-          docId: docId,
-          userId: userId,
-          downloads: downloads,
-          postId: postId,
-          likes: likes,
-          description: description,
+        OwnerDetails(img: img, userImg: userImg, name: name,
+          date: date, docId: docId, userId: userId, downloads: downloads,
+          postId: postId, likes: likes, description: description,
         )));
   }
 
@@ -122,16 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      goToDetails(
-                          img,
-                          userImg,
-                          name,
-                          date,
-                          docId,
-                          userId,
-                          downloads,
-                          postId,
-                          likes,
+                      goToDetails(img, userImg, name, date,
+                          docId, userId, downloads, postId, likes,
                           description);
                     },
                     child: ClipRRect(
@@ -153,8 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.pushReplacement(
                                   context, MaterialPageRoute(builder: (_) =>
                                   UsersSpecificPostsScreen(
-                                    userId: docId,
-                                    userName: name,
+                                    userId: docId, userName: name,
                                   )));
                             },
                             child: CircleAvatar(
@@ -204,17 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
                 onTap: () {
-                  goToDetails(
-                      img,
-                      userImg,
-                      name,
-                      date,
-                      docId,
-                      userId,
-                      downloads,
-                      postId,
-                      likes,
-                      description);
+                  goToDetails(img, userImg, name, date, docId, userId,
+                      downloads, postId, likes, description);
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10), // Image border
@@ -379,14 +353,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   else {
                     return const Center(
-                        child: Text("There are no Posts",
-                          style: TextStyle(fontSize: 20),)
+                        child: Text("There are no Posts", style: TextStyle(fontSize: 20),)
                     );
                   }
                 }
                 return const Center(
-                  child: Text('Something went wrong',
-                    style: TextStyle(
+                  child: Text('Something went wrong', style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 30),
                   ),
                 );
