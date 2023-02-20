@@ -11,7 +11,7 @@ Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
-const serverKey = "key=AAAAa6DK0FU:APA91bGr7tMfzOpEHztQr1zmtPhJ837GpfS3i3khwZnnNSfZAupNxbmE0M-BbfSomctSh4-HJCeyA7UHuZtJm4j4nFVYl8X1-ik5M6YKZAUD5sB3_YRZE0iFCPhBlGakGlbFRHS-dRxB";
+String serverKey = "key=";
 const fcmURL = "https://fcm.googleapis.com/fcm/send";
 
 
@@ -39,9 +39,13 @@ class NotificationManager{
   }
 
   void sendNotification(String token, NotificationModel model) async {
+    final collection = FirebaseFirestore.instance.collection('cms').doc("aiYFVBMWhZjcBdy4FTwg");
+    final cms = await collection.get();
+    serverKey = "$serverKey${cms.get("fcm").toString()}";
+    print("key $serverKey");
+
     try {
-      await http.post(
-        Uri.parse(fcmURL),
+      await http.post(Uri.parse(fcmURL),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': serverKey
@@ -73,7 +77,6 @@ class NotificationManager{
 
     final fcmToken = await FirebaseMessaging.instance.getToken();
     if (fcmToken != null && fcmToken != deviceToken) updateToken(fcmToken);
-
   }
 
   void initServer() {

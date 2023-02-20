@@ -10,6 +10,7 @@ import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
@@ -66,11 +67,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     readUserInfo();
 
-    // NotificationModel model = NotificationModel(title: "Hello from Jonas",
-    //     body: "Jonas has just liked your post", dataBody: "should be post url",
-    // dataTitle: "Should be post description");
-    // String token = "fRUDbKNKRz6gQ7v2MWGAA5:APA91bELAlAPokiqOjgItWg3S0zMKGNdzf7SZJSdrGWKjBOz2seG7FlHPRUcD7KN8RNYiAo8uiatHDnM8RZi_yQKSB4wyRlUVIA0h3f46UpzhLCORW0a1A20mtEU2-PPH6AWQcqKKZQ3";
-    // notificationManager?.sendNotification(token, model);
+    NotificationModel model = NotificationModel(title: "Hello from Jonas",
+        body: "Jonas has just liked your post", dataBody: "should be post url",
+    dataTitle: "Should be post description");
+    String token = "fRUDbKNKRz6gQ7v2MWGAA5:APA91bELAlAPokiqOjgItWg3S0zMKGNdzf7SZJSdrGWKjBOz2seG7FlHPRUcD7KN8RNYiAo8uiatHDnM8RZi_yQKSB4wyRlUVIA0h3f46UpzhLCORW0a1A20mtEU2-PPH6AWQcqKKZQ3";
+    notificationManager?.sendNotification(token, model);
 
     // Timer.run(() {
     //   FancyAlertDialog.showFancyAlertDialog(
