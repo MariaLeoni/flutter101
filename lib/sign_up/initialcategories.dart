@@ -113,9 +113,7 @@ FirebaseAuth _auth = FirebaseAuth.instance;
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: (subCategoryList != null && subCategoryList!.isEmpty) ? const Text('Nothing Selected',
-                           style: TextStyle(
-                          color: Colors.white,
-                             fontSize: 20.0,
+                           style: TextStyle(color: Colors.white, fontSize: 20.0,
                              fontWeight: FontWeight.bold,
                         )) : subCategories,
                       ),
@@ -129,7 +127,6 @@ FirebaseAuth _auth = FirebaseAuth.instance;
                               press: () async {
                                 FirebaseFirestore.instance.collection('Interests')
                                     .doc(_auth.currentUser!.uid).set({'categories': selectedInterests});
-
                               }
                           )
                       ),

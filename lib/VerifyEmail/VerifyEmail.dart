@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sharedstudent1/categoryView.dart';
-import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

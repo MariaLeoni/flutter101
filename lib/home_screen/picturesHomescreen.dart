@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/Activity%20Feed/feed.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
@@ -44,6 +45,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
 
+  NotificationManager? notificationManager;
+
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -57,7 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
+
     readUserInfo();
+
+    // NotificationModel model = NotificationModel(title: "Hello from Jonas",
+    //     body: "Jonas has just liked your post", dataBody: "should be post url",
+    // dataTitle: "Should be post description");
+    // String token = "fRUDbKNKRz6gQ7v2MWGAA5:APA91bELAlAPokiqOjgItWg3S0zMKGNdzf7SZJSdrGWKjBOz2seG7FlHPRUcD7KN8RNYiAo8uiatHDnM8RZi_yQKSB4wyRlUVIA0h3f46UpzhLCORW0a1A20mtEU2-PPH6AWQcqKKZQ3";
+    // notificationManager?.sendNotification(token, model);
 
     // Timer.run(() {
     //   FancyAlertDialog.showFancyAlertDialog(
@@ -84,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void goToDetails(String img, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, String postId,
       List<String>? likes, String description) {
+
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
         OwnerDetails(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
@@ -176,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget gridViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
+
     return GridView.count(
         primary: false,
         padding: const EdgeInsets.all(2.0),
