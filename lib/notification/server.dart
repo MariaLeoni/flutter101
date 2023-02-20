@@ -42,7 +42,6 @@ class NotificationManager{
     final collection = FirebaseFirestore.instance.collection('cms').doc("aiYFVBMWhZjcBdy4FTwg");
     final cms = await collection.get();
     serverKey = "$serverKey${cms.get("fcm").toString()}";
-    print("key $serverKey");
 
     try {
       await http.post(Uri.parse(fcmURL),
