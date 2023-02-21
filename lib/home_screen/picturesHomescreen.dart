@@ -21,9 +21,9 @@ import '../sign_up/initialcategories.dart';
 final themeMode = ValueNotifier(2);
 
 class PictureHomeScreen extends StatefulWidget {
-  String? category;
+  String category = "";
 
-  PictureHomeScreen({super.key, this.category});
+  PictureHomeScreen({super.key, required this.category});
 
   @override
   State<PictureHomeScreen> createState() => PictureHomeScreenState();
@@ -221,13 +221,16 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         ]
     );
   }
+  
   void updateInterests(Map<String, List<String>?> interests) {
     setState(() {
       this.interests = interests;
     });
   }
+  
   @override
   Widget build(BuildContext context) {
+    
     return Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -324,16 +327,19 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => ActivityFeed()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
                   },
                   icon: const Icon(Icons.doorbell_outlined),
                 ),
               ]
           ),
           body: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('wallpaper')
-                  .orderBy('createdAt', descending: true).snapshots(),
+              stream: widget.category == "random" ? FirebaseFirestore.instance
+                  .collection('wallpaper').orderBy('createdAt', descending: true).snapshots() :
+
+              FirebaseFirestore.instance.collection('wallpaper')
+                  .where("category", arrayContains: widget.category).snapshots(),
+
               builder: (BuildContext context,
                   AsyncSnapshot <QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

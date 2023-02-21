@@ -108,23 +108,6 @@ class CommentState extends State<Comment> {
     });
     AddLikeToActivityFeed();
     commentController.clear();
-    // bool isNotPostOwner = widget.userId != _auth.currentUser!.uid;
-    // if (isNotPostOwner) {
-    //   FirebaseFirestore.instance.collection('Activity Feed')
-    //       .doc(widget.userId)
-    //       .collection('FeedItems')
-    //       .add({
-    //     "type": "comment",
-    //     "commentData": commentController.text,
-    //     "timestamp": DateTime.now(),
-    //     "postId": widget.postId,
-    //     "userId": _auth.currentUser!.uid,
-    //     "name": myName,
-    //     "userProfileImage": myImage,
-    //     "Image": Image,
-    //   });
-    //   commentController.clear();
-   // }
   }
 
   void readUserInfo() async {
