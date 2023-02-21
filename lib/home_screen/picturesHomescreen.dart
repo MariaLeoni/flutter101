@@ -21,11 +21,9 @@ import '../sign_up/initialcategories.dart';
 final themeMode = ValueNotifier(2);
 
 class PictureHomeScreen extends StatefulWidget {
-  String? userId;
-  String? name;
-  String? userImg;
+  String? category;
 
-  PictureHomeScreen({super.key, this.userId, this.name, this.userImg,});
+  PictureHomeScreen({super.key, this.category});
 
   @override
   State<PictureHomeScreen> createState() => PictureHomeScreenState();

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sharedstudent1/misc/global.dart';
-
 import '../search_userpost/postmodel.dart';
 
 class Post {
@@ -17,7 +16,7 @@ class Post {
   PostType? postType;
   
   List<String>? likes = List.empty(growable: true);
-  Map<String, List<String>?> category = {};
+  List<String>? category = List.empty(growable: true);
 
   Post({
     required this.id,
@@ -36,28 +35,29 @@ class Post {
   static Post getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index, PostType type){
     String postSource = "";
     if (type == PostType.image){
-      postSource = snapshot.data!.docs[index]['Image'];
+      postSource = snapshot.data!.docs[index]['Image'] ? snapshot.data!.docs[index]['Image'] : "";
     }
     else {
-      postSource = snapshot.data!.docs[index]['video'];
+      postSource = snapshot.data!.docs[index]['video'] ? snapshot.data!.docs[index]['video'] : "";
     }
 
     return Post(id: snapshot.data?.docs[index]["id"],
         source: postSource,
-        userImage: snapshot.data!.docs[index]['userImage'] ,
-        createdAt:snapshot.data!.docs[index]['createdAt'].toDate(),
+        userImage: snapshot.data!.docs[index]['userImage'] ? snapshot.data!.docs[index]['userImage'] : "",
+        createdAt: snapshot.data!.docs[index]['createdAt'].toDate(),
         userName: snapshot.data!.docs[index]['name'],
         email: snapshot.data!.docs[index]['email'],
         postId: snapshot.data!.docs[index]['postId'],
         downloads: snapshot.data!.docs[index]['downloads'],
-        description:snapshot.data!.docs[index]['description'],
+        description: snapshot.data!.docs[index]['description'] ? snapshot.data!.docs[index]['description'] : "",
         likes: List.from(snapshot.data!.docs[index]['likes']),
-        category: {}
+        category: List.from(snapshot.data!.docs[index]['category'])
     );
   }
 
   static Post getPostSnapshot(Map<String, dynamic> data, PostType type){
     PostModel postModel = PostModel.fromJson(data, type);
+
     return Post(id: postModel.id!,
         source: postModel.source!,
         userImage: postModel.userImage!,
@@ -68,7 +68,7 @@ class Post {
         downloads: postModel.downloads!,
         description: postModel.description!,
         likes: List.empty(),
-        category: {}
+        category: List.empty()
     );
   }
 }

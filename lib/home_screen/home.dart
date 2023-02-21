@@ -41,6 +41,9 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
           subList.add(subCategory);
         });
         myInterests?.addAll(subList);
+        if (myInterests != null && myInterests!.isNotEmpty){
+          myInterests!.add("random");
+        }
       });
       setState(() {
         myInterests;
