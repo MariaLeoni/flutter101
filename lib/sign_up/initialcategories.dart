@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
-import '../home_screen/picturesHomescreen.dart';
+import '../home_screen/home.dart';
 import '../misc/category.dart';
 import '../misc/global.dart';
 import '../widgets/button_square.dart';

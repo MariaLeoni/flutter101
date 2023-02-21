@@ -20,18 +20,18 @@ import '../sign_up/initialcategories.dart';
 
 final themeMode = ValueNotifier(2);
 
-class HomeScreen extends StatefulWidget {
+class PictureHomeScreen extends StatefulWidget {
   String? userId;
   String? name;
   String? userImg;
 
-  HomeScreen({super.key, this.userId, this.name, this.userImg,});
+  PictureHomeScreen({super.key, this.userId, this.name, this.userImg,});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<PictureHomeScreen> createState() => PictureHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   String changeTitle = "Grid View";
   bool checkView = false;

@@ -12,7 +12,7 @@ import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
-import 'home_screen/picturesHomescreen.dart';
+import 'home_screen/home.dart';
 import 'misc/progressIndicator.dart';
 
 class PostUploader extends StatefulWidget {

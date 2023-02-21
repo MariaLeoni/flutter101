@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
-import '../home_screen/picturesHomescreen.dart';
+import '../home_screen/home.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
@@ -269,22 +269,6 @@ removeLikeFromActivityFeed() {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // IconButton(
-                    //   splashRadius: 50,
-                    //   iconSize: 50,
-                    //   onPressed: () {
-                    //     if (_favoriteController.status ==
-                    //         AnimationStatus.dismissed) {
-                    //       _favoriteController.reset();
-                    //       _favoriteController.animateTo(0.6);
-                    //     } else {
-                    //       _favoriteController.reverse();
-                    //     }
-                    //     handleLikePost();
-                    //   },
-                    //  icon: Lottie.asset(Icons8.heart_color,
-                    //       controller: _favoriteController),
-                    // ),
                     GestureDetector(
                       onTap: () {
                         handleLikePost();
