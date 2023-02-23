@@ -10,17 +10,12 @@ import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-<<<<<<< HEAD
-import '../InitialCategories.dart';
-=======
 import '../notification/notification.dart';
->>>>>>> 0ccfe7906588bd1583e29aa47d696de9fa7e930a
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
 import'package:uuid/uuid.dart';
 import '../search_post/users_specific_posts.dart';
-import '../sign_up/initialcategories.dart';
 
 final themeMode = ValueNotifier(2);
 
@@ -116,6 +111,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
+
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -316,7 +312,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 IconButton(
                   onPressed: () {
                     Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => VideoHomeScreen(),),);
+                      MaterialPageRoute(builder: (_) => VideoHomeScreen(category: widget.category,),),);
                   },
                   icon: const Icon(Icons.play_circle_outlined),
                 ),

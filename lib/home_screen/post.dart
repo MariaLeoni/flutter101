@@ -52,13 +52,8 @@ class Post {
         downloads: snapshot.data!.docs[index]['downloads'],
         description: snapshot.data!.docs[index]['description'],
         likes: List.from(snapshot.data!.docs[index]['likes']),
-<<<<<<< HEAD
-        category: {}
-
-=======
         category: snapshot.data!.docs[index].toString().contains("category") ?
         List.from(snapshot.data!.docs[index]['category']) : List.empty()
->>>>>>> 0ccfe7906588bd1583e29aa47d696de9fa7e930a
     );
   }
 

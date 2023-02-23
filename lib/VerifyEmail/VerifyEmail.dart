@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-<<<<<<< HEAD
 import 'package:sharedstudent1/InitialCategories.dart';
-import 'package:sharedstudent1/categoryView.dart';
-import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
-=======
->>>>>>> 0ccfe7906588bd1583e29aa47d696de9fa7e930a
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import '../sign_up/initialcategories.dart';
 
 
 class VerifyEmail extends StatefulWidget {

@@ -58,7 +58,7 @@ class PostUploaderState extends State<PostUploader> {
     LoadingIndicatorDialog().dismiss();
 
     if (!mounted) return;
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => VideoHomeScreen()));
+    Navigator.canPop(context) ? Navigator.pop(context) : null;
   }
 
   postPicture() {
@@ -79,7 +79,6 @@ class PostUploaderState extends State<PostUploader> {
 
     LoadingIndicatorDialog().dismiss();
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
     if (!mounted) return;
     Navigator.canPop(context) ? Navigator.pop(context) : null;
   }
@@ -325,9 +324,7 @@ class PostUploaderState extends State<PostUploader> {
                   updateInterests(interests);
                 }, isEditable: false,)
                 ),
-                SizedBox.fromSize(
-                    size: const Size(300, 50), // Image radius
-                    child: TextFormField(
+                Flexible(child: TextFormField(
                       controller: commentController,
                       decoration: const InputDecoration(labelText: "Add a title..."),
                     )
