@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../home_screen/picturesHomescreen.dart';
+import '../home_screen/home.dart';
 import '../messagesearch/messagesearch_post.dart';
 
-class Message extends StatefulWidget {
+class FLMessage extends StatefulWidget {
 
 
   @override
-  State<Message> createState() => _MessageState();
+  State<FLMessage> createState() => _FLMessageState();
 }
 
-class _MessageState extends State<Message> {
+class _FLMessageState extends State<FLMessage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

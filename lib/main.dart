@@ -4,6 +4,8 @@ import  'package:firebase_core/firebase_core.dart';
 import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 
+import 'home_screen/home.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

@@ -71,6 +71,7 @@ dependencies:
       url: https://github.com/tintran-dev/betterplayer.git
 
   firebase_database: ^10.0.10
+  firebase_in_app_messaging: ^0.7.0+13
 dev_dependencies:
   flutter_test:
     sdk: flutter

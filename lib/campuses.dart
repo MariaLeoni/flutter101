@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'Categories.dart';
+import 'categories.dart';
 
 class Campuses extends StatefulWidget {
 

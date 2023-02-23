@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_userpost/searchView.dart';
-import 'home_screen/picturesHomescreen.dart';
+import 'home_screen/home.dart';
 
 
 class Search extends StatefulWidget {

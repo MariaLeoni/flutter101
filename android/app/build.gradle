@@ -69,5 +69,6 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.core:core-splashscreen:1.0.0-alpha01'
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
 }
 apply plugin:'com.google.gms.google-services'

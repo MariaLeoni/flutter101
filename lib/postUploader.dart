@@ -12,7 +12,7 @@ import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
-import 'home_screen/picturesHomescreen.dart';
+import 'home_screen/home.dart';
 import 'misc/progressIndicator.dart';
 
 class PostUploader extends StatefulWidget {
@@ -29,6 +29,7 @@ class PostUploaderState extends State<PostUploader> {
   String postId = const Uuid().v4();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Map<String, List<String>?> interests = {};
+  List<String> selectedInterests = List.empty(growable: true);
 
   String? myImage;
   String? myName;
@@ -51,7 +52,7 @@ class PostUploaderState extends State<PostUploader> {
       'postId': postId,
       'likes': <String>[],
       'description': commentController.text,
-      'category': interests,
+      'category': selectedInterests,
     });
 
     LoadingIndicatorDialog().dismiss();
@@ -73,7 +74,7 @@ class PostUploaderState extends State<PostUploader> {
       'postId': postId,
       'likes': <String>[],
       'description': commentController.text,
-      'category': interests,
+      'category': selectedInterests,
     });
 
     LoadingIndicatorDialog().dismiss();
@@ -251,6 +252,13 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void uploadPost() async {
+
+    interests.forEach((key, value) {
+      if (value != null) {
+        selectedInterests.addAll(value);
+      }
+    });
+
     if(videoFile == null && imageFile == null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Looks like no media was selected or captured")));

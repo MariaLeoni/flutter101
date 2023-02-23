@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/messagesearch/users_design_widget.dart';
 import 'package:sharedstudent1/search_post/user.dart';
-import '../home_screen/picturesHomescreen.dart';
+
+import '../home_screen/home.dart';
 
 class messageSearchPost extends StatefulWidget {
 

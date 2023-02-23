@@ -6,10 +6,15 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/Activity%20Feed/feed.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+<<<<<<< HEAD
 import '../InitialCategories.dart';
+=======
+import '../notification/notification.dart';
+>>>>>>> 0ccfe7906588bd1583e29aa47d696de9fa7e930a
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
@@ -19,18 +24,16 @@ import '../sign_up/initialcategories.dart';
 
 final themeMode = ValueNotifier(2);
 
-class HomeScreen extends StatefulWidget {
-  String? userId;
-  String? name;
-  String? userImg;
+class PictureHomeScreen extends StatefulWidget {
+  String category = "";
 
-  HomeScreen({super.key, this.userId, this.name, this.userImg,});
+  PictureHomeScreen({super.key, required this.category});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<PictureHomeScreen> createState() => PictureHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   String changeTitle = "Grid View";
   bool checkView = false;
@@ -45,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
 
+  NotificationManager? notificationManager;
+
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -58,7 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
+
     readUserInfo();
+
+    //sendNotification();
 
     // Timer.run(() {
     //   FancyAlertDialog.showFancyAlertDialog(
@@ -82,21 +93,22 @@ class _HomeScreenState extends State<HomeScreen> {
     // });
   }
 
+  void sendNotification() {
+    NotificationModel model = NotificationModel(title: "Hello from Jonas",
+        body: "Jonas has just liked your post", dataBody: "should be post url",
+    dataTitle: "Should be post description");
+    String token = "fRUDbKNKRz6gQ7v2MWGAA5:APA91bELAlAPokiqOjgItWg3S0zMKGNdzf7SZJSdrGWKjBOz2seG7FlHPRUcD7KN8RNYiAo8uiatHDnM8RZi_yQKSB4wyRlUVIA0h3f46UpzhLCORW0a1A20mtEU2-PPH6AWQcqKKZQ3";
+    notificationManager?.sendNotification(token, model);
+  }
+
   void goToDetails(String img, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, String postId,
       List<String>? likes, String description) {
+
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
-        OwnerDetails(
-          img: img,
-          userImg: userImg,
-          name: name,
-          date: date,
-          docId: docId,
-          userId: userId,
-          downloads: downloads,
-          postId: postId,
-          likes: likes,
-          description: description,
+        OwnerDetails(img: img, userImg: userImg, name: name,
+          date: date, docId: docId, userId: userId, downloads: downloads,
+          postId: postId, likes: likes, description: description,
         )));
   }
 
@@ -123,16 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      goToDetails(
-                          img,
-                          userImg,
-                          name,
-                          date,
-                          docId,
-                          userId,
-                          downloads,
-                          postId,
-                          likes,
+                      goToDetails(img, userImg, name, date,
+                          docId, userId, downloads, postId, likes,
                           description);
                     },
                     child: ClipRRect(
@@ -154,8 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.pushReplacement(
                                   context, MaterialPageRoute(builder: (_) =>
                                   UsersSpecificPostsScreen(
-                                    userId: docId,
-                                    userName: name,
+                                    userId: docId, userName: name,
                                   )));
                             },
                             child: CircleAvatar(
@@ -194,6 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget gridViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
+
     return GridView.count(
         primary: false,
         padding: const EdgeInsets.all(2.0),
@@ -205,17 +209,8 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
                 onTap: () {
-                  goToDetails(
-                      img,
-                      userImg,
-                      name,
-                      date,
-                      docId,
-                      userId,
-                      downloads,
-                      postId,
-                      likes,
-                      description);
+                  goToDetails(img, userImg, name, date, docId, userId,
+                      downloads, postId, likes, description);
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10), // Image border
@@ -230,13 +225,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ]
     );
   }
+  
   void updateInterests(Map<String, List<String>?> interests) {
     setState(() {
       this.interests = interests;
     });
   }
+  
   @override
   Widget build(BuildContext context) {
+    
     return Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -332,16 +330,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 // ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => ActivityFeed()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
                   },
                   icon: const Icon(Icons.doorbell_outlined),
                 ),
               ]
           ),
           body: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('wallpaper')
-                  .orderBy('createdAt', descending: true).snapshots(),
+              stream: widget.category == "random" ? FirebaseFirestore.instance
+                  .collection('wallpaper').orderBy('createdAt', descending: true).snapshots() :
+
+              FirebaseFirestore.instance.collection('wallpaper')
+                  .where("category", arrayContains: widget.category).snapshots(),
+
               builder: (BuildContext context,
                   AsyncSnapshot <QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -379,14 +380,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   else {
                     return const Center(
-                        child: Text("There are no Posts",
-                          style: TextStyle(fontSize: 20),)
+                        child: Text("There are no Posts", style: TextStyle(fontSize: 20),)
                     );
                   }
                 }
                 return const Center(
-                  child: Text('Something went wrong',
-                    style: TextStyle(
+                  child: Text('Something went wrong', style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 30),
                   ),
                 );

@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
+import 'home.dart';
 import 'post.dart';
 import '../message/sendmessage.dart';
 import '../misc/global.dart';
@@ -137,7 +137,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Message(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => FLMessage(),),);
                 },
                 icon: const Icon(Icons.message_rounded),
               ),

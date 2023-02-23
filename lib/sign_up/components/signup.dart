@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/account_check/account_check.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
@@ -250,8 +249,7 @@ class _CredentialsState extends State<Credentials> {
                     }
                   }
               ),
-              AccountCheck(
-                login: false,
+              AccountCheck(login: false,
                 press: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const LoginScreen()));
                 },
