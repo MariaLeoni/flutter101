@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sharedstudent1/InitialCategories.dart';
 import 'package:sharedstudent1/categoryView.dart';
 import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
@@ -20,7 +21,6 @@ class VerifyEmailState extends State<VerifyEmail> {
   bool isEmailVerified = false;
   Timer? timer;
   bool canResendEmail = false;
-  Map<String, List<String>?> interests = {};
   @override
   initState() {
     super.initState();
@@ -62,17 +62,11 @@ class VerifyEmailState extends State<VerifyEmail> {
       Fluttertoast.showToast(msg: error.toString());
     }
   }
-  void updateInterests(Map<String, List<String>?> interests) {
-    setState(() {
-      this.interests = interests;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) =>
-      isEmailVerified ? CategoryView1(interestCallback: (Map<String, List<String>?> interests) {
-        updateInterests(interests);
-      }, isEditable: false,) : Scaffold(
+      isEmailVerified ? InitialCategories(): Scaffold(
           appBar: AppBar(
             title: const Text('Verify Email'),
           ),

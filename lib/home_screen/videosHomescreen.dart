@@ -164,6 +164,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               if(snapshot.data!.docs.isNotEmpty)
               {
                 return ListView.builder(
+
                   physics: const BouncingScrollPhysics(),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {

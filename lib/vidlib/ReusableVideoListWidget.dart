@@ -1,12 +1,10 @@
 import 'dart:async';
-
 import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-
 import 'ReusableVideoListController.dart';
 import 'VideoListData.dart';
 
@@ -94,7 +92,24 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       }
     }
   }
-
+MainInfo(){
+  AspectRatio(
+  aspectRatio: 2,
+  child: controller != null
+  ? BetterPlayer(
+  controller: controller!,
+  )
+      : Container(
+  color: Colors.black,
+  child: const Center(
+  child: CircularProgressIndicator(
+  valueColor:
+  AlwaysStoppedAnimation<Color>(Colors.white),
+  ),
+  ),
+  ),
+  );
+    }
   ///TODO: Handle "setState() or markNeedsBuild() called during build." error
   ///when fast scrolling through the list
   @override
@@ -136,7 +151,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
               stream: betterPlayerControllerStreamController.stream,
               builder: (context, snapshot) {
                 return AspectRatio(
-                  aspectRatio: 16 / 9,
+                  aspectRatio: 2,
                   child: controller != null
                       ? BetterPlayer(
                     controller: controller!,
@@ -177,7 +192,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                               Text(videoListData!.post.userName,
                                 style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                               ),
-                              const SizedBox(height: 10.0),
+                              const SizedBox(height:10.0),
                               Text(DateFormat("dd MMM, yyyy - hh:mn a").format(videoListData!.post.createdAt).toString(),
                                 style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                               )

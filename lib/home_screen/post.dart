@@ -15,6 +15,7 @@ class Post {
   String postId = "";
   String description ="";
   PostType? postType;
+
   
   List<String>? likes = List.empty(growable: true);
   Map<String, List<String>?> category = {};
@@ -53,6 +54,7 @@ class Post {
         description:snapshot.data!.docs[index]['description'],
         likes: List.from(snapshot.data!.docs[index]['likes']),
         category: {}
+
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import '../InitialCategories.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
@@ -322,14 +323,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.play_circle_outlined),
                 ),
 
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryView1(interestCallback: (Map<String, List<String>?> interests) {
-                      updateInterests(interests);
-                    }, isEditable: false,)));
-                  },
-                  icon: const Icon(Icons.stream_outlined),
-                ),
+                // IconButton(
+
+                //   onPressed: () {
+                //     Navigator.push(context, MaterialPageRoute(builder: (_) => InitialCategories ()));
+                //   },
+                //   icon: const Icon(Icons.stream_outlined),
+                // ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(context,

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 
 import '../owner_details/owner_details.dart';
+import '../search_post/users_specific_posts.dart';
 import 'feedpost.dart';
 class ActivityFeed extends StatefulWidget {
 
@@ -103,8 +104,18 @@ class _ActivityFeedState extends State<ActivityFeed> {
                       )
                   )
               ),
-              leading: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(userProfileImage),
+              leading: GestureDetector(
+                onTap: () {
+                Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (_) =>
+                UsersSpecificPostsScreen(
+                userId: userId,
+                userName: name,
+                )));
+              },
+                    child: CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(userProfileImage),
+            ),
               ),
               subtitle: Text(
                 DateFormat("dd MMM, yyyy - hh:mn a").format(timestamp).toString(),
