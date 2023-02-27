@@ -8,13 +8,14 @@ class PostModel {
   Timestamp? createdAt;
   String? description;
   int? downloads;
+  int? viewcount;
   String? email;
   String? id;
   String? postId;
   PostType? type;
 
   PostModel({this.source, this.name, this.userImage, this.createdAt,
-    this.description, this. downloads, this.email, this.id, this.postId, this.type,
+    this.description, this. downloads, this.viewcount,this.email, this.id, this.postId, this.type,
   });
 
   PostModel.fromJson(Map<String, dynamic> json, PostType type){
@@ -32,6 +33,7 @@ class PostModel {
 
     description = json['description'];
     downloads = json['downloads'];
+    viewcount = json['viewcount'];
     postId = json['postId'];
   }
 
@@ -50,6 +52,7 @@ class PostModel {
     data['Image'] = source;
     data['description']= description;
     data['downloads']= downloads;
+
     data['postId'] = postId;
     return data;
   }

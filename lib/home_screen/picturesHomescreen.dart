@@ -10,11 +10,8 @@ import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-<<<<<<< HEAD
 import '../InitialCategories.dart';
-=======
 import '../notification/notification.dart';
->>>>>>> 0ccfe7906588bd1583e29aa47d696de9fa7e930a
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
