@@ -9,7 +9,6 @@ import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import '../InitialCategories.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
