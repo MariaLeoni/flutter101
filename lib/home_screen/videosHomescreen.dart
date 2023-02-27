@@ -18,6 +18,10 @@ import '../vidlib/VideoListData.dart';
 
 class VideoHomeScreen extends StatefulWidget {
 
+  String category = "";
+
+  VideoHomeScreen({super.key, required this.category});
+
   @override
   State<VideoHomeScreen> createState() => VideoHomeScreenState();
 }
@@ -25,10 +29,8 @@ class VideoHomeScreen extends StatefulWidget {
 class VideoHomeScreenState extends State<VideoHomeScreen> {
   bool checkView = false;
 
-  final ScrollController _scrollController = ScrollController();
   ReusableVideoListController videoListController = ReusableVideoListController();
   int lastMilli = DateTime.now().millisecondsSinceEpoch;
-  final bool _canBuildVideo = true;
 
   File? imageFile;
   File? videoFile;
@@ -56,7 +58,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   void videoSelected(VideoListData videoListData){
     Post post = videoListData.post;
     goToDetails(post.source, post.userImage, post.userName, post.createdAt, post.id, post.email,
-    post.downloads, post.description, post.likes, post.postId);
+        post.downloads, post.description, post.likes, post.postId);
   }
 
   void goToDetails(String vid, String userImg, String name, DateTime date,
@@ -150,9 +152,11 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             ]
 
         ),
-        body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('wallpaper2')
-              .orderBy('createdAt',descending: true).snapshots(),
+        body: StreamBuilder(stream: widget.category == "random" ? FirebaseFirestore.instance
+              .collection('wallpaper2').orderBy('createdAt', descending: true).snapshots() :
+
+          FirebaseFirestore.instance.collection('wallpaper2')
+              .where("category", arrayContains: widget.category).snapshots(),
 
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting )
@@ -174,7 +178,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                     return ReusableVideoListWidget(videoListData: videoListData,
                       videoListController: videoListController,
                       canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
-                      videoSelected(videoListData);
+                        videoSelected(videoListData);
                       },
                     );
                   },

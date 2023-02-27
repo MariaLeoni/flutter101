@@ -59,7 +59,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
-    return myInterests == null ? PictureHomeScreen(category: "random",) :
+    return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen(category: "random",) :
     Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(

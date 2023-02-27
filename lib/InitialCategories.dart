@@ -15,7 +15,12 @@ import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
 import 'home_screen/home.dart';
+<<<<<<< HEAD
 
+=======
+import 'home_screen/picturesHomescreen.dart';
+import 'misc/progressIndicator.dart';
+>>>>>>> 46cb45c47932004d8bc81109282cdf8eee9fc933
 
 class InitialCategories extends StatefulWidget {
 
