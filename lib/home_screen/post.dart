@@ -11,9 +11,9 @@ class Post {
   DateTime createdAt = DateTime.now();
   String email = "";
   int downloads = 0;
-  int viewcount =0;
+  int viewCount = 0;
   String postId = "";
-  String description ="";
+  String description = "";
   PostType? postType;
 
   
@@ -30,7 +30,7 @@ class Post {
     required this.postId,
     required this.description,
     required this.downloads,
-    required this.viewcount,
+    required this.viewCount,
     required this.likes,
     required this.category,
   });
@@ -52,7 +52,8 @@ class Post {
         email: snapshot.data!.docs[index]['email'],
         postId: snapshot.data!.docs[index]['postId'],
         downloads: snapshot.data!.docs[index]['downloads'],
-        viewcount: snapshot.data!.docs[index]['viewcount'],
+        viewCount: snapshot.data!.docs[index].toString().contains('viewcount') ?
+        snapshot.data!.docs[index]['viewcount'] : 0,
         description: snapshot.data!.docs[index]['description'],
         likes: List.from(snapshot.data!.docs[index]['likes']),
         category: snapshot.data!.docs[index].toString().contains("category") ?
@@ -71,7 +72,7 @@ class Post {
         email: postModel.email!,
         postId: postModel.postId!,
         downloads: postModel.downloads!,
-        viewcount: postModel.viewcount!,
+        viewCount: postModel.viewcount!,
         description: postModel.description!,
         likes: List.empty(),
         category: List.empty()

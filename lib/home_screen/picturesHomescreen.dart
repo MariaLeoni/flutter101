@@ -44,11 +44,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   int? viewcount =0;
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
-
-  Size? size;
-
   NotificationManager? notificationManager;
 
+  Size? size;
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
@@ -346,7 +344,7 @@ viewcounts(){
                   }
                   else {
                     return const Center(
-                        child: Text("There are no Posts for selection", style: TextStyle(fontSize: 20),)
+                        child: Text("Sorry, there are no Posts for selection", style: TextStyle(fontSize: 20),)
                     );
                   }
                 }

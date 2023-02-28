@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,10 @@ class ReusableVideoListWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ReusableVideoListWidgetState createState() => _ReusableVideoListWidgetState();
+  ReusableVideoListWidgetState createState() => ReusableVideoListWidgetState();
 }
 
-class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
+class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   VideoListData? get videoListData => widget.videoListData;
   VideoSelected? get videoSelected => widget.videoSelected;
   BetterPlayerController? controller;
@@ -92,28 +93,27 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       }
     }
   }
-MainInfo(){
-  AspectRatio(
-  aspectRatio: 2,
-  child: controller != null
-  ? BetterPlayer(
-  controller: controller!,
-  )
-      : Container(
-  color: Colors.black,
-  child: const Center(
-  child: CircularProgressIndicator(
-  valueColor:
-  AlwaysStoppedAnimation<Color>(Colors.white),
-  ),
-  ),
-  ),
-  );
-    }
+
+
   ///TODO: Handle "setState() or markNeedsBuild() called during build." error
   ///when fast scrolling through the list
   @override
   Widget build(BuildContext context) {
+
+    var tmp = MediaQuery.of(context).size;
+
+    double height = tmp.height * 0.75;
+    var screenH = max(height, tmp.width);
+    var screenW = min(height, tmp.width);
+
+    tmp = tmp;
+
+    height = tmp.height * 0.75;
+    var previewH = max(height, tmp.width);
+    var previewW = min(height, tmp.width);
+    var screenRatio = screenH / screenW;
+    var previewRatio = previewH / previewW;
+
     return Card(
       color: Colors.black,
       margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -133,7 +133,7 @@ MainInfo(){
                 _timer?.cancel();
                 _timer = null;
                 _timer = Timer(const Duration(milliseconds: 500), () {
-                  if (info.visibleFraction >= 0.6) {
+                  if (info.visibleFraction >= 0.7) {
                     _setupController();
                   } else {
                     _freeController();
@@ -141,7 +141,7 @@ MainInfo(){
                 });
                 return;
               }
-              if (info.visibleFraction >= 0.6) {
+              if (info.visibleFraction >= 0.7) {
                 _setupController();
               } else {
                 _freeController();
@@ -150,21 +150,17 @@ MainInfo(){
             child: StreamBuilder<BetterPlayerController?>(
               stream: betterPlayerControllerStreamController.stream,
               builder: (context, snapshot) {
-                return AspectRatio(
-                  aspectRatio: 2,
-                  child: controller != null
-                      ? BetterPlayer(
-                    controller: controller!,
-                  )
-                      : Container(
-                    color: Colors.black,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.white),
+                return SizedBox(
+                    width: tmp.width,
+                    height: tmp.height - 400,
+                    child: controller != null
+                        ? BetterPlayer(controller: controller!,)
+                        : Container(color: Colors.black, child: const Center(
+                      child: CircularProgressIndicator(valueColor:
+                      AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
-                    ),
-                  ),
+                    )
+                    )
                 );
               },
             ),
@@ -174,9 +170,9 @@ MainInfo(){
                 videoSelected!(videoListData!);
               },
               child: Column(children: [
-                const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text("Categories will be here"),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(videoListData!.post.description),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
@@ -190,11 +186,11 @@ MainInfo(){
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children:[
                               Text(videoListData!.post.userName,
-                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height:10.0),
-                              Text(DateFormat("dd MMM, yyyy - hh:mn a").format(videoListData!.post.createdAt).toString(),
-                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                              Text(DateFormat("dd MMM, yyyy - hh:mm a").format(videoListData!.post.createdAt).toString(),
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                               )
                             ]
                         )

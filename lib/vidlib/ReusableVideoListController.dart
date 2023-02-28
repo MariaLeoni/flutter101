@@ -6,7 +6,7 @@ class ReusableVideoListController {
   final List<BetterPlayerController> _usedBetterPlayerControllerRegistry = [];
 
   ReusableVideoListController() {
-    for (int index = 0; index < 3; index++) {
+    for (int index = 0; index < 10; index++) {
       _betterPlayerControllerRegistry.add(
         BetterPlayerController(
           const BetterPlayerConfiguration(autoPlay: true, handleLifecycle: false, autoDispose: false),
