@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,27 +31,29 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   ReusableVideoListController videoListController = ReusableVideoListController();
   int lastMilli = DateTime.now().millisecondsSinceEpoch;
 
-  File? imageFile;
-  File? videoFile;
-  String? videoUrl;
-  String? myImage;
-  String? myName;
-  String? vid;
+  int _currentPage = 0;
+  bool _isOnPageTurning = false;
+  final PageController _pageController = PageController(initialPage: 0,
+      keepPage: true);
 
-
-  void readUserInfo() async {
-    FirebaseFirestore.instance.collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get().then<dynamic>((DocumentSnapshot snapshot) {
-      myImage = snapshot.get('userImage');
-      myName = snapshot.get('name');
-    });
+  void _scrollListener() {
+    if (_isOnPageTurning && _pageController.page == _pageController.page!.roundToDouble){
+      setState(() {
+        _currentPage = _pageController.page!.toInt();
+        _isOnPageTurning = false;
+      });
+    } else if (!_isOnPageTurning && _currentPage.toDouble() != _pageController.page) {
+      if ((_currentPage.toDouble() - _pageController.page!).abs()>0.7){
+        setState(() {
+          _isOnPageTurning = true;
+        });
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    readUserInfo();
   }
 
   void videoSelected(VideoListData videoListData){
@@ -113,7 +114,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 ),
               ),
             ),
-            title: const Text("Video Posts"),
+            title: const Text("Videos"),
             centerTitle: true,
             leading: GestureDetector(
               onTap: () {
@@ -159,16 +160,12 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               .where("category", arrayContains: widget.category).snapshots(),
 
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
-            if(snapshot.connectionState == ConnectionState.waiting )
-            {
+            if(snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator(),);
             }
-            else if (snapshot.connectionState == ConnectionState.active)
-            {
-              if(snapshot.data!.docs.isNotEmpty)
-              {
+            else if (snapshot.connectionState == ConnectionState.active) {
+              if(snapshot.data!.docs.isNotEmpty) {
                 return ListView.builder(
-
                   physics: const BouncingScrollPhysics(),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {

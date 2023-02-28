@@ -48,3 +48,4 @@ typedef VideoSelected = void Function(VideoListData);
 bool checkCanBuildVideo() {
   return true;
 }
+

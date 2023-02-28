@@ -1,23 +1,14 @@
-import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
-import 'package:better_player/better_player.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/misc/global.dart';
-import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
 import 'home_screen/home.dart';
+
 import 'home_screen/picturesHomescreen.dart';
 import 'misc/progressIndicator.dart';
-
 
 class InitialCategories extends StatefulWidget {
 
@@ -59,10 +50,7 @@ class InitialCategoriesState extends State<InitialCategories> {
   void initState() {
     super.initState();
     readUserInfo();
-
     title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
-
-
   }
 
   void updateInterests(Map<String, List<String>?> interests) {

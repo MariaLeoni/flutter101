@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +9,11 @@ import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import '../InitialCategories.dart';
+import 'package:uuid/uuid.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
-import'package:uuid/uuid.dart';
 import '../search_post/users_specific_posts.dart';
 
 final themeMode = ValueNotifier(2);
@@ -31,11 +29,12 @@ class PictureHomeScreen extends StatefulWidget {
 
 class PictureHomeScreenState extends State<PictureHomeScreen> {
 
+
   String changeTitle = "Grid View";
   bool checkView = false;
 
-  File? imageFile;
-  File? videoFile;
+
+
   String? videoUrl;
   String? imageUrl;
   String? myImage;
@@ -46,17 +45,12 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
 
+  Size? size;
+
   NotificationManager? notificationManager;
 
-  void readUserInfo() async {
-    FirebaseFirestore.instance.collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get().then<dynamic>((DocumentSnapshot snapshot) {
-      myImage = snapshot.get('userImage');
-      myName = snapshot.get('name');
-      userId = FirebaseAuth.instance.currentUser!.uid;
-    });
-  }
+  final PageController _pageController = PageController(initialPage: 0,
+      keepPage: true);
 
   @override
   void initState() {
@@ -64,8 +58,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
     notificationManager = NotificationManager();
     notificationManager?.initServer();
-
-    readUserInfo();
 
     //sendNotification();
 
@@ -94,7 +86,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   void sendNotification() {
     NotificationModel model = NotificationModel(title: "Hello from Jonas",
         body: "Jonas has just liked your post", dataBody: "should be post url",
-    dataTitle: "Should be post description");
+        dataTitle: "Should be post description");
     String token = "fRUDbKNKRz6gQ7v2MWGAA5:APA91bELAlAPokiqOjgItWg3S0zMKGNdzf7SZJSdrGWKjBOz2seG7FlHPRUcD7KN8RNYiAo8uiatHDnM8RZi_yQKSB4wyRlUVIA0h3f46UpzhLCORW0a1A20mtEU2-PPH6AWQcqKKZQ3";
     notificationManager?.sendNotification(token, model);
   }
@@ -145,16 +137,17 @@ viewcounts(){
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10), // Image border
                       child: SizedBox.fromSize(
-                          size: const Size(500.0, 400.0), // Image radius
+                          size: Size(500.0, size == null ? 400 : size!.height * 0.75), // Image radius
                           child: Image.network(img, fit: BoxFit.cover)
                       ),
                     )
                 ),
-                const SizedBox(height: 15.0,),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 8.0, right: 8.0, bottom: 8.0),
-                  child: Row(
+                 const SizedBox(height: 12.0,),
+                // Padding(
+                //   padding: const EdgeInsets.only(
+                //       left: 8.0, right: 8.0, bottom: 8.0),
+                 // child:
+                  Row(
                       children: [
                         GestureDetector(
                             onTap: () {
@@ -173,13 +166,12 @@ viewcounts(){
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(name,
-                                  style: const TextStyle(color: Colors.white,
+                                Text(name, style: const TextStyle(color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Text(
-                                  DateFormat("dd MMM, yyyy - hh:mn a").format(
+                                  DateFormat("dd MMM, yyyy - hh:mm a").format(
                                       date).toString(),
                                   style: const TextStyle(color: Colors.white54,
                                       fontWeight: FontWeight.bold),
@@ -189,13 +181,14 @@ viewcounts(){
                         ),
                       ]
                   ),
-                )
+                //)
               ],
             )
         ),
       ),
     );
   }
+
 
   Widget gridViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
@@ -230,15 +223,18 @@ viewcounts(){
     );
   }
   
+
   void updateInterests(Map<String, List<String>?> interests) {
     setState(() {
       this.interests = interests;
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    
+
+    size = MediaQuery.of(context).size;
+
     return Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -278,20 +274,8 @@ viewcounts(){
                   ),
                 ),
               ),
-              title: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    changeTitle = "List View";
-                    checkView = true;
-                  });
-                },
-                onDoubleTap: () {
-                  setState(() {
-                    changeTitle = "Grid View";
-                    checkView = false;
-                  });
-                },
-                child: Text(changeTitle),
+              title: const Text("Photos", style: TextStyle(color: Colors.white,
+                  fontWeight: FontWeight.bold),
               ),
               centerTitle: true,
               leading: GestureDetector(
@@ -324,14 +308,6 @@ viewcounts(){
                   },
                   icon: const Icon(Icons.play_circle_outlined),
                 ),
-
-                // IconButton(
-
-                //   onPressed: () {
-                //     Navigator.push(context, MaterialPageRoute(builder: (_) => InitialCategories ()));
-                //   },
-                //   icon: const Icon(Icons.stream_outlined),
-                // ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
@@ -354,43 +330,29 @@ viewcounts(){
                 }
                 else if (snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.data!.docs.isNotEmpty) {
-                    if (checkView == true) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          Post post = Post.getPost(snapshot, index, PostType.image);
+                    return PageView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      controller: _pageController,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        Post post = Post.getPost(snapshot, index, PostType.image);
 
-                          return listViewWidget(post.id, post.source, post.userImage,
-                              post.userName, post.createdAt, post.email,
-                              post.downloads, post.postId, post.likes, post.description);
-                        },
-                      );
-                    }
-                    else {
-                      return GridView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            Post post = Post.getPost(snapshot, index, PostType.image);
-
-                            return gridViewWidget(post.id, post.source, post.userImage,
-                                post.userName, post.createdAt, post.email, post.downloads,
-                                post.postId, post.likes, post.description);
-                          }
-                      );
-                    }
+                        return listViewWidget(post.id, post.source, post.userImage,
+                            post.userName, post.createdAt, post.email,
+                            post.downloads, post.postId, post.likes, post.description);
+                      },
+                    );
                   }
                   else {
                     return const Center(
-                        child: Text("There are no Posts", style: TextStyle(fontSize: 20),)
+                        child: Text("There are no Posts for selection", style: TextStyle(fontSize: 20),)
                     );
                   }
                 }
                 return const Center(
                   child: Text('Something went wrong', style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 30),
+                      fontWeight: FontWeight.bold, fontSize: 30),
                   ),
                 );
               }

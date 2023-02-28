@@ -9,8 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 
 class VerifyEmail extends StatefulWidget {
-
-
+  
   @override
   VerifyEmailState createState() => VerifyEmailState();
 }
