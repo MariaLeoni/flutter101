@@ -41,6 +41,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String? myImage;
   String? myName;
   String? userId;
+  int? total;
+  int? viewcount =0;
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
 
@@ -107,7 +109,10 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
           postId: postId, likes: likes, description: description,
         )));
   }
-
+viewcounts(){
+    total = viewcount! + 1;
+    FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
+}
 
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
@@ -132,6 +137,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               children: [
                 GestureDetector(
                     onTap: () {
+                      viewcounts();
                       goToDetails(img, userImg, name, date,
                           docId, userId, downloads, postId, likes,
                           description);
@@ -206,6 +212,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
                 onTap: () {
+                  viewcounts();
                   goToDetails(img, userImg, name, date, docId, userId,
                       downloads, postId, likes, description);
                 },

@@ -95,7 +95,7 @@ AddLikeToActivityFeed() {
       "postOwnerImage": widget.img,
       "postOwnername": widget.name,
        "likes": widget.likes,
-      "downloads": widget.downloads,
+
     });
   }
 }
