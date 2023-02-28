@@ -29,11 +29,9 @@ class PictureHomeScreen extends StatefulWidget {
 class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   Map<String, List<String>?> interests = {};
-
-  Size? size;
-
   NotificationManager? notificationManager;
 
+  Size? size;
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
@@ -291,7 +289,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   }
                   else {
                     return const Center(
-                        child: Text("There are no Posts for selection", style: TextStyle(fontSize: 20),)
+                        child: Text("Sorry, there are no Posts for selection", style: TextStyle(fontSize: 20),)
                     );
                   }
                 }

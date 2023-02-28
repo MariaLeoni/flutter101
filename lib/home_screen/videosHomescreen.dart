@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
+import '../vidlib/videoWidget.dart';
 import 'home.dart';
 import 'post.dart';
 import '../message/sendmessage.dart';
@@ -33,6 +34,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
 
   int _currentPage = 0;
   bool _isOnPageTurning = false;
+
+  Size? size;
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
@@ -54,6 +57,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    _pageController.addListener(_scrollListener);
   }
 
   void videoSelected(VideoListData videoListData){
@@ -76,6 +81,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -151,7 +158,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 icon: const Icon(Icons.home),
               ),
             ]
-
         ),
         body: StreamBuilder(stream: widget.category == "random" ? FirebaseFirestore.instance
               .collection('wallpaper2').orderBy('createdAt', descending: true).snapshots() :
@@ -165,12 +171,25 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             }
             else if (snapshot.connectionState == ConnectionState.active) {
               if(snapshot.data!.docs.isNotEmpty) {
-                return ListView.builder(
+                return PageView.builder(
                   physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  controller: _pageController,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
                     Post post = Post.getPost(snapshot, index, PostType.video);
+
                     VideoListData videoListData = VideoListData(post);
+
+                    // return VideoItemWidget(videoInfo: videoListData,
+                    //   pageIndex: index, currentPageIndex: _currentPage,
+                    //   isPaused: _isOnPageTurning,
+                    //   videoEnded: (){
+                    //      print("Video at $_currentPage is ended");
+                    //   },
+                    //     videoListController: videoListController,
+                    //     canBuildVideo: checkCanBuildVideo
+                    // );
 
                     return ReusableVideoListWidget(videoListData: videoListData,
                       videoListController: videoListController,
@@ -183,8 +202,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               }
               else{
                 return const Center(
-                    child: Text("There are no Posts",
-                      style: TextStyle(fontSize: 20),)
+                    child: Text("Sorry, there are no Posts for selection", style: TextStyle(fontSize: 20),)
                 );
               }
             }
