@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/cupertino.dart';
 
 class ReusableVideoListController {
   final List<BetterPlayerController> _betterPlayerControllerRegistry = [];
@@ -9,7 +10,9 @@ class ReusableVideoListController {
     for (int index = 0; index < 10; index++) {
       _betterPlayerControllerRegistry.add(
         BetterPlayerController(
-          const BetterPlayerConfiguration(autoPlay: true, handleLifecycle: false, autoDispose: false),
+          const BetterPlayerConfiguration(autoPlay: true, handleLifecycle: false,
+              autoDispose: false, fit: BoxFit.fill,
+              aspectRatio: 4/3, fullScreenByDefault: false),
         ),
       );
     }
