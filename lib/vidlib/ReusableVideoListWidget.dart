@@ -101,18 +101,7 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   Widget build(BuildContext context) {
 
     var tmp = MediaQuery.of(context).size;
-
-    double height = tmp.height * 0.75;
-    var screenH = max(height, tmp.width);
-    var screenW = min(height, tmp.width);
-
-    tmp = tmp;
-
-    height = tmp.height * 0.75;
-    var previewH = max(height, tmp.width);
-    var previewW = min(height, tmp.width);
-    var screenRatio = screenH / screenW;
-    var previewRatio = previewH / previewW;
+    print("Size $tmp");
 
     return Card(
       color: Colors.black,
@@ -150,18 +139,21 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
             child: StreamBuilder<BetterPlayerController?>(
               stream: betterPlayerControllerStreamController.stream,
               builder: (context, snapshot) {
-                return SizedBox(
-                    width: tmp.width,
-                    height: tmp.height - 400,
-                    child: controller != null
-                        ? BetterPlayer(controller: controller!,)
-                        : Container(color: Colors.black, child: const Center(
-                      child: CircularProgressIndicator(valueColor:
-                      AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                    )
-                );
+                return FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                        width: tmp.width,
+                        height: tmp.height * 0.75,
+                        child: controller != null
+                            ? BetterPlayer(controller: controller!,)
+                            : Container(color: Colors.black, child: const Center(
+                          child: CircularProgressIndicator(valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                        )
+                    ),
+                  );
               },
             ),
           ),

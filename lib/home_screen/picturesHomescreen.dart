@@ -85,7 +85,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     NotificationModel model = NotificationModel(title: "Hello from Jonas",
         body: "Jonas has just liked your post", dataBody: "should be post url",
         dataTitle: "Should be post description");
-    String token = "fRUDbKNKRz6gQ7v2MWGAA5:APA91bELAlAPokiqOjgItWg3S0zMKGNdzf7SZJSdrGWKjBOz2seG7FlHPRUcD7KN8RNYiAo8uiatHDnM8RZi_yQKSB4wyRlUVIA0h3f46UpzhLCORW0a1A20mtEU2-PPH6AWQcqKKZQ3";
+    String token = "fWrxOXwIS-i5hWV3hBRAuy:APA91bGho335472C4RUCFbzCIPzGzIS2Gb0j519yuSuGCxTiqeau4_PsG9pB0coGwEQyjhmEGzBUhLsL4eN4LrAcaBtG3uhKgeeS7uFleU7FUUzAg5a9F5ac-2cX9P7sTz6UMZ2831VQ";
     notificationManager?.sendNotification(token, model);
   }
 
