@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:better_player/better_player.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/misc/global.dart';
@@ -100,8 +98,7 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   @override
   Widget build(BuildContext context) {
 
-    var tmp = MediaQuery.of(context).size;
-    print("Size $tmp");
+    var screen = MediaQuery.of(context).size;
 
     return Card(
       color: Colors.black,
@@ -142,8 +139,8 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                 return FittedBox(
                     fit: BoxFit.cover,
                     child: SizedBox(
-                        width: tmp.width,
-                        height: tmp.height * 0.75,
+                        width: screen.width,
+                        height: screen.height * 0.75,
                         child: controller != null
                             ? BetterPlayer(controller: controller!,)
                             : Container(color: Colors.black, child: const Center(
