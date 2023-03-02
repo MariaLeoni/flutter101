@@ -253,7 +253,7 @@ viewcounts(){
                   backgroundColor: Colors.red,
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                        PostUploader(postType: PostType.image,)));
+                        PostUploader(postType: Type.image,)));
                   },
                   child: const Icon(Icons.camera_enhance),
                 ),
@@ -288,7 +288,7 @@ viewcounts(){
                 IconButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
-                      builder: (_) => Search(postType: PostType.image,),),);
+                      builder: (_) => Search(postType: Type.image,),),);
                   },
                   icon: const Icon(Icons.person_search),
                 ),
@@ -334,7 +334,7 @@ viewcounts(){
                       controller: _pageController,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (BuildContext context, int index) {
-                        Post post = Post.getPost(snapshot, index, PostType.image);
+                        Post post = Post.getPost(snapshot, index, Type.image);
 
                         return listViewWidget(post.id, post.source, post.userImage,
                             post.userName, post.createdAt, post.email,

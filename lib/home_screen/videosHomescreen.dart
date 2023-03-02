@@ -101,7 +101,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 heroTag: "1",
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video)));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: Type.video)));
                 },
                 child: const Icon(Icons.video_camera_back_outlined),
               ),
@@ -134,7 +134,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.video,),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: Type.video,),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
@@ -176,7 +176,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   controller: _pageController,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Post post = Post.getPost(snapshot, index, PostType.video);
+                    Post post = Post.getPost(snapshot, index, Type.video);
 
                     VideoListData videoListData = VideoListData(post);
                     return ReusableVideoListWidget(videoListData: videoListData,

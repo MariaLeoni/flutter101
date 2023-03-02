@@ -12,7 +12,7 @@ import 'misc/progressIndicator.dart';
 
 class InitialCategories extends StatefulWidget {
 
-  PostType? postType;
+  Type? postType;
   InitialCategories({super.key, this.postType,});
 
   @override
@@ -50,7 +50,7 @@ class InitialCategoriesState extends State<InitialCategories> {
   void initState() {
     super.initState();
     readUserInfo();
-    title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
+    title = widget.postType == Type.video ? "Post A Video" : "Post A Picture";
   }
 
   void updateInterests(Map<String, List<String>?> interests) {

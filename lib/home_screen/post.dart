@@ -14,7 +14,7 @@ class Post {
   int viewCount = 0;
   String postId = "";
   String description = "";
-  PostType? postType;
+  Type? postType;
 
   
   List<String>? likes = List.empty(growable: true);
@@ -35,9 +35,9 @@ class Post {
     required this.category,
   });
 
-  static Post getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index, PostType type){
+  static Post getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index, Type type){
     String postSource = "";
-    if (type == PostType.image){
+    if (type == Type.image){
       postSource = snapshot.data!.docs[index]['Image'];
     }
     else {
@@ -61,7 +61,7 @@ class Post {
     );
   }
 
-  static Post getPostSnapshot(Map<String, dynamic> data, PostType type){
+  static Post getPostSnapshot(Map<String, dynamic> data, Type type){
     PostModel postModel = PostModel.fromJson(data, type);
 
     return Post(id: postModel.id!,

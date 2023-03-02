@@ -17,7 +17,7 @@ import 'misc/progressIndicator.dart';
 
 class PostUploader extends StatefulWidget {
 
-  PostType? postType;
+  Type? postType;
   PostUploader({super.key, this.postType,});
 
   @override
@@ -150,7 +150,7 @@ class PostUploaderState extends State<PostUploader> {
     super.initState();
     readUserInfo();
 
-    title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
+    title = widget.postType == Type.video ? "Post A Video" : "Post A Picture";
 
     Timer.run(() {
       showAlert();
@@ -186,7 +186,7 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void cameraSource(){
-    if (widget.postType == PostType.video){
+    if (widget.postType == Type.video){
       getVideoFromCamera();
     }
     else {
@@ -195,7 +195,7 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void gallerySource(){
-    if (widget.postType == PostType.video){
+    if (widget.postType == Type.video){
       getVideoFromGallery();
     }
     else {
@@ -266,7 +266,7 @@ class PostUploaderState extends State<PostUploader> {
     try {
       LoadingIndicatorDialog().show(context);
 
-      if (widget.postType == PostType.video){
+      if (widget.postType == Type.video){
         final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}mp4');
         await ref.putFile(videoFile!);
         String path = await ref.getDownloadURL();
@@ -275,7 +275,7 @@ class PostUploaderState extends State<PostUploader> {
           postVideo();
         });
       }
-      else if (widget.postType == PostType.image){
+      else if (widget.postType == Type.image){
         final ref = FirebaseStorage.instance.ref().child('userImages')
             .child('${DateTime.now()}jpg');
         await ref.putFile(imageFile!);
@@ -311,7 +311,7 @@ class PostUploaderState extends State<PostUploader> {
                   onTap:() {
                     showAlert();
                   },
-                  child: widget.postType == PostType.video ? (videoFile == null ? Image.asset("assets/images/wolf.webp") :
+                  child: widget.postType == Type.video ? (videoFile == null ? Image.asset("assets/images/wolf.webp") :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
                     child: BetterPlayer.file(videoFile!.path,
                       betterPlayerConfiguration: const BetterPlayerConfiguration(
