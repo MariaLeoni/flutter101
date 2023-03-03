@@ -249,7 +249,6 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void uploadPost() async {
-
     interests.forEach((key, value) {
       if (value != null) {
         selectedInterests.addAll(value);

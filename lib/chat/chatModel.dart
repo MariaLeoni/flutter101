@@ -8,15 +8,16 @@ class ChatMessages {
   String content;
   String type;
   bool mine;
+  String? thumbnail;
 
-  ChatMessages(
-      {required this.idFrom,
+  ChatMessages({required this.idFrom,
         required this.idTo,
         required this.timestamp,
         required this.content,
         required this.type,
-        required this.mine
-      });
+        required this.mine,
+        required this.thumbnail,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -26,6 +27,7 @@ class ChatMessages {
       FirestoreConstants.content: content,
       FirestoreConstants.type: type,
       FirestoreConstants.mine: mine,
+      FirestoreConstants.thumbnail: thumbnail
     };
   }
 
@@ -36,13 +38,16 @@ class ChatMessages {
     String content = documentSnapshot.get(FirestoreConstants.content);
     String type = documentSnapshot.get(FirestoreConstants.type);
     bool mine = documentSnapshot.get(FirestoreConstants.mine);
+    String thumbnail = documentSnapshot.toString().contains(FirestoreConstants.thumbnail) ?
+    documentSnapshot.get(FirestoreConstants.thumbnail) : "";
 
-    return ChatMessages(
-        idFrom: idFrom,
-        idTo: idTo,
-        timestamp: timestamp,
-        content: content,
-        type: type,
-        mine: mine);
+    return ChatMessages(idFrom: idFrom, idTo: idTo,
+        timestamp: timestamp, content: content, type: type,
+        mine: mine, thumbnail: thumbnail);
+  }
+
+  @override
+  String toString(){
+    return "From:$idFrom To:$idTo Type:$type Thumbnail:$thumbnail time:$timestamp";
   }
 }

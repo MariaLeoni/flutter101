@@ -36,7 +36,7 @@ class ChatProvider{
   }
 
   void sendChatMessage(String content, PostType type, String groupChatId,
-      String currentUserId, String peerId) {
+      String currentUserId, String peerId, String? thumbnail) {
 
     DocumentReference documentReference = firebaseFirestore
         .collection(FirestoreConstants.pathMessageCollection)
@@ -53,7 +53,8 @@ class ChatProvider{
         timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
         content: content,
         type: type.name,
-        mine: true);
+        mine: true,
+        thumbnail: thumbnail);
 
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.set(documentReference, chatMessages.toJson());

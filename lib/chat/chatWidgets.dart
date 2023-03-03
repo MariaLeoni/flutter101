@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 Widget errorContainer() {
   return Container(
     clipBehavior: Clip.hardEdge,
-    child: Image.asset(
-      'assets/images/img_not_available.jpeg',
+    child: Image.asset('assets/images/img_not_available.jpeg',
       height: Sizes.dimen_200,
       width: Sizes.dimen_200,
     ),
@@ -16,10 +15,8 @@ Widget chatImage({required String imageSrc}) {
     decoration: BoxDecoration(
       border: Border.all(width: 2,),),
     child: Image.network(
-      imageSrc,
-      width: Sizes.dimen_200,
-      height: Sizes.dimen_200,
-      fit: BoxFit.cover,
+      imageSrc, width: Sizes.dimen_200,
+      height: Sizes.dimen_200, fit: BoxFit.cover,
       loadingBuilder: (BuildContext ctx, Widget child, ImageChunkEvent? loadingProgress) {
         if (loadingProgress == null) return child;
         return Container(
@@ -43,6 +40,45 @@ Widget chatImage({required String imageSrc}) {
       },
       errorBuilder: (context, object, stackTrace) => errorContainer(),
     ),
+  );
+}
+
+Widget chatVideoThumbnail({required String videoSrc}) {
+  String thumb = "https://firebasestorage.googleapis.com/v0/b/studentshared1.appspot.com/o/1677872264659?alt=media&token=fc1d355a-3733-4b30-8a99-c441fadb6467";
+  print("Thumbnail $thumb");
+  return Container(
+    decoration: BoxDecoration(
+      border: Border.all(width: 2,),),
+    child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Image.network(thumb, width: Sizes.dimen_200,
+            height: Sizes.dimen_200, fit: BoxFit.cover,
+            loadingBuilder: (BuildContext ctx, Widget child, ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                decoration: BoxDecoration(
+                  color: AppColors.greyColor2,
+                  borderRadius: BorderRadius.circular(Sizes.dimen_10),
+                ),
+                width: Sizes.dimen_200,
+                height: Sizes.dimen_200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.burgundy,
+                    value: loadingProgress.expectedTotalBytes != null &&
+                        loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, object, stackTrace) => errorContainer(),
+          ),
+          const Icon(Icons.play_arrow, color: Colors.green, size: Sizes.dimen_100,)
+        ]),
   );
 }
 
