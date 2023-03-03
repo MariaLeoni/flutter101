@@ -6,7 +6,7 @@ class ChatMessages {
   String idTo;
   String timestamp;
   String content;
-  Type type;
+  String type;
   bool mine;
 
   ChatMessages(
@@ -34,7 +34,7 @@ class ChatMessages {
     String idTo = documentSnapshot.get(FirestoreConstants.idTo);
     String timestamp = documentSnapshot.get(FirestoreConstants.timestamp);
     String content = documentSnapshot.get(FirestoreConstants.content);
-    Type type = documentSnapshot.get(FirestoreConstants.type);
+    String type = documentSnapshot.get(FirestoreConstants.type);
     bool mine = documentSnapshot.get(FirestoreConstants.mine);
 
     return ChatMessages(
@@ -43,6 +43,6 @@ class ChatMessages {
         timestamp: timestamp,
         content: content,
         type: type,
-    mine: mine);
+        mine: mine);
   }
 }

@@ -157,6 +157,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  equatable:
+    dependency: "direct main"
+    description:
+      name: equatable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -323,6 +330,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_3d_choice_chip:
+    dependency: "direct main"
+    description:
+      name: flutter_3d_choice_chip
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   flutter_blurhash:
     dependency: transitive
     description:
@@ -983,7 +997,7 @@ packages:
     source: hosted
     version: "2.0.13"
   video_thumbnail:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: video_thumbnail
       url: "https://pub.dartlang.org"

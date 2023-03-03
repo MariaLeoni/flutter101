@@ -6,7 +6,7 @@ import 'home_screen/home.dart';
 
 class Search extends StatefulWidget {
 
-  Type? postType;
+  PostType? postType;
   Search({super.key, this.postType});
 
   @override

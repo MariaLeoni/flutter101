@@ -9,15 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/misc/global.dart';
-import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
-import 'home_screen/home.dart';
 import 'misc/progressIndicator.dart';
 
 class PostUploader extends StatefulWidget {
 
-  Type? postType;
+  PostType? postType;
   PostUploader({super.key, this.postType,});
 
   @override
@@ -150,7 +148,7 @@ class PostUploaderState extends State<PostUploader> {
     super.initState();
     readUserInfo();
 
-    title = widget.postType == Type.video ? "Post A Video" : "Post A Picture";
+    title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
 
     Timer.run(() {
       showAlert();
@@ -186,7 +184,7 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void cameraSource(){
-    if (widget.postType == Type.video){
+    if (widget.postType == PostType.video){
       getVideoFromCamera();
     }
     else {
@@ -195,7 +193,7 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void gallerySource(){
-    if (widget.postType == Type.video){
+    if (widget.postType == PostType.video){
       getVideoFromGallery();
     }
     else {
@@ -266,7 +264,7 @@ class PostUploaderState extends State<PostUploader> {
     try {
       LoadingIndicatorDialog().show(context);
 
-      if (widget.postType == Type.video){
+      if (widget.postType == PostType.video){
         final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}mp4');
         await ref.putFile(videoFile!);
         String path = await ref.getDownloadURL();
@@ -275,7 +273,7 @@ class PostUploaderState extends State<PostUploader> {
           postVideo();
         });
       }
-      else if (widget.postType == Type.image){
+      else if (widget.postType == PostType.image){
         final ref = FirebaseStorage.instance.ref().child('userImages')
             .child('${DateTime.now()}jpg');
         await ref.putFile(imageFile!);
@@ -311,7 +309,7 @@ class PostUploaderState extends State<PostUploader> {
                   onTap:() {
                     showAlert();
                   },
-                  child: widget.postType == Type.video ? (videoFile == null ? Image.asset("assets/images/wolf.webp") :
+                  child: widget.postType == PostType.video ? (videoFile == null ? Image.asset("assets/images/wolf.webp") :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
                     child: BetterPlayer.file(videoFile!.path,
                       betterPlayerConfiguration: const BetterPlayerConfiguration(

@@ -29,11 +29,8 @@ class PictureHomeScreen extends StatefulWidget {
 
 class PictureHomeScreenState extends State<PictureHomeScreen> {
 
-
   String changeTitle = "Grid View";
   bool checkView = false;
-
-
 
   String? videoUrl;
   String? imageUrl;
@@ -41,7 +38,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String? myName;
   String? userId;
   int? total;
-  int? viewcount =0;
+  int? viewCount = 0;
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
@@ -99,10 +96,11 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
           postId: postId, likes: likes, description: description,
         )));
   }
-viewcounts(){
-    total = viewcount! + 1;
-    FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
-}
+
+  void viewCounts(){
+    total = viewCount! + 1;
+    FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewCount, });
+  }
 
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
@@ -127,7 +125,7 @@ viewcounts(){
               children: [
                 GestureDetector(
                     onTap: () {
-                      viewcounts();
+                      viewCounts();
                       goToDetails(img, userImg, name, date,
                           docId, userId, downloads, postId, likes,
                           description);
@@ -203,7 +201,7 @@ viewcounts(){
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
                 onTap: () {
-                  viewcounts();
+                  viewCounts();
                   goToDetails(img, userImg, name, date, docId, userId,
                       downloads, postId, likes, description);
                 },
@@ -253,7 +251,7 @@ viewcounts(){
                   backgroundColor: Colors.red,
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                        PostUploader(postType: Type.image,)));
+                        PostUploader(postType: PostType.image,)));
                   },
                   child: const Icon(Icons.camera_enhance),
                 ),
@@ -288,7 +286,7 @@ viewcounts(){
                 IconButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
-                      builder: (_) => Search(postType: Type.image,),),);
+                      builder: (_) => Search(postType: PostType.image,),),);
                   },
                   icon: const Icon(Icons.person_search),
                 ),
@@ -334,7 +332,7 @@ viewcounts(){
                       controller: _pageController,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (BuildContext context, int index) {
-                        Post post = Post.getPost(snapshot, index, Type.image);
+                        Post post = Post.getPost(snapshot, index, PostType.image);
 
                         return listViewWidget(post.id, post.source, post.userImage,
                             post.userName, post.createdAt, post.email,

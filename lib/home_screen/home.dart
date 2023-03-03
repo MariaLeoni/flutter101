@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import '../chat/chatListScreen.dart';
 import 'picturesHomescreen.dart';
 import '../misc/category.dart';
 import '../misc/global.dart';
@@ -62,18 +64,26 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
     return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen(category: "random",) :
     Scaffold(
         appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2],
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2],
+                ),
               ),
             ),
-          ),
-          title: const Text("Home"),
-        ),
+            title: const Text("Home"),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => const ChatListScreen(),),);
+                },
+                icon: const Icon(Icons.chat_bubble),
+              )
+            ]),
         body: CustomScrollView(
           slivers: <Widget>[
             SliverList(

@@ -12,20 +12,20 @@ class PostModel {
   String? email;
   String? id;
   String? postId;
-  Type? type;
+  PostType? type;
 
   PostModel({this.source, this.name, this.userImage, this.createdAt,
     this.description, this. downloads, this.viewcount,this.email, this.id, this.postId, this.type,
   });
 
-  PostModel.fromJson(Map<String, dynamic> json, Type type){
+  PostModel.fromJson(Map<String, dynamic> json, PostType type){
     email = json['email'];
     name  = json['name'];
     userImage = json ['userImage'];
     createdAt = json ['createdAt'];
     id = json ['id'];
 
-    if (type == Type.image) {
+    if (type == PostType.image) {
       source = json['Image'];
     } else {
       source = json['video'];
@@ -44,7 +44,7 @@ class PostModel {
     data['userImage'] = userImage;
     data['createdAt'] = createdAt;
     data['id'] = id;
-    if (type == Type.image) {
+    if (type == PostType.image) {
       data['Image'] = source;
     } else {
       data['video'] = source;

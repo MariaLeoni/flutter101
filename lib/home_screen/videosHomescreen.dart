@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
+import '../chat/chatListScreen.dart';
 import 'home.dart';
 import 'post.dart';
-import '../message/sendmessage.dart';
 import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
@@ -101,7 +101,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 heroTag: "1",
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: Type.video)));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video)));
                 },
                 child: const Icon(Icons.video_camera_back_outlined),
               ),
@@ -134,7 +134,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             actions: <Widget>[
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: Type.video,),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.video,),),);
                 },
                 icon: const Icon(Icons.person_search),
               ),
@@ -145,10 +145,11 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 icon: const Icon(Icons.person),
               ),
               IconButton(
-                onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => FLMessage(),),);
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => const ChatListScreen(),),);
                 },
-                icon: const Icon(Icons.message_rounded),
+                icon: const Icon(Icons.chat_bubble),
               ),
               IconButton(
                 onPressed: (){
@@ -176,7 +177,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   controller: _pageController,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Post post = Post.getPost(snapshot, index, Type.video);
+                    Post post = Post.getPost(snapshot, index, PostType.video);
 
                     VideoListData videoListData = VideoListData(post);
                     return ReusableVideoListWidget(videoListData: videoListData,

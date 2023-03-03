@@ -30,7 +30,7 @@ Future<bool> usernameExist(String username) async {
   return snapshot.count > 0 ? true : false;
 }
 
-enum Type{
+enum PostType{
   image,
   video,
   text

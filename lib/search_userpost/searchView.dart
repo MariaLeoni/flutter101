@@ -14,7 +14,7 @@ import '../vidlib/ReusableVideoListWidget.dart';
 class SearchScreen extends StatefulWidget {
 
   SearchType? type;
-  Type? postType;
+  PostType? postType;
 
   SearchScreen({super.key, this.type, this.postType});
 
@@ -32,12 +32,12 @@ class SearchScreenState extends State<SearchScreen> {
   void startSearch(String searchText) {
 
     if (widget.type == SearchType.post){
-      if (widget.postType == Type.image){
+      if (widget.postType == PostType.image){
         postDocumentsList = firestore.collection("wallpaper")
             .where("description", isGreaterThanOrEqualTo: searchText).
         where("description", isLessThanOrEqualTo: '$searchText\uf8ff').get();
       }
-      else if (widget.postType == Type.video){
+      else if (widget.postType == PostType.video){
         postDocumentsList = firestore.collection("wallpaper2")
             .where("description", isGreaterThanOrEqualTo: searchText).
         where("description", isLessThanOrEqualTo: '$searchText\uf8ff').get();
@@ -106,9 +106,9 @@ class SearchScreenState extends State<SearchScreen> {
 
                   if (widget.type == SearchType.post){
                     Post model = Post.getPostSnapshot(snapshot.data!.docs[index].data()! as Map<String, dynamic>,
-                        widget.postType == null? Type.image : widget.postType!);
+                        widget.postType == null? PostType.image : widget.postType!);
 
-                    if (widget.postType == Type.video){
+                    if (widget.postType == PostType.video){
                       VideoListData videoListData = VideoListData(model);
 
                       return ReusableVideoListWidget(videoListData: videoListData,

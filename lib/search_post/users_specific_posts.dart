@@ -311,7 +311,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 return ListView.builder(itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
 
-                    Post post = Post.getPost(snapshot, index, Type.image);
+                    Post post = Post.getPost(snapshot, index, PostType.image);
 
                     return listViewWidget(post.id, post.source, post.userImage,
                         post.userName, post.createdAt, post.email,
