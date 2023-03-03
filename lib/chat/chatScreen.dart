@@ -305,11 +305,14 @@ class ChatScreenState extends State<ChatScreen> {
                     : chatMessages.type == PostType.image.name ? Container(
                   margin: const EdgeInsets.only(
                       right: Sizes.dimen_10, top: Sizes.dimen_10),
-                  child: chatImage(imageSrc: chatMessages.content, onTap: () {
+                  child: GestureDetector(
+                  onTap: () {
                     Navigator.push(context, MaterialPageRoute(
                         builder: (_) => FullImageView(url: chatMessages.content))
                     );
-                  }),
+                  },
+                    child: chatImage(imageSrc: chatMessages.content)
+                  ),
                 )
                     : const SizedBox.shrink(),
                 isMessageSent(index)
@@ -432,14 +435,16 @@ class ChatScreenState extends State<ChatScreen> {
                     ? Container(
                   margin: const EdgeInsets.only(
                       left: Sizes.dimen_10, top: Sizes.dimen_10),
-                  child: chatImage(
-                      imageSrc: chatMessages.content, onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => FullImageView(url: chatMessages.content))
-                    );
-                  }),
-                )
-                    : const SizedBox.shrink(),
+                  child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (_) => FullImageView(url: chatMessages.content))
+                        );
+                      },
+                    child:
+                  chatImage(imageSrc: chatMessages.content)
+                  ),
+                ) : const SizedBox.shrink(),
               ],
             ),
             isMessageReceived(index)

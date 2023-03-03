@@ -11,9 +11,10 @@ Widget errorContainer() {
   );
 }
 
-Widget chatImage({required String imageSrc, required Function onTap}) {
-  return OutlinedButton(
-    onPressed: onTap(),
+Widget chatImage({required String imageSrc}) {
+  return Container(
+    decoration: BoxDecoration(
+      border: Border.all(width: 2,),),
     child: Image.network(
       imageSrc,
       width: Sizes.dimen_200,
