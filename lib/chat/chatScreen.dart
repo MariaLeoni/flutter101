@@ -355,25 +355,33 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildMessageInput() {
+    var screen = MediaQuery.of(context).size;
     return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: Sizes.dimen_4),
-            decoration: BoxDecoration(
-              color: AppColors.burgundy,
-              borderRadius: BorderRadius.circular(Sizes.dimen_20),
-            ),
-            child: IconButton(
-              onPressed: showAlert,
-              icon: const Icon(Icons.add_a_photo, size: Sizes.dimen_18,
-              ),
-              color: AppColors.white,
-            ),
+        width: screen.width,
+        height: 70,
+        child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_8),
+    child:Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Sizes.dimen_30),
+            color: AppColors.greyColor,
           ),
-          Flexible(child: TextField(
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: Sizes.dimen_4),
+                decoration: BoxDecoration(
+                  color: AppColors.greyColor,
+                  borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                ),
+                child: IconButton(
+                  onPressed: showAlert,
+                  icon: const Icon(Icons.add_a_photo, size: Sizes.dimen_18,
+                  ),
+                  color: AppColors.white,
+                ),
+              ),
+              Flexible(child: TextField(
                 focusNode: focusNode,
                 textInputAction: TextInputAction.send,
                 keyboardType: TextInputType.text,
@@ -383,30 +391,32 @@ class ChatScreenState extends State<ChatScreen> {
                 onSubmitted: (value) {
                   onSendMessage(textEditingController.text, PostType.text, "");
                 },
+                style: const TextStyle(backgroundColor: AppColors.greyColor,
+                color: AppColors.white),
               )),
-          Container(
-            margin: const EdgeInsets.only(left: Sizes.dimen_4),
-            decoration: BoxDecoration(
-              color: AppColors.burgundy,
-              borderRadius: BorderRadius.circular(Sizes.dimen_20),
-            ),
-            child: IconButton(
-              onPressed: () {
-                onSendMessage(textEditingController.text, PostType.text, "");
-              },
-              icon: const Icon(Icons.send_rounded),
-              color: AppColors.white,
-            ),
+              Container(
+                margin: const EdgeInsets.only(left: Sizes.dimen_4),
+                decoration: BoxDecoration(
+                  color: AppColors.greyColor,
+                  borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    onSendMessage(textEditingController.text, PostType.text, "");
+                  },
+                  icon: const Icon(Icons.send_rounded),
+                  color: AppColors.white,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        )
+    ));
   }
 
   Widget buildItem(int index, DocumentSnapshot? documentSnapshot) {
     if (documentSnapshot != null) {
       ChatMessages chatMessages = ChatMessages.fromDocument(documentSnapshot);
-      print("index $index message ${chatMessages.toString()}");
       if (chatMessages.idFrom == currentUserId) {
         // right side (my message)
         return Column(
@@ -424,12 +434,12 @@ class ChatScreenState extends State<ChatScreen> {
                   margin: const EdgeInsets.only(
                       right: Sizes.dimen_10, top: Sizes.dimen_10),
                   child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => FullImageView(url: chatMessages.content))
-                    );
-                  },
-                    child: chatImage(imageSrc: chatMessages.content)
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (_) => FullImageView(url: chatMessages.content))
+                        );
+                      },
+                      child: chatImage(imageSrc: chatMessages.content)
                   ),
                 ) : chatMessages.type == PostType.video.name ? Container(
                   margin: const EdgeInsets.only(
@@ -555,8 +565,8 @@ class ChatScreenState extends State<ChatScreen> {
                             builder: (_) => FullImageView(url: chatMessages.content))
                         );
                       },
-                    child:
-                  chatImage(imageSrc: chatMessages.content)
+                      child:
+                      chatImage(imageSrc: chatMessages.content)
                   ),
                 ) : chatMessages.type == PostType.video.name ? Container(
                   margin: const EdgeInsets.only(
@@ -622,14 +632,14 @@ class ChatScreenState extends State<ChatScreen> {
               }
             } else {
               return const Center(child: CircularProgressIndicator(
-                  color: AppColors.burgundy,
-                ),
+                color: AppColors.burgundy,
+              ),
               );
             }
           })
           : const Center(child: CircularProgressIndicator(
-          color: AppColors.burgundy,
-        ),
+        color: AppColors.burgundy,
+      ),
       ),
     );
   }

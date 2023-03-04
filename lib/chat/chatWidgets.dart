@@ -44,15 +44,13 @@ Widget chatImage({required String imageSrc}) {
 }
 
 Widget chatVideoThumbnail({required String videoSrc}) {
-  String thumb = "https://firebasestorage.googleapis.com/v0/b/studentshared1.appspot.com/o/1677872264659?alt=media&token=fc1d355a-3733-4b30-8a99-c441fadb6467";
-  print("Thumbnail $thumb");
   return Container(
     decoration: BoxDecoration(
       border: Border.all(width: 2,),),
     child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          Image.network(thumb, width: Sizes.dimen_200,
+          Image.network(videoSrc, width: Sizes.dimen_200,
             height: Sizes.dimen_200, fit: BoxFit.cover,
             loadingBuilder: (BuildContext ctx, Widget child, ImageChunkEvent? loadingProgress) {
               if (loadingProgress == null) return child;

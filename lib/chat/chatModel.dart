@@ -38,8 +38,7 @@ class ChatMessages {
     String content = documentSnapshot.get(FirestoreConstants.content);
     String type = documentSnapshot.get(FirestoreConstants.type);
     bool mine = documentSnapshot.get(FirestoreConstants.mine);
-    String thumbnail = documentSnapshot.toString().contains(FirestoreConstants.thumbnail) ?
-    documentSnapshot.get(FirestoreConstants.thumbnail) : "";
+    String thumbnail = documentSnapshot.get(FirestoreConstants.thumbnail);
 
     return ChatMessages(idFrom: idFrom, idTo: idTo,
         timestamp: timestamp, content: content, type: type,
