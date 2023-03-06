@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
+import '../chatmain.dart';
 import '../vidlib/videoWidget.dart';
 import 'home.dart';
 import 'post.dart';
@@ -152,8 +153,10 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 icon: const Icon(Icons.message_rounded),
               ),
               IconButton(
-                onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
+                onPressed: () {
+                  chatmain();
+                  //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
+                  // },
                 },
                 icon: const Icon(Icons.home),
               ),

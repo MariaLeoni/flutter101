@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/Activity%20Feed/feed.dart';
@@ -10,6 +12,7 @@ import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:uuid/uuid.dart';
+import '../misc/alertbox.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
@@ -45,7 +48,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
-
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  late String currentToken;
+  String userIdx = FirebaseAuth.instance.currentUser!.uid;
   Size? size;
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
@@ -57,12 +62,23 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     notificationManager = NotificationManager();
     notificationManager?.initServer();
 
-    //sendNotification();
+  //  sendNotification();
 
+      _messaging.getToken().then((value) {
+        print(value);
+        if (mounted)
+          setState(() {
+            currentToken = value!;
+          });
+        FirebaseFirestore.instance
+            .collection('pushtokens')
+            .doc(userIdx)
+            .set({'token': value!, 'createdAt': DateTime.now()});
+      });
     // Timer.run(() {
     //   FancyAlertDialog.showFancyAlertDialog(
-    //     context, 'Info Fancy Alert Dialog Box',
-    //     'This is a info alert dialog box. This plugin is used to help you easily create fancy dialog',
+    //     context, 'Maria',
+    //     'just liked your post',
     //     icon: const Icon(
     //       Icons.clear,
     //       color: Colors.black,
@@ -81,13 +97,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     // });
   }
 
-  void sendNotification() {
-    NotificationModel model = NotificationModel(title: "Hello from Jonas",
-        body: "Jonas has just liked your post", dataBody: "should be post url",
-        dataTitle: "Should be post description");
-    String token = "fRUDbKNKRz6gQ7v2MWGAA5:APA91bELAlAPokiqOjgItWg3S0zMKGNdzf7SZJSdrGWKjBOz2seG7FlHPRUcD7KN8RNYiAo8uiatHDnM8RZi_yQKSB4wyRlUVIA0h3f46UpzhLCORW0a1A20mtEU2-PPH6AWQcqKKZQ3";
-    notificationManager?.sendNotification(token, model);
-  }
+  // void sendNotification() {
+  //   NotificationModel model = NotificationModel(title: "Hello from Jonas",
+  //       body: "Jonas has just liked your post", dataBody: "should be post url",
+  //       dataTitle: "Should be post description");
+  //   String token = "fwihk98iTwuDd15vLrU0Dj:APA91bHpbp0WLFJZyBfkx-MImsDymk700wm47R2PdL5jrjXNGRptKyROCRXSEgfbZzlAwldOsutnKMFdCWvc61_ROtQCUEA310kGXL4boq_5jh25hDnUg8sCBivMGS0cR0NVW2aJMxVN";
+  //   notificationManager?.sendNotification(token, model);
+  // }
 
   void goToDetails(String img, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, String postId,
@@ -127,7 +143,6 @@ viewcounts(){
               children: [
                 GestureDetector(
                     onTap: () {
-                      viewcounts();
                       goToDetails(img, userImg, name, date,
                           docId, userId, downloads, postId, likes,
                           description);
@@ -294,8 +309,8 @@ viewcounts(){
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                     Navigator.push(context,
+                       MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                   },
                   icon: const Icon(Icons.person),
                 ),

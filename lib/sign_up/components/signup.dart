@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/account_check/account_check.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
@@ -37,10 +37,39 @@ class _CredentialsState extends State<Credentials> {
 
   File? imageFile;
   String? imageUrl;
-
+  //late String currentToken;
   final Map<String, List<String>?> interests = {};
+  // @override
+  // void initState() {
+  //   super.initState();
 
 
+      // FirebaseFirestore.instance
+      //     .collection('Activity Feed')
+      //     .doc(userId).collection('Feed Count').doc(userId)
+      //     .set({'Feed Count': 0, 'createdAt': DateTime.now()});
+
+    // Timer.run(() {
+    //   FancyAlertDialog.showFancyAlertDialog(
+    //     context, 'Maria',
+    //     'just liked your post',
+    //     icon: const Icon(
+    //       Icons.clear,
+    //       color: Colors.black,
+    //     ),
+    //     labelPositiveButton: 'OKAY',
+    //     onTapPositiveButton: () {
+    //       Navigator.of(context).pop(false);
+    //       print('tap positive button');
+    //     },
+    //     labelNegativeButton: 'Cancel',
+    //     onTapNegativeButton: () {
+    //       Navigator.of(context, rootNavigator: true).pop();
+    //       print('tap negative button');
+    //     },
+    //   );
+    // });
+ // }
   void _showImageDialog() {
     showDialog(
         context: context,
@@ -208,6 +237,11 @@ class _CredentialsState extends State<Credentials> {
                       final User? user = _auth.currentUser;
                       final uid = user!.uid;
 
+                        var token = await FirebaseMessaging.instance.getToken();
+                        setState(() {
+                          token = token;
+                        });
+
                       FirebaseFirestore.instance.collection('users').doc(uid).set({
                         'id': uid,
                         'userImage': imageUrl,
@@ -217,6 +251,8 @@ class _CredentialsState extends State<Credentials> {
                         'CreateAt': Timestamp.now(),
                         'followers': <String>[],
                         'categories': interests,
+                        'devicetoken':token,
+                        'groups':<String>[],
                         //   'device': FirebaseMessaging.instance.getToken().then((token) {
                       // print("Device Token: $token");
                       // })

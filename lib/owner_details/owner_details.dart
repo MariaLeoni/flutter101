@@ -6,6 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
 import '../home_screen/home.dart';
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
@@ -22,11 +24,12 @@ class OwnerDetails extends StatefulWidget {
   String? description;
   int? downloads;
   String? postId;
+  bool? isRead;
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
 
   OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.postId, this.likes, this.description
+    this.docId, this.userId, this.downloads, this.postId, this.likes, this.description, this.isRead
   });
 
   @override
@@ -40,11 +43,14 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   int likesCount = 0;
   int followersCount = 0;
   String? postId;
+  int? FeedCount;
   String? likeruserId;
   String? followuserId;
   String? name;
   String? userImage;
   String?image;
+  String? tokens;
+  NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   _OwnerDetailsState({
@@ -65,13 +71,49 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     }
     });
   }
+  void getDataFromDatabase3() async {
+    await FirebaseFirestore.instance.collection("Activity Feed")
+        .doc(widget.docId).collection('Feed Count').doc(widget.docId)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        FeedCount = snapshot.data()!["Feed Count"];
+
+      });
+    }
+    });
+  }
+  void sendNotification() {
+    NotificationModel model = NotificationModel(title: name,
+      body: "Liked your post", dataBody: widget.img,
+      // dataTitle: "Should be post description"
+    );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
+  }
+  void getDataFromDatabase2() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.docId)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        tokens = snapshot.data()!["devicetoken"];
+
+
+      });
+    }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     getDataFromDatabase();
+    getDataFromDatabase2();
     _favoriteController =
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
 
   }
 AddLikeToActivityFeed() {
@@ -85,18 +127,24 @@ AddLikeToActivityFeed() {
       "userId": _auth.currentUser!.uid,
       "userProfileImage": image,
       "postId": widget.postId,
-      "Image": widget.img,
+      "Image": widget.userImg,
       "timestamp": DateTime.now(),
       "commentData": null,
       "downloads": widget.downloads,
-       "description":widget.description,
+      "description": widget.description,
       "likes": widget.likes,
       "postOwnerId": widget.docId,
       "postOwnerImage": widget.img,
       "postOwnername": widget.name,
-       "likes": widget.likes,
+      "likes": widget.likes,
 
-    });
+    }).then((value) {
+      FirebaseFirestore.instance.collection('Activity Feed')
+          .doc(widget.docId).collection('Feed Count').doc(widget.docId).update(
+          {'Feed Count': FeedCount! + 1,
+          });
+    }
+    );
   }
 }
 
@@ -115,6 +163,8 @@ removeLikeFromActivityFeed() {
     });
   }
 }
+
+
   handleLikePost(){
     if (widget.likes != null && widget.likes!.contains(likeruserId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
@@ -125,6 +175,7 @@ removeLikeFromActivityFeed() {
       Fluttertoast.showToast(msg: "You liked this image!");
       widget.likes!.add(likeruserId!);
       AddLikeToActivityFeed();
+      sendNotification();
     }
 
 

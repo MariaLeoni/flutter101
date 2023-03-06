@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
 
+import '../notification/notification.dart';
+import '../notification/server.dart';
+
 class Comment extends StatefulWidget {
 
   String? userId;
@@ -29,9 +32,10 @@ class CommentState extends State<Comment> {
   String? myImage;
   String? myName;
   String? id;
-
+  String? tokens;
   String commentId = const Uuid().v4();
   String? myUserId;
+  NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController commentController = TextEditingController();
 
@@ -67,6 +71,27 @@ class CommentState extends State<Comment> {
         return ListView(children: comments);
       },
     );
+  }
+  void getDataFromDatabase2() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.docId)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        tokens = snapshot.data()!["devicetoken"];
+
+
+      });
+    }
+    });
+  }
+  void sendNotification() {
+    NotificationModel model = NotificationModel(title: myName,
+        body: "Liked your comment", dataBody: widget.Image,
+        //dataTitle: "Should be post description"
+        );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
   }
   AddLikeToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
@@ -107,6 +132,7 @@ class CommentState extends State<Comment> {
       'Image': widget.Image,
     });
     AddLikeToActivityFeed();
+    sendNotification();
     commentController.clear();
   }
 
@@ -125,6 +151,9 @@ class CommentState extends State<Comment> {
     super.initState();
     myUserId = _auth.currentUser!.uid;
     readUserInfo();
+    getDataFromDatabase2();
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
   }
 
 

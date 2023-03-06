@@ -8,6 +8,8 @@ import 'package:sharedstudent1/search_userpost/searchView.dart';
 import '../following/followers.dart';
 import '../home_screen/home.dart';
 import '../home_screen/post.dart';
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import'package:fluttertoast/fluttertoast.dart';
@@ -36,10 +38,33 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   String? myName;
   String? name;
   String? image;
+  String? tokens;
+  NotificationManager? notificationManager;
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
 
+  void getDataFromDatabase2() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.docId)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        tokens = snapshot.data()!["devicetoken"];
+
+
+      });
+    }
+    });
+  }
+  void sendNotification() {
+    NotificationModel model = NotificationModel(title: name,
+        body: "Followed you", //dataBody: "should be post url",
+        //dataTitle: "Should be post description"
+        );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
+  }
   AddFollowToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
@@ -134,7 +159,10 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   void initState() {
     super.initState();
     getDataFromDatabase();
+    getDataFromDatabase2();
     readUserInfo();
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
   }
 
   Widget listViewWidget (String docId, String img, String userImg, String name,

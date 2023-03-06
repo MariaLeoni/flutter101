@@ -46,7 +46,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
               img: Image, userImg: postOwnerImage, name: postOwnername, date: timestamp, docId: userId,
               userId: postOwnerId,  postId: postId,
               description: description, likes: likes, downloads: downloads,
-            )));
+             )));
           },
           child: Container(
               height: 50.0,
