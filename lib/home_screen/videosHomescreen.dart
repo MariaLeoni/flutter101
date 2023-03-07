@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import 'package:sharedstudent1/userMention.dart';
 import '../Search.dart';
 import '../chatmain.dart';
 import '../vidlib/videoWidget.dart';
@@ -154,7 +155,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  chatmain();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => userMention(),),);
                   //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
                   // },
                 },

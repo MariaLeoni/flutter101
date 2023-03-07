@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -35,6 +36,10 @@ class CommentState extends State<Comment> {
   String? tokens;
   String commentId = const Uuid().v4();
   String? myUserId;
+  List<String> users = ['Naveen', 'Ram', 'Satish', 'Some Other'],
+      words = [];
+  String str = '';
+  List<String> coments=[];
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController commentController = TextEditingController();
@@ -156,7 +161,15 @@ class CommentState extends State<Comment> {
     notificationManager?.initServer();
   }
 
-
+  showProfile(String s) {
+    showDialog(
+        context: context,
+        builder: (con) =>
+            AlertDialog(
+                title: Text('Profile of $s'),
+                content: Text('Show the user profile !')
+            ));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,6 +194,16 @@ class CommentState extends State<Comment> {
                 title: TextFormField(
                   controller: commentController,
                   decoration: const InputDecoration(labelText: "Write a comment.."),
+                    onChanged: (val) {
+                      setState(() {
+                        words = val.split(' ');
+                        str = words.length > 0 &&
+                            words[words.length - 1].startsWith('@')
+                            ? words[words.length - 1]
+                            : '';
+                      });
+                    }
+
                 ),
                 trailing: OutlinedButton(
                   onPressed: addComment,
@@ -188,6 +211,52 @@ class CommentState extends State<Comment> {
                   child: const Text("Post"),
                 )
             ),
+            str.length > 1
+                ? ListView(
+                shrinkWrap: true,
+                children: users.map((s) {
+                  if (('@' + s).contains(str))
+                    return
+                      ListTile(
+                          title: Text(s, style: TextStyle(color: Colors.black),),
+                          onTap: () {
+                            String tmp = str.substring(1, str.length);
+                            setState(() {
+                              str = '';
+                              commentController.text += s
+                                  .substring(
+                                  s.indexOf(tmp) + tmp.length, s.length)
+                                  .replaceAll(' ', '_');
+                            });
+                          });
+                  else
+                    return SizedBox();
+                }).toList()
+            ) : SizedBox(),
+            SizedBox(height: 25),
+            coments.length > 0 ?
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: coments.length,
+              itemBuilder: (con, ind) {
+                return Text.rich(
+                  TextSpan(
+                      text: '',
+                      children: coments[ind].split(' ').map((w) {
+                        return w.startsWith('@') && w.length > 1 ?
+                        TextSpan(
+                          text: ' ' + w,
+                          style: TextStyle(color: Colors.blue),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () => showProfile(w),
+                        ) : TextSpan(text: ' ' + w, style: TextStyle(
+                            color: Colors.black));
+                      }).toList()
+                  ),
+                );
+              },
+            ) : SizedBox()
+
           ],
         )
     );
