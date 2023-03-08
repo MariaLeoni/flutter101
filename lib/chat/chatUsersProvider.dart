@@ -39,8 +39,15 @@ class ChatUsersProvider {
   }
 
   Stream<QuerySnapshot> getChatUsers(String userId, int limit) {
+    print("getChatUsers Chatees $chatees");
+    if (chatees.isEmpty){
+      limit = 10;
+    }
+    else{
+      limit = chatees.length;
+    }
     return getFirestoreData(FirestoreConstants.pathUserCollection,
-        chatees.length, null, chatees);
+        limit, null, chatees);
   }
 
   Future<ChatUser> getUser(userId) async {

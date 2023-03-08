@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/chat/userModel.dart';
 import '../home_screen/home.dart';
+import '../log_in/login_screen.dart';
 import '../misc/debouncer.dart';
 import '../misc/keyboardUtil.dart';
 import '../misc/loadingView.dart';
@@ -58,15 +59,38 @@ class ChatListScreenState extends State<ChatListScreen> {
   @override
   void initState() {
     super.initState();
+
+    if (_auth.currentUser == null){
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()));
+      return;
+    }
     currentUserId = _auth.currentUser!.uid;
-    chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore, chatees: widget.chatees);
+
+    if (widget.chatees.isNotEmpty){
+      chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore, chatees: widget.chatees);
+    }else{
+      readUserInfo();
+    }
 
     scrollController.addListener(scrollListener);
   }
 
+  readUserInfo() async {
+    if (widget.chatees.isEmpty){
+      fireStore.collection('users').doc(currentUserId).get()
+          .then<dynamic>((DocumentSnapshot snapshot) {
+        widget.chatees = List.from(snapshot.get('chatWith'));
+        print("Chatees call ${widget.chatees}");
+        setState(() {
+          chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore, chatees: widget.chatees);
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
             centerTitle: true,

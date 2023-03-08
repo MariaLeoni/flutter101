@@ -147,13 +147,13 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => ChatListScreen(chatees: [],),),);
+                    builder: (_) => ChatListScreen(chatees: List.empty(),),),);
                 },
                 icon: const Icon(Icons.chat_bubble),
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
                 },
                 icon: const Icon(Icons.home),
               ),
