@@ -330,7 +330,7 @@ viewcounts(){
               ]
           ),
           body: StreamBuilder(
-              stream: widget.category == "random" ? FirebaseFirestore.instance
+                          stream: widget.category == "random" ? FirebaseFirestore.instance
                   .collection('wallpaper').orderBy('createdAt', descending: true).snapshots() :
 
               FirebaseFirestore.instance.collection('wallpaper')

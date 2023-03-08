@@ -7,6 +7,7 @@ import 'package:sharedstudent1/Comments/CommentItem.dart';
 
 import '../notification/notification.dart';
 import '../notification/server.dart';
+import '../returnusers.dart';
 
 class Comment extends StatefulWidget {
 
@@ -19,8 +20,9 @@ class Comment extends StatefulWidget {
   List<String>? likes = List.empty(growable: true);
   String? description;
   int? downloads;
+  List<String>? users = List.empty(growable:true);
   Comment({super.key, this.userId, this.postId,
-    this.docId,this.Image, this.likes, this.description, this.downloads, this.postOwnerImg, this.postOwnername});
+    this.docId,this.Image, this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, this.users,});
 
   @override
   State<Comment> createState() => CommentState();
@@ -36,7 +38,7 @@ class CommentState extends State<Comment> {
   String? tokens;
   String commentId = const Uuid().v4();
   String? myUserId;
-  List<String> users = ['Naveen', 'Ram', 'Satish', 'Some Other'],
+  List<String>
       words = [];
   String str = '';
   List<String> coments=[];
@@ -170,6 +172,59 @@ class CommentState extends State<Comment> {
                 content: Text('Show the user profile !')
             ));
   }
+  buildUsers(){
+  // final firebaseCollection = FirebaseFirestore.instance.collection('users');
+  return StreamBuilder(
+  stream: FirebaseFirestore.instance.collection('users').snapshots(),
+  builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
+  if(snapshot.connectionState == ConnectionState.waiting ) {
+  return const Center(child: CircularProgressIndicator(),);
+  }
+  else if (snapshot.connectionState == ConnectionState.active) {
+  if(snapshot.data!.docs.isNotEmpty){
+  {
+  List<UsersModel> users = [];
+  for (var doc in snapshot.data!.docs) {
+  users.add(UsersModel.fromDocument(doc));
+  }
+  return Comment(
+    users: [],
+
+  );
+
+  }
+  }
+  else if (snapshot.data!.docs.isEmpty) {
+  return const Center(
+  child: Text("This user has no followers ",
+  style: TextStyle(fontSize: 20),)
+  );
+  }
+  }
+  return const Center(
+  child: Text(
+  'Something went wrong',
+  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+  ),
+  );
+  }
+  // builder: (context, snapshot) {
+  //   if (snapshot.hasError) {
+  //     return const Text('Something went wrong');
+  //   }
+  //   if (snapshot.connectionState == ConnectionState.waiting) {
+  //     return const Center(child: CircularProgressIndicator(),);
+  //   }
+  //   List<FollowerModel> followers = [];
+  //   for (var doc in snapshot.data!.docs) {
+  //     followers.add(FollowerModel.fromDocument(doc));
+  //   }
+  //   return ListView(
+  //     children: followers,
+  //   );
+  //
+  //   }
+  );}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,8 +268,10 @@ class CommentState extends State<Comment> {
             ),
             str.length > 1
                 ? ListView(
+
+
                 shrinkWrap: true,
-                children: users.map((s) {
+                children: widget.users!.map((s) {
                   if (('@' + s).contains(str))
                     return
                       ListTile(

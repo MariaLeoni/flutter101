@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/home_screen/home.dart';
+import 'package:sharedstudent1/chatPage.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
+
+import '../chathome.dart';
 
 class GroupTile extends StatefulWidget {
   final String userName;
@@ -24,10 +26,10 @@ class _GroupTileState extends State<GroupTile> {
       onTap: () {
         nextScreen(
             context,
-             HomeScreen(
-            //   groupId: widget.groupId,
-            //   groupName: widget.groupName,
-            //   userName: widget.userName,
+             ChatPage(
+             groupId: widget.groupId,
+              groupName: widget.groupName,
+              userName: widget.userName,
             ));
       },
       child: Container(
