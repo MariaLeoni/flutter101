@@ -172,7 +172,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                         ),
                       ]
                   ),
-                //)
               ],
             )
         ),
@@ -209,11 +208,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   ),
                 )
             ),
-          ),
-        ]
+          ),]
     );
   }
-  
 
   void updateInterests(Map<String, List<String>?> interests) {
     setState(() {

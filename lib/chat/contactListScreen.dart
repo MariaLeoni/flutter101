@@ -4,10 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/chat/constants.dart';
-import 'package:sharedstudent1/chat/contactListScreen.dart';
 import 'package:sharedstudent1/chat/userModel.dart';
 import '../home_screen/home.dart';
 import '../log_in/login_screen.dart';
+import '../misc/debouncer.dart';
 import '../misc/keyboardUtil.dart';
 import '../misc/loadingView.dart';
 import '../profile/profile_screen.dart';
@@ -15,21 +15,19 @@ import 'chatScreen.dart';
 import 'chatUsersProvider.dart';
 import 'chatWidgets.dart';
 
-class ChatListScreen extends StatefulWidget {
-  List<String> chatees = List.empty(growable: true);
-
-  ChatListScreen({super.key, required this.chatees});
+class ContactListScreen extends StatefulWidget {
+  const ContactListScreen({super.key});
 
   @override
-  State<ChatListScreen> createState() => ChatListScreenState();
+  State<ContactListScreen> createState() => ContactListScreenState();
 }
 
-class ChatListScreenState extends State<ChatListScreen> {
+class ContactListScreenState extends State<ContactListScreen> {
   final ScrollController scrollController = ScrollController();
 
   int _limit = 20;
   final int _limitIncrement = 20;
-  String searchText = "";
+  String _textSearch = "";
   bool isLoading = false;
 
   late String currentUserId;
@@ -38,9 +36,9 @@ class ChatListScreenState extends State<ChatListScreen> {
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 
+  Debouncer searchDebouncer = Debouncer(milliseconds: 300);
   StreamController<bool> buttonClearController = StreamController<bool>();
   TextEditingController searchTextEditingController = TextEditingController();
-  List<QueryDocumentSnapshot> documents = [];
 
   void scrollListener() {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
@@ -67,34 +65,18 @@ class ChatListScreenState extends State<ChatListScreen> {
       return;
     }
     currentUserId = _auth.currentUser!.uid;
-
-    if (widget.chatees.isNotEmpty){
-      chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
-    }else{
-      readUserInfo();
-    }
+    chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
 
     scrollController.addListener(scrollListener);
   }
 
-  readUserInfo() async {
-    if (widget.chatees.isEmpty){
-      fireStore.collection('users').doc(currentUserId).get()
-          .then<dynamic>((DocumentSnapshot snapshot) {
-        widget.chatees = List.from(snapshot.get('chatWith'));
-        setState(() {
-          chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
-        });
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
             centerTitle: true,
-            title: const Text('Chat Contacts'),
+            title: const Text('Search for User'),
             actions: [
               IconButton(
                   onPressed: (){
@@ -119,32 +101,24 @@ class ChatListScreenState extends State<ChatListScreen> {
                 buildSearchBar(),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, widget.chatees).snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
+                    stream: chatUserProvider.getFirestoreData(FirestoreConstants.pathUserCollection, _limit, _textSearch),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasData) {
-                        documents = snapshot.data!.docs;
-                        if (searchText.isNotEmpty) {
-                          documents = documents.where((user) {
-                            return user.get(FirestoreConstants.displayName)
-                                .toString()
-                                .toLowerCase()
-                                .contains(searchText.toLowerCase());
-                          }).toList();
-                        }
-
-                        if (documents.isNotEmpty) {
+                        if ((snapshot.data?.docs.length ?? 0) > 0) {
                           return ListView.separated(
                             shrinkWrap: true,
-                            itemCount: documents.length,
+                            itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) => buildItem(
-                                context, documents[index]),
+                                context, snapshot.data?.docs[index]),
                             controller: scrollController,
-                            separatorBuilder: (BuildContext context, int index) =>
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
                             const Divider(),
                           );
                         } else {
                           return const Center(
-                            child: Text('You have not started any chat yet...'),
+                            child: Text('Search with a user...'),
                           );
                         }
                       } else {
@@ -162,22 +136,6 @@ class ChatListScreenState extends State<ChatListScreen> {
             ),
           ],
         ),
-      floatingActionButton: Wrap(
-        direction: Axis.horizontal,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(10.0),
-            child: FloatingActionButton(
-              heroTag: "1",
-              backgroundColor: Colors.deepPurple,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ContactListScreen()));
-              },
-              child: const Icon(Icons.chat_bubble),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -210,12 +168,12 @@ class ChatListScreenState extends State<ChatListScreen> {
                 if (value.isNotEmpty) {
                   buttonClearController.add(true);
                   setState(() {
-                    searchText = value;
+                    _textSearch = value;
                   });
                 } else {
                   buttonClearController.add(false);
                   setState(() {
-                    searchText = "";
+                    _textSearch = "";
                   });
                 }
               },
@@ -232,7 +190,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                     searchTextEditingController.clear();
                     buttonClearController.add(false);
                     setState(() {
-                      searchText = '';
+                      _textSearch = '';
                     });
                   },
                   child: const Padding(

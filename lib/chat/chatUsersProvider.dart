@@ -6,11 +6,9 @@ import 'constants.dart';
 
 class ChatUsersProvider {
   final FirebaseFirestore firebaseFirestore;
-  final List<String> chatees;
-
   String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-  ChatUsersProvider({required this.firebaseFirestore, required this.chatees});
+  ChatUsersProvider({required this.firebaseFirestore});
 
   Future<void> updateFirestoreData(
       String collectionPath, String path, Map<String, dynamic> updateData) {
@@ -20,39 +18,27 @@ class ChatUsersProvider {
         .update(updateData);
   }
 
-  Stream<QuerySnapshot> getFirestoreData(String collectionPath, int limit,
-      String? textSearch, List<String>? userList) {
+  Stream<QuerySnapshot> getFirestoreData(String collectionPath, int limit, String? textSearch) {
     if (textSearch?.isNotEmpty == true) {
-      return firebaseFirestore
-          .collection(collectionPath)
+      return firebaseFirestore.collection(collectionPath)
           .limit(limit)
-          .where(FirestoreConstants.displayName, isEqualTo: textSearch)
-          .where(FirestoreConstants.id, isNotEqualTo: currentUserId)
+          .where(FirestoreConstants.displayName, isGreaterThanOrEqualTo: textSearch).
+          where(FirestoreConstants.displayName, isLessThanOrEqualTo: '$textSearch\uf8ff')
           .snapshots();
     } else {
-      return firebaseFirestore
-          .collection(collectionPath)
+      return firebaseFirestore.collection(collectionPath)
           .limit(limit)
-          .where(FieldPath.documentId, whereIn: userList)
           .snapshots();
     }
-  }
-
-  Stream<QuerySnapshot> getChatUsers(String userId, int limit) {
-    print("getChatUsers Chatees $chatees");
-    if (chatees.isEmpty){
-      limit = 10;
-    }
-    else{
-      limit = chatees.length;
-    }
-    return getFirestoreData(FirestoreConstants.pathUserCollection,
-        limit, null, chatees);
   }
 
   Future<ChatUser> getUser(userId) async {
     final userCollection = firebaseFirestore.collection(FirestoreConstants.pathUserCollection);
     var chatWith = await userCollection.doc(userId).snapshots().first;
     return ChatUser.fromDocument(chatWith);
+  }
+
+  Query<Map<String, dynamic>> getUsersIChatWith(String collectionPath, List<String>? userList) {
+      return firebaseFirestore.collection(collectionPath).where(FieldPath.documentId, whereIn: userList);
   }
 }

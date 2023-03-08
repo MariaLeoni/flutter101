@@ -43,10 +43,7 @@ class ChatProvider{
         .collection(FirestoreConstants.pathMessageCollection)
         .doc(groupChatId)
         .collection(groupChatId)
-        .doc(DateTime
-        .now()
-        .millisecondsSinceEpoch
-        .toString());
+        .doc(DateTime.now().millisecondsSinceEpoch.toString());
 
     ChatMessages chatMessages = ChatMessages(
         idFrom: currentUserId,
