@@ -124,7 +124,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       setState(() {
         name = snapshot.data()!["name"];
         image = snapshot.data()!["userImage"];
-
       });
     }
     });

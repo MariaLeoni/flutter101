@@ -387,7 +387,9 @@ class ChatScreenState extends State<ChatScreen> {
                 keyboardType: TextInputType.text,
                 textCapitalization: TextCapitalization.sentences,
                 controller: textEditingController,
-                decoration: const InputDecoration(hintText: 'Write here...',),
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Type here...',
+                  hintStyle: TextStyle(color: AppColors.white)),
                 onSubmitted: (value) {
                   onSendMessage(textEditingController.text, PostType.text, "");
                 },
@@ -508,6 +510,7 @@ class ChatScreenState extends State<ChatScreen> {
           ],
         );
       } else {
+        // left side (others message)
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

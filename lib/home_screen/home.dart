@@ -12,7 +12,7 @@ import '../misc/global.dart';
 
 class HomeScreen extends StatefulWidget {
 
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -29,6 +29,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   final GlobalKey<TagsState> categoryTagStateKey = GlobalKey<TagsState>();
 
   final List<String>? myInterests = List.empty(growable: true);
+  late List<String>? myChatees = List.empty(growable: true);
   String selectedInterest = "";
 
   Random random = Random();
@@ -36,6 +37,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   readUserInfo() async {
     fireStore.collection('users').doc(auth.currentUser!.uid).get()
         .then<dynamic>((DocumentSnapshot snapshot) {
+          myChatees = List.from(snapshot.get('chatWith'));
       var data = jsonDecode(jsonEncode(snapshot.get('interests')));
       data.forEach((key, value) {
         List<String> subList = List.empty(growable: true);
@@ -79,7 +81,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
               IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => const ChatListScreen(),),);
+                    builder: (_) => ChatListScreen(chatees: myChatees ?? List.empty()),),);
                 },
                 icon: const Icon(Icons.chat_bubble),
               )

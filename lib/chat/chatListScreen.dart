@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/chat/userModel.dart';
-import '../log_in/login_screen.dart';
+import '../home_screen/home.dart';
 import '../misc/debouncer.dart';
 import '../misc/keyboardUtil.dart';
 import '../misc/loadingView.dart';
@@ -12,10 +12,11 @@ import '../profile/profile_screen.dart';
 import 'chatScreen.dart';
 import 'chatUsersProvider.dart';
 import 'chatWidgets.dart';
-import 'constants.dart';
 
 class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({Key? key}) : super(key: key);
+  List<String> chatees = List.empty(growable: true);
+
+  ChatListScreen({super.key, required this.chatees});
 
   @override
   State<ChatListScreen> createState() => ChatListScreenState();
@@ -58,25 +59,26 @@ class ChatListScreenState extends State<ChatListScreen> {
   void initState() {
     super.initState();
     currentUserId = _auth.currentUser!.uid;
-    chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
+    chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore, chatees: widget.chatees);
 
     scrollController.addListener(scrollListener);
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
             centerTitle: true,
-            title: const Text('Contacts'),
+            title: const Text('Chat Contacts'),
             actions: [
               IconButton(
                   onPressed: (){
                       FirebaseAuth.instance.signOut();
                       Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()));
+                      MaterialPageRoute(builder: (_) => const HomeScreen()));
                    },
-                  icon: const Icon(Icons.login_outlined)),
+                  icon: const Icon(Icons.home)),
               IconButton(
                   onPressed: () {
                     Navigator.push(
@@ -93,10 +95,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                 buildSearchBar(),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: chatUserProvider.getFirestoreData(
-                        FirestoreConstants.pathUserCollection,
-                        _limit,
-                        _textSearch),
+                    stream: chatUserProvider.getChatUsers(currentUserId, _limit),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasData) {
@@ -113,7 +112,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                           );
                         } else {
                           return const Center(
-                            child: Text('No user found...'),
+                            child: Text('You have not started any chat yet...'),
                           );
                         }
                       } else {
@@ -212,9 +211,7 @@ class ChatListScreenState extends State<ChatListScreen> {
             if (KeyboardUtils.isKeyboardShowing()) {
               KeyboardUtils.closeKeyboard(context);
             }
-            Navigator.push(
-                context,
-                MaterialPageRoute(
+            Navigator.push(context, MaterialPageRoute(
                     builder: (context) => ChatScreen(
                       peerId: userChat.id,
                       peerAvatar: userChat.photoUrl,
@@ -223,10 +220,8 @@ class ChatListScreenState extends State<ChatListScreen> {
                     )));
           },
           child: ListTile(leading: userChat.photoUrl.isNotEmpty
-                ? ClipRRect(
-              borderRadius: BorderRadius.circular(Sizes.dimen_30),
-              child: Image.network(
-                userChat.photoUrl,
+                ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
+              child: Image.network(userChat.photoUrl,
                 fit: BoxFit.cover, width: 50, height: 50,
                 loadingBuilder: (BuildContext ctx, Widget child,
                     ImageChunkEvent? loadingProgress) {
@@ -234,11 +229,9 @@ class ChatListScreenState extends State<ChatListScreen> {
                     return child;
                   } else {
                     return SizedBox(width: 50, height: 50,
-                      child: CircularProgressIndicator(
-                          color: Colors.grey,
+                      child: CircularProgressIndicator(color: Colors.grey,
                           value: loadingProgress.expectedTotalBytes !=
-                              null
-                              ? loadingProgress.cumulativeBytesLoaded /
+                              null ? loadingProgress.cumulativeBytesLoaded /
                               loadingProgress.expectedTotalBytes!
                               : null),
                     );
@@ -249,12 +242,9 @@ class ChatListScreenState extends State<ChatListScreen> {
                 },
               ),
             )
-                : const Icon(
-              Icons.account_circle,
-              size: 50,
+                : const Icon(Icons.account_circle, size: 50,
             ),
-            title: Text(
-              userChat.displayName,
+            title: Text(userChat.displayName,
               style: const TextStyle(color: Colors.black),
             ),
           ),

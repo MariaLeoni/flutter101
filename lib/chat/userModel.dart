@@ -9,24 +9,28 @@ class ChatUser extends Equatable {
   final String displayName;
   final String phoneNumber;
   final String aboutMe;
+  List<String>? chatWith = List.empty(growable: true);
 
-  const ChatUser({required this.id,
+  ChatUser({required this.id,
         required this.photoUrl,
         required this.displayName,
         required this.phoneNumber,
-        required this.aboutMe});
+        required this.aboutMe,
+        required this.chatWith,});
 
   ChatUser copyWith({
     String? id,
     String? photoUrl,
     String? nickname,
     String? phoneNumber,
-    String? email,}) => ChatUser(
+    String? email,
+    List<String>? chatWith}) => ChatUser(
           id: id ?? this.id,
           photoUrl: photoUrl ?? this.photoUrl,
           displayName: nickname ?? displayName,
           phoneNumber: phoneNumber ?? this.phoneNumber,
-          aboutMe: email ?? aboutMe);
+          aboutMe: email ?? aboutMe,
+          chatWith: chatWith ?? chatWith);
 
   Map<String, dynamic> toJson() => {
     FirestoreConstants.displayName: displayName,
@@ -34,17 +38,20 @@ class ChatUser extends Equatable {
     FirestoreConstants.phoneNumber: phoneNumber,
     FirestoreConstants.aboutMe: aboutMe,
   };
+
   factory ChatUser.fromDocument(DocumentSnapshot snapshot) {
     String photoUrl = "";
     String nickname = "";
     String phoneNumber = "";
     String aboutMe = "";
+    List<String> chatWith = List.empty(growable: true);
 
     try {
       photoUrl = snapshot.get(FirestoreConstants.photoUrl);
       nickname = snapshot.get(FirestoreConstants.displayName);
       phoneNumber = snapshot.get(FirestoreConstants.phoneNumber);
       aboutMe = snapshot.toString().contains(FirestoreConstants.aboutMe) ? snapshot.get(FirestoreConstants.aboutMe) : "";
+      chatWith = snapshot.toString().contains(FirestoreConstants.chatWith) ? snapshot.get(FirestoreConstants.chatWith) : List.empty();
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -55,8 +62,9 @@ class ChatUser extends Equatable {
         photoUrl: photoUrl,
         displayName: nickname,
         phoneNumber: phoneNumber,
-        aboutMe: aboutMe);
+        aboutMe: aboutMe,
+        chatWith: chatWith);
   }
   // TODO: implement props
-  List<Object?> get props => [id, photoUrl, displayName, phoneNumber, aboutMe];
+  List<Object?> get props => [id, photoUrl, displayName, phoneNumber, aboutMe, chatWith];
 }

@@ -9,6 +9,7 @@ class ChatProvider{
 
   final FirebaseFirestore firebaseFirestore;
   final FirebaseStorage firebaseStorage;
+  bool saved = false;
 
   ChatProvider({
         required this.firebaseStorage,
@@ -59,5 +60,18 @@ class ChatProvider{
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.set(documentReference, chatMessages.toJson());
     });
+
+    if (saved == false) {
+      updateDMers(currentUserId, peerId);
+    }
+  }
+
+  void updateDMers(String userId, String peerId) {
+    List users = List.empty(growable: true);
+    users.add(peerId);
+    FirebaseFirestore.instance.collection("users")
+        .doc(userId).update({FirestoreConstants.chatWith: FieldValue.arrayUnion(users)
+    });
+    saved = true;
   }
 }
