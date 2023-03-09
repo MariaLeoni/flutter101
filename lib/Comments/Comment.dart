@@ -41,6 +41,7 @@ class CommentState extends State<Comment> {
   List<String>
       words = [];
   String str = '';
+  Future<QuerySnapshot>? postDocumentsList;
   List<String> coments=[];
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -52,7 +53,11 @@ class CommentState extends State<Comment> {
     String? userId,
 
   });
-
+startSearch( String seachText){
+  postDocumentsList = FirebaseFirestore.instance.collection("users")
+      .where("name", isGreaterThanOrEqualTo: searchText)
+      .where("name", isLessThanOrEqualTo: '$searchText\uf8ff').get();
+}
   buildComments(){
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
@@ -172,59 +177,84 @@ class CommentState extends State<Comment> {
                 content: Text('Show the user profile !')
             ));
   }
+  users(){
+    Future<List<User>> readUsers(String path, int limit) async {
+      final snapshot =
+      await FirebaseFirestore.instance.collection(path).limit(limit).get();
+      return snapshot.docs
+          .map(
+            (doc) => User(
+          id: doc.data()['id'],
+          name: doc.data()['name'],
+        ),
+      )
+          .toList();
+    }
+  }
   buildUsers(){
-  // final firebaseCollection = FirebaseFirestore.instance.collection('users');
-  return StreamBuilder(
-  stream: FirebaseFirestore.instance.collection('users').snapshots(),
-  builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
-  if(snapshot.connectionState == ConnectionState.waiting ) {
-  return const Center(child: CircularProgressIndicator(),);
-  }
-  else if (snapshot.connectionState == ConnectionState.active) {
-  if(snapshot.data!.docs.isNotEmpty){
-  {
-  List<UsersModel> users = [];
-  for (var doc in snapshot.data!.docs) {
-  users.add(UsersModel.fromDocument(doc));
-  }
-  return Comment(
-    users: [],
+    FutureBuilder<QuerySnapshot>(
+        future: postDocumentsList,
+        builder: (context, snapshot) {
+          return snapshot.hasData ?
+          Container(
+              color: Colors.black,
+              child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
+                str.length > 1
+                    ? ListView(
 
-  );
+                    shrinkWrap: true,
+                    children: model.map((s) {
+                      if (('@' + s).contains(str))
+                        return
+                          ListTile(
+                              title: Text(s, style: TextStyle(color: Colors.black),),
+                              onTap: () {
+                                String tmp = str.substring(1, str.length);
+                                setState(() {
+                                  str = '';
+                                  commentController.text += s
+                                      .substring(
+                                      s.indexOf(tmp) + tmp.length, s.length)
+                                      .replaceAll(' ', '_');
+                                });
+                              });
+                      else
+                        return SizedBox();
+                    }).toList()
+                ) : SizedBox(),
+                if (widget.type == SearchType.post){
+                  Post model = Post.getPostSnapshot(snapshot.data!.docs[index].data()! as Map<String, dynamic>,
+                      widget.postType == null? PostType.image : widget.postType!);
 
+                  if (widget.postType == PostType.video){
+                    VideoListData videoListData = VideoListData(model);
+
+                    return ReusableVideoListWidget(videoListData: videoListData,
+                      videoListController: videoListController,
+                      canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+                        videoSelected(videoListData);
+                      },
+                    );
+                  }
+                  else{
+                    return UsersPostWidget(model: model, context: context);
+                  }
+                }
+                else{
+                  Users model = Users.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
+                  return UsersDesignWidget(model: model, context: context,);
+                }
+              })
+          ):
+          const Center(child: Text("No Record Exists",
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),),);
+        }
+    ),
   }
-  }
-  else if (snapshot.data!.docs.isEmpty) {
-  return const Center(
-  child: Text("This user has no followers ",
-  style: TextStyle(fontSize: 20),)
-  );
-  }
-  }
-  return const Center(
-  child: Text(
-  'Something went wrong',
-  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-  ),
-  );
-  }
-  // builder: (context, snapshot) {
-  //   if (snapshot.hasError) {
-  //     return const Text('Something went wrong');
-  //   }
-  //   if (snapshot.connectionState == ConnectionState.waiting) {
-  //     return const Center(child: CircularProgressIndicator(),);
-  //   }
-  //   List<FollowerModel> followers = [];
-  //   for (var doc in snapshot.data!.docs) {
-  //     followers.add(FollowerModel.fromDocument(doc));
-  //   }
-  //   return ListView(
-  //     children: followers,
-  //   );
-  //
-  //   }
-  );}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -266,12 +296,12 @@ class CommentState extends State<Comment> {
                   child: const Text("Post"),
                 )
             ),
-            str.length > 1
-                ? ListView(
-
+            str.length > 1 ?
+                startSearch(str):
+            ListView(
 
                 shrinkWrap: true,
-                children: widget.users!.map((s) {
+                children: users.map((s) {
                   if (('@' + s).contains(str))
                     return
                       ListTile(
