@@ -2,43 +2,44 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class UsersModel extends StatelessWidget {
+class Usersx {
+  Timestamp createdTime;
+  String name;
+  String id;
+  String email;
+  String userImage;
 
-  String? name;
-  String? userImage;
-  String? userId;
-  String? email;
-
-
-  UsersModel({super.key,
-    this.name,
-    this.userId,
-    this.email,
-    this.userImage
+  Usersx({
+    required this.createdTime,
+     required this.name,
+    required this.email ,
+    required this.id,
+    required this.userImage
   });
 
-
-  factory UsersModel.fromDocument(DocumentSnapshot doc){
-    return UsersModel(
-      name: doc.data().toString().contains('name') ? doc.get('name') : '',
-      userId: doc.data().toString().contains('id') ? doc.get('id') : '',
-      userImage: doc.data().toString().contains('userImage') ? doc.get(
-          'userImage') : '',
+  factory Usersx.fromJson(Map<String, dynamic> json) {
+    return Usersx(
+        createdTime: json['createdAt'],
+        name: json['name'],
+        id: json['id'],
+        email: json['email'],
+        userImage: json['userImage']
     );
   }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      ListTile(contentPadding: const EdgeInsets.only(left: 2.0, right: 0.0),
-        title: Text(name!),
-        //subtitle: Text(userId!),
-        leading: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(userImage!),
-        ),
-      ),
-      const Divider(),
-    ]);
-  }
 }
+
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(children: <Widget>[
+//       ListTile(contentPadding: const EdgeInsets.only(left: 2.0, right: 0.0),
+//         title: Text(name!),
+//         //subtitle: Text(userId!),
+//         leading: CircleAvatar(
+//           backgroundImage: CachedNetworkImageProvider(userImage!),
+//         ),
+//       ),
+//       const Divider(),
+//     ]);
+//   }
+// }

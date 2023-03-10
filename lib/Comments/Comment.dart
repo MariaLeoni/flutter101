@@ -20,9 +20,8 @@ class Comment extends StatefulWidget {
   List<String>? likes = List.empty(growable: true);
   String? description;
   int? downloads;
-  List<String>? users = List.empty(growable:true);
   Comment({super.key, this.userId, this.postId,
-    this.docId,this.Image, this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, this.users,});
+    this.docId,this.Image, this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, });
 
   @override
   State<Comment> createState() => CommentState();
@@ -38,6 +37,7 @@ class CommentState extends State<Comment> {
   String? tokens;
   String commentId = const Uuid().v4();
   String? myUserId;
+  List<String>? allData = List.empty(growable: true);
   List<String>
       words = [];
   String str = '';
@@ -53,11 +53,11 @@ class CommentState extends State<Comment> {
     String? userId,
 
   });
-startSearch( String seachText){
-  postDocumentsList = FirebaseFirestore.instance.collection("users")
-      .where("name", isGreaterThanOrEqualTo: searchText)
-      .where("name", isLessThanOrEqualTo: '$searchText\uf8ff').get();
-}
+// startSearch( String seachText){
+//   postDocumentsList = FirebaseFirestore.instance.collection("users")
+//       .where("name", isGreaterThanOrEqualTo: searchText)
+//       .where("name", isLessThanOrEqualTo: '$searchText\uf8ff').get();
+// }
   buildComments(){
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
@@ -97,6 +97,23 @@ startSearch( String seachText){
     }
     });
   }
+  // void getUsers() async {
+  //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection(
+  //       "collection").get();
+  //   list = querySnapshot.docs;
+  // }
+
+  Future<List<String>?> GetData() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection(
+        "users").get();
+
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).cast<String>().toList();
+return allData;
+  }
+
+
+
   void sendNotification() {
     NotificationModel model = NotificationModel(title: myName,
         body: "Liked your comment", dataBody: widget.Image,
@@ -166,6 +183,7 @@ startSearch( String seachText){
     getDataFromDatabase2();
     notificationManager = NotificationManager();
     notificationManager?.initServer();
+    GetData();
   }
 
   showProfile(String s) {
@@ -177,84 +195,79 @@ startSearch( String seachText){
                 content: Text('Show the user profile !')
             ));
   }
-  users(){
-    Future<List<User>> readUsers(String path, int limit) async {
-      final snapshot =
-      await FirebaseFirestore.instance.collection(path).limit(limit).get();
-      return snapshot.docs
-          .map(
-            (doc) => User(
-          id: doc.data()['id'],
-          name: doc.data()['name'],
-        ),
-      )
-          .toList();
-    }
-  }
-  buildUsers(){
-    FutureBuilder<QuerySnapshot>(
-        future: postDocumentsList,
-        builder: (context, snapshot) {
-          return snapshot.hasData ?
-          Container(
-              color: Colors.black,
-              child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
-                str.length > 1
-                    ? ListView(
+  // gotousers() async {
+  //   {
+  //     final snapshot =
+  //     await FirebaseFirestore.instance.collection('users').get();
+  //     return snapshot.docs.toList();
+  //   }
+  // }
 
-                    shrinkWrap: true,
-                    children: model.map((s) {
-                      if (('@' + s).contains(str))
-                        return
-                          ListTile(
-                              title: Text(s, style: TextStyle(color: Colors.black),),
-                              onTap: () {
-                                String tmp = str.substring(1, str.length);
-                                setState(() {
-                                  str = '';
-                                  commentController.text += s
-                                      .substring(
-                                      s.indexOf(tmp) + tmp.length, s.length)
-                                      .replaceAll(' ', '_');
-                                });
-                              });
-                      else
-                        return SizedBox();
-                    }).toList()
-                ) : SizedBox(),
-                if (widget.type == SearchType.post){
-                  Post model = Post.getPostSnapshot(snapshot.data!.docs[index].data()! as Map<String, dynamic>,
-                      widget.postType == null? PostType.image : widget.postType!);
 
-                  if (widget.postType == PostType.video){
-                    VideoListData videoListData = VideoListData(model);
-
-                    return ReusableVideoListWidget(videoListData: videoListData,
-                      videoListController: videoListController,
-                      canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
-                        videoSelected(videoListData);
-                      },
-                    );
-                  }
-                  else{
-                    return UsersPostWidget(model: model, context: context);
-                  }
-                }
-                else{
-                  Users model = Users.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
-                  return UsersDesignWidget(model: model, context: context,);
-                }
-              })
-          ):
-          const Center(child: Text("No Record Exists",
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),),);
-        }
-    ),
-  }
+  // buildUsers(){
+  //   FutureBuilder<QuerySnapshot>(
+  //       future: postDocumentsList,
+  //       builder: (context, snapshot) {
+  //         return snapshot.hasData ?
+  //         Container(
+  //             color: Colors.black,
+  //             child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
+  //               str.length > 1
+  //                   ? ListView(
+  //
+  //                   shrinkWrap: true,
+  //                   children: model.map((s) {
+  //                     if (('@' + s).contains(str))
+  //                       return
+  //                         ListTile(
+  //                             title: Text(s, style: TextStyle(color: Colors.black),),
+  //                             onTap: () {
+  //                               String tmp = str.substring(1, str.length);
+  //                               setState(() {
+  //                                 str = '';
+  //                                 commentController.text += s
+  //                                     .substring(
+  //                                     s.indexOf(tmp) + tmp.length, s.length)
+  //                                     .replaceAll(' ', '_');
+  //                               });
+  //                             });
+  //                     else
+  //                       return SizedBox();
+  //                   }).toList()
+  //               ) : SizedBox(),
+  //               if (widget.type == SearchType.post){
+  //                 Post model = Post.getPostSnapshot(snapshot.data!.docs[index].data()! as Map<String, dynamic>,
+  //                     widget.postType == null? PostType.image : widget.postType!);
+  //
+  //                 if (widget.postType == PostType.video){
+  //                   VideoListData videoListData = VideoListData(model);
+  //
+  //                   return ReusableVideoListWidget(videoListData: videoListData,
+  //                     videoListController: videoListController,
+  //                     canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+  //                       videoSelected(videoListData);
+  //                     },
+  //                   );
+  //                 }
+  //                 else{
+  //                   return UsersPostWidget(model: model, context: context);
+  //                 }
+  //               }
+  //               else{
+  //                 Users model = Users.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
+  //                 return UsersDesignWidget(model: model, context: context,);
+  //               }
+  //             })
+  //         ):
+  //         const Center(child: Text("No Record Exists",
+  //           style: TextStyle(
+  //             fontSize: 20.0,
+  //             color: Colors.black,
+  //             fontWeight: FontWeight.bold,
+  //           ),),);
+  //       }
+  //   ),
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -297,11 +310,10 @@ startSearch( String seachText){
                 )
             ),
             str.length > 1 ?
-                startSearch(str):
             ListView(
 
                 shrinkWrap: true,
-                children: users.map((s) {
+                children: allData!.map((s) {
                   if (('@' + s).contains(str))
                     return
                       ListTile(
@@ -319,7 +331,7 @@ startSearch( String seachText){
                   else
                     return SizedBox();
                 }).toList()
-            ) : SizedBox(),
+            ): SizedBox(),
             SizedBox(height: 25),
             coments.length > 0 ?
             ListView.builder(
