@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:better_player/better_player.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/misc/global.dart';
@@ -100,19 +98,7 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   @override
   Widget build(BuildContext context) {
 
-    var tmp = MediaQuery.of(context).size;
-
-    double height = tmp.height * 0.75;
-    var screenH = max(height, tmp.width);
-    var screenW = min(height, tmp.width);
-
-    tmp = tmp;
-
-    height = tmp.height * 0.75;
-    var previewH = max(height, tmp.width);
-    var previewW = min(height, tmp.width);
-    var screenRatio = screenH / screenW;
-    var previewRatio = previewH / previewW;
+    var screen = MediaQuery.of(context).size;
 
     return Card(
       color: Colors.black,
@@ -150,18 +136,21 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
             child: StreamBuilder<BetterPlayerController?>(
               stream: betterPlayerControllerStreamController.stream,
               builder: (context, snapshot) {
-                return SizedBox(
-                    width: tmp.width,
-                    height: tmp.height - 400,
-                    child: controller != null
-                        ? BetterPlayer(controller: controller!,)
-                        : Container(color: Colors.black, child: const Center(
-                      child: CircularProgressIndicator(valueColor:
-                      AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                    )
-                );
+                return FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                        width: screen.width,
+                        height: screen.height * 0.75,
+                        child: controller != null
+                            ? BetterPlayer(controller: controller!,)
+                            : Container(color: Colors.black, child: const Center(
+                          child: CircularProgressIndicator(valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                        )
+                    ),
+                  );
               },
             ),
           ),

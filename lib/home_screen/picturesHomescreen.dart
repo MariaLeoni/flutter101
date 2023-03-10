@@ -96,14 +96,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     //   );
     // });
   }
-
-  // void sendNotification() {
-  //   NotificationModel model = NotificationModel(title: "Hello from Jonas",
-  //       body: "Jonas has just liked your post", dataBody: "should be post url",
-  //       dataTitle: "Should be post description");
-  //   String token = "fwihk98iTwuDd15vLrU0Dj:APA91bHpbp0WLFJZyBfkx-MImsDymk700wm47R2PdL5jrjXNGRptKyROCRXSEgfbZzlAwldOsutnKMFdCWvc61_ROtQCUEA310kGXL4boq_5jh25hDnUg8sCBivMGS0cR0NVW2aJMxVN";
-  //   notificationManager?.sendNotification(token, model);
-  // }
+  void sendNotification() {
+    NotificationModel model = NotificationModel(title: "Hello from Jonas",
+        body: "Jonas has just liked your post", dataBody: "should be post url",
+        dataTitle: "Should be post description");
+    String token = "fWrxOXwIS-i5hWV3hBRAuy:APA91bGho335472C4RUCFbzCIPzGzIS2Gb0j519yuSuGCxTiqeau4_PsG9pB0coGwEQyjhmEGzBUhLsL4eN4LrAcaBtG3uhKgeeS7uFleU7FUUzAg5a9F5ac-2cX9P7sTz6UMZ2831VQ";
+    notificationManager?.sendNotification(token, model);
+  }
 
   void goToDetails(String img, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, String postId,

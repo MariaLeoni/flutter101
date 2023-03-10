@@ -5,10 +5,7 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/userMention.dart';
 import '../Search.dart';
 import '../chatmain.dart';
-import '../vidlib/videoWidget.dart';
-import 'home.dart';
 import 'post.dart';
-import '../message/sendmessage.dart';
 import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../profile/profile_screen.dart';
@@ -185,17 +182,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                     Post post = Post.getPost(snapshot, index, PostType.video);
 
                     VideoListData videoListData = VideoListData(post);
-
-                    // return VideoItemWidget(videoInfo: videoListData,
-                    //   pageIndex: index, currentPageIndex: _currentPage,
-                    //   isPaused: _isOnPageTurning,
-                    //   videoEnded: (){
-                    //      print("Video at $_currentPage is ended");
-                    //   },
-                    //     videoListController: videoListController,
-                    //     canBuildVideo: checkCanBuildVideo
-                    // );
-
                     return ReusableVideoListWidget(videoListData: videoListData,
                       videoListController: videoListController,
                       canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
