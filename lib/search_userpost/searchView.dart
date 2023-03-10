@@ -103,7 +103,6 @@ class SearchScreenState extends State<SearchScreen> {
             Container(
                 color: Colors.black,
                 child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
-
                   if (widget.type == SearchType.post){
                     Post model = Post.getPostSnapshot(snapshot.data!.docs[index].data()! as Map<String, dynamic>,
                         widget.postType == null? PostType.image : widget.postType!);

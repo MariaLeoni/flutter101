@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
-
 import '../notification/notification.dart';
 import '../notification/server.dart';
-import '../returnusers.dart';
+import '../search_post/user.dart';
 
 class Comment extends StatefulWidget {
 
@@ -38,13 +37,13 @@ class CommentState extends State<Comment> {
   String commentId = const Uuid().v4();
   String? myUserId;
   List<String>? allData = List.empty(growable: true);
-  List<String>
-      words = [];
+  List<String> words = [];
   String str = '';
   Future<QuerySnapshot>? postDocumentsList;
-  List<String> coments=[];
+  List<String> coments = [];
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
 
   CommentState({
@@ -53,11 +52,7 @@ class CommentState extends State<Comment> {
     String? userId,
 
   });
-// startSearch( String seachText){
-//   postDocumentsList = FirebaseFirestore.instance.collection("users")
-//       .where("name", isGreaterThanOrEqualTo: searchText)
-//       .where("name", isLessThanOrEqualTo: '$searchText\uf8ff').get();
-// }
+
   buildComments(){
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
@@ -91,28 +86,10 @@ class CommentState extends State<Comment> {
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
         tokens = snapshot.data()!["devicetoken"];
-
-
       });
     }
     });
   }
-  // void getUsers() async {
-  //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection(
-  //       "collection").get();
-  //   list = querySnapshot.docs;
-  // }
-
-  Future<List<String>?> GetData() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection(
-        "users").get();
-
-    // Get data from docs and convert map to List
-    allData = querySnapshot.docs.map((doc) => doc.data()).cast<String>().toList();
-return allData;
-  }
-
-
 
   void sendNotification() {
     NotificationModel model = NotificationModel(title: myName,
@@ -122,7 +99,8 @@ return allData;
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
-  AddLikeToActivityFeed() {
+
+  addLikeToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
@@ -146,6 +124,7 @@ return allData;
           });
     }
   }
+
   addComment() {
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
@@ -160,7 +139,7 @@ return allData;
       'likes': <String>[],
       'Image': widget.Image,
     });
-    AddLikeToActivityFeed();
+    addLikeToActivityFeed();
     sendNotification();
     commentController.clear();
   }
@@ -183,7 +162,6 @@ return allData;
     getDataFromDatabase2();
     notificationManager = NotificationManager();
     notificationManager?.initServer();
-    GetData();
   }
 
   showProfile(String s) {
@@ -192,17 +170,9 @@ return allData;
         builder: (con) =>
             AlertDialog(
                 title: Text('Profile of $s'),
-                content: Text('Show the user profile !')
+                content: const Text('Show the user profile !')
             ));
   }
-  // gotousers() async {
-  //   {
-  //     final snapshot =
-  //     await FirebaseFirestore.instance.collection('users').get();
-  //     return snapshot.docs.toList();
-  //   }
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -224,76 +194,90 @@ return allData;
           children: <Widget>[
             Expanded(child: buildComments()),
             const Divider(),
-            ListTile(
-                title: TextFormField(
+            ListTile(title: TextFormField(
                   controller: commentController,
                   decoration: const InputDecoration(labelText: "Write a comment.."),
                     onChanged: (val) {
                       setState(() {
                         words = val.split(' ');
-                        str = words.length > 0 &&
-                            words[words.length - 1].startsWith('@')
-                            ? words[words.length - 1]
-                            : '';
+                        str = words.isNotEmpty && words[words.length - 1].startsWith('@')
+                            ? words[words.length - 1] : '';
                       });
                     }
-
                 ),
                 trailing: OutlinedButton(
                   onPressed: addComment,
-                  //  borderSide: BorderSide.none,
                   child: const Text("Post"),
                 )
             ),
             str.length > 1 ?
-            ListView(
-
-                shrinkWrap: true,
-                children: allData!.map((s) {
-                  if (('@' + s).contains(str))
-                    return
-                      ListTile(
-                          title: Text(s, style: TextStyle(color: Colors.black),),
-                          onTap: () {
-                            String tmp = str.substring(1, str.length);
-                            setState(() {
-                              str = '';
-                              commentController.text += s
-                                  .substring(
-                                  s.indexOf(tmp) + tmp.length, s.length)
-                                  .replaceAll(' ', '_');
-                            });
-                          });
-                  else
-                    return SizedBox();
-                }).toList()
-            ): SizedBox(),
-            SizedBox(height: 25),
-            coments.length > 0 ?
+            StreamBuilder<QuerySnapshot>(
+                stream: searchForUser("users", 100, str.split("@")[1]),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    if ((snapshot.data?.docs.length ?? 0) > 0) {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          Users model = Users.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
+                          return ListTile(
+                              title: Text(model.name!, style: const TextStyle(color: Colors.black),),
+                              onTap: () {
+                                String tmp = str.substring(1, str.length);
+                                setState(() {
+                                  str = '';
+                                  commentController.text += model.name!.
+                                  substring(
+                                      model.name!.indexOf(tmp) + tmp.length, model.name!.length)
+                                      .replaceAll(' ', '_');
+                                });
+                              });
+                        },
+                        separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(),
+                      );
+                    }
+                  }
+                  return const SizedBox();
+                }) : const SizedBox(),
+            const SizedBox(height: 25),
+            coments.isNotEmpty ?
             ListView.builder(
               shrinkWrap: true,
               itemCount: coments.length,
               itemBuilder: (con, ind) {
                 return Text.rich(
-                  TextSpan(
-                      text: '',
+                  TextSpan(text: '',
                       children: coments[ind].split(' ').map((w) {
                         return w.startsWith('@') && w.length > 1 ?
                         TextSpan(
-                          text: ' ' + w,
-                          style: TextStyle(color: Colors.blue),
-                          recognizer: new TapGestureRecognizer()
+                          text: ' $w',
+                          style: const TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
                             ..onTap = () => showProfile(w),
-                        ) : TextSpan(text: ' ' + w, style: TextStyle(
+                        ) : TextSpan(text: ' $w', style: const TextStyle(
                             color: Colors.black));
                       }).toList()
                   ),
                 );
               },
-            ) : SizedBox()
-
+            ) : const SizedBox()
           ],
         )
     );
+  }
+
+  Stream<QuerySnapshot> searchForUser(String collectionPath, int limit, String? textSearch) {
+    if (textSearch?.isNotEmpty == true) {
+      return firebaseFirestore.collection(collectionPath).limit(limit)
+          .where("name", isGreaterThanOrEqualTo: textSearch)
+          .where("name", isLessThanOrEqualTo: '$textSearch\uf8ff')
+          .snapshots();
+    } else {
+      return firebaseFirestore.collection(collectionPath)
+          .limit(limit)
+          .snapshots();
+    }
   }
 }
