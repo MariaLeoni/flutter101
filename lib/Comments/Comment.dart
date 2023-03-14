@@ -10,8 +10,7 @@ import '../notification/server.dart';
 import '../search_post/user.dart';
 
 class Comment extends StatefulWidget {
-  Users? model;
-  BuildContext? context;
+
   String? userId;
   String? postId;
   String? docId;
@@ -22,7 +21,7 @@ class Comment extends StatefulWidget {
 
   String? description;
   int? downloads;
-  Comment({super.key, this.model, this.context,this.userId, this.postId,
+  Comment({super.key, this.userId, this.postId,
     this.docId,this.Image, this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, });
 
   @override
@@ -39,16 +38,14 @@ class CommentState extends State<Comment> {
   String? tokens;
   String commentId = const Uuid().v4();
   String? myUserId;
-  List<String>? allData = List.empty(growable: true);
   List<String> words = [];
   String str = '';
-  Future<QuerySnapshot>? postDocumentsList;
   List<String> coments = [];
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
-  List<String>? ids = List.empty(growable: true);
+ // List<String> ids = List.empty(growable: true);
 
   CommentState({
     String? postId,
@@ -129,30 +126,55 @@ class CommentState extends State<Comment> {
     }
   }
 
-
-  addComment() {
-    if (commentController.text.startsWith('@')){
-    Query<Map<String, dynamic>> getUsersId(String collectionPath, List<String>?ids){
-      return FirebaseFirestore.instance.collection(collectionPath).where(FieldPath.documentId, whereIn: ids);
-    }
-    };
-    FirebaseFirestore.instance.collection('comment').doc(commentId).set({
-      "comment": commentController.text,
-      "commenterImage": myImage,
-      "commenterName": myName,
-      "timestamp": DateTime.now(),
-      "commenterId": id,
-      "originalCommentId": null,
-      "commentId": commentId,
-      "postId": widget.postId,
-      'subCommentIds': <String>[],
-      'likes': <String>[],
-      'Image': widget.Image,
-    });
-    addLikeToActivityFeed();
-    sendNotification();
-    commentController.clear();
-  }
+addComment(){
+  FirebaseFirestore.instance.collection('comment').doc(commentId).set({
+    "comment": commentController.text,
+    "commenterImage": myImage,
+    "commenterName": myName,
+    "timestamp": DateTime.now(),
+    "commenterId": id,
+    "originalCommentId": null,
+    "commentId": commentId,
+    "postId": widget.postId,
+    'subCommentIds': <String>[],
+    'likes': <String>[],
+    'Image': widget.Image,
+  });
+  addLikeToActivityFeed();
+  sendNotification();
+  commentController.clear();
+}
+  // checkComment() {
+  //   if (commentController.text.startsWith('@')) {
+  //     ids.forEach((item) {
+  //       FirebaseFirestore.instance.collection('Activity Feed')
+  //           .doc(item)
+  //           .collection('FeedItems')
+  //           .add({
+  //         "type": "tag",
+  //         "name": myName,
+  //         "userId": _auth.currentUser!.uid,
+  //         "userProfileImage": myImage,
+  //         "postId": widget.postId,
+  //         "Image": widget.Image,
+  //         "timestamp": DateTime.now(),
+  //         "commentData": commentController.text,
+  //         "description": widget.description,
+  //         "downloads": widget.downloads,
+  //         "likes": widget.likes,
+  //         "postOwnerId": widget.userId,
+  //         "postOwnerImage": widget.postOwnerImg,
+  //         "postOwnername": widget.postOwnername,
+  //         "likes": widget.likes,
+  //         "downloads": widget.downloads,
+  //       });
+  //       addComment();
+  //     });
+  //   }
+  //   else{
+  //     addComment();
+  //   }
+  // }
 
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
@@ -216,7 +238,7 @@ class CommentState extends State<Comment> {
                     }
                 ),
                 trailing: OutlinedButton(
-                  onPressed: addComment,
+                  onPressed: addComment(),
                   child: const Text("Post"),
                 )
             ),
@@ -242,7 +264,7 @@ class CommentState extends State<Comment> {
                                   substring(
                                       model.name!.indexOf(tmp) + tmp.length, model.name!.length)
                                       .replaceAll(' ', '_');
-                                  ids!.add(model.id!);
+                                //  ids.add(model.id!);
                                 });
 
                               });

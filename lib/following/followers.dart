@@ -47,6 +47,7 @@ class FollowersState extends State<Followers> {
                 {
                   List<FollowerModel> followers = [];
                   for (var doc in snapshot.data!.docs) {
+
                     followers.add(FollowerModel.fromDocument(doc));
                   }
                   return ListView(
