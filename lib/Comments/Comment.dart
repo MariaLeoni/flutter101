@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
 import '../notification/notification.dart';
@@ -9,7 +10,8 @@ import '../notification/server.dart';
 import '../search_post/user.dart';
 
 class Comment extends StatefulWidget {
-
+  Users? model;
+  BuildContext? context;
   String? userId;
   String? postId;
   String? docId;
@@ -17,9 +19,10 @@ class Comment extends StatefulWidget {
   String? postOwnerImg;
   String? postOwnername;
   List<String>? likes = List.empty(growable: true);
+
   String? description;
   int? downloads;
-  Comment({super.key, this.userId, this.postId,
+  Comment({super.key, this.model, this.context,this.userId, this.postId,
     this.docId,this.Image, this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, });
 
   @override
@@ -45,6 +48,7 @@ class CommentState extends State<Comment> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
+  List<String>? ids = List.empty(growable: true);
 
   CommentState({
     String? postId,
@@ -126,6 +130,28 @@ class CommentState extends State<Comment> {
   }
 
   addComment() {
+    if (commentController.text.startsWith('@')){
+    FirebaseFirestore.instance.collection('Activity Feed').
+    where( FieldPath.documentId, whereIn: widget.followers)
+        .collection('FeedItems').add({
+      "type": "tag",
+      "name": myName,
+      "userId": _auth.currentUser!.uid,
+      "userProfileImage": myImage,
+      "postId": widget.postId,
+      "Image": widget.Image,
+      "timestamp": DateTime.now(),
+      "commentData":  commentController.text,
+      "description": widget.description,
+      "downloads": widget.downloads,
+      "likes": widget.likes,
+      "postOwnerId": widget.userId,
+      "postOwnerImage": widget.postOwnerImg,
+      "postOwnername": widget.postOwnername,
+      "likes": widget.likes,
+      "downloads": widget.downloads,
+    });
+    };
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
@@ -215,6 +241,7 @@ class CommentState extends State<Comment> {
                 stream: searchForUser("users", 100, str.split("@")[1]),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
+
                     if ((snapshot.data?.docs.length ?? 0) > 0) {
                       return ListView.separated(
                         shrinkWrap: true,
@@ -231,13 +258,18 @@ class CommentState extends State<Comment> {
                                   substring(
                                       model.name!.indexOf(tmp) + tmp.length, model.name!.length)
                                       .replaceAll(' ', '_');
+                                  ids!.add(model.id!);
                                 });
+
                               });
+
                         },
                         separatorBuilder: (BuildContext context, int index) =>
+
                         const Divider(),
                       );
                     }
+
                   }
                   return const SizedBox();
                 }) : const SizedBox(),
