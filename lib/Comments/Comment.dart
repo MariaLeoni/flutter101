@@ -129,28 +129,12 @@ class CommentState extends State<Comment> {
     }
   }
 
+
   addComment() {
     if (commentController.text.startsWith('@')){
-    FirebaseFirestore.instance.collection('Activity Feed').
-    where( FieldPath.documentId, whereIn: widget.followers)
-        .collection('FeedItems').add({
-      "type": "tag",
-      "name": myName,
-      "userId": _auth.currentUser!.uid,
-      "userProfileImage": myImage,
-      "postId": widget.postId,
-      "Image": widget.Image,
-      "timestamp": DateTime.now(),
-      "commentData":  commentController.text,
-      "description": widget.description,
-      "downloads": widget.downloads,
-      "likes": widget.likes,
-      "postOwnerId": widget.userId,
-      "postOwnerImage": widget.postOwnerImg,
-      "postOwnername": widget.postOwnername,
-      "likes": widget.likes,
-      "downloads": widget.downloads,
-    });
+    Query<Map<String, dynamic>> getUsersId(String collectionPath, List<String>?ids){
+      return FirebaseFirestore.instance.collection(collectionPath).where(FieldPath.documentId, whereIn: ids);
+    }
     };
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
