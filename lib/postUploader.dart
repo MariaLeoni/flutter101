@@ -48,6 +48,7 @@ class PostUploaderState extends State<PostUploader> {
       'video': postUrl,
       'downloads': 0,
       'viewcount':0,
+      'viewers': <String>[],
       'createdAt': DateTime.now(),
       'postId': postId,
       'likes': <String>[],
@@ -73,6 +74,7 @@ class PostUploaderState extends State<PostUploader> {
       'createdAt': DateTime.now(),
       'postId': postId,
       'likes': <String>[],
+      'viewers':<String>[],
       'description': commentController.text,
       'category': selectedInterests,
     });

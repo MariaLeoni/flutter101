@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/search_post/user.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
+import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 
 class UsersDesignWidget extends StatefulWidget {
 
@@ -20,9 +21,10 @@ class UsersDesignWidgetState extends State<UsersDesignWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+        Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
           userId:widget.model!.id,
           userName:widget.model!.name,
+          userImage: widget.model!.userImage,
         )));
       },
       child: Card(

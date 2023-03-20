@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
 import '../notification/notification.dart';
@@ -18,16 +17,15 @@ class Comment extends StatefulWidget {
   String? postOwnerImg;
   String? postOwnername;
   List<String>? likes = List.empty(growable: true);
-
   String? description;
   int? downloads;
+
   Comment({super.key, this.userId, this.postId,
     this.docId,this.Image, this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, });
 
   @override
   State<Comment> createState() => CommentState();
 }
-
 
 class CommentState extends State<Comment> {
   String? postId;
@@ -45,7 +43,7 @@ class CommentState extends State<Comment> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
- // List<String> ids = List.empty(growable: true);
+ List<String>? ids = List.empty(growable: true);
 
   CommentState({
     String? postId,
@@ -80,6 +78,7 @@ class CommentState extends State<Comment> {
       },
     );
   }
+
   void getDataFromDatabase2() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId)
@@ -124,6 +123,8 @@ class CommentState extends State<Comment> {
         "downloads": widget.downloads,
           });
     }
+    ids!.clear();
+    commentController.clear();
   }
 
 addComment(){
@@ -140,41 +141,102 @@ addComment(){
     'likes': <String>[],
     'Image': widget.Image,
   });
+
+  if (commentController.text.startsWith('@')) {
+    for (var item in ids!) {
+      FirebaseFirestore.instance.collection('Activity Feed')
+          .doc(item)
+          .collection('FeedItems')
+          .add({
+        "type": "tag",
+        "name": myName,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": myImage,
+        "postId": widget.postId,
+        "Image": widget.Image,
+        "timestamp": DateTime.now(),
+        "commentData": commentController.text,
+        "description": widget.description,
+        "downloads": widget.downloads,
+        "likes": widget.likes,
+        "postOwnerId": widget.userId,
+        "postOwnerImage": widget.postOwnerImg,
+        "postOwnername": widget.postOwnername,
+        "likes": widget.likes,
+        "downloads": widget.downloads,
+      });
+      FirebaseFirestore.instance.collection('comment').doc(commentId).set({
+        "comment": commentController.text,
+        "commenterImage": myImage,
+        "commenterName": myName,
+        "timestamp": DateTime.now(),
+        "commenterId": id,
+        "originalCommentId": null,
+        "commentId": commentId,
+        "postId": widget.postId,
+        'subCommentIds': <String>[],
+        'likes': <String>[],
+        'Image': widget.Image,
+      });
+      ids!.clear();
+    }
+  }
+
+ else{
+    FirebaseFirestore.instance.collection('comment').doc(commentId).set({
+      "comment": commentController.text,
+      "commenterImage": myImage,
+      "commenterName": myName,
+      "timestamp": DateTime.now(),
+      "commenterId": id,
+      "originalCommentId": null,
+      "commentId": commentId,
+      "postId": widget.postId,
+      'subCommentIds': <String>[],
+      'likes': <String>[],
+      'Image': widget.Image,
+    });
+  }
+
+  commentController.clear();
   addLikeToActivityFeed();
   sendNotification();
-  commentController.clear();
+
 }
-  // checkComment() {
-  //   if (commentController.text.startsWith('@')) {
-  //     ids.forEach((item) {
-  //       FirebaseFirestore.instance.collection('Activity Feed')
-  //           .doc(item)
-  //           .collection('FeedItems')
-  //           .add({
-  //         "type": "tag",
-  //         "name": myName,
-  //         "userId": _auth.currentUser!.uid,
-  //         "userProfileImage": myImage,
-  //         "postId": widget.postId,
-  //         "Image": widget.Image,
-  //         "timestamp": DateTime.now(),
-  //         "commentData": commentController.text,
-  //         "description": widget.description,
-  //         "downloads": widget.downloads,
-  //         "likes": widget.likes,
-  //         "postOwnerId": widget.userId,
-  //         "postOwnerImage": widget.postOwnerImg,
-  //         "postOwnername": widget.postOwnername,
-  //         "likes": widget.likes,
-  //         "downloads": widget.downloads,
-  //       });
-  //       addComment();
-  //     });
-  //   }
-  //   else{
-  //     addComment();
-  //   }
-  // }
+  checkComment() {
+    if (commentController.text.startsWith('@')) {
+      for(var item in ids!) {
+        FirebaseFirestore.instance.collection('Activity Feed')
+            .doc(item)
+            .collection('FeedItems')
+            .add({
+          "type": "tag",
+          "name": myName,
+          "userId": _auth.currentUser!.uid,
+          "userProfileImage": myImage,
+          "postId": widget.postId,
+          "Image": widget.Image,
+          "timestamp": DateTime.now(),
+          "commentData": commentController.text,
+          "description": widget.description,
+          "downloads": widget.downloads,
+          "likes": widget.likes,
+          "postOwnerId": widget.userId,
+          "postOwnerImage": widget.postOwnerImg,
+          "postOwnername": widget.postOwnername,
+          "likes": widget.likes,
+          "downloads": widget.downloads,
+        });
+        ids!.clear();
+      };
+      ids!.clear();
+      addComment();
+
+    }
+    else {
+      addComment();
+    }
+  }
 
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
@@ -184,7 +246,6 @@ addComment(){
       id = snapshot.get('id');
     });
   }
-
 
   @override
   void initState() {
@@ -238,7 +299,7 @@ addComment(){
                     }
                 ),
                 trailing: OutlinedButton(
-                  onPressed: addComment(),
+                  onPressed: addComment,
                   child: const Text("Post"),
                 )
             ),
@@ -264,7 +325,7 @@ addComment(){
                                   substring(
                                       model.name!.indexOf(tmp) + tmp.length, model.name!.length)
                                       .replaceAll(' ', '_');
-                                //  ids.add(model.id!);
+                                  ids?.add(model.id!);
                                 });
 
                               });

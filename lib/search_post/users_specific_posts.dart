@@ -24,7 +24,7 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
   UsersSpecificPostsScreen({super.key,
     this.userId,
     this.userName,
-    this.followers,
+   this.followers,
     this.docId,
   });
 

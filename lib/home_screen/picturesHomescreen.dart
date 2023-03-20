@@ -44,7 +44,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String? myName;
   String? userId;
   int? total;
-  int? viewcount =0;
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
@@ -105,23 +104,24 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   }
 
   void goToDetails(String img, String userImg, String name, DateTime date,
-      String docId, String userId, int downloads, String postId,
-      List<String>? likes, String description) {
+      String docId, String userId, int downloads, int viewCount, String postId,
+      List<String>? likes, List<String>? viewers,String description) {
 
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
         OwnerDetails(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
-          postId: postId, likes: likes, description: description,
+          viewCount: viewCount,
+          postId: postId, likes: likes,viewers: viewers, description: description,
         )));
   }
-viewcounts(){
-    total = viewcount! + 1;
-    FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
-}
+// viewcounts(){
+//     total = viewcount! + 1;
+//     FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
+// }
 
   Widget listViewWidget(String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId,
-      List<String>? likes, String description) {
+      DateTime date, String userId, int downloads, int viewCount, String postId,
+      List<String>? likes, List<String>? viewers, String description) {
 
     return Padding(
       padding: const EdgeInsets.all (8.0),
@@ -142,9 +142,27 @@ viewcounts(){
               children: [
                 GestureDetector(
                     onTap: () {
-                      goToDetails(img, userImg, name, date,
-                          docId, userId, downloads, postId, likes,
-                          description);
+                      total = viewCount +1;
+                      FirebaseFirestore.instance.collection('wallpaper'). doc(postId).update({
+                        'viewcount': total,
+                      });
+                        if (viewers != null && viewers!.contains(userIdx)){
+                          goToDetails(img, userImg, name, date,
+                              docId, userId, downloads,viewCount, postId, likes,viewers,
+                              description);
+                        }
+                        else {
+                          viewers!.add(userIdx);
+                        }
+                        FirebaseFirestore.instance.collection('wallpaper').doc(postId)
+                            .update({'viewers': viewers,
+                        }).then((value){
+                          goToDetails(img, userImg, name, date,
+                              docId, userId, downloads,viewCount, postId, likes,viewers,
+                              description);
+                        });
+
+
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10), // Image border
@@ -203,8 +221,8 @@ viewcounts(){
 
 
   Widget gridViewWidget(String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId,
-      List<String>? likes, String description) {
+      DateTime date, String userId, int downloads, int viewCount, String postId,
+      List<String>? likes, List<String>? viewers, String description) {
 
     return GridView.count(
         primary: false,
@@ -217,9 +235,27 @@ viewcounts(){
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
                 onTap: () {
-                  viewcounts();
-                  goToDetails(img, userImg, name, date, docId, userId,
-                      downloads, postId, likes, description);
+                  total = viewCount +1;
+                  FirebaseFirestore.instance.collection('wallpaper'). doc(postId).update({
+                    'viewcount': total,
+                  });
+                  if (viewers != null && viewers!.contains(userIdx)){
+                    goToDetails(img, userImg, name, date,
+                        docId, userId, downloads,viewCount, postId, likes,viewers,
+                        description);
+                  }
+                  else {
+                    viewers!.add(userIdx);
+                  }
+                  FirebaseFirestore.instance.collection('wallpaper').doc(postId)
+                      .update({'viewers': viewers,
+                  }).then((value){
+                    goToDetails(img, userImg, name, date,
+                        docId, userId, downloads,viewCount, postId, likes,viewers,
+                        description);
+                  });
+
+
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10), // Image border
@@ -352,7 +388,7 @@ viewcounts(){
 
                         return listViewWidget(post.id, post.source, post.userImage,
                             post.userName, post.createdAt, post.email,
-                            post.downloads, post.postId, post.likes, post.description);
+                            post.downloads, post.viewCount, post.postId, post.likes, post.viewers, post.description);
                       },
                     );
                   }

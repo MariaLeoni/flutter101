@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
+import 'package:share_plus/share_plus.dart';
 import '../home_screen/home.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
@@ -23,13 +24,15 @@ class OwnerDetails extends StatefulWidget {
   String? userId;
   String? description;
   int? downloads;
+  int? viewCount;
   String? postId;
   bool? isRead;
   List<String>? likes = List.empty(growable: true);
+  List<String>? viewers = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
 
   OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.postId, this.likes, this.description, this.isRead
+    this.docId, this.userId, this.downloads, this.viewCount,this.postId, this.likes, this.viewers, this.description, this.isRead
   });
 
   @override
@@ -337,6 +340,12 @@ removeLikeFromActivityFeed() {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.docId, Image:widget.img, likes: widget.likes, description: widget.description, downloads: widget.downloads, postOwnerImg: widget.userImg, postOwnername: widget.name, )));
                       },
                       icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        Share.share(widget.img!);
+                      },
+                      icon: const Icon(Icons.share, color: Colors.white),
                     ),
                     IconButton(onPressed: () async{
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));

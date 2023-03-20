@@ -39,7 +39,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
   Widget listViewWidget (String Image, String name, String postId, DateTime timestamp, String type,
       String userId, String userProfileImage, String commentData, String description, String postOwnerId, String postOwnername, String postOwnerImage,
       List<String>? likes, int downloads ) {
-    if (type == "like" || type == 'comment'|| type == 'follow') {
+    if (type == "like" || type == 'comment'|| type == 'follow'|| type == 'tag') {
       mediaPreview = GestureDetector(
           onTap:() {
             Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
@@ -73,6 +73,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
       ActivityItemText = 'replied : $commentData';
     } else if (type == 'follow') {
       ActivityItemText = ' started following you';
+    } else if (type == 'tag'){
+      ActivityItemText = ' tagged you in a post ';
     } else {
       ActivityItemText = "Error : Uknown type '$type'";
     }

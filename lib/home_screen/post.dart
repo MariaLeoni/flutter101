@@ -18,6 +18,7 @@ class Post {
 
   
   List<String>? likes = List.empty(growable: true);
+  List<String>? viewers = List.empty(growable:true);
   List<String>? category = List.empty(growable: true);
 
   Post({
@@ -32,6 +33,7 @@ class Post {
     required this.downloads,
     required this.viewCount,
     required this.likes,
+    required this.viewers,
     required this.category,
   });
 
@@ -52,10 +54,10 @@ class Post {
         email: snapshot.data!.docs[index]['email'],
         postId: snapshot.data!.docs[index]['postId'],
         downloads: snapshot.data!.docs[index]['downloads'],
-        viewCount: snapshot.data!.docs[index].toString().contains('viewcount') ?
-        snapshot.data!.docs[index]['viewcount'] : 0,
+        viewCount: snapshot.data!.docs[index]['viewcount'],
         description: snapshot.data!.docs[index]['description'],
         likes: List.from(snapshot.data!.docs[index]['likes']),
+        viewers: List.from(snapshot.data!.docs[index]['viewers']),
         category: snapshot.data!.docs[index].toString().contains("category") ?
         List.from(snapshot.data!.docs[index]['category']) : List.empty()
     );
@@ -75,6 +77,7 @@ class Post {
         viewCount: postModel.viewcount!,
         description: postModel.description!,
         likes: List.empty(),
+        viewers: List.empty(),
         category: List.empty()
     );
   }
