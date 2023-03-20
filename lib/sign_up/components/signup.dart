@@ -253,9 +253,6 @@ class _CredentialsState extends State<Credentials> {
                         'categories': interests,
                         'devicetoken':token,
                         'groups':<String>[],
-                        //   'device': FirebaseMessaging.instance.getToken().then((token) {
-                      // print("Device Token: $token");
-                      // })
                        });
                       if (!mounted) return;
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
