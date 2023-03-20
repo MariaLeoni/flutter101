@@ -10,7 +10,6 @@ import 'package:sharedstudent1/widgets/input_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import '../../VerifyEmail/VerifyEmail.dart';
 import '../../misc/global.dart';
 
@@ -37,39 +36,9 @@ class _CredentialsState extends State<Credentials> {
 
   File? imageFile;
   String? imageUrl;
-  //late String currentToken;
+
   final Map<String, List<String>?> interests = {};
-  // @override
-  // void initState() {
-  //   super.initState();
 
-
-      // FirebaseFirestore.instance
-      //     .collection('Activity Feed')
-      //     .doc(userId).collection('Feed Count').doc(userId)
-      //     .set({'Feed Count': 0, 'createdAt': DateTime.now()});
-
-    // Timer.run(() {
-    //   FancyAlertDialog.showFancyAlertDialog(
-    //     context, 'Maria',
-    //     'just liked your post',
-    //     icon: const Icon(
-    //       Icons.clear,
-    //       color: Colors.black,
-    //     ),
-    //     labelPositiveButton: 'OKAY',
-    //     onTapPositiveButton: () {
-    //       Navigator.of(context).pop(false);
-    //       print('tap positive button');
-    //     },
-    //     labelNegativeButton: 'Cancel',
-    //     onTapNegativeButton: () {
-    //       Navigator.of(context, rootNavigator: true).pop();
-    //       print('tap negative button');
-    //     },
-    //   );
-    // });
- // }
   void _showImageDialog() {
     showDialog(
         context: context,
