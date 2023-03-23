@@ -130,7 +130,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
             children: <Widget>[
               OutlinedButton(
                   onPressed: () async {
-                    //handleFollowerPost();
+                    handlePostView(PostType.video);
                   },
                   child: Text(videosCount > 1 ? "$videosCount Videos" : "$videosCount Video",
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -139,7 +139,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
               buildDivider(),
               OutlinedButton(
                   onPressed: () async {
-                    //handleFollowerPost();
+                    handlePostView(PostType.image);
                   },
                   child: Text(picturesCount > 1 ? "$picturesCount Pictures" : "$picturesCount Picture",
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -150,6 +150,10 @@ class UsersProfilePageState extends State<UsersProfilePage> {
         ],
       ),
     );
+  }
+
+  handlePostView(PostType type){
+
   }
 
   void readUserInfo() async {
@@ -196,7 +200,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .update({'followers': widget.followers!,});
   }
-  
+
   Future<int> getPicturePost() async {
     final collection = FirebaseFirestore.instance.collection('wallpaper').where("id", isEqualTo: widget.userId);
     final countQuery = collection.count();
