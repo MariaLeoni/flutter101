@@ -39,3 +39,5 @@ void showSnackbar(context, color, message) {
     ),
   );
 }
+
+Widget buildDivider() => const SizedBox(height: 24, child: VerticalDivider(),);
