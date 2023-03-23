@@ -5,6 +5,7 @@ class FeedPost {
   String Image= "";
   String name = "";
   String postId = "";
+  String ActivityId = "";
   String type = "";
   DateTime timestamp = DateTime.now();
   String userId = "";
@@ -16,13 +17,14 @@ String postOwnerId = "";
 String postOwnerImage = "";
 String postOwnername = "";
   List<String>? likes = List.empty(growable: true);
-
+bool ReadStatus;
 
 
   FeedPost({
     required this.Image,
     required this.name,
     required this.postId,
+    required this.ActivityId,
     required this.type,
     required this.timestamp,
     required this.userId,
@@ -34,6 +36,7 @@ String postOwnername = "";
     required this.postOwnerImage,
     required this.postOwnername,
     required this.likes,
+    required this.ReadStatus,
 
 
   });
@@ -43,6 +46,7 @@ String postOwnername = "";
         Image: snapshot.data!.docs[index]['Image'],
        name: snapshot.data!.docs[index]['name'],
         postId: snapshot.data!.docs[index]['postId'],
+      ActivityId: snapshot.data!.docs[index]['Activity Id'],
       timestamp: snapshot.data!.docs[index]['timestamp'].toDate(),
         type: snapshot.data!.docs[index]['type'],
       userId: snapshot.data!.docs[index]['userId'],
@@ -54,6 +58,7 @@ String postOwnername = "";
       postOwnerImage:snapshot.data!.docs[index]['postOwnerImage'],
       postOwnername:snapshot.data!.docs[index]['postOwnername'],
     likes: List.from(snapshot.data!.docs[index]['likes']),
+      ReadStatus:snapshot.data!.docs[index]['Read Status'],
     );
   }
 }

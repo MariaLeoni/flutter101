@@ -41,7 +41,9 @@ class _ActivityFeedState extends State<ActivityFeed> {
       List<String>? likes, int downloads ) {
     if (type == "like" || type == 'comment'|| type == 'follow'|| type == 'tag') {
       mediaPreview = GestureDetector(
+
           onTap:() {
+            FirebaseFirestore.instance.collection('Activity Feed').doc(postId).collection('Feed Items').doc(A)
             Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
               img: Image, userImg: postOwnerImage, name: postOwnername, date: timestamp, docId: userId,
               userId: postOwnerId,  postId: postId,

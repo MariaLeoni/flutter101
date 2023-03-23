@@ -84,6 +84,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
         "postOwnerImage": null,
         "postOwnername": null,
         "downloads": null,
+        "Read Status": false,
       });
     }
   }

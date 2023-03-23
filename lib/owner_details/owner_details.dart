@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
@@ -55,6 +56,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   String? tokens;
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String ActivityId = const Uuid().v4();
 
   _OwnerDetailsState({
     String? postId,
@@ -123,7 +125,7 @@ AddLikeToActivityFeed() {
   bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
   if (isNotPostOwner) {
     FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
-        .collection('FeedItems').doc(widget.postId)
+        .collection('FeedItems').doc(ActivityId)
         .set({
       "type": "like",
       "name": name,
@@ -140,6 +142,7 @@ AddLikeToActivityFeed() {
       "postOwnerImage": widget.img,
       "postOwnername": widget.name,
       "likes": widget.likes,
+      "Read Status": false,
 
     }).then((value) {
       FirebaseFirestore.instance.collection('Activity Feed')

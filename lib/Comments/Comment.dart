@@ -35,6 +35,7 @@ class CommentState extends State<Comment> {
   String? id;
   String? tokens;
   String commentId = const Uuid().v4();
+  String ActivityId = const Uuid().v4();
   String? myUserId;
   List<String> words = [];
   String str = '';
@@ -104,7 +105,7 @@ class CommentState extends State<Comment> {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
-          .collection('FeedItems').add({
+          .collection('FeedItems').doc(ActivityId).set({
         "type": "comment",
         "name": myName,
         "userId": _auth.currentUser!.uid,
@@ -165,6 +166,7 @@ addComment(){
         "postOwnername": widget.postOwnername,
         "likes": widget.likes,
         "downloads": widget.downloads,
+        "Read Status": false,
       });
       FirebaseFirestore.instance.collection('comment').doc(commentId).set({
         "comment": commentController.text,
@@ -209,8 +211,8 @@ addComment(){
       for(var item in ids!) {
         FirebaseFirestore.instance.collection('Activity Feed')
             .doc(item)
-            .collection('FeedItems')
-            .add({
+            .collection('FeedItems').doc(ActivityId).
+            set({
           "type": "tag",
           "name": myName,
           "userId": _auth.currentUser!.uid,
@@ -227,6 +229,8 @@ addComment(){
           "postOwnername": widget.postOwnername,
           "likes": widget.likes,
           "downloads": widget.downloads,
+          "Read Status": false,
+          "Activity Id": ActivityId
         });
         ids!.clear();
       };
