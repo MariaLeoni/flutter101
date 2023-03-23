@@ -19,6 +19,7 @@ class UsersProfilePage extends StatefulWidget {
   String? docId;
   String?userImage;
   List<String>? followers = List.empty(growable: true);
+  List<String>? following = List.empty(growable: true);
   UsersProfilePage({super.key,
     this.userId,
     this.userName,
@@ -36,7 +37,9 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
   String? myImage;
   String? myName;
   String? followuserId;
+  List<String>? followingx = List.empty(growable: true);
   int followersCount = 0;
+  int followingCount =0;
   FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
   @override
@@ -44,6 +47,9 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
     followuserId = _auth.currentUser?.uid;
     followersCount = (widget.followers?.length ?? 0);
     amFollowingUser = widget.followers == null ? false : widget.followers!.contains(followuserId);
+    var followerText = Text(followersCount.toString(),
+        style: const TextStyle(fontSize: 20.0,
+            color: Colors.white, fontWeight: FontWeight.bold));
     return Scaffold(
       appBar: AppBar(
           flexibleSpace:Container(
@@ -84,8 +90,7 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
           ]
       ),
       body: ListView(
-        physics: BouncingScrollPhysics(),
-        children: [
+          children: [
           CircleAvatar(
               backgroundColor: Colors.white54,
               minRadius: 90.0,
@@ -97,19 +102,36 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
               )
           ),
           const SizedBox(height: 24),
-          Center(child:  ButtonSquare(
-              text:"Follow",
+          Center(child: amFollowingUser ?  ButtonSquare(
+              text:"Following",
               colors1: Colors.black,
               colors2: Colors.black,
 
               press: () async {
                handleFollowerPost();
               }
-          ) ),
+          ) :
+          ButtonSquare(
+              text:"Follow",
+              colors1: Colors.black,
+              colors2: Colors.black,
+
+              press: () async {
+                handleFollowerPost();
+              }
+          ),
+          ),
           const SizedBox(height: 24),
-          NumbersWidget(),
+          NumbersWidget(
+            followersCount: followersCount,
+                followerText: followerText,
+            followers: widget.followers,
+              followingCount: followingCount,
+            following:widget.following,
+          ),
           const SizedBox(height:24),
-         // ViewPosts(),
+            Expanded(child: ViewPosts()),
+            const Divider(),
         ],
       ),
     );
@@ -126,6 +148,10 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
         .then<dynamic>((DocumentSnapshot snapshot) async {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
+      widget.following = List.from(snapshot.get('following'));
+      setState(() {
+        followingCount = (widget.following?.length ?? 0);
+      });
       widget.followers = List.from(snapshot.get('followers'));
       setState(() {
         followersCount = (widget.followers?.length ?? 0);
@@ -133,6 +159,16 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
 
     });
   }
+  void readUserInfo2()async {
+    FirebaseFirestore.instance.collection('users').doc(followuserId)
+        .get()
+        .then<dynamic>((DocumentSnapshot snapshot) async {
+      followingx = List.from(snapshot.get('following'));
+
+    });
+  }
+
+
   handleFollowerPost() {
     if (widget.followers!= null && widget.followers!.contains(followuserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
@@ -151,6 +187,23 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
       setState(() {
         followersCount = (widget.followers?.length ?? 0);
       });
+    });
+    Following();
+  }
+  Following(){
+    if (followingx!= null && followingx!.contains(widget.userId)) {
+      Fluttertoast.showToast(msg: "You unfollowedx this person");
+      followingx!.remove(widget.userId);
+    }
+    else {
+      Fluttertoast.showToast(msg: "You followedx this person");
+      followingx!.add(widget.userId!);
+    }
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(followuserId)
+        .update({'following': followingx!,
     });
   }
   Widget listViewWidget (String docId, String img, String userImg, String name,

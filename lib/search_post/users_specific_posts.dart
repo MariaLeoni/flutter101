@@ -348,7 +348,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 );
               }
               else{
-                return const Center(child: Text("This user has is no Posts.",
+                return const Center(child: Text("This user has  no Posts.",
                       style: TextStyle(fontSize: 20, color: Colors.white))
                 );
               }

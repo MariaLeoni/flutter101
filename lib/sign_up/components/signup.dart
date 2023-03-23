@@ -250,6 +250,7 @@ class _CredentialsState extends State<Credentials> {
                         'phoneNumber': _phoneNumController.text,
                         'CreateAt': Timestamp.now(),
                         'followers': <String>[],
+                        'following':<String>[],
                         'categories': interests,
                         'devicetoken':token,
                         'groups':<String>[],

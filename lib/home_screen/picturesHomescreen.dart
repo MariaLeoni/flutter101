@@ -37,7 +37,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   bool checkView = false;
 
 
-
+  int ActivityCount = 0;
   String? videoUrl;
   String? imageUrl;
   String? myImage;
@@ -118,6 +118,16 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 //     total = viewcount! + 1;
 //     FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
 // }
+  Future<void> getAllProducts() async {
+    CollectionReference productsRef =
+    FirebaseFirestore.instance.collection('Activity Feed');
+    final snapshot = await productsRef.doc(userIdx).collection('Feed Items').get();
+    List<Map<String, dynamic>> Activitynotifs =
+    snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    setState(() {
+      ActivityCount = (Activitynotifs.length ?? 0);
+    });
+  }
 
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, int viewCount, String postId,
@@ -280,7 +290,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
+    var ActivityText = Text(ActivityCount.toString(),
+        style: const TextStyle(fontSize: 20.0,
+            color: Colors.white, fontWeight: FontWeight.bold));
     size = MediaQuery.of(context).size;
 
     return Container(
@@ -362,6 +374,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   },
                   icon: const Icon(Icons.doorbell_outlined),
                 ),
+                ActivityText,
               ]
           ),
           body: StreamBuilder(
@@ -409,3 +422,4 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     );
   }
 }
+

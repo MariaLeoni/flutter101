@@ -121,6 +121,7 @@ class CommentState extends State<Comment> {
          "postOwnername": widget.postOwnername,
         "likes": widget.likes,
         "downloads": widget.downloads,
+        'Read Status': false
           });
     }
     ids!.clear();
