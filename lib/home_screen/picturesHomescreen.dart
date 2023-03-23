@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,7 +11,6 @@ import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:uuid/uuid.dart';
-import '../misc/alertbox.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
@@ -31,20 +29,20 @@ class PictureHomeScreen extends StatefulWidget {
 }
 
 class PictureHomeScreenState extends State<PictureHomeScreen> {
-
-
   String changeTitle = "Grid View";
   bool checkView = false;
 
 
+
   int ActivityCount = 0;
+
   String? videoUrl;
   String? imageUrl;
   String? myImage;
   String? myName;
   String? userId;
   int? total;
-  String postId = const Uuid().v4();
+
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -65,10 +63,11 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
       _messaging.getToken().then((value) {
         print(value);
-        if (mounted)
+        if (mounted) {
           setState(() {
             currentToken = value!;
           });
+        }
         FirebaseFirestore.instance
             .collection('pushtokens')
             .doc(userIdx)
@@ -114,6 +113,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
           postId: postId, likes: likes,viewers: viewers, description: description,
         )));
   }
+
 // viewcounts(){
 //     total = viewcount! + 1;
 //     FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
@@ -152,27 +152,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      total = viewCount +1;
-                      FirebaseFirestore.instance.collection('wallpaper'). doc(postId).update({
-                        'viewcount': total,
-                      });
-                        if (viewers != null && viewers!.contains(userIdx)){
-                          goToDetails(img, userImg, name, date,
-                              docId, userId, downloads,viewCount, postId, likes,viewers,
-                              description);
-                        }
-                        else {
-                          viewers!.add(userIdx);
-                        }
-                        FirebaseFirestore.instance.collection('wallpaper').doc(postId)
-                            .update({'viewers': viewers,
-                        }).then((value){
-                          goToDetails(img, userImg, name, date,
-                              docId, userId, downloads,viewCount, postId, likes,viewers,
-                              description);
-                        });
-
-
+                      updateViewAndNavigate(viewCount, postId, viewers, img, userImg,
+                          name, date, docId, userId, downloads, likes, description);
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10), // Image border
@@ -183,10 +164,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     )
                 ),
                  const SizedBox(height: 12.0,),
-                // Padding(
-                //   padding: const EdgeInsets.only(
-                //       left: 8.0, right: 8.0, bottom: 8.0),
-                 // child:
                   Row(
                       children: [
                         GestureDetector(
@@ -221,7 +198,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                         ),
                       ]
                   ),
-                //)
               ],
             )
         ),
@@ -229,6 +205,23 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     );
   }
 
+  void updateViewAndNavigate(int viewCount, String postId, List<String>? viewers, String img,
+      String userImg, String name, DateTime date, String docId, String userId,
+      int downloads, List<String>? likes, String description) {
+    total = viewCount + 1;
+
+    if (viewers != null && !viewers.contains(userIdx)){
+      viewers.add(userIdx);
+    }
+
+    FirebaseFirestore.instance.collection('wallpaper').doc(postId)
+        .update({'viewers': viewers,'viewcount': total,
+    });
+
+    goToDetails(img, userImg, name, date,
+        docId, userId, downloads,viewCount, postId, likes,viewers,
+        description);
+  }
 
   Widget gridViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, int viewCount, String postId,
@@ -245,27 +238,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
                 onTap: () {
-                  total = viewCount +1;
-                  FirebaseFirestore.instance.collection('wallpaper'). doc(postId).update({
-                    'viewcount': total,
-                  });
-                  if (viewers != null && viewers!.contains(userIdx)){
-                    goToDetails(img, userImg, name, date,
-                        docId, userId, downloads,viewCount, postId, likes,viewers,
-                        description);
-                  }
-                  else {
-                    viewers!.add(userIdx);
-                  }
-                  FirebaseFirestore.instance.collection('wallpaper').doc(postId)
-                      .update({'viewers': viewers,
-                  }).then((value){
-                    goToDetails(img, userImg, name, date,
-                        docId, userId, downloads,viewCount, postId, likes,viewers,
-                        description);
-                  });
-
-
+                  updateViewAndNavigate(viewCount, postId, viewers, img, userImg, name, date, docId, userId, downloads, likes, description);
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10), // Image border
@@ -378,7 +351,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               ]
           ),
           body: StreamBuilder(
-                          stream: widget.category == "random" ? FirebaseFirestore.instance
+              stream: widget.category == "random" ? FirebaseFirestore.instance
                   .collection('wallpaper').orderBy('createdAt', descending: true).snapshots() :
 
               FirebaseFirestore.instance.collection('wallpaper')

@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -44,7 +43,7 @@ class CommentState extends State<Comment> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
- List<String>? ids = List.empty(growable: true);
+  List<String>? ids = List.empty(growable: true);
 
   CommentState({
     String? postId,
@@ -94,14 +93,14 @@ class CommentState extends State<Comment> {
 
   void sendNotification() {
     NotificationModel model = NotificationModel(title: myName,
-        body: "Liked your comment", dataBody: widget.Image,
-        //dataTitle: "Should be post description"
-        );
+      body: "Liked your comment", dataBody: widget.Image,
+      //dataTitle: "Should be post description"
+    );
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
 
-  addLikeToActivityFeed() {
+  addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
@@ -129,7 +128,7 @@ class CommentState extends State<Comment> {
     commentController.clear();
   }
 
-addComment(){
+addComment() {
   FirebaseFirestore.instance.collection('comment').doc(commentId).set({
     "comment": commentController.text,
     "commenterImage": myImage,
@@ -168,24 +167,12 @@ addComment(){
         "downloads": widget.downloads,
         "Read Status": false,
       });
-      FirebaseFirestore.instance.collection('comment').doc(commentId).set({
-        "comment": commentController.text,
-        "commenterImage": myImage,
-        "commenterName": myName,
-        "timestamp": DateTime.now(),
-        "commenterId": id,
-        "originalCommentId": null,
-        "commentId": commentId,
-        "postId": widget.postId,
-        'subCommentIds': <String>[],
-        'likes': <String>[],
-        'Image': widget.Image,
-      });
-      ids!.clear();
     }
+    ids!.clear();
+    commentController.clear();
   }
 
- else{
+  addComment() {
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
@@ -199,20 +186,13 @@ addComment(){
       'likes': <String>[],
       'Image': widget.Image,
     });
-  }
 
-  commentController.clear();
-  addLikeToActivityFeed();
-  sendNotification();
-
-}
-  checkComment() {
     if (commentController.text.startsWith('@')) {
-      for(var item in ids!) {
+      for (var item in ids!) {
         FirebaseFirestore.instance.collection('Activity Feed')
             .doc(item)
             .collection('FeedItems').doc(ActivityId).
-            set({
+        set({
           "type": "tag",
           "name": myName,
           "userId": _auth.currentUser!.uid,
@@ -232,19 +212,19 @@ addComment(){
           "Read Status": false,
           "Activity Id": ActivityId
         });
-        ids!.clear();
-      };
+      }
       ids!.clear();
-      addComment();
+    }
 
-    }
-    else {
-      addComment();
-    }
+    commentController.clear();
+    addCommentTaggingToActivityFeed();
+    sendNotification();
+    FocusScope.of(context).unfocus();
   }
 
   void readUserInfo() async {
-    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+    FirebaseFirestore.instance.collection('users').doc(
+        FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
@@ -268,10 +248,10 @@ addComment(){
         builder: (con) =>
             AlertDialog(
                 title: Text('Profile of $s'),
-                content: const Text('Show the user profile !')
+                content: const Text('Show the user profile!')
             ));
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -293,16 +273,19 @@ addComment(){
             Expanded(child: buildComments()),
             const Divider(),
             ListTile(title: TextFormField(
-                  controller: commentController,
-                  decoration: const InputDecoration(labelText: "Write a comment.."),
-                    onChanged: (val) {
-                      setState(() {
-                        words = val.split(' ');
-                        str = words.isNotEmpty && words[words.length - 1].startsWith('@')
-                            ? words[words.length - 1] : '';
-                      });
-                    }
-                ),
+                controller: commentController,
+                decoration: const InputDecoration(labelText: "Write a comment.."),
+                onChanged: (val) {
+                  words = val.split(' ');
+                  String taggedComment = words.isNotEmpty && words[words.length - 1].startsWith('@')
+                      ? words[words.length - 1] : '';
+                  if (taggedComment.length > 1){
+                    setState(() {
+                      str = taggedComment;
+                    });
+                  }
+                }
+            ),
                 trailing: OutlinedButton(
                   onPressed: addComment,
                   child: const Text("Post"),
@@ -313,7 +296,6 @@ addComment(){
                 stream: searchForUser("users", 100, str.split("@")[1]),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
-
                     if ((snapshot.data?.docs.length ?? 0) > 0) {
                       return ListView.separated(
                         shrinkWrap: true,
@@ -333,40 +315,21 @@ addComment(){
                                   ids?.add(model.id!);
                                 });
 
+                                //Move cursor to end of text
+                                String inputSoFar = commentController.text;
+                                commentController.value = TextEditingValue(
+                                  text: inputSoFar,
+                                  selection: TextSelection.collapsed(offset: inputSoFar.length),
+                                );
                               });
-
                         },
-                        separatorBuilder: (BuildContext context, int index) =>
-
-                        const Divider(),
+                        separatorBuilder: (BuildContext context, int index) => const Divider(),
                       );
                     }
-
                   }
                   return const SizedBox();
                 }) : const SizedBox(),
             const SizedBox(height: 25),
-            coments.isNotEmpty ?
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: coments.length,
-              itemBuilder: (con, ind) {
-                return Text.rich(
-                  TextSpan(text: '',
-                      children: coments[ind].split(' ').map((w) {
-                        return w.startsWith('@') && w.length > 1 ?
-                        TextSpan(
-                          text: ' $w',
-                          style: const TextStyle(color: Colors.blue),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => showProfile(w),
-                        ) : TextSpan(text: ' $w', style: const TextStyle(
-                            color: Colors.black));
-                      }).toList()
-                  ),
-                );
-              },
-            ) : const SizedBox()
           ],
         )
     );

@@ -39,7 +39,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       keepPage: true);
 
   void _scrollListener() {
-    if (_isOnPageTurning && _pageController.page == _pageController.page!.roundToDouble){
+    if (_isOnPageTurning && _pageController.page == _pageController.page!.round()){
       setState(() {
         _currentPage = _pageController.page!.toInt();
         _isOnPageTurning = false;
@@ -147,7 +147,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               IconButton(
                 onPressed: (){
                   chatmain();
-                 // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => chatmain(),),);
                 },
                 icon: const Icon(Icons.message_rounded),
               ),
