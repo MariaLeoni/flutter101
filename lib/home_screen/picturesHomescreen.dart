@@ -34,7 +34,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
 
 
-  int ActivityCount = 0;
+  late int ActivityCount ;
 
   String? videoUrl;
   String? imageUrl;
@@ -55,7 +55,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   @override
   void initState() {
     super.initState();
-
+     getAllProducts();
     notificationManager = NotificationManager();
     notificationManager?.initServer();
 
@@ -118,15 +118,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 //     total = viewcount! + 1;
 //     FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
 // }
-  Future<void> getAllProducts() async {
-    CollectionReference productsRef =
-    FirebaseFirestore.instance.collection('Activity Feed');
-    final snapshot = await productsRef.doc(userIdx).collection('Feed Items').get();
-    List<Map<String, dynamic>> Activitynotifs =
-    snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-    setState(() {
-      ActivityCount = (Activitynotifs.length ?? 0);
-    });
+   getAllProducts() async {
+     final collection = FirebaseFirestore.instance.collection("Activity Feed").doc(userIdx).collection('FeedItems');
+     final query = collection.where("Read Status", isEqualTo: false);
+     final countQuery = query.count();
+     final AggregateQuerySnapshot snapshot = await countQuery.get();
+     debugPrint("Count: ${snapshot.count}");
+    ActivityCount = snapshot.count;
   }
 
   Widget listViewWidget(String docId, String img, String userImg, String name,

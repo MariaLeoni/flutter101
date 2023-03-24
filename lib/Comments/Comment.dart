@@ -110,6 +110,7 @@ class CommentState extends State<Comment> {
         "userId": _auth.currentUser!.uid,
         "userProfileImage": myImage,
         "postId": widget.postId,
+        "Activity Id": ActivityId,
         "Image": widget.Image,
         "timestamp": DateTime.now(),
         "commentData":  commentController.text,
@@ -127,51 +128,51 @@ class CommentState extends State<Comment> {
     ids!.clear();
     commentController.clear();
   }
-
-addComment() {
-  FirebaseFirestore.instance.collection('comment').doc(commentId).set({
-    "comment": commentController.text,
-    "commenterImage": myImage,
-    "commenterName": myName,
-    "timestamp": DateTime.now(),
-    "commenterId": id,
-    "originalCommentId": null,
-    "commentId": commentId,
-    "postId": widget.postId,
-    'subCommentIds': <String>[],
-    'likes': <String>[],
-    'Image': widget.Image,
-  });
-
-  if (commentController.text.startsWith('@')) {
-    for (var item in ids!) {
-      FirebaseFirestore.instance.collection('Activity Feed')
-          .doc(item)
-          .collection('FeedItems')
-          .add({
-        "type": "tag",
-        "name": myName,
-        "userId": _auth.currentUser!.uid,
-        "userProfileImage": myImage,
-        "postId": widget.postId,
-        "Image": widget.Image,
-        "timestamp": DateTime.now(),
-        "commentData": commentController.text,
-        "description": widget.description,
-        "downloads": widget.downloads,
-        "likes": widget.likes,
-        "postOwnerId": widget.userId,
-        "postOwnerImage": widget.postOwnerImg,
-        "postOwnername": widget.postOwnername,
-        "likes": widget.likes,
-        "downloads": widget.downloads,
-        "Read Status": false,
-      });
-    }
-    ids!.clear();
-    commentController.clear();
-  }
-
+//
+// addComment() {
+//   FirebaseFirestore.instance.collection('comment').doc(commentId).set({
+//     "comment": commentController.text,
+//     "commenterImage": myImage,
+//     "commenterName": myName,
+//     "timestamp": DateTime.now(),
+//     "commenterId": id,
+//     "originalCommentId": null,
+//     "commentId": commentId,
+//     "postId": widget.postId,
+//     'subCommentIds': <String>[],
+//     'likes': <String>[],
+//     'Image': widget.Image,
+//   });
+//
+//   if (commentController.text.startsWith('@')) {
+//     for (var item in ids!) {
+//       FirebaseFirestore.instance.collection('Activity Feed')
+//           .doc(item)
+//           .collection('FeedItems')
+//           .add({
+//         "type": "tag",
+//         "name": myName,
+//         "userId": _auth.currentUser!.uid,
+//         "userProfileImage": myImage,
+//         "postId": widget.postId,
+//         "Image": widget.Image,
+//         "timestamp": DateTime.now(),
+//         "commentData": commentController.text,
+//         "description": widget.description,
+//         "downloads": widget.downloads,
+//         "likes": widget.likes,
+//         "postOwnerId": widget.userId,
+//         "postOwnerImage": widget.postOwnerImg,
+//         "postOwnername": widget.postOwnername,
+//         "likes": widget.likes,
+//         "downloads": widget.downloads,
+//         "Read Status": false,
+//       });
+//     }
+//     ids!.clear();
+//     commentController.clear();
+//   }
+// }
   addComment() {
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
@@ -198,6 +199,7 @@ addComment() {
           "userId": _auth.currentUser!.uid,
           "userProfileImage": myImage,
           "postId": widget.postId,
+          "Activity Id": ActivityId,
           "Image": widget.Image,
           "timestamp": DateTime.now(),
           "commentData": commentController.text,
@@ -251,7 +253,7 @@ addComment() {
                 content: const Text('Show the user profile!')
             ));
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

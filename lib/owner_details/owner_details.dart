@@ -132,6 +132,7 @@ AddLikeToActivityFeed() {
       "userId": _auth.currentUser!.uid,
       "userProfileImage": image,
       "postId": widget.postId,
+      "Activity Id": ActivityId,
       "Image": widget.userImg,
       "timestamp": DateTime.now(),
       "commentData": null,

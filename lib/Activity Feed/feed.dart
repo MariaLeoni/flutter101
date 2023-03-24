@@ -36,14 +36,14 @@ class _ActivityFeedState extends State<ActivityFeed> {
   //   return snapshot.docs;
   // }
 
+
   Widget listViewWidget (String Image, String name, String postId, DateTime timestamp, String type,
       String userId, String userProfileImage, String commentData, String description, String postOwnerId, String postOwnername, String postOwnerImage,
-      List<String>? likes, int downloads ) {
+      List<String>? likes, int downloads, String ActivityId, bool ReadStatus ) {
     if (type == "like" || type == 'comment'|| type == 'follow'|| type == 'tag') {
       mediaPreview = GestureDetector(
-
           onTap:() {
-            FirebaseFirestore.instance.collection('Activity Feed').doc(postId).collection('Feed Items').doc(A)
+            FirebaseFirestore.instance.collection('Activity Feed').doc(_auth.currentUser!.uid).collection('FeedItems').doc(ActivityId).update({'Read Status': true});
             Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
               img: Image, userImg: postOwnerImage, name: postOwnername, date: timestamp, docId: userId,
               userId: postOwnerId,  postId: postId,
@@ -103,12 +103,17 @@ class _ActivityFeedState extends State<ActivityFeed> {
                             TextSpan(
                               text: ' $ActivityItemText',
 
-                            )
+                            ),
                           ]
                       )
                   )
               ),
-              leading: GestureDetector(
+              leading:
+              ReadStatus == false ?
+              IconButton(onPressed: () async{
+
+              }, icon: const Icon(Icons.circle, color: Colors.red)):
+     GestureDetector(
                 onTap: () {
                 Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (_) =>
@@ -121,6 +126,10 @@ class _ActivityFeedState extends State<ActivityFeed> {
                   backgroundImage: CachedNetworkImageProvider(userProfileImage),
             ),
               ),
+      // ReadStatus == false ?
+      // IconButton(onPressed: () async{
+      //
+      // }, icon: const Icon(Icons.circle, color: Colors.red)): Container(),
               subtitle: Text(
                 DateFormat("dd MMM, yyyy - hh:mn a").format(timestamp).toString(),
                 overflow: TextOverflow.ellipsis,
@@ -169,7 +178,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
                       FeedPost post = FeedPost.getPost(snapshot, index);
 
                       return listViewWidget(post.Image, post.name, post.postId, post.timestamp,post.type,
-                           post.userId, post.userProfileImage, post.commentData, post. description, post.postOwnerId, post.postOwnername, post.postOwnerImage, post.likes, post.downloads,
+                           post.userId, post.userProfileImage, post.commentData, post. description, post.postOwnerId, post.postOwnername, post.postOwnerImage, post.likes, post.downloads, post.ActivityId,post.ReadStatus,
                       );
                     },
                   );
