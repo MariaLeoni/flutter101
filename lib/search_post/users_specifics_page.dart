@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +10,7 @@ import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
 import '../search_userpost/searchView.dart';
 import '../widgets/button_square.dart';
+import '../widgets/widgets.dart';
 import 'numbers_widget.dart';
 
 class UsersProfilePage extends StatefulWidget {
@@ -20,36 +20,46 @@ class UsersProfilePage extends StatefulWidget {
   String?userImage;
   List<String>? followers = List.empty(growable: true);
   List<String>? following = List.empty(growable: true);
+
   UsersProfilePage({super.key,
     this.userId,
     this.userName,
     this.followers,
     this.docId,
     this.userImage,
+    this.following,
   });
 
-
   @override
-  _UsersProfilePageState createState() => _UsersProfilePageState();
+  UsersProfilePageState createState() => UsersProfilePageState();
 }
 
-class _UsersProfilePageState extends State<UsersProfilePage> {
+class UsersProfilePageState extends State<UsersProfilePage> {
   String? myImage;
   String? myName;
-  String? followuserId;
-  List<String>? followingx = List.empty(growable: true);
+  String? myUserId;
   int followersCount = 0;
-  int followingCount =0;
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  int followingCount = 0;
+  int videosCount = 0;
+  int picturesCount = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    myUserId = _auth.currentUser?.uid;
+
+    print("This userId ${widget.userId}");
+
+    readUserInfo();
+    getPosts();
+  }
+
   @override
   Widget build(BuildContext context) {
-    followuserId = _auth.currentUser?.uid;
-    followersCount = (widget.followers?.length ?? 0);
-    amFollowingUser = widget.followers == null ? false : widget.followers!.contains(followuserId);
-    var followerText = Text(followersCount.toString(),
-        style: const TextStyle(fontSize: 20.0,
-            color: Colors.white, fontWeight: FontWeight.bold));
+
     return Scaffold(
       appBar: AppBar(
           flexibleSpace:Container(
@@ -73,7 +83,6 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                 Icons.login_outlined
             ),
           ),
-
           actions: <Widget>[
             IconButton(
               onPressed: (){
@@ -90,7 +99,8 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
           ]
       ),
       body: ListView(
-          children: [
+        physics: const BouncingScrollPhysics(),
+        children: [
           CircleAvatar(
               backgroundColor: Colors.white54,
               minRadius: 90.0,
@@ -102,219 +112,106 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
               )
           ),
           const SizedBox(height: 24),
-          Center(child: amFollowingUser ?  ButtonSquare(
-              text:"Following",
-              colors1: Colors.black,
-              colors2: Colors.black,
-
-              press: () async {
-               handleFollowerPost();
-              }
-          ) :
-          ButtonSquare(
-              text:"Follow",
-              colors1: Colors.black,
-              colors2: Colors.black,
-
-              press: () async {
+          OutlinedButton(
+              onPressed: () async {
                 handleFollowerPost();
-              }
-          ),
+              },
+              child: Text(amFollowingUser ? "Unfollow $myName" : "Follow $myName",
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              )
           ),
           const SizedBox(height: 24),
-          NumbersWidget(
-            followersCount: followersCount,
-                followerText: followerText,
-            followers: widget.followers,
-              followingCount: followingCount,
-            following:widget.following,
-          ),
+          NumbersWidget(followers: followersCount, following: followingCount,),
           const SizedBox(height:24),
-            Expanded(child: ViewPosts()),
-            const Divider(),
+          const Center(child: Text("User Posts", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),),
+          const SizedBox(height:8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              OutlinedButton(
+                  onPressed: () async {
+                    handlePostView(PostType.video);
+                  },
+                  child: Text(videosCount > 1 ? "$videosCount Videos" : "$videosCount Video",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  )
+              ),
+              buildDivider(),
+              OutlinedButton(
+                  onPressed: () async {
+                    handlePostView(PostType.image);
+                  },
+                  child: Text(picturesCount > 1 ? "$picturesCount Pictures" : "$picturesCount Picture",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  )
+              ),
+            ],
+          )
         ],
       ),
     );
   }
-  @override
-  void initState() {
-    super.initState();
-    readUserInfo();
+
+  handlePostView(PostType type){
 
   }
-  void readUserInfo()async {
-    FirebaseFirestore.instance.collection('users').doc(widget.userId)
-        .get()
+
+  void readUserInfo() async {
+    FirebaseFirestore.instance.collection('users').doc(widget.userId).get()
         .then<dynamic>((DocumentSnapshot snapshot) async {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
-      widget.following = List.from(snapshot.get('following'));
-      setState(() {
-        followingCount = (widget.following?.length ?? 0);
-      });
       widget.followers = List.from(snapshot.get('followers'));
+      widget.following = List.from(snapshot.get('following'));
+
       setState(() {
-        followersCount = (widget.followers?.length ?? 0);
+        followersCount = widget.followers?.length ?? 0;
+        followingCount = widget.following?.length ?? 0;
+        amFollowingUser = widget.followers == null ? false : widget.followers!.contains(myUserId);
       });
-
-    });
-  }
-  void readUserInfo2()async {
-    FirebaseFirestore.instance.collection('users').doc(followuserId)
-        .get()
-        .then<dynamic>((DocumentSnapshot snapshot) async {
-      followingx = List.from(snapshot.get('following'));
-
     });
   }
 
+  void getPosts() async {
+    videosCount = await getVideoPosts();
+    picturesCount = await getPicturePost();
+
+    setState(() {
+      videosCount;
+      picturesCount;
+    });
+  }
 
   handleFollowerPost() {
-    if (widget.followers!= null && widget.followers!.contains(followuserId)) {
+    if (widget.followers!= null && widget.followers!.contains(myUserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
-      widget.followers!.remove(followuserId);
+      widget.followers!.remove(myUserId);
     }
     else {
       Fluttertoast.showToast(msg: "You followed this person");
-      widget.followers!.add(followuserId!);
+      widget.followers!.add(myUserId!);
     }
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.userId)
-        .update({'followers': widget.followers!,
-    }).then((value) {
-      setState(() {
-        followersCount = (widget.followers?.length ?? 0);
-      });
+    setState(() {
+      followersCount = widget.followers?.length ?? 0;
+      amFollowingUser = widget.followers == null ? false : widget.followers!.contains(myUserId);
     });
-    Following();
+
+    FirebaseFirestore.instance.collection('users').doc(widget.userId)
+        .update({'followers': widget.followers!,});
   }
-  Following(){
-    if (followingx!= null && followingx!.contains(widget.userId)) {
-      Fluttertoast.showToast(msg: "You unfollowedx this person");
-      followingx!.remove(widget.userId);
-    }
-    else {
-      Fluttertoast.showToast(msg: "You followedx this person");
-      followingx!.add(widget.userId!);
-    }
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(followuserId)
-        .update({'following': followingx!,
-    });
+  Future<int> getPicturePost() async {
+    final collection = FirebaseFirestore.instance.collection('wallpaper').where("id", isEqualTo: widget.userId);
+    final countQuery = collection.count();
+    final AggregateQuerySnapshot snapshot = await countQuery.get();
+    return snapshot.count;
   }
-  Widget listViewWidget (String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, String postId,
-      List<String>? likes, String description) {
 
-    return Padding(
-      padding: const EdgeInsets.all (8.0),
-      child: Card(
-        elevation: 16.0,
-        shadowColor: Colors.white10,
-        child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap:() {
-                    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-                      img: img, userImg: userImg, name: name, date: date, docId: docId,
-                      userId: userId, downloads: downloads, postId: postId, likes: likes,
-                      description: description,
-                    )));
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10), // Image border
-                    child: SizedBox.fromSize(
-                        size: const Size(500.0, 400.0), // Image radius
-                        child: Image.network(img, fit: BoxFit.cover)
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15.0,),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                  child: Row(
-                      children:[
-                        CircleAvatar(
-                          radius: 35,
-                          backgroundImage: NetworkImage(
-                            userImg,
-                          ),
-                        ),
-                        const SizedBox(width: 10.0,),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:[
-                              Text(
-                                name,
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
-                                style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                              )
-                            ]
-                        )
-                      ]
-                  ),
-                )
-              ],
-            )
-        ),
-      ),
-    );
+  Future<int> getVideoPosts() async {
+    final collection = FirebaseFirestore.instance.collection('wallpaper2').where("id", isEqualTo: widget.userId);
+    final countQuery = collection.count();
+    final AggregateQuerySnapshot snapshot = await countQuery.get();
+    return snapshot.count;
   }
-ViewPosts(){
-  StreamBuilder(
-    stream: FirebaseFirestore.instance
-        .collection('wallpaper').where("id", isEqualTo: widget.userId)
-        .orderBy('createdAt',descending: true).snapshots(),
-
-    builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
-      if(snapshot.connectionState == ConnectionState.waiting ) {
-        return const Center(child: CircularProgressIndicator(),);
-      }
-      else if (snapshot.connectionState == ConnectionState.active) {
-        if(snapshot.data!.docs.isNotEmpty)
-        {
-          return ListView.builder(itemCount: snapshot.data!.docs.length,
-            itemBuilder: (BuildContext context, int index) {
-
-              Post post = Post.getPost(snapshot, index, PostType.image);
-
-              return listViewWidget(post.id, post.source, post.userImage,
-                  post.userName, post.createdAt, post.email,
-                  post.downloads, post.postId, post.likes, post.description);
-            },
-          );
-        }
-        else{
-          return const Center(child: Text("This user has is no Posts.",
-              style: TextStyle(fontSize: 20, color: Colors.white))
-          );
-        }
-      }
-      return const Center(child: Text(
-        'Something went wrong',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-      ),
-      );
-    },
-  );
-}
-
 }

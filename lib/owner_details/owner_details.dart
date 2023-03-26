@@ -280,10 +280,13 @@ removeLikeFromActivityFeed() {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                            //Flexible(
+                              //  child:
                                   Text(
                                     widget.description!,
                                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                                   )
+                            //)
                                 ]
                             )
                         )

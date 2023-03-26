@@ -34,7 +34,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
 
 
-  late int ActivityCount ;
+  int ActivityCount  = 0;
 
   String? videoUrl;
   String? imageUrl;

@@ -1,61 +1,37 @@
 import 'package:flutter/material.dart';
 
-import '../following/followers.dart';
-import '../following/following.dart';
+import '../widgets/widgets.dart';
 
 class NumbersWidget extends StatelessWidget {
-  int? followersCount;
-  int? followingCount;
-  Text? followerText;
-  List<String>? followers;
-  List<String>? following;
-  NumbersWidget({super.key,
-    this.followersCount,
-    this.followingCount,
-    this.followerText,
-    this.followers,
-    this.following,
-  });
+
+  int following = 0;
+  int followers = 0;
+
+  NumbersWidget({super.key, required this.following, required this.followers});
+
   @override
   Widget build(BuildContext context) => Row(
-
     mainAxisAlignment: MainAxisAlignment.center,
-
     children: <Widget>[
-      buildButton(context,followingCount.toString(), 'Following'),
+      buildButton(context, following, following > 1 ? 'Followings': 'Following'),
       buildDivider(),
-      buildButton(context, followersCount.toString(), 'Followers'),
-
+      buildButton(context, followers, followers > 1 ? 'Followers' : 'Follower'),
     ],
-
-  );
-  Widget buildDivider() => Container(
-    height: 24,
-    child: VerticalDivider(),
   );
 
-  Widget buildButton(BuildContext context, String value, String text) =>
+  Widget buildButton(BuildContext context, int value, String text) =>
       MaterialButton(
-        padding: EdgeInsets.symmetric(vertical: 4),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => Following(
-            following: following,
-            //followers: followers,
-          )));
-        },
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        onPressed: () {},
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text(
-              value,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            Text(value.toString(),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            SizedBox(height: 2),
-            Text(
-              text,
-              style: TextStyle(fontWeight: FontWeight.bold),
+            const SizedBox(height: 2), Text(text, style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),

@@ -10,7 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Firebase.initializeApp().whenComplete(() {
-    runApp( MyApp());
+    runApp( const MyApp());
   });
 }
 final themeMode = ValueNotifier(2);

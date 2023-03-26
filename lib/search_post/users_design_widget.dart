@@ -10,7 +10,6 @@ class UsersDesignWidget extends StatefulWidget {
 
   UsersDesignWidget({super.key, this.model, this.context,});
 
-
   @override
   State<UsersDesignWidget> createState() => UsersDesignWidgetState();
 }
