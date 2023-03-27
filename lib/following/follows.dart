@@ -1,50 +1,55 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'FollowerModel.dart';
+import '../misc/global.dart';
+import 'followsModel.dart';
 
-class Followers extends StatefulWidget {
+class Follows extends StatefulWidget {
 
-  List<String>? followers;
+  List<String>? follow;
+  String user;
+  FFType type;
 
-  Followers({super.key, this.followers});
+  Follows({super.key, this.follow, required this.user, required this.type});
 
   @override
-  FollowersState createState() => FollowersState();
+  FollowsState createState() => FollowsState();
 }
 
 
-class FollowersState extends State<Followers> {
+class FollowsState extends State<Follows> {
   String? userName;
   String? userImage;
   String? userId;
   List<String>? followers = List.empty(growable: true);
 
-  FollowersState({
+  FollowsState({
     this.userName,
     this.userId,
     this.followers,
     this.userImage
   });
 
-  buildFollowers() {
-    if (widget.followers == null || widget.followers!.isEmpty){
-      return const Center(
-          child: Text("This user has no followers ",
-            style: TextStyle(fontSize: 20),)
-      );
+  buildView() {
+    String noUsers;
+    if (widget.type == FFType.following){
+      noUsers = "${widget.user} is not following any user";
+    }
+    else {
+      noUsers = "${widget.user} has no followers";
+    }
+    if (widget.follow == null || widget.follow!.isEmpty){
+      return Center(child: Text(noUsers, style: const TextStyle(fontSize: 20),));
     }
     else{
       final firebaseCollection = FirebaseFirestore.instance.collection('users');
       return StreamBuilder(
-          stream: firebaseCollection.where(
-              FieldPath.documentId, whereIn: widget.followers).snapshots(),
+          stream: firebaseCollection.where(FieldPath.documentId, whereIn: widget.follow).snapshots(),
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting ) {
               return const Center(child: CircularProgressIndicator(),);
             }
             else if (snapshot.connectionState == ConnectionState.active) {
-              if(snapshot.data!.docs.isNotEmpty){
-                {
+              if(snapshot.data!.docs.isNotEmpty){{
                   List<FollowerModel> followers = [];
                   for (var doc in snapshot.data!.docs) {
 
@@ -56,35 +61,15 @@ class FollowersState extends State<Followers> {
                 }
               }
               else if (snapshot.data!.docs.isEmpty) {
-                return const Center(
-                    child: Text("This user has no followers ",
-                      style: TextStyle(fontSize: 20),)
-                );
+                return Center(child: Text(noUsers, style: const TextStyle(fontSize: 20),));
               }
             }
             return const Center(
-              child: Text(
-                'Something went wrong',
+              child: Text('Something went wrong',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
             );
           }
-        // builder: (context, snapshot) {
-        //   if (snapshot.hasError) {
-        //     return const Text('Something went wrong');
-        //   }
-        //   if (snapshot.connectionState == ConnectionState.waiting) {
-        //     return const Center(child: CircularProgressIndicator(),);
-        //   }
-        //   List<FollowerModel> followers = [];
-        //   for (var doc in snapshot.data!.docs) {
-        //     followers.add(FollowerModel.fromDocument(doc));
-        //   }
-        //   return ListView(
-        //     children: followers,
-        //   );
-        //
-        //   }
       );
     }
   }
@@ -102,11 +87,11 @@ class FollowersState extends State<Followers> {
               ),
             ),
           ),
-          title: const Text("Followers"),
+          title: Text("${widget.user}'s ${widget.type.name}s"),
         ),
         body: Column(
           children: <Widget>[
-            Expanded(child: buildFollowers()),
+            Expanded(child: buildView()),
             const Divider(),
           ],
         )

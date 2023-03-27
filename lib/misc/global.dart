@@ -41,9 +41,16 @@ enum SearchType{
   post,
 }
 
+enum FFType{
+  follower,
+  following
+}
+
 typedef InterestCallback = void Function(Map<String, List<String>?> interests);
 
 typedef VideoSelected = void Function(VideoListData);
+
+typedef GoToPageWithTypeAndId = void Function(dynamic type, String Id);
 
 bool checkCanBuildVideo() {
   return true;

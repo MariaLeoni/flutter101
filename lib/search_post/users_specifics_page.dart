@@ -2,14 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import '../home_screen/home.dart';
-import '../home_screen/post.dart';
 import '../log_in/login_screen.dart';
 import '../misc/global.dart';
-import '../owner_details/owner_details.dart';
 import '../search_userpost/searchView.dart';
-import '../widgets/button_square.dart';
 import '../widgets/widgets.dart';
 import 'numbers_widget.dart';
 
@@ -51,15 +47,12 @@ class UsersProfilePageState extends State<UsersProfilePage> {
 
     myUserId = _auth.currentUser?.uid;
 
-    print("This userId ${widget.userId}");
-
     readUserInfo();
     getPosts();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
           flexibleSpace:Container(
@@ -121,7 +114,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
               )
           ),
           const SizedBox(height: 24),
-          NumbersWidget(followers: followersCount, following: followingCount,),
+          NumbersWidget(followers: widget.followers, following: widget.following, userName: myName ?? "",),
           const SizedBox(height:24),
           const Center(child: Text("User Posts", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),),
           const SizedBox(height:8),

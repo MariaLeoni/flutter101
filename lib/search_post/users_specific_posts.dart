@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_userpost/searchView.dart';
-import '../following/followers.dart';
+import '../following/follows.dart';
 import '../home_screen/home.dart';
 import '../home_screen/post.dart';
 import '../notification/notification.dart';
@@ -150,7 +150,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       setState(() {
         name = snapshot.data()!["name"];
         image = snapshot.data()!["userImage"];
-
       });
     }
     });
@@ -162,6 +161,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     getDataFromDatabase();
     getDataFromDatabase2();
     readUserInfo();
+
     notificationManager = NotificationManager();
     notificationManager?.initServer();
   }
@@ -309,8 +309,8 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => Followers(
-                    followers: widget.followers,
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Follows(
+                    follow: widget.followers, user: myName ?? "", type: FFType.follower,
                   )));
                 },
                 icon: const Icon(Icons.person_search),

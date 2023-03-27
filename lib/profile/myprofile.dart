@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/misc/global.dart';
-import '../following/followers.dart';
+import '../following/follows.dart';
 import '../home_screen/home.dart';
 import '../home_screen/post.dart';
 import '../owner_details/owner_details.dart';
@@ -204,9 +204,8 @@ class UserProfileState extends State<UserProfile> {
               ),
               IconButton(
                 onPressed: (){
-
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => Followers(
-                    followers: widget.followers,
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Follows(
+                    follow: widget.followers, user: myName ?? "", type: FFType.follower,
                   )));
                 },
                 icon: const Icon(Icons.check_circle_sharp),
@@ -248,14 +247,12 @@ class UserProfileState extends State<UserProfile> {
               }
               else{
                 return const Center(
-                    child: Text("There is no tasks",
-                      style: TextStyle(fontSize: 20),)
+                    child: Text("There is no tasks", style: TextStyle(fontSize: 20),)
                 );
               }
             }
             return const Center(
-              child: Text(
-                'Something went wrong',
+              child: Text('Something went wrong',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
             );
