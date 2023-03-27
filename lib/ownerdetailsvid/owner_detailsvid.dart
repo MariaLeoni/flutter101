@@ -18,14 +18,11 @@ class  OwnerDetails extends StatefulWidget {
   String? docId;
   String? userId;
   int? downloads;
-  //String? vid;
   String? postId;
   String? description;
 
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
-  //String?id;
-
 
   OwnerDetails({super.key, this.likeruserId,this.vid, this.userImg, this.name, this.date,
     this.docId, this.userId, this.downloads, this.postId, this.likes, this. description,

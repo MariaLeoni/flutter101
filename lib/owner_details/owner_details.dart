@@ -121,55 +121,55 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     notificationManager?.initServer();
 
   }
-AddLikeToActivityFeed() {
-  bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
-  if (isNotPostOwner) {
-    FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
-        .collection('FeedItems').doc(ActivityId)
-        .set({
-      "type": "like",
-      "name": name,
-      "userId": _auth.currentUser!.uid,
-      "userProfileImage": image,
-      "postId": widget.postId,
-      "Activity Id": ActivityId,
-      "Image": widget.userImg,
-      "timestamp": DateTime.now(),
-      "commentData": null,
-      "downloads": widget.downloads,
-      "description": widget.description,
-      "likes": widget.likes,
-      "postOwnerId": widget.docId,
-      "postOwnerImage": widget.img,
-      "postOwnername": widget.name,
-      "likes": widget.likes,
-      "Read Status": false,
+  AddLikeToActivityFeed() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
+          .collection('FeedItems').doc(ActivityId)
+          .set({
+        "type": "like",
+        "name": name,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": image,
+        "postId": widget.postId,
+        "Activity Id": ActivityId,
+        "Image": widget.userImg,
+        "timestamp": DateTime.now(),
+        "commentData": null,
+        "downloads": widget.downloads,
+        "description": widget.description,
+        "likes": widget.likes,
+        "postOwnerId": widget.docId,
+        "postOwnerImage": widget.img,
+        "postOwnername": widget.name,
+        "likes": widget.likes,
+        "Read Status": false,
 
-    }).then((value) {
-      FirebaseFirestore.instance.collection('Activity Feed')
-          .doc(widget.docId).collection('Feed Count').doc(widget.docId).update(
-          {'Feed Count': FeedCount! + 1,
-          });
-    }
-    );
-  }
-}
-
-removeLikeFromActivityFeed() {
-  bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
-  if (isNotPostOwner) {
-    FirebaseFirestore.instance.collection('Activity Feed')
-        .doc(widget.docId)
-        .collection('FeedItems')
-        .doc(widget.postId)
-        .get()
-        .then((doc) {
-      if (doc.exists) {
-        doc.reference.delete();
+      }).then((value) {
+        FirebaseFirestore.instance.collection('Activity Feed')
+            .doc(widget.docId).collection('Feed Count').doc(widget.docId).update(
+            {'Feed Count': FeedCount! + 1,
+            });
       }
-    });
+      );
+    }
   }
-}
+
+  removeLikeFromActivityFeed() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed')
+          .doc(widget.docId)
+          .collection('FeedItems')
+          .doc(widget.postId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    }
+  }
 
 
   handleLikePost(){
@@ -232,13 +232,8 @@ removeLikeFromActivityFeed() {
                   ),
                 ),
                 const SizedBox(height: 30.0,),
-
-                const Text('Owner Information',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    color: Colors.white54,
-                    fontWeight: FontWeight.bold,
-                  ),
+                const Text('Owner Information', style: TextStyle(
+                  fontSize: 20.0, color: Colors.white54, fontWeight: FontWeight.bold,),
                 ) ,
                 const SizedBox(height: 30.0,),
                 Padding(
@@ -252,41 +247,35 @@ removeLikeFromActivityFeed() {
                                 userName:widget.name,
                               )));
                             },
-                            child: CircleAvatar(
-                              radius:35,
+                            child: CircleAvatar(radius:35,
                               backgroundImage: NetworkImage(
-                                widget.userImg!,
-                              ),
+                                widget.userImg!,),
                             )
                         ),
                         Padding(padding: const EdgeInsets.all(10.0),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children:[
-                                  Text(
-                                    widget.name!,
-                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                  ),
+                                  Text(widget.name!,
+                                    style: const TextStyle(color: Colors.white,
+                                        fontWeight: FontWeight.bold),),
                                   const SizedBox(height: 10.0),
                                   Text(
-                                    DateFormat("dd MMM, yyyy - hh:mn a").format(widget.date!).toString(),
+                                    DateFormat("dd MMM, yyyy - hh:mm a").format(widget.date!).toString(),
                                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height:10.0),
-                                  const Text('Description',
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                            //Flexible(
-                              //  child:
-                                  Text(
-                                    widget.description!,
-                                    style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                                  const Text('Description', style: TextStyle(
+                                    fontSize: 15.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),),
+                                  SizedBox(width: 250, child: Text(widget.description!,
+                                    maxLines: 3, overflow: TextOverflow.fade,
+                                    textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
+                                        fontWeight: FontWeight.bold),
                                   )
-                            //)
+                                  )
                                 ]
                             )
                         )
