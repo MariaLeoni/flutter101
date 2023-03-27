@@ -34,30 +34,22 @@ class  OwnerDetails extends StatefulWidget {
 }
 
 class _OwnerDetailsState extends State<OwnerDetails> {
-
   int? total;
   int likesCount = 0;
   int followersCount = 0;
   String? postId;
-  String? likeruserId;
-  String? followuserId;
+  String? likerUserId;
+  String? followUserId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  _OwnerDetailsState({
-    String? postId,
-    String? userId,
-  });
-
-
   handleFollowerPost() {
-
-    if (widget.followers!= null && widget.followers!.contains(followuserId)) {
+    if (widget.followers!= null && widget.followers!.contains(followUserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
-      widget.followers!.remove(followuserId);
+      widget.followers!.remove(followUserId);
     }
     else {
       Fluttertoast.showToast(msg: "You followed this person");
-      widget.followers!.add(followuserId!);
+      widget.followers!.add(followUserId!);
     }
 
     FirebaseFirestore.instance
@@ -72,15 +64,14 @@ class _OwnerDetailsState extends State<OwnerDetails> {
   }
 
   handleLikePost(){
-    if (widget.likes != null && widget.likes!.contains(likeruserId)) {
+    if (widget.likes != null && widget.likes!.contains(likerUserId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
-      widget.likes!.remove(likeruserId);
+      widget.likes!.remove(likerUserId);
     }
     else {
       Fluttertoast.showToast(msg: "You liked this image!");
-      widget.likes!.add(likeruserId!);
+      widget.likes!.add(likerUserId!);
     }
-
 
     FirebaseFirestore.instance.collection('wallpaper2').doc(widget.postId)
         .update({'likes': widget.likes!,
@@ -93,27 +84,28 @@ class _OwnerDetailsState extends State<OwnerDetails> {
 
   @override
   Widget build(BuildContext context) {
-    likeruserId = _auth.currentUser?.uid;
+    likerUserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
 
     var likeText = Text(likesCount.toString(),
         style: const TextStyle(fontSize: 28.0,
             color: Colors.white, fontWeight: FontWeight.bold));
 
-    followuserId = _auth.currentUser?.uid;
+    followUserId = _auth.currentUser?.uid;
     followersCount = (widget.followers?.length ?? 0);
+
     var followerText = Text(followersCount.toString(),
         style: const TextStyle(fontSize: 28.0,
             color: Colors.white, fontWeight: FontWeight.bold));
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-              colors:[Colors.purple, Colors.deepPurple.shade300],
+              colors:[Colors.black, Colors.black],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              stops: const[0.2,0.9]
+              stops: [0.2,0.9]
           ),
         ),
         child: ListView(
@@ -128,13 +120,10 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                   ),
                 ),
                 const SizedBox(height: 30.0,),
-                const Text('Owner Information',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    color: Colors.white54,
+                const Text('Post Information', style: TextStyle(
+                    fontSize: 20.0, color: Colors.white54,
                     fontWeight: FontWeight.bold,
-                  ),
-                ) ,
+                  ),) ,
                 const SizedBox(height: 30.0,),
                 GestureDetector(
                     onTap:(){
@@ -143,15 +132,12 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                         userName:widget.name,
                       )));
                     },
-                    child: CircleAvatar(
-                      radius:35,
-                      backgroundImage: NetworkImage(
-                        widget.userImg!,
-                      ),
+                    child: CircleAvatar(radius:35,
+                      backgroundImage: NetworkImage(widget.userImg!,),
                     )
                 ),
                 const SizedBox(height:30.0,),
-                Text('Uploaded by:${widget.name!}',
+                Text('Uploaded by: ${widget.name!}',
                   style: const TextStyle(
                     fontSize: 18.0,
                     color: Colors.white,
@@ -159,13 +145,17 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                   ),
                 ),
                 const SizedBox(height: 10.0,),
-                Text(
-                    DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
+                Text(DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
                     style: const TextStyle( color: Colors.white, fontWeight: FontWeight.bold,)
                 ),
-                const SizedBox(height: 50.0,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                const SizedBox(height:10.0),
+                SizedBox(width: 250, child: Text(widget.description!,
+                  maxLines: 3, overflow: TextOverflow.fade,
+                  textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
+                      fontWeight: FontWeight.bold),
+                )
+                ),
+                Row(mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
                       Icons.download_outlined,
@@ -184,7 +174,6 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                       onTap: () {
                         handleLikePost();
                       },
-
                       child: const Icon (
                         Icons.thumb_up_sharp,
                         size:20.0,
@@ -207,21 +196,17 @@ class _OwnerDetailsState extends State<OwnerDetails> {
                 FirebaseAuth.instance.currentUser!.uid == widget.docId  ?
                 Padding(
                     padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                    child: ButtonSquare(
-                        text:"Delete",
+                    child: ButtonSquare(text:"Delete",
                         colors1: Colors.black,
                         colors2: Colors.black,
 
                         press: () async {
                           FirebaseFirestore.instance.collection('wallpaper')
-                              .doc(widget.postId).delete()
-                              .then((value)
-                          {
+                              .doc(widget.postId).delete().then((value) {
                             Fluttertoast.showToast(msg: 'Your post has been deleted');
                             Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                           });
                         }
-
                     )
                 ):
                 Container(),

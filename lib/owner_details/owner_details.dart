@@ -33,7 +33,8 @@ class OwnerDetails extends StatefulWidget {
   List<String>? followers = List.empty(growable: true);
 
   OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.viewCount,this.postId, this.likes, this.viewers, this.description, this.isRead
+    this.docId, this.userId, this.downloads, this.viewCount,this.postId, this.likes,
+    this.viewers, this.description, this.isRead
   });
 
   @override
@@ -41,27 +42,21 @@ class OwnerDetails extends StatefulWidget {
 }
 
 class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMixin {
-  late AnimationController _favoriteController;
 
   int? total;
   int likesCount = 0;
   int followersCount = 0;
   String? postId;
-  int? FeedCount;
-  String? likeruserId;
-  String? followuserId;
+  int? feedCount;
+  String? likerUserId;
+  String? followUserId;
   String? name;
   String? userImage;
   String?image;
   String? tokens;
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String ActivityId = const Uuid().v4();
-
-  _OwnerDetailsState({
-    String? postId,
-    String? userId,
-  });
+  String activityId = const Uuid().v4();
 
   void getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
@@ -71,7 +66,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       setState(() {
         name = snapshot.data()!["name"];
         image = snapshot.data()!["userImage"];
-
       });
     }
     });
@@ -82,12 +76,12 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         .get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        FeedCount = snapshot.data()!["Feed Count"];
-
+        feedCount = snapshot.data()!["Feed Count"];
       });
     }
     });
   }
+
   void sendNotification() {
     NotificationModel model = NotificationModel(title: name,
       body: "Liked your post", dataBody: widget.img,
@@ -96,6 +90,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
+
   void getDataFromDatabase2() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId)
@@ -103,8 +98,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
         tokens = snapshot.data()!["devicetoken"];
-
-
       });
     }
     });
@@ -115,24 +108,22 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     super.initState();
     getDataFromDatabase();
     getDataFromDatabase2();
-    _favoriteController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1));
     notificationManager = NotificationManager();
     notificationManager?.initServer();
-
   }
-  AddLikeToActivityFeed() {
+
+  addLikeToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
-          .collection('FeedItems').doc(ActivityId)
+          .collection('FeedItems').doc(activityId)
           .set({
         "type": "like",
         "name": name,
         "userId": _auth.currentUser!.uid,
         "userProfileImage": image,
         "postId": widget.postId,
-        "Activity Id": ActivityId,
+        "Activity Id": activityId,
         "Image": widget.userImg,
         "timestamp": DateTime.now(),
         "commentData": null,
@@ -148,7 +139,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       }).then((value) {
         FirebaseFirestore.instance.collection('Activity Feed')
             .doc(widget.docId).collection('Feed Count').doc(widget.docId).update(
-            {'Feed Count': FeedCount! + 1,
+            {'Feed Count': feedCount! + 1,
             });
       }
       );
@@ -171,17 +162,16 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     }
   }
 
-
   handleLikePost(){
-    if (widget.likes != null && widget.likes!.contains(likeruserId)) {
+    if (widget.likes != null && widget.likes!.contains(likerUserId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
-      widget.likes!.remove(likeruserId);
+      widget.likes!.remove(likerUserId);
       removeLikeFromActivityFeed();
     }
     else {
       Fluttertoast.showToast(msg: "You liked this image!");
-      widget.likes!.add(likeruserId!);
-      AddLikeToActivityFeed();
+      widget.likes!.add(likerUserId!);
+      addLikeToActivityFeed();
       sendNotification();
     }
 
@@ -198,8 +188,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-
-    likeruserId = _auth.currentUser?.uid;
+    likerUserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
 
     var likeText = Text(likesCount.toString(),
@@ -232,7 +221,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                   ),
                 ),
                 const SizedBox(height: 30.0,),
-                const Text('Owner Information', style: TextStyle(
+                const Text('Post Information', style: TextStyle(
                   fontSize: 20.0, color: Colors.white54, fontWeight: FontWeight.bold,),
                 ) ,
                 const SizedBox(height: 30.0,),
@@ -265,11 +254,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height:10.0),
-                                  const Text('Description', style: TextStyle(
-                                    fontSize: 15.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),),
                                   SizedBox(width: 250, child: Text(widget.description!,
                                     maxLines: 3, overflow: TextOverflow.fade,
                                     textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
@@ -282,8 +266,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       ]
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
                       onPressed: () async
@@ -353,15 +336,11 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                     ?
                 Padding(
                     padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                    child: ButtonSquare(
-                        text:"Delete",
-                        colors1: Colors.black,
-                        colors2: Colors.black,
-
+                    child: ButtonSquare(text:"Delete",
+                        colors1: Colors.black, colors2: Colors.black,
                         press: () async {
                           FirebaseFirestore.instance.collection('wallpaper')
-                              .doc(widget.postId).delete()
-                              .then((value) {
+                              .doc(widget.postId).delete().then((value) {
                             Fluttertoast.showToast(msg: 'Your post has been deleted');
                             Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                           });
