@@ -10,7 +10,7 @@ import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-import 'package:uuid/uuid.dart';
+import '../misc/userModel.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
@@ -21,8 +21,10 @@ final themeMode = ValueNotifier(2);
 
 class PictureHomeScreen extends StatefulWidget {
   String category = "";
+  UserWithNameAndId? user;
 
-  PictureHomeScreen({super.key, required this.category});
+  PictureHomeScreen.forCategory({super.key, required this.category});
+  PictureHomeScreen.forUser({super.key, required this.user});
 
   @override
   State<PictureHomeScreen> createState() => PictureHomeScreenState();
@@ -31,11 +33,7 @@ class PictureHomeScreen extends StatefulWidget {
 class PictureHomeScreenState extends State<PictureHomeScreen> {
   String changeTitle = "Grid View";
   bool checkView = false;
-
-
-
   int ActivityCount  = 0;
-
   String? videoUrl;
   String? imageUrl;
   String? myImage;
@@ -46,6 +44,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   late String currentToken;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
   Size? size;
@@ -68,8 +67,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
             currentToken = value!;
           });
         }
-        FirebaseFirestore.instance
-            .collection('pushtokens')
+        firestore.collection('pushtokens')
             .doc(userIdx)
             .set({'token': value!, 'createdAt': DateTime.now()});
       });
@@ -114,12 +112,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         )));
   }
 
-// viewcounts(){
-//     total = viewcount! + 1;
-//     FirebaseFirestore.instance.collection('wallpaper').doc(postId).update({'viewcount': viewcount, });
-// }
    getAllProducts() async {
-     final collection = FirebaseFirestore.instance.collection("Activity Feed").doc(userIdx).collection('FeedItems');
+     final collection = firestore.collection("Activity Feed").doc(userIdx).collection('FeedItems');
      final query = collection.where("Read Status", isEqualTo: false);
      final countQuery = query.count();
      final AggregateQuerySnapshot snapshot = await countQuery.get();
@@ -212,7 +206,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
       viewers.add(userIdx);
     }
 
-    FirebaseFirestore.instance.collection('wallpaper').doc(postId)
+    firestore.collection('wallpaper').doc(postId)
         .update({'viewers': viewers,'viewcount': total,
     });
 
@@ -334,8 +328,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => VideoHomeScreen(category: widget.category,),),);
+                    if (widget.user == null){
+                      Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                          VideoHomeScreen.forCategory(category: widget.category,),),);
+                    }
+                    else{
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+                    }
                   },
                   icon: const Icon(Icons.play_circle_outlined),
                 ),
@@ -349,11 +348,14 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               ]
           ),
           body: StreamBuilder(
-              stream: widget.category == "random" ? FirebaseFirestore.instance
-                  .collection('wallpaper').orderBy('createdAt', descending: true).snapshots() :
+              stream: widget.user != null ? firestore.collection('wallpaper').
+              where("id", isEqualTo: widget.user!.userId).snapshots() :
 
-              FirebaseFirestore.instance.collection('wallpaper')
-                  .where("category", arrayContains: widget.category).snapshots(),
+              widget.category == "random" ? firestore.collection('wallpaper')
+                  .orderBy('createdAt', descending: true).snapshots() :
+
+              firestore.collection('wallpaper').
+              where("category", arrayContains: widget.category).snapshots(),
 
               builder: (BuildContext context,
                   AsyncSnapshot <QuerySnapshot> snapshot) {
@@ -378,13 +380,14 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   }
                   else {
                     return const Center(
-                        child: Text("Sorry, there are no Posts for selection", style: TextStyle(fontSize: 20),)
+                        child: Text("Sorry, there are no Posts for selection",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),)
                     );
                   }
                 }
                 return const Center(
                   child: Text('Something went wrong', style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 30),
+                      fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
                   ),
                 );
               }

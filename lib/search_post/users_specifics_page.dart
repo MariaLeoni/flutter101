@@ -3,8 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../home_screen/home.dart';
+import '../home_screen/picturesHomescreen.dart';
+import '../home_screen/videosHomescreen.dart';
 import '../log_in/login_screen.dart';
 import '../misc/global.dart';
+import '../misc/userModel.dart';
 import '../search_userpost/searchView.dart';
 import '../widgets/widgets.dart';
 import 'numbers_widget.dart';
@@ -146,7 +149,13 @@ class UsersProfilePageState extends State<UsersProfilePage> {
   }
 
   handlePostView(PostType type){
-
+    UserWithNameAndId user = UserWithNameAndId(userId: widget.userId!, userName: myName!);
+    if (type == PostType.image){
+      Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: user,)));
+    }
+    else{
+      Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: user,)));
+    }
   }
 
   void readUserInfo() async {

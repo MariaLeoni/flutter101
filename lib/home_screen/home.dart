@@ -59,7 +59,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
-    return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen(category: "random",) :
+    return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen.forCategory(category: "random",) :
     Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
@@ -119,7 +119,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
             textStyle: TextStyle(fontSize: fontSize),
             onPressed: (item) {
               selectedInterest = item.title;
-              Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen(category: selectedInterest,)));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forCategory(category: selectedInterest,)));
             }
         );
       },

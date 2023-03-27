@@ -5,6 +5,7 @@ import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/userMention.dart';
 import '../Search.dart';
 import '../chatmain.dart';
+import '../misc/userModel.dart';
 import 'post.dart';
 import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
@@ -18,8 +19,10 @@ import '../vidlib/VideoListData.dart';
 class VideoHomeScreen extends StatefulWidget {
 
   String category = "";
+  UserWithNameAndId? user;
 
-  VideoHomeScreen({super.key, required this.category});
+  VideoHomeScreen.forUser({super.key, required this.user});
+  VideoHomeScreen.forCategory({super.key, required this.category});
 
   @override
   State<VideoHomeScreen> createState() => VideoHomeScreenState();
@@ -30,9 +33,9 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
 
   ReusableVideoListController videoListController = ReusableVideoListController();
   int lastMilli = DateTime.now().millisecondsSinceEpoch;
-
   int _currentPage = 0;
   bool _isOnPageTurning = false;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Size? size;
   final PageController _pageController = PageController(initialPage: 0,
@@ -153,17 +156,19 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               IconButton(
                 onPressed: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => userMention(),),);
-                  //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
-                  // },
                 },
                 icon: const Icon(Icons.home),
               ),
             ]
         ),
-        body: StreamBuilder(stream: widget.category == "random" ? FirebaseFirestore.instance
-              .collection('wallpaper2').orderBy('createdAt', descending: true).snapshots() :
+        body: StreamBuilder(
+          stream: widget.user != null ? firestore.collection('wallpaper2')
+              .where("id", isEqualTo: widget.user!.userId).snapshots() :
 
-          FirebaseFirestore.instance.collection('wallpaper2')
+          widget.category == "random" ? firestore.collection('wallpaper2')
+              .orderBy('createdAt', descending: true).snapshots() :
+
+          firestore.collection('wallpaper2')
               .where("category", arrayContains: widget.category).snapshots(),
 
           builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
@@ -192,14 +197,15 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               }
               else{
                 return const Center(
-                    child: Text("Sorry, there are no Posts for selection", style: TextStyle(fontSize: 20),)
+                    child: Text("Sorry, there are no Posts for selection",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,
+                          color: Colors.white),)
                 );
               }
             }
             return const Center(
-              child: Text(
-                'Something went wrong',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              child: Text('Something went wrong',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
               ),
             );
           },
