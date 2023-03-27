@@ -32,13 +32,7 @@ class PictureHomeScreen extends StatefulWidget {
 
 class PictureHomeScreenState extends State<PictureHomeScreen> {
   String changeTitle = "Grid View";
-  bool checkView = false;
-  int ActivityCount  = 0;
-  String? videoUrl;
-  String? imageUrl;
-  String? myImage;
-  String? myName;
-  String? userId;
+  int activityCount  = 0;
   int? total;
 
   Map<String, List<String>?> interests = {};
@@ -118,7 +112,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
      final countQuery = query.count();
      final AggregateQuerySnapshot snapshot = await countQuery.get();
      debugPrint("Count: ${snapshot.count}");
-    ActivityCount = snapshot.count;
+    activityCount = snapshot.count;
   }
 
   Widget listViewWidget(String docId, String img, String userImg, String name,
@@ -255,7 +249,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var ActivityText = Text(ActivityCount.toString(),
+    var ActivityText = Text(activityCount.toString(),
         style: const TextStyle(fontSize: 20.0,
             color: Colors.white, fontWeight: FontWeight.bold));
     size = MediaQuery.of(context).size;
