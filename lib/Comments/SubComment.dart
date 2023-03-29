@@ -120,6 +120,7 @@ class CommentState extends State<SubComment> {
       id = snapshot.get('id');
     });
   }
+
   void readUserInfo2() async {
     FirebaseFirestore.instance.collection('wallpaper').doc(widget.commentItem!.postId)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
@@ -130,16 +131,16 @@ class CommentState extends State<SubComment> {
       postOwnername = snapshot.get('name');
       postOwnerImage = snapshot.get('userImage');
       Image = snapshot.get('Image');
-
     });
   }
+
   @override
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
+
     readUserInfo();
     readUserInfo2();
-
   }
 
   @override

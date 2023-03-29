@@ -154,11 +154,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                       children: [
                         GestureDetector(
                             onTap: () {
-                              Navigator.pushReplacement(
-                                  context, MaterialPageRoute(builder: (_) =>
-                                  UsersSpecificPostsScreen(
-                                    userId: docId, userName: name,
-                                  )));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                                  UsersSpecificPostsScreen(userId: docId, userName: name,)));
                             },
                             child: CircleAvatar(
                               radius: 35,

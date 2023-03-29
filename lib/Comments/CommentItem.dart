@@ -64,6 +64,7 @@ class CommentItem extends StatelessWidget {
       likesCount = (likes?.length ?? 0);
     });
   }
+
   // void readUserInfo() async {
   //   FirebaseFirestore.instance.collection('users').doc(myUserId)
   //       .get().then<dynamic>((DocumentSnapshot snapshot) {
