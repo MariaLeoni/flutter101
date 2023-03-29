@@ -9,10 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/misc/global.dart';
-import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
-import 'home_screen/home.dart';
 import 'misc/progressIndicator.dart';
 
 class PostUploader extends StatefulWidget {
@@ -151,7 +149,6 @@ class PostUploaderState extends State<PostUploader> {
   void initState() {
     super.initState();
     readUserInfo();
-
     title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
 
     Timer.run(() {
@@ -253,7 +250,6 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void uploadPost() async {
-
     interests.forEach((key, value) {
       if (value != null) {
         selectedInterests.addAll(value);
@@ -321,7 +317,7 @@ class PostUploaderState extends State<PostUploader> {
                       ),
                     ),
                   ))) : (imageFile == null ? Image.asset("assets/images/wolf.webp") :
-                  Image.file(imageFile!))),
+                  Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
                 }, isEditable: false,)
