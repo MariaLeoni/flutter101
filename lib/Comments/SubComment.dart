@@ -105,7 +105,7 @@ class CommentState extends State<SubComment> {
       "originalCommentId": widget.commentItem?.commentId,
       "commentId": commentId,
       'subCommentIds': <String>[],
-      "postId": widget.commentItem!.postId,
+     // "postId": widget.commentItem!.postId,
 
     });
     addCommentTaggingToActivityFeed();

@@ -29,6 +29,7 @@ class CommentItem extends StatelessWidget {
   String? postId;
   String? Image;
   Timestamp? timestamp;
+  String ActivityId = const Uuid().v4();
   List<String>? likes = List.empty(growable: true);
   List<String>? subCommentsIds = List.empty(growable: true);
   String? originalCommentId;
@@ -63,7 +64,39 @@ class CommentItem extends StatelessWidget {
       likesCount = (likes?.length ?? 0);
     });
   }
-
+  // void readUserInfo() async {
+  //   FirebaseFirestore.instance.collection('users').doc(myUserId)
+  //       .get().then<dynamic>((DocumentSnapshot snapshot) {
+  //     myImage = snapshot.get('userImage');
+  //     myName = snapshot.get('name');
+  //     id = snapshot.get('id');
+  //   });
+  // }
+  // addCommentTaggingToActivityFeed() {
+  //   bool isNotPostOwner = _auth.currentUser!.uid != commenterId;
+  //   if (isNotPostOwner) {
+  //     FirebaseFirestore.instance.collection('Activity Feed').doc(commenterId)
+  //         .collection('FeedItems').doc(ActivityId).set({
+  //       "type": "comment reply",
+  //       "name": myName,
+  //       "userId": _auth.currentUser!.uid,
+  //       "userProfileImage": myImage,
+  //       "postId": postId,
+  //       "Activity Id": ActivityId,
+  //       "Image": Image,
+  //       "timestamp": DateTime.now(),
+  //       "commentData":  commentController1.text,
+  //       "description": description,
+  //       "downloads": downloads,
+  //       "likes": Likes,
+  //       "postOwnerId": postOwnerId,
+  //       "postOwnerImage": postOwnerImage,
+  //       "postOwnername": postOwnername,
+  //       'Read Status': false
+  //     });
+  //   }
+  //   commentController.clear();
+  // }
 
   addComment() {
     originalCommentId = commentId;
