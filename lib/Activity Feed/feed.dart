@@ -40,7 +40,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
   Widget listViewWidget (String Image, String name, String postId, DateTime timestamp, String type,
       String userId, String userProfileImage, String commentData, String description, String postOwnerId, String postOwnername, String postOwnerImage,
       List<String>? likes, int downloads, String ActivityId, bool ReadStatus ) {
-    if (type == "like" || type == 'comment'|| type == 'follow'|| type == 'tag') {
+    if (type == "like" || type == 'comment'|| type == 'follow'|| type == 'tag' || type =='comment reply') {
       mediaPreview = GestureDetector(
           onTap:() {
             FirebaseFirestore.instance.collection('Activity Feed').doc(_auth.currentUser!.uid).collection('FeedItems').doc(ActivityId).update({'Read Status': true});
@@ -77,7 +77,10 @@ class _ActivityFeedState extends State<ActivityFeed> {
       ActivityItemText = ' started following you';
     } else if (type == 'tag'){
       ActivityItemText = ' tagged you in a post ';
-    } else {
+    }else if (type == 'comment reply'){
+      ActivityItemText = 'replied to your comment: $commentData ';
+    }
+    else {
       ActivityItemText = "Error : Uknown type '$type'";
     }
 
@@ -85,7 +88,10 @@ class _ActivityFeedState extends State<ActivityFeed> {
         padding:EdgeInsets.only(bottom: 2.0),
         child: Container(
             color: Colors.white54,
-            child:ListTile(
+            child: GestureDetector(
+            onTap: () {
+       FirebaseFirestore.instance.collection('Activity Items').doc(_auth.currentUser!.uid).collection('FeedItems').doc(ActivityId).update({'Read Status': true });
+    },child: ListTile(
               title: GestureDetector(
                   onTap: ()=> print('show profile'),
                   child: RichText(
@@ -136,6 +142,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
               ),
               trailing: mediaPreview,
             )
+        )
         )
     );
   }

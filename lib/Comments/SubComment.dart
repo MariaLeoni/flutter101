@@ -24,15 +24,47 @@ class CommentState extends State<SubComment> {
   String? id;
   String commentId = const Uuid().v4();
   String? myUserId;
+  String? description;
+  int? downloads;
+  String? postOwnerId;
+  String? postOwnername;
+  String? postOwnerImage;
+  String? Image;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController commentController = TextEditingController();
-
+  String ActivityId = const Uuid().v4();
+  List<String>? Likes = List.empty(growable: true);
   CommentState({
     String? postId,
     String? commentId,
     String? userId,
   });
 
+  addCommentTaggingToActivityFeed() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.commentItem!.commenterId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(widget.commentItem!.commenterId)
+          .collection('FeedItems').doc(ActivityId).set({
+        "type": "comment reply",
+        "name": myName,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": myImage,
+        "postId": widget.commentItem!.postId,
+        "Activity Id": ActivityId,
+        "Image": Image,
+        "timestamp": DateTime.now(),
+        "commentData":  commentController.text,
+        "description": description,
+        "downloads": downloads,
+        "likes": Likes,
+        "postOwnerId": postOwnerId,
+        "postOwnerImage": postOwnerImage,
+        "postOwnername": postOwnername,
+        'Read Status': false
+      });
+    }
+    commentController.clear();
+  }
 
   buildComments(){
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
@@ -73,7 +105,10 @@ class CommentState extends State<SubComment> {
       "originalCommentId": widget.commentItem?.commentId,
       "commentId": commentId,
       'subCommentIds': <String>[],
+      "postId": widget.commentItem!.postId,
+
     });
+    addCommentTaggingToActivityFeed();
     commentController.clear();
   }
 
@@ -85,12 +120,26 @@ class CommentState extends State<SubComment> {
       id = snapshot.get('id');
     });
   }
+  void readUserInfo2() async {
+    FirebaseFirestore.instance.collection('wallpaper').doc(widget.commentItem!.postId)
+        .get().then<dynamic>((DocumentSnapshot snapshot) {
+      description = snapshot.get('description');
+      Likes = snapshot.get('likes');
+      downloads = snapshot.get('downloads');
+      postOwnerId = snapshot.get('id');
+      postOwnername = snapshot.get('name');
+      postOwnerImage = snapshot.get('userImage');
+      Image = snapshot.get('Image');
 
+    });
+  }
   @override
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
     readUserInfo();
+    readUserInfo2();
+
   }
 
   @override

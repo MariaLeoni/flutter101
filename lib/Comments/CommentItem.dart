@@ -24,6 +24,10 @@ class CommentItem extends StatelessWidget {
   String? userId;
   String? comment;
   String? commentId;
+  String? commenterId;
+  String? postImage;
+  String? postId;
+  String? Image;
   Timestamp? timestamp;
   List<String>? likes = List.empty(growable: true);
   List<String>? subCommentsIds = List.empty(growable: true);
@@ -36,6 +40,9 @@ class CommentItem extends StatelessWidget {
     this.timestamp,
     this.userImage,
     this.commentId,
+    this.commenterId,
+    this.postId,
+    this.Image,
     this.subCommentsIds,
     this.likes
   });
@@ -71,7 +78,7 @@ class CommentItem extends StatelessWidget {
       "likes": <String>[],
       "originalCommentId": originalCommentId,
       "commentId": replyCommentId,
-      "postId": null,
+      "postId": postId,
       'subCommentIds': <String>[],
     });
 
@@ -103,6 +110,12 @@ class CommentItem extends StatelessWidget {
           .from(doc.get('subCommentIds')) : List.empty(),
       likes: doc.data().toString().contains('likes') ? List
           .from(doc.get('likes')) : List.empty(),
+      postId: doc.data().toString().contains('postId') ? doc.get(
+          'postId') : '',
+      // Image: doc.data().toString().contains('Image') ? doc.get(
+      //     'Image') : '',
+      // commenterId: doc.data().toString().contains('commenterId') ? doc.get(
+      //     'commenterId') : '',
     );
   }
 
@@ -159,7 +172,9 @@ class CommentItem extends StatelessWidget {
                   CommentItem commentItem = CommentItem(userName: userName,
                     userId: userId, comment: comment, timestamp: timestamp,
                     userImage: userImage, commentId: commentId,
-                    subCommentsIds: subCommentsIds, likes: likes,);
+                    subCommentsIds: subCommentsIds, likes: likes,
+                  postId: postId, Image: Image, commenterId: commenterId,
+                  );
 
                   Navigator.push(context, MaterialPageRoute(
                       builder: (_) => SubComment(commentItem: commentItem)));

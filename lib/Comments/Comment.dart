@@ -218,9 +218,10 @@ class CommentState extends State<Comment> {
       ids!.clear();
     }
 
-    commentController.clear();
+
     addCommentTaggingToActivityFeed();
     sendNotification();
+    commentController.clear();
     FocusScope.of(context).unfocus();
   }
 

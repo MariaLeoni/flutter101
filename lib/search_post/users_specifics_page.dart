@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
 import '../home_screen/picturesHomescreen.dart';
 import '../home_screen/videosHomescreen.dart';
@@ -37,12 +39,15 @@ class UsersProfilePageState extends State<UsersProfilePage> {
   String? myImage;
   String? myName;
   String? myUserId;
+  String? name;
+  String? image;
   int followersCount = 0;
   int followingCount = 0;
   int videosCount = 0;
   int picturesCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
+  String ActivityId = const Uuid().v4();
 
   @override
   void initState() {
@@ -51,6 +56,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
     myUserId = _auth.currentUser?.uid;
 
     readUserInfo();
+    readUserInfo2();
     getPosts();
   }
 
@@ -173,7 +179,15 @@ class UsersProfilePageState extends State<UsersProfilePage> {
       });
     });
   }
+  void readUserInfo2() async {
+    FirebaseFirestore.instance.collection('users').doc(myUserId).get()
+        .then<dynamic>((DocumentSnapshot snapshot) async {
+      name = snapshot.get('name');
+      image = snapshot.get('userImage');
 
+
+    });
+  }
   void getPosts() async {
     videosCount = await getVideoPosts();
     picturesCount = await getPicturePost();
@@ -201,6 +215,29 @@ class UsersProfilePageState extends State<UsersProfilePage> {
 
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .update({'followers': widget.followers!,});
+  }
+  AddFollowToActivityFeed() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
+          .collection('FeedItems').doc(ActivityId).set({
+        "type": "follow",
+        "name": name,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": image,
+        "postId": null,
+        "Image": null,
+        "timestamp": DateTime.now(),
+        "commentData":  null,
+        "description": null,
+        "likes": null,
+        "postOwnerId": widget.userId,
+        "postOwnerImage": null,
+        "postOwnername": null,
+        "downloads": null,
+        "Read Status": false,
+      });
+    }
   }
 
   Future<int> getPicturePost() async {
