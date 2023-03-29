@@ -16,7 +16,6 @@ class Post {
   String description = "";
   PostType? postType;
 
-  
   List<String>? likes = List.empty(growable: true);
   List<String>? viewers = List.empty(growable:true);
   List<String>? category = List.empty(growable: true);

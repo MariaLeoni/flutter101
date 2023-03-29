@@ -49,7 +49,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   void initState() {
     super.initState();
      getAllProducts();
-    notificationManager = NotificationManager();
+
+     notificationManager = NotificationManager();
     notificationManager?.initServer();
 
   //  sendNotification();
@@ -101,8 +102,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
         OwnerDetails(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
-          viewCount: viewCount,
-          postId: postId, likes: likes,viewers: viewers, description: description,
+          viewCount: viewCount, postId: postId, likes: likes, viewers: viewers,
+          description: description,
         )));
   }
 
@@ -201,9 +202,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         .update({'viewers': viewers,'viewcount': total,
     });
 
-    goToDetails(img, userImg, name, date,
-        docId, userId, downloads,viewCount, postId, likes,viewers,
-        description);
+    goToDetails(img, userImg, name, date, docId, userId, downloads, viewCount,
+        postId, likes,viewers, description);
   }
 
   Widget gridViewWidget(String docId, String img, String userImg, String name,

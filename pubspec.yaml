@@ -70,9 +70,10 @@ dependencies:
   better_player:
     git:
       url: https://github.com/tintran-dev/betterplayer.git
-
   firebase_database: ^10.0.10
   firebase_in_app_messaging: ^0.7.0+13
+  badges: ^3.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

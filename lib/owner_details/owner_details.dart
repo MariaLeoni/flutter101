@@ -32,8 +32,8 @@ class OwnerDetails extends StatefulWidget {
   List<String>? viewers = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
 
-  OwnerDetails({super.key, this.likeruserId,this.img, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.viewCount,this.postId, this.likes,
+  OwnerDetails({super.key, this.likeruserId, this.img, this.userImg, this.name, this.date,
+    this.docId, this.userId, this.downloads, this.viewCount, this.postId, this.likes,
     this.viewers, this.description, this.isRead
   });
 
@@ -185,7 +185,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     likerUserId = _auth.currentUser?.uid;
@@ -231,7 +230,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       children:[
                         GestureDetector(
                             onTap:(){
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
                                 userId:widget.docId,
                                 userName:widget.name,
                               )));
@@ -269,12 +268,10 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                 Row(mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: () async
-                      {
+                      onPressed: () async {
                         try{
                           var imageId = await ImageDownloader.downloadImage(widget.img!);
-                          if(imageId == null)
-                          {
+                          if(imageId == null) {
                             return;
                           }
                           Fluttertoast.showToast(msg: "Image saved to Gallery");
@@ -282,8 +279,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
 
                           FirebaseFirestore.instance.collection('wallpaper')
                               .doc(widget.postId).update({'downloads': total,
-                          }).then((value)
-                          {
+                          }).then((value) {
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
                           });
                         } on PlatformException catch (error)
@@ -294,8 +290,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       },
                       icon: const Icon(Icons.download, color:Colors.white,),
                     ),
-                    Text(
-                      "${widget.downloads}",
+                    Text("${widget.downloads}",
                       style: const TextStyle(
                         fontSize: 28.0,
                         color: Colors.white,
@@ -306,7 +301,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       onTap: () {
                         handleLikePost();
                       },
-
                       child: const Icon (
                         Icons.thumb_up_sharp,
                         size:20.0,
@@ -316,7 +310,12 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                     likeText,
                     IconButton(
                       onPressed: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.docId, Image:widget.img, likes: widget.likes, description: widget.description, downloads: widget.downloads, postOwnerImg: widget.userImg, postOwnername: widget.name, )));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                            Comment(postId: widget.postId, userId: widget.docId,
+                              image: widget.img, likes: widget.likes,
+                              description: widget.description,
+                              downloads: widget.downloads, postOwnerImg: widget.userImg,
+                              postOwnername: widget.name,)));
                       },
                       icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
                     ),

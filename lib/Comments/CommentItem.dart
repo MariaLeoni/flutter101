@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,9 +28,9 @@ class CommentItem extends StatelessWidget {
   String? commenterId;
   String? postImage;
   String? postId;
-  String? Image;
+  String? image;
   Timestamp? timestamp;
-  String ActivityId = const Uuid().v4();
+  String activityId = const Uuid().v4();
   List<String>? likes = List.empty(growable: true);
   List<String>? subCommentsIds = List.empty(growable: true);
   String? originalCommentId;
@@ -43,7 +44,7 @@ class CommentItem extends StatelessWidget {
     this.commentId,
     this.commenterId,
     this.postId,
-    this.Image,
+    this.image,
     this.subCommentsIds,
     this.likes
   });
@@ -117,8 +118,7 @@ class CommentItem extends StatelessWidget {
     });
 
     firebase.collection('comment').doc(originalCommentId)
-        .update({
-      'subCommentIds': FieldValue.arrayUnion(
+        .update({'subCommentIds': FieldValue.arrayUnion(
           List<String>.filled(1, replyCommentId)),
     });
 
@@ -132,8 +132,7 @@ class CommentItem extends StatelessWidget {
       userId: doc.data().toString().contains('commenterId') ? doc.get(
           'commenterId') : '',
       comment: doc.data().toString().contains('comment')
-          ? doc.get('comment')
-          : '',
+          ? doc.get('comment') : '',
       timestamp: doc.data().toString().contains('timestamp') ? doc.get(
           'timestamp') : '',
       userImage: doc.data().toString().contains('commenterImage') ? doc.get(
@@ -186,7 +185,20 @@ class CommentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     likerUserId = _auth.currentUser?.uid;
-    likesCount = (likes?.length ?? 0);
+    likesCount = likes?.length ?? 0;
+
+    // var likeWithBadge = Badge(badgeContent: Text(likesCount.toString()),
+    //     onTap: () {
+    //       handleLikeComment();
+    //     },
+    //     badgeAnimation: const BadgeAnimation.scale(
+    //       animationDuration: Duration(seconds: 1),
+    //       colorChangeAnimationDuration: Duration(seconds: 1),
+    //       loopAnimation: false,
+    //       curve: Curves.fastOutSlowIn,
+    //       colorChangeAnimationCurve: Curves.easeInCubic,
+    //     ),
+    //   child: const Icon(Icons.thumb_up_sharp));
 
     var likeText = Text(likesCount.toString(),
         style: const TextStyle(fontSize: 28.0,
@@ -207,7 +219,7 @@ class CommentItem extends StatelessWidget {
                     userId: userId, comment: comment, timestamp: timestamp,
                     userImage: userImage, commentId: commentId,
                     subCommentsIds: subCommentsIds, likes: likes,
-                  postId: postId, Image: Image, commenterId: commenterId,
+                  postId: postId, image: image, commenterId: commenterId,
                   );
 
                   Navigator.push(context, MaterialPageRoute(
@@ -220,15 +232,15 @@ class CommentItem extends StatelessWidget {
               IconButton(icon: const Icon(Icons.thumb_up_sharp),
                   onPressed: () => handleLikeComment()),
               likeText,
+              //likeWithBadge
             ],
           ),
           onTap: () {
             displayAddCommentDialog(context);
           },
-          leading:
-          GestureDetector(
+          leading: GestureDetector(
               onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                Navigator.push(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
                   userId: userId, userName: userName,
                 )));
               },
