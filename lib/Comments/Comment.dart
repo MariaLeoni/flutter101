@@ -44,6 +44,7 @@ class CommentState extends State<Comment> {
   List<String>? ids = List.empty(growable: true);
 
   loadAndBuildComments(){
+    print("PostId ${widget.postId}");
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
     return StreamBuilder(
@@ -58,7 +59,8 @@ class CommentState extends State<Comment> {
         List<CommentItem> commentViews = [];
 
         for (var doc in snapshot.data!.docs) {
-          commentViews.add(CommentItem.fromDocument(doc));
+          CommentItem commentItem = CommentItem.fromDocument(doc);
+          commentViews.add(commentItem);
         }
 
         commentViews.sort((a,b) {

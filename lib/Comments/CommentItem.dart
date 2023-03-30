@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import '../search_post/users_specific_posts.dart';
+import '../widgets/ssbadge.dart';
 import 'SubComment.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 
 class CommentItem extends StatelessWidget {
@@ -36,7 +34,7 @@ class CommentItem extends StatelessWidget {
 
   CommentItem({super.key, this.userName, this.userId,
     this.comment, this.timestamp, this.userImage,
-    this.commentId, this.commenterId, this.postId,
+    this.commentId, this.commenterId, required this.postId,
     this.image, this.subCommentsIds, this.likes
   });
 
@@ -91,7 +89,6 @@ class CommentItem extends StatelessWidget {
   //   commentController.clear();
   // }
 
-
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
       userName: doc.data().toString().contains('commenterName') ? doc.get(
@@ -112,10 +109,6 @@ class CommentItem extends StatelessWidget {
           .from(doc.get('likes')) : List.empty(growable: true),
       postId: doc.data().toString().contains('postId') ? doc.get(
           'postId') : '',
-      // Image: doc.data().toString().contains('Image') ? doc.get(
-      //     'Image') : '',
-      // commenterId: doc.data().toString().contains('commenterId') ? doc.get(
-      //     'commenterId') : '',
     );
   }
 
@@ -136,36 +129,20 @@ class CommentItem extends StatelessWidget {
     likerUserId = _auth.currentUser?.uid;
     likesCount = likes?.length ?? 0;
 
-    // var likeWithBadge = Badge(badgeContent: Text(likesCount.toString()),
-    //     onTap: () {
-    //       handleLikeComment();
-    //     },
-    //     badgeAnimation: const BadgeAnimation.scale(
-    //       animationDuration: Duration(seconds: 1),
-    //       colorChangeAnimationDuration: Duration(seconds: 1),
-    //       loopAnimation: false,
-    //       curve: Curves.fastOutSlowIn,
-    //       colorChangeAnimationCurve: Curves.easeInCubic,
-    //     ),
-    //   child: const Icon(Icons.thumb_up_sharp));
-
-    var likeText = Text(likesCount.toString(),
-        style: const TextStyle(fontSize: 28.0,
-            color: Colors.black, fontWeight: FontWeight.bold));
+    var likeBadgeView = SSBadge(top: 0, right: 2,
+        value: likesCount.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.thumb_up_sharp), onPressed: () {
+          handleLikeComment();
+        }));
 
     return Column(
       children: <Widget>[
         ListTile(
           title: Text(comment!),
           subtitle: Text(userName!),
-          trailing: Wrap(
-            spacing: 0, // space between two icons
-            children: <Widget>[
-              IconButton(icon: const Icon(Icons.thumb_up_sharp),
-                  onPressed: () => handleLikeComment()),
-              likeText,
-              //likeWithBadge
-            ],
+          trailing: Container(
+            child: likeBadgeView,
           ),
           onTap: () {
             showSubcomments(context);

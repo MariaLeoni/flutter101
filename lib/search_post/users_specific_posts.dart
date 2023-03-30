@@ -51,12 +51,11 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
         tokens = snapshot.data()!["devicetoken"];
-
-
       });
     }
     });
   }
+
   void sendNotification() {
     NotificationModel model = NotificationModel(title: name,
         body: "Followed you", //dataBody: "should be post url",
@@ -282,7 +281,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                   Icons.login_outlined
               ),
             ),
-
             actions: <Widget>[
               IconButton(
                 onPressed: (){
@@ -290,10 +288,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 },
                 icon: const Icon(Icons.search),
               ),
-              FirebaseAuth.instance.currentUser!.uid == widget.userId
-                  ?
-              IconButton(
-                onPressed: (){
+              FirebaseAuth.instance.currentUser!.uid == widget.userId ? IconButton(onPressed: (){
                   Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
                 },
                 icon: const Icon(Icons.person),

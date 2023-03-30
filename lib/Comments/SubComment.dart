@@ -80,7 +80,8 @@ class CommentState extends State<SubComment> {
           }
           List<CommentItem> comments = [];
           for (var doc in snapshot.data!.docs) {
-            comments.add(CommentItem.fromDocument(doc));
+            CommentItem commentItem = CommentItem.fromDocument(doc);
+            comments.add(commentItem);
           }
 
           comments.sort((a,b) {
@@ -101,6 +102,7 @@ class CommentState extends State<SubComment> {
       widget.commentItem!.subCommentsIds;
     });
 
+    print("CommentId $commentId and postId $postId");
     firestore.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
@@ -111,6 +113,7 @@ class CommentState extends State<SubComment> {
       "commentId": commentId,
       'subCommentIds': <String>[],
       'likes': <String>[],
+      "postId": postId!,
     });
 
     firestore.collection('comment').doc(widget.commentItem?.commentId)
@@ -148,6 +151,9 @@ class CommentState extends State<SubComment> {
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
+    postId = widget.commentItem!.postId;
+
+    print("CommentId A $commentId and postId A $postId");
 
     readUserInfo();
     loadPostInfo();
