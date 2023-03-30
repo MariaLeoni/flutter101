@@ -13,6 +13,7 @@ import '../notification/server.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import'package:fluttertoast/fluttertoast.dart';
+import '../widgets/ssbadge.dart';
 
 
 class  UsersSpecificPostsScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
 }
 
 class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
-  String? followuserId;
+  String? myUserId;
   String? myImage;
   String? myName;
   String? name;
@@ -44,11 +45,9 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
 
-  void getDataFromDatabase2() async {
+  void getUserToken() async {
     await FirebaseFirestore.instance.collection("users")
-        .doc(widget.docId)
-        .get()
-        .then((snapshot) async { if (snapshot.exists) {
+        .doc(widget.docId).get().then((snapshot) async { if (snapshot.exists) {
       setState(() {
         tokens = snapshot.data()!["devicetoken"];
       });
@@ -64,7 +63,8 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
-  AddFollowToActivityFeed() {
+
+  addFollowToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
@@ -88,7 +88,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     }
   }
 
-  RemoveFollow() {
+  removeFollow() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed')
@@ -105,15 +105,15 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   }
 
   handleFollowerPost() {
-    if (widget.followers!= null && widget.followers!.contains(followuserId)) {
+    if (widget.followers!= null && widget.followers!.contains(myUserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
-      widget.followers!.remove(followuserId);
-      RemoveFollow();
+      widget.followers?.remove(myUserId);
+      removeFollow();
     }
     else {
       Fluttertoast.showToast(msg: "You followed this person");
-      widget.followers!.add(followuserId!);
-      AddFollowToActivityFeed();
+      widget.followers?.add(myUserId!);
+      addFollowToActivityFeed();
     }
 
     FirebaseFirestore.instance
@@ -122,30 +122,29 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
         .update({'followers': widget.followers!,
     }).then((value) {
       setState(() {
-        followersCount = (widget.followers?.length ?? 0);
+        followersCount = widget.followers?.length ?? 0;
+        amFollowingUser = widget.followers == null ? false : widget.followers!.contains(myUserId);
       });
     });
   }
 
   void readUserInfo()async {
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
-        .get()
-        .then<dynamic>((DocumentSnapshot snapshot) async {
+        .get().then<dynamic>((DocumentSnapshot snapshot) async {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
       widget.followers = List.from(snapshot.get('followers'));
 
       setState(() {
-        followersCount = (widget.followers?.length ?? 0);
+        followersCount = widget.followers?.length ?? 0;
+        amFollowingUser = widget.followers == null ? false : widget.followers!.contains(myUserId);
       });
     });
   }
 
-  void getDataFromDatabase() async {
+  void loadMyDetails() async {
     await FirebaseFirestore.instance.collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((snapshot) async { if (snapshot.exists) {
+        .doc(myUserId).get().then((snapshot) async { if (snapshot.exists) {
       setState(() {
         name = snapshot.data()!["name"];
         image = snapshot.data()!["userImage"];
@@ -157,8 +156,11 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   @override
   void initState() {
     super.initState();
-    getDataFromDatabase();
-    getDataFromDatabase2();
+
+    myUserId = _auth.currentUser?.uid;
+
+    loadMyDetails();
+    getUserToken();
     readUserInfo();
 
     notificationManager = NotificationManager();
@@ -240,13 +242,16 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    followuserId = _auth.currentUser?.uid;
     followersCount = (widget.followers?.length ?? 0);
-    amFollowingUser = widget.followers == null ? false : widget.followers!.contains(followuserId);
+    amFollowingUser = widget.followers == null ? false : widget.followers!.contains(myUserId);
 
-    var followerText = Text(followersCount.toString(),
-        style: const TextStyle(fontSize: 20.0,
-            color: Colors.white, fontWeight: FontWeight.bold));
+    var followersBadgeView = SSBadge(top: 0, right: 2,
+        value: followersCount.toString(),
+        child: IconButton(
+            icon: amFollowingUser ? const Icon(Icons.person_remove_alt_1_outlined, color: Colors.red) :
+            const Icon(Icons.person_add_alt_outlined, color: Colors.white), onPressed: () {
+          handleFollowerPost();
+        }));
 
     return Container(
       decoration: const BoxDecoration(
@@ -293,15 +298,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 },
                 icon: const Icon(Icons.person),
               ):
-              IconButton(
-                onPressed: (){
-                  handleFollowerPost();
-                  followerText;
-                },
-                icon: amFollowingUser ?
-                const Icon(Icons.person_remove_alt_1_outlined, color: Colors.red) :
-                const Icon(Icons.person_add_alt_outlined, color: Colors.red),
-              ),
+              followersBadgeView,
               IconButton(
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(builder: (_) => Follows(
@@ -310,8 +307,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                 },
                 icon: const Icon(Icons.person_search),
               ),
-              followerText,
-
               IconButton(
                 onPressed: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
@@ -336,7 +331,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                   itemBuilder: (BuildContext context, int index) {
 
                     Post post = Post.getPost(snapshot, index, PostType.image);
-
                     return listViewWidget(post.id, post.source, post.userImage,
                         post.userName, post.createdAt, post.email,
                         post.downloads, post.postId, post.likes, post.description);
