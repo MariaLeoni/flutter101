@@ -16,6 +16,7 @@ import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
 import '../search_post/users_specific_posts.dart';
+import '../widgets/ssbadge.dart';
 
 final themeMode = ValueNotifier(2);
 
@@ -221,7 +222,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
             padding: const EdgeInsets.all(2.0),
             child: GestureDetector(
                 onTap: () {
-                  updateViewAndNavigate(viewCount, postId, viewers, img, userImg, name, date, docId, userId, downloads, likes, description);
+                  updateViewAndNavigate(viewCount, postId, viewers, img, userImg,
+                      name, date, docId, userId, downloads, likes, description);
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10), // Image border
@@ -246,9 +248,14 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var ActivityText = Text(activityCount.toString(),
-        style: const TextStyle(fontSize: 20.0,
-            color: Colors.white, fontWeight: FontWeight.bold));
+
+    var activityBadgeView = SSBadge(top: 0, right: 2,
+        value: activityCount.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.doorbell_outlined), onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
+        }));
+
     size = MediaQuery.of(context).size;
 
     return Container(
@@ -329,13 +336,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   },
                   icon: const Icon(Icons.play_circle_outlined),
                 ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
-                  },
-                  icon: const Icon(Icons.doorbell_outlined),
-                ),
-                ActivityText,
+                activityBadgeView,
               ]
           ),
           body: StreamBuilder(
