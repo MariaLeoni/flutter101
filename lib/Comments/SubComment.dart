@@ -31,6 +31,7 @@ class CommentState extends State<SubComment> {
   String? postOwnerImage;
   String? image;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final firestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
   String activityId = const Uuid().v4();
   List<String>? likes = List.empty(growable: true);
@@ -95,7 +96,12 @@ class CommentState extends State<SubComment> {
   }
 
   addComment() {
-    FirebaseFirestore.instance.collection('comment').doc(commentId).set({
+    widget.commentItem!.subCommentsIds?.add(commentId);
+    setState(() {
+      widget.commentItem!.subCommentsIds;
+    });
+
+    firestore.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
       "commenterName" : myName,
@@ -103,11 +109,16 @@ class CommentState extends State<SubComment> {
       "commenterId": id,
       "originalCommentId": widget.commentItem?.commentId,
       "commentId": commentId,
-      'subCommentIds': <String>[],
-     // "postId": widget.commentItem!.postId,
+      'subCommentIds': [],
     });
+
+    firestore.collection('comment').doc(widget.commentItem?.commentId)
+        .update({'subCommentIds': FieldValue.arrayUnion(List<String>.filled(1, commentId)),
+    });
+
     addCommentTaggingToActivityFeed();
     commentController.clear();
+    commentId = const Uuid().v4();
   }
 
   void readUserInfo() async {
@@ -136,6 +147,8 @@ class CommentState extends State<SubComment> {
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
+
+    print("CommentId ${widget.commentItem?.commentId}");
 
     readUserInfo();
     loadPostInfo();

@@ -13,7 +13,6 @@ import 'package:intl/intl.dart';
 
 class CommentItem extends StatelessWidget {
 
-  TextEditingController commentController1 = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebase = FirebaseFirestore.instance;
 
@@ -100,30 +99,6 @@ class CommentItem extends StatelessWidget {
   //   commentController.clear();
   // }
 
-  addComment() {
-    originalCommentId = commentId;
-    String replyCommentId = const Uuid().v4();
-
-    firebase.collection('comment').doc(replyCommentId).set({
-      "comment": commentController1.text,
-      "commenterImage": userImage,
-      "commenterName": userName,
-      "timestamp": DateTime.now(),
-      "commenterId": userId,
-      "likes": <String>[],
-      "originalCommentId": originalCommentId,
-      "commentId": replyCommentId,
-      //"postId": postId,
-      'subCommentIds': <String>[],
-    });
-
-    firebase.collection('comment').doc(originalCommentId)
-        .update({'subCommentIds': FieldValue.arrayUnion(
-          List<String>.filled(1, replyCommentId)),
-    });
-
-    commentController1.clear();
-  }
 
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
@@ -149,36 +124,6 @@ class CommentItem extends StatelessWidget {
       //     'Image') : '',
       // commenterId: doc.data().toString().contains('commenterId') ? doc.get(
       //     'commenterId') : '',
-    );
-  }
-
-  Future<void> displayAddCommentDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Reply to comment'),
-          content: TextField(
-            controller: commentController1,
-            decoration: const InputDecoration(hintText: "Add your comment..."),
-          ),
-          actions: <Widget>[
-            MaterialButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            MaterialButton(
-              child: const Text('OK'),
-              onPressed: () {
-                addComment();
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -222,25 +167,8 @@ class CommentItem extends StatelessWidget {
           title: Text(comment!),
           subtitle: Text(userName!),
           trailing: Wrap(
-            spacing: 2, // space between two icons
+            spacing: 0, // space between two icons
             children: <Widget>[
-              IconButton(
-                  icon: const Icon(Icons.arrow_forward), onPressed: () {
-                // if (subCommentsIds != null && subCommentsIds!.isNotEmpty) {
-                //   CommentItem commentItem = CommentItem(userName: userName,
-                //     userId: userId, comment: comment, timestamp: timestamp,
-                //     userImage: userImage, commentId: commentId,
-                //     subCommentsIds: subCommentsIds, likes: likes,
-                //   postId: postId, image: image, commenterId: commenterId,
-                //   );
-                //
-                //   Navigator.push(context, MaterialPageRoute(
-                //       builder: (_) => SubComment(commentItem: commentItem)));
-                // }
-                // else {
-                //   Fluttertoast.showToast(msg: 'No more comments under this');
-                // }
-              }),
               IconButton(icon: const Icon(Icons.thumb_up_sharp),
                   onPressed: () => handleLikeComment()),
               likeText,
@@ -248,7 +176,6 @@ class CommentItem extends StatelessWidget {
             ],
           ),
           onTap: () {
-            //displayAddCommentDialog(context);
             showSubcomments(context);
           },
           leading: GestureDetector(
