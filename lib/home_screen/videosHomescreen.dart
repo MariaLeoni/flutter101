@@ -155,7 +155,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => userMention(),),);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => userMention(),),);
                 },
                 icon: const Icon(Icons.home),
               ),
