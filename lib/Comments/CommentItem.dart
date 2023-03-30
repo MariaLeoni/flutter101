@@ -113,7 +113,7 @@ class CommentItem extends StatelessWidget {
       "likes": <String>[],
       "originalCommentId": originalCommentId,
       "commentId": replyCommentId,
-      "postId": postId,
+      //"postId": postId,
       'subCommentIds': <String>[],
     });
 
@@ -182,6 +182,18 @@ class CommentItem extends StatelessWidget {
     );
   }
 
+  showSubcomments(BuildContext context){
+    CommentItem commentItem = CommentItem(userName: userName,
+      userId: userId, comment: comment, timestamp: timestamp,
+      userImage: userImage, commentId: commentId,
+      subCommentsIds: subCommentsIds, likes: likes,
+      postId: postId, image: image, commenterId: commenterId,
+    );
+
+    Navigator.push(context, MaterialPageRoute(
+        builder: (_) => SubComment(commentItem: commentItem)));
+  }
+
   @override
   Widget build(BuildContext context) {
     likerUserId = _auth.currentUser?.uid;
@@ -214,20 +226,20 @@ class CommentItem extends StatelessWidget {
             children: <Widget>[
               IconButton(
                   icon: const Icon(Icons.arrow_forward), onPressed: () {
-                if (subCommentsIds != null && subCommentsIds!.isNotEmpty) {
-                  CommentItem commentItem = CommentItem(userName: userName,
-                    userId: userId, comment: comment, timestamp: timestamp,
-                    userImage: userImage, commentId: commentId,
-                    subCommentsIds: subCommentsIds, likes: likes,
-                  postId: postId, image: image, commenterId: commenterId,
-                  );
-
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (_) => SubComment(commentItem: commentItem)));
-                }
-                else {
-                  Fluttertoast.showToast(msg: 'No more comments under this');
-                }
+                // if (subCommentsIds != null && subCommentsIds!.isNotEmpty) {
+                //   CommentItem commentItem = CommentItem(userName: userName,
+                //     userId: userId, comment: comment, timestamp: timestamp,
+                //     userImage: userImage, commentId: commentId,
+                //     subCommentsIds: subCommentsIds, likes: likes,
+                //   postId: postId, image: image, commenterId: commenterId,
+                //   );
+                //
+                //   Navigator.push(context, MaterialPageRoute(
+                //       builder: (_) => SubComment(commentItem: commentItem)));
+                // }
+                // else {
+                //   Fluttertoast.showToast(msg: 'No more comments under this');
+                // }
               }),
               IconButton(icon: const Icon(Icons.thumb_up_sharp),
                   onPressed: () => handleLikeComment()),
@@ -236,7 +248,8 @@ class CommentItem extends StatelessWidget {
             ],
           ),
           onTap: () {
-            displayAddCommentDialog(context);
+            //displayAddCommentDialog(context);
+            showSubcomments(context);
           },
           leading: GestureDetector(
               onTap: () {

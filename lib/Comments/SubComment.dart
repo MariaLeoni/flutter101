@@ -29,34 +29,29 @@ class CommentState extends State<SubComment> {
   String? postOwnerId;
   String? postOwnername;
   String? postOwnerImage;
-  String? Image;
+  String? image;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController commentController = TextEditingController();
-  String ActivityId = const Uuid().v4();
-  List<String>? Likes = List.empty(growable: true);
-  CommentState({
-    String? postId,
-    String? commentId,
-    String? userId,
-  });
+  String activityId = const Uuid().v4();
+  List<String>? likes = List.empty(growable: true);
 
   addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.commentItem!.commenterId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.commentItem!.commenterId)
-          .collection('FeedItems').doc(ActivityId).set({
+          .collection('FeedItems').doc(activityId).set({
         "type": "comment reply",
         "name": myName,
         "userId": _auth.currentUser!.uid,
         "userProfileImage": myImage,
         "postId": widget.commentItem!.postId,
-        "Activity Id": ActivityId,
-        "Image": Image,
+        "Activity Id": activityId,
+        "Image": image,
         "timestamp": DateTime.now(),
         "commentData":  commentController.text,
         "description": description,
         "downloads": downloads,
-        "likes": Likes,
+        "likes": likes,
         "postOwnerId": postOwnerId,
         "postOwnerImage": postOwnerImage,
         "postOwnername": postOwnername,
@@ -66,33 +61,37 @@ class CommentState extends State<SubComment> {
     commentController.clear();
   }
 
-  buildComments(){
-    final firebaseCollection = FirebaseFirestore.instance.collection('comment');
+  loadAndBuildComments(){
+    if (widget.commentItem!.subCommentsIds != null && widget.commentItem!.subCommentsIds!.isEmpty){
+      return const Text('There are no comments for this comment');
+    }
+    else{
+      final firebaseCollection = FirebaseFirestore.instance.collection('comment');
+      return StreamBuilder(
+        stream: firebaseCollection.where(FieldPath.documentId,
+            whereIn: widget.commentItem!.subCommentsIds!).snapshots(),
+        builder: (context, snapshot){
+          if (snapshot.hasError) {
+            return const Text('Something went wrong');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text('Loading');
+          }
+          List<CommentItem> comments = [];
+          for (var doc in snapshot.data!.docs) {
+            comments.add(CommentItem.fromDocument(doc));
+          }
 
-    return StreamBuilder(
-      stream: firebaseCollection.where(FieldPath.documentId,
-          whereIn: widget.commentItem!.subCommentsIds!).snapshots(),
-      builder: (context, snapshot){
-        if (snapshot.hasError) {
-          return const Text('Something went wrong');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading');
-        }
-        List<CommentItem> comments = [];
-        for (var doc in snapshot.data!.docs) {
-          comments.add(CommentItem.fromDocument(doc));
-        }
+          comments.sort((a,b) {
+            var aTimeStamp = a.timestamp;
+            var bTimeStamp = b.timestamp;
+            return aTimeStamp!.compareTo(bTimeStamp!);
+          });
 
-        comments.sort((a,b) {
-          var aTimeStamp = a.timestamp;
-          var bTimeStamp = b.timestamp;
-          return aTimeStamp!.compareTo(bTimeStamp!);
-        });
-
-        return ListView(children: comments);
-      },
-    );
+          return ListView(children: comments);
+        },
+      );
+    }
   }
 
   addComment() {
@@ -106,7 +105,6 @@ class CommentState extends State<SubComment> {
       "commentId": commentId,
       'subCommentIds': <String>[],
      // "postId": widget.commentItem!.postId,
-
     });
     addCommentTaggingToActivityFeed();
     commentController.clear();
@@ -121,16 +119,16 @@ class CommentState extends State<SubComment> {
     });
   }
 
-  void readUserInfo2() async {
+  void loadPostInfo() async {
     FirebaseFirestore.instance.collection('wallpaper').doc(widget.commentItem!.postId)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       description = snapshot.get('description');
-      Likes = snapshot.get('likes');
+      likes = snapshot.get('likes');
       downloads = snapshot.get('downloads');
       postOwnerId = snapshot.get('id');
       postOwnername = snapshot.get('name');
       postOwnerImage = snapshot.get('userImage');
-      Image = snapshot.get('Image');
+      image = snapshot.get('Image');
     });
   }
 
@@ -140,7 +138,7 @@ class CommentState extends State<SubComment> {
     myUserId = _auth.currentUser!.uid;
 
     readUserInfo();
-    readUserInfo2();
+    loadPostInfo();
   }
 
   @override
@@ -173,7 +171,7 @@ class CommentState extends State<SubComment> {
           ]
           ),
           const Divider(),
-          Expanded(child: buildComments()),
+          Expanded(child: loadAndBuildComments()),
           const Divider(),
           ListTile(
               title: TextFormField(
