@@ -34,18 +34,10 @@ class CommentItem extends StatelessWidget {
   List<String>? subCommentsIds = List.empty(growable: true);
   String? originalCommentId;
 
-  CommentItem({super.key,
-    this.userName,
-    this.userId,
-    this.comment,
-    this.timestamp,
-    this.userImage,
-    this.commentId,
-    this.commenterId,
-    this.postId,
-    this.image,
-    this.subCommentsIds,
-    this.likes
+  CommentItem({super.key, this.userName, this.userId,
+    this.comment, this.timestamp, this.userImage,
+    this.commentId, this.commenterId, this.postId,
+    this.image, this.subCommentsIds, this.likes
   });
 
   handleLikeComment() {
@@ -117,7 +109,7 @@ class CommentItem extends StatelessWidget {
       subCommentsIds: doc.data().toString().contains('subCommentIds') ? List
           .from(doc.get('subCommentIds')) : List.empty(),
       likes: doc.data().toString().contains('likes') ? List
-          .from(doc.get('likes')) : List.empty(),
+          .from(doc.get('likes')) : List.empty(growable: true),
       postId: doc.data().toString().contains('postId') ? doc.get(
           'postId') : '',
       // Image: doc.data().toString().contains('Image') ? doc.get(

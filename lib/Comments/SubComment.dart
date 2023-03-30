@@ -109,7 +109,8 @@ class CommentState extends State<SubComment> {
       "commenterId": id,
       "originalCommentId": widget.commentItem?.commentId,
       "commentId": commentId,
-      'subCommentIds': [],
+      'subCommentIds': <String>[],
+      'likes': <String>[],
     });
 
     firestore.collection('comment').doc(widget.commentItem?.commentId)
@@ -134,7 +135,7 @@ class CommentState extends State<SubComment> {
     FirebaseFirestore.instance.collection('wallpaper').doc(widget.commentItem!.postId)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       description = snapshot.get('description');
-      likes = snapshot.get('likes');
+      likes = List.from(snapshot.get('likes'));
       downloads = snapshot.get('downloads');
       postOwnerId = snapshot.get('id');
       postOwnername = snapshot.get('name');
@@ -147,8 +148,6 @@ class CommentState extends State<SubComment> {
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
-
-    print("CommentId ${widget.commentItem?.commentId}");
 
     readUserInfo();
     loadPostInfo();

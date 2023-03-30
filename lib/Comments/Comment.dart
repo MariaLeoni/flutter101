@@ -37,7 +37,6 @@ class CommentState extends State<Comment> {
   String? myUserId;
   List<String> words = [];
   String str = '';
-  List<String> comments = [];
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebaseFirestore = FirebaseFirestore.instance;
@@ -110,8 +109,6 @@ class CommentState extends State<Comment> {
         "postOwnerId": widget.userId,
         "postOwnerImage": widget.postOwnerImg,
          "postOwnername": widget.postOwnername,
-        "likes": widget.likes,
-        "downloads": widget.downloads,
         'Read Status': false
           });
     }
@@ -120,7 +117,6 @@ class CommentState extends State<Comment> {
   }
 
   addComment() {
-    print("CommentId before post $commentId");
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
@@ -169,7 +165,6 @@ class CommentState extends State<Comment> {
     sendNotification("Commented on your post");
     commentController.clear();
     commentId = const Uuid().v4();
-    print("CommentId after post $commentId");
     FocusScope.of(context).unfocus();
   }
 
@@ -191,15 +186,6 @@ class CommentState extends State<Comment> {
     notificationManager = NotificationManager();
     notificationManager?.initServer();
   }
-
-  // showProfile(String s) {
-  //   showDialog(context: context,
-  //       builder: (con) =>
-  //           AlertDialog(
-  //               title: Text('Profile of $s'),
-  //               content: const Text('Show the user profile!')
-  //           ));
-  // }
 
   @override
   Widget build(BuildContext context) {
