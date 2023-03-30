@@ -254,6 +254,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height:10.0),
+
                                   SizedBox(width: 250, child: Text(widget.description!,
                                     maxLines: 3, overflow: TextOverflow.fade,
                                     textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,

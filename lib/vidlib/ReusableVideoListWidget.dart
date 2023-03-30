@@ -159,12 +159,12 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                 videoSelected!(videoListData!);
               },
               child: Column(children: [
+                // Padding(
+                //   padding: const EdgeInsets.all(8),
+                //   child: Text(videoListData!.post.description, style:TextStyle(color:Colors.white54)),
+                // ),
                 Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(videoListData!.post.description),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 3.0),
                   child: Row(
                       children:[
                         CircleAvatar(radius: 35,

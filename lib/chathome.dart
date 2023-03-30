@@ -25,11 +25,12 @@ class _ChatHomeState extends State<ChatHome> {
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
-
+  FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   void initState() {
     super.initState();
     gettingUserData();
+    getDataFromDatabase2();
   }
 
   // string manipulation
@@ -59,15 +60,35 @@ class _ChatHomeState extends State<ChatHome> {
     //   });
     // });
     // // getting the list of snapshots in our stream
-    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-        .getUserGroups()
-        .then((snapshot) {
+
+    // await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+    //     .getUserGroups()
+    //     .then((snapshot) {
+    //   setState(() {
+    //     groups = snapshot;
+    //   });
+    // });
+  }
+  void getDataFromDatabase2() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        groups = snapshot;
+        groups = List.from(snapshot.get('groups')) as Stream?;
       });
+    }
     });
   }
 
+  // void readUserInfo() async {
+  //   FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid).get()
+  //       .then<dynamic>((DocumentSnapshot snapshot) async {
+  //     groups = List.from(snapshot.get('groups')) as Stream?;
+  //
+  //
+  //   });
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,11 +123,11 @@ class _ChatHomeState extends State<ChatHome> {
               const SizedBox(
                 height: 15,
               ),
-              Text(
-                userName!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+              // Text(
+              //   userName!,
+              //   textAlign: TextAlign.center,
+              //   style: const TextStyle(fontWeight: FontWeight.bold),
+              // ),
               const SizedBox(
                 height: 30,
               ),
