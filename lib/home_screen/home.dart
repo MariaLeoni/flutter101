@@ -4,11 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import '../chat/chatListScreen.dart';
 import 'picturesHomescreen.dart';
 
 class HomeScreen extends StatefulWidget {
 
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -25,6 +26,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   final GlobalKey<TagsState> categoryTagStateKey = GlobalKey<TagsState>();
 
   final List<String>? myInterests = List.empty(growable: true);
+  late List<String>? myChatees = List.empty(growable: true);
   String selectedInterest = "";
 
   Random random = Random();
@@ -32,6 +34,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   readUserInfo() async {
     fireStore.collection('users').doc(auth.currentUser!.uid).get()
         .then<dynamic>((DocumentSnapshot snapshot) {
+          myChatees = List.from(snapshot.get('chatWith'));
       var data = jsonDecode(jsonEncode(snapshot.get('interests')));
       data.forEach((key, value) {
         List<String> subList = List.empty(growable: true);
@@ -58,7 +61,6 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   @override
   Widget build(BuildContext context) {
     return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen.forCategory(category: "random",) :
-
     Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
@@ -68,11 +70,19 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 stops: [0.2],
+                ),
               ),
             ),
-          ),
-          title: const Text("Home"),
-        ),
+            title: const Text("Home"),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => ChatListScreen(chatees: myChatees ?? List.empty()),),);
+                },
+                icon: const Icon(Icons.chat_bubble),
+              )
+            ]),
         body: CustomScrollView(
           slivers: <Widget>[
             SliverList(

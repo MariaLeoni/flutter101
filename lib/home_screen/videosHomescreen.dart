@@ -6,6 +6,8 @@ import 'package:sharedstudent1/userMention.dart';
 import '../Search.dart';
 import '../chatmain.dart';
 import '../misc/userModel.dart';
+import '../chat/chatListScreen.dart';
+import 'home.dart';
 import 'post.dart';
 import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
@@ -149,13 +151,16 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  chatmain();
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => ChatListScreen(chatees: List.empty(),),),);
+                  //chatmain();
                 },
-                icon: const Icon(Icons.message_rounded),
+                icon: const Icon(Icons.chat_bubble),
               ),
               IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => userMention(),),);
+                onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
+                  //Navigator.push(context, MaterialPageRoute(builder: (_) => userMention(),),);
                 },
                 icon: const Icon(Icons.home),
               ),

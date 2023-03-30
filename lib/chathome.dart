@@ -42,7 +42,7 @@ class _ChatHomeState extends State<ChatHome> {
   }
 
   gettingUserData() async {
-    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+    await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
      // groups = snapshot.get('groups');
       userName = snapshot.get('name');
