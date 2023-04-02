@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/chatPage.dart';
+import 'package:sharedstudent1/chat/chatPage.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 
-import '../chathome.dart';
+import '../chat/chathome.dart';
 
 class GroupTile extends StatefulWidget {
   final String userName;

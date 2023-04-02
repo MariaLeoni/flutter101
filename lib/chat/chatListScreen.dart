@@ -6,11 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:sharedstudent1/chat/constants.dart';
 import 'package:sharedstudent1/chat/contactListScreen.dart';
 import 'package:sharedstudent1/chat/userModel.dart';
-import '../home_screen/home.dart';
 import '../log_in/login_screen.dart';
 import '../misc/keyboardUtil.dart';
 import '../misc/loadingView.dart';
-import '../profile/profile_screen.dart';
 import 'chatScreen.dart';
 import 'chatUsersProvider.dart';
 import 'chatWidgets.dart';
@@ -91,59 +89,59 @@ class ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: null,
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                buildSearchBar(),
-                Expanded(
-                  child: widget.chatees.isEmpty ? const Center(
-                child: Text('You have not started any chat yet...'),
-    ) : StreamBuilder<QuerySnapshot>(
-                    stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, widget.chatees).snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
-                      if (snapshot.hasData) {
-                        documents = snapshot.data!.docs;
-                        if (searchText.isNotEmpty) {
-                          documents = documents.where((user) {
-                            return user.get(FirestoreConstants.displayName)
-                                .toString()
-                                .toLowerCase()
-                                .contains(searchText.toLowerCase());
-                          }).toList();
-                        }
+      appBar: null,
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              buildSearchBar(),
+              Expanded(
+                child: widget.chatees.isEmpty ? const Center(
+                  child: Text('You have not started any chat yet...'),
+                ) : StreamBuilder<QuerySnapshot>(
+                  stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, widget.chatees).snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      documents = snapshot.data!.docs;
+                      if (searchText.isNotEmpty) {
+                        documents = documents.where((user) {
+                          return user.get(FirestoreConstants.displayName)
+                              .toString()
+                              .toLowerCase()
+                              .contains(searchText.toLowerCase());
+                        }).toList();
+                      }
 
-                        if (documents.isNotEmpty) {
-                          return ListView.separated(
-                            shrinkWrap: true,
-                            itemCount: documents.length,
-                            itemBuilder: (context, index) => buildItem(
-                                context, documents[index]),
-                            controller: scrollController,
-                            separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(),
-                          );
-                        } else {
-                          return const Center(
-                            child: Text('You have not started any chat yet...'),
-                          );
-                        }
+                      if (documents.isNotEmpty) {
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: documents.length,
+                          itemBuilder: (context, index) => buildItem(
+                              context, documents[index]),
+                          controller: scrollController,
+                          separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                        );
                       } else {
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: Text('You have not started any chat yet...'),
                         );
                       }
-                    },
-                  ),
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
                 ),
-              ],
-            ),
-            Positioned(
-              child: isLoading ? const LoadingView() : const SizedBox.shrink(),
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          Positioned(
+            child: isLoading ? const LoadingView() : const SizedBox.shrink(),
+          ),
+        ],
+      ),
       floatingActionButton: Wrap(
         direction: Axis.horizontal,
         children: [
@@ -211,19 +209,19 @@ class ChatListScreenState extends State<ChatListScreen> {
               stream: buttonClearController.stream,
               builder: (context, snapshot) {
                 return snapshot.data == true ? GestureDetector(onTap: () {
-                    searchTextEditingController.clear();
-                    buttonClearController.add(false);
-                    setState(() {
-                      searchText = '';
-                    });
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.only(top: 0,left: 16,right: 16),
-                    child:Icon(Icons.clear_rounded,
-                    color: AppColors.white,
-                    size: 20,
-                  ),
-                )) : const SizedBox.shrink();
+                  searchTextEditingController.clear();
+                  buttonClearController.add(false);
+                  setState(() {
+                    searchText = '';
+                  });
+                },
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 0,left: 16,right: 16),
+                      child:Icon(Icons.clear_rounded,
+                        color: AppColors.white,
+                        size: 20,
+                      ),
+                    )) : const SizedBox.shrink();
               })
         ],
       ),
@@ -242,38 +240,38 @@ class ChatListScreenState extends State<ChatListScreen> {
               KeyboardUtils.closeKeyboard(context);
             }
             Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => ChatScreen(
-                      peerId: userChat.id,
-                      peerAvatar: userChat.photoUrl,
-                      peerNickname: userChat.displayName,
-                      userAvatar: userChat.photoUrl,
-                    )));
+                builder: (context) => ChatScreen(
+                  peerId: userChat.id,
+                  peerAvatar: userChat.photoUrl,
+                  peerNickname: userChat.displayName,
+                  userAvatar: userChat.photoUrl,
+                )));
           },
           child: ListTile(leading: userChat.photoUrl.isNotEmpty
-                ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
-              child: Image.network(userChat.photoUrl,
-                fit: BoxFit.cover, width: 50, height: 50,
-                loadingBuilder: (BuildContext ctx, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  } else {
-                    return SizedBox(width: 50, height: 50,
-                      child: CircularProgressIndicator(color: Colors.grey,
-                          value: loadingProgress.expectedTotalBytes !=
-                              null ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                              : null),
-                    );
-                  }
-                },
-                errorBuilder: (context, object, stackTrace) {
-                  return const Icon(Icons.account_circle, size: 50);
-                },
-              ),
-            )
-                : const Icon(Icons.account_circle, size: 50,
+              ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
+            child: Image.network(userChat.photoUrl,
+              fit: BoxFit.cover, width: 50, height: 50,
+              loadingBuilder: (BuildContext ctx, Widget child,
+                  ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                } else {
+                  return SizedBox(width: 50, height: 50,
+                    child: CircularProgressIndicator(color: Colors.grey,
+                        value: loadingProgress.expectedTotalBytes !=
+                            null ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                            : null),
+                  );
+                }
+              },
+              errorBuilder: (context, object, stackTrace) {
+                return const Icon(Icons.account_circle, size: 50);
+              },
             ),
+          )
+              : const Icon(Icons.account_circle, size: 50,
+          ),
             title: Text(userChat.displayName,
               style: const TextStyle(color: Colors.black),
             ),

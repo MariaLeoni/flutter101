@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../chathome.dart';
 import '../home_screen/home.dart';
 import '../profile/profile_screen.dart';
 import 'chatListScreen.dart';
+import 'chathome.dart';
 
 class ChatHomeScreen extends StatefulWidget {
   const ChatHomeScreen({super.key});
@@ -51,8 +51,8 @@ class ChatHomeScreenState extends State<ChatHomeScreen> {
             ]),
         body: TabBarView(children: [
             ChatListScreen(chatees: List.empty(),),
-            ChatHome(),
-            ChatHome()
+            GroupChatHome(),
+            GroupChatHome()
         ],),
     ));
   }

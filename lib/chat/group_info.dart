@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
-
 import 'DatabasService.dart';
-import 'chathome.dart';
+import '../chat/chathome.dart';
 
 class GroupInfo extends StatefulWidget {
   final String groupId;
@@ -85,7 +84,7 @@ class _GroupInfoState extends State<GroupInfo> {
                                   getName(widget.adminName),
                                   widget.groupName)
                                   .whenComplete(() {
-                                nextScreenReplace(context,  ChatHome());
+                                nextScreenReplace(context,  GroupChatHome());
                               });
                             },
                             icon: const Icon(
