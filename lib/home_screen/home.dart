@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import '../chat/chatHomeScreen.dart';
 import 'picturesHomescreen.dart';
 
@@ -75,6 +76,20 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
             ),
             title: const Text("Home"),
             actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => PictureHomeScreen.forCategory(category: "random")));
+                },
+                icon: const Icon(Icons.photo),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                      VideoHomeScreen.forCategory(category: "random"),),);
+                },
+                icon: const Icon(Icons.play_circle_outlined),
+              ),
               IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
