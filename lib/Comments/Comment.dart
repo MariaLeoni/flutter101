@@ -44,11 +44,12 @@ class CommentState extends State<Comment> {
   List<String>? ids = List.empty(growable: true);
 
   loadAndBuildComments(){
-    print("PostId ${widget.postId}");
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
     return StreamBuilder(
-      stream: firebaseCollection.where("postId", isEqualTo: widget.postId).snapshots(),
+      stream: firebaseCollection.where("postId", isEqualTo: widget.postId)
+      .where("originalCommentId", isNull: true)
+          .snapshots(),
       builder: (context, snapshot){
         if (snapshot.hasError) {
           return const Text('Something went wrong');
