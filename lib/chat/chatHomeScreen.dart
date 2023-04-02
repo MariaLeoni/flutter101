@@ -26,6 +26,16 @@ class ChatHomeScreenState extends State<ChatHomeScreen> {
         child: Scaffold(
         appBar: AppBar(
             centerTitle: true,
+            flexibleSpace:Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black, Colors.black],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2, 0.9],
+                ),
+              ),
+            ),
             bottom: const TabBar(tabs: [
               Tab(icon: Icon(Icons.chat_bubble),),
               Tab(icon: Icon(Icons.group_outlined),),
