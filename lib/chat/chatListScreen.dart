@@ -91,26 +91,7 @@ class ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            centerTitle: true,
-            title: const Text('Chat Contacts'),
-            actions: [
-              IconButton(
-                  onPressed: (){
-                      FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()));
-                   },
-                  icon: const Icon(Icons.home)),
-              IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileScreen()));
-                  },
-                  icon: const Icon(Icons.person)),
-            ]),
+        appBar: null,
         body: Stack(
           children: [
             Column(

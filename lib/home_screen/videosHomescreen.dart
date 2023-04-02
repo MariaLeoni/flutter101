@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/userMention.dart';
 import '../Search.dart';
+import '../chat/chatHomeScreen.dart';
 import '../chatmain.dart';
 import '../misc/userModel.dart';
 import '../chat/chatListScreen.dart';
@@ -152,7 +153,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               IconButton(
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => ChatListScreen(chatees: List.empty(),),),);
+                    builder: (_) => const ChatHomeScreen()));
                   //chatmain();
                 },
                 icon: const Icon(Icons.chat_bubble),
