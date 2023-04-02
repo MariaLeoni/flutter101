@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/chatPage.dart';
 import 'package:sharedstudent1/groupInfo.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
+import '../chat/chatPage.dart';
 
 class SearchGroupTile extends StatefulWidget {
   Groups? model;

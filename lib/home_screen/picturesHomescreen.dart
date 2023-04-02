@@ -10,12 +10,14 @@ import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import 'package:uuid/uuid.dart';
 import '../misc/userModel.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
 import '../search_post/users_specific_posts.dart';
+import '../widgets/ssbadge.dart';
 
 final themeMode = ValueNotifier(2);
 
@@ -35,6 +37,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   int activityCount  = 0;
   int? total;
 
+  int? viewCount = 0;
+  String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -49,8 +53,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   void initState() {
     super.initState();
      getAllProducts();
-    notificationManager = NotificationManager();
-    notificationManager?.initServer();
+
+     notificationManager = NotificationManager();
+     notificationManager?.initServer();
 
   //  sendNotification();
 
@@ -101,19 +106,21 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
         OwnerDetails(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
-          viewCount: viewCount,
-          postId: postId, likes: likes,viewers: viewers, description: description,
+          viewCount: viewCount, postId: postId, likes: likes, viewers: viewers,
+          description: description,
         )));
   }
 
+
    getAllProducts() async {
-     final collection = firestore.collection("Activity Feed").doc(userIdx).collection('FeedItems');
+     final collection = firestore.collection("Activity Feed")
+         .doc(userIdx).collection('FeedItems');
      final query = collection.where("Read Status", isEqualTo: false);
      final countQuery = query.count();
      final AggregateQuerySnapshot snapshot = await countQuery.get();
      debugPrint("Count: ${snapshot.count}");
-    activityCount = snapshot.count;
-  }
+     activityCount = snapshot.count;
+   }
 
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, int viewCount, String postId,
@@ -150,15 +157,11 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     )
                 ),
                  const SizedBox(height: 12.0,),
-                  Row(
-                      children: [
+                  Row(children: [
                         GestureDetector(
                             onTap: () {
-                              Navigator.pushReplacement(
-                                  context, MaterialPageRoute(builder: (_) =>
-                                  UsersSpecificPostsScreen(
-                                    userId: docId, userName: name,
-                                  )));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                                  UsersSpecificPostsScreen(userId: docId, userName: name,)));
                             },
                             child: CircleAvatar(
                               radius: 35,
@@ -204,42 +207,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         .update({'viewers': viewers,'viewcount': total,
     });
 
-    goToDetails(img, userImg, name, date,
-        docId, userId, downloads,viewCount, postId, likes,viewers,
-        description);
+    goToDetails(img, userImg, name, date, docId, userId, downloads, viewCount,
+        postId, likes,viewers, description);
   }
-
-  Widget gridViewWidget(String docId, String img, String userImg, String name,
-      DateTime date, String userId, int downloads, int viewCount, String postId,
-      List<String>? likes, List<String>? viewers, String description) {
-
-    return GridView.count(
-        primary: false,
-        padding: const EdgeInsets.all(2.0),
-        crossAxisSpacing: 0,
-        crossAxisCount: 1,
-        children: [
-          Container(
-            decoration: const BoxDecoration(),
-            padding: const EdgeInsets.all(2.0),
-            child: GestureDetector(
-                onTap: () {
-                  updateViewAndNavigate(viewCount, postId, viewers, img, userImg, name, date, docId, userId, downloads, likes, description);
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10), // Image border
-                  child: SizedBox.fromSize(
-                      size: const Size.fromRadius(48), // Image radius
-                      child: Image.network(
-                        img, fit: BoxFit.fill, width: 200, height: 300,)
-                  ),
-                )
-            ),
-          ),
-        ]
-    );
-  }
-  
 
   void updateInterests(Map<String, List<String>?> interests) {
     setState(() {
@@ -249,9 +219,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var ActivityText = Text(activityCount.toString(),
-        style: const TextStyle(fontSize: 20.0,
-            color: Colors.white, fontWeight: FontWeight.bold));
+    var activityBadgeView = SSBadge(top: 0, right: 2,
+        value: activityCount.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.doorbell_outlined), onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
+        }));
+
     size = MediaQuery.of(context).size;
 
     return Container(
@@ -332,13 +306,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   },
                   icon: const Icon(Icons.play_circle_outlined),
                 ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
-                  },
-                  icon: const Icon(Icons.doorbell_outlined),
-                ),
-                ActivityText,
+                activityBadgeView,
               ]
           ),
           body: StreamBuilder(

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/chatPage.dart';
-import 'package:sharedstudent1/groupInfo.dart';
+import 'package:sharedstudent1/chat/chatPage.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 
-import '../chathome.dart';
+import '../groupInfo.dart';
 
 class GroupTile extends StatefulWidget {
   Groups? model;

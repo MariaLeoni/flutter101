@@ -12,51 +12,44 @@ class Comment extends StatefulWidget {
   String? userId;
   String? postId;
   String? docId;
-  String? Image;
+  String? image;
   String? postOwnerImg;
   String? postOwnername;
   List<String>? likes = List.empty(growable: true);
   String? description;
   int? downloads;
 
-  Comment({super.key, this.userId, this.postId,
-    this.docId,this.Image, this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, });
+  Comment({super.key, this.userId, this.postId, this.docId, this.image, 
+    this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, });
 
   @override
   State<Comment> createState() => CommentState();
 }
 
 class CommentState extends State<Comment> {
-  String? postId;
   String? userId;
   String? myImage;
   String? myName;
   String? id;
-  String? tokens;
+  String? token;
   String commentId = const Uuid().v4();
-  String ActivityId = const Uuid().v4();
+  String activityId = const Uuid().v4();
   String? myUserId;
   List<String> words = [];
   String str = '';
-  List<String> coments = [];
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
   List<String>? ids = List.empty(growable: true);
 
-  CommentState({
-    String? postId,
-    String? commentId,
-    String? userId,
-
-  });
-
-  buildComments(){
+  loadAndBuildComments(){
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
     return StreamBuilder(
-      stream: firebaseCollection.where("postId", isEqualTo: widget.postId).snapshots(),
+      stream: firebaseCollection.where("postId", isEqualTo: widget.postId)
+      .where("originalCommentId", isNull: true)
+          .snapshots(),
       builder: (context, snapshot){
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -64,54 +57,53 @@ class CommentState extends State<Comment> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text('Loading');
         }
-        List<CommentItem> comments = [];
+        List<CommentItem> commentViews = [];
+
         for (var doc in snapshot.data!.docs) {
-          comments.add(CommentItem.fromDocument(doc));
+          CommentItem commentItem = CommentItem.fromDocument(doc);
+          commentViews.add(commentItem);
         }
 
-        comments.sort((a,b) {
+        commentViews.sort((a,b) {
           var aTimeStamp = a.timestamp;
           var bTimeStamp = b.timestamp;
           return aTimeStamp!.compareTo(bTimeStamp!);
         });
-        return ListView(children: comments);
+        return ListView(children: commentViews);
       },
     );
   }
 
-  void getDataFromDatabase2() async {
+  void getOPToken() async {
     await FirebaseFirestore.instance.collection("users")
-        .doc(widget.docId)
-        .get()
-        .then((snapshot) async { if (snapshot.exists) {
-      setState(() {
-        tokens = snapshot.data()!["devicetoken"];
-      });
-    }
+        .doc(widget.userId).get().then<dynamic>((DocumentSnapshot snapshot) {
+      token = snapshot.get('devicetoken');
+      print("Token $token");
     });
   }
 
-  void sendNotification() {
+  void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: myName,
-      body: "Liked your comment", dataBody: widget.Image,
+      body: action, dataBody: widget.image,
       //dataTitle: "Should be post description"
-    );
-    String? token = tokens;
-    notificationManager?.sendNotification(token!, model);
+        );
+    if (token != null) {
+      notificationManager?.sendNotification(token!, model);
+    }
   }
 
   addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)
-          .collection('FeedItems').doc(ActivityId).set({
+          .collection('FeedItems').doc(activityId).set({
         "type": "comment",
         "name": myName,
         "userId": _auth.currentUser!.uid,
         "userProfileImage": myImage,
         "postId": widget.postId,
-        "Activity Id": ActivityId,
-        "Image": widget.Image,
+        "Activity Id": activityId,
+        "Image": widget.image,
         "timestamp": DateTime.now(),
         "commentData":  commentController.text,
         "description": widget.description,
@@ -120,59 +112,13 @@ class CommentState extends State<Comment> {
         "postOwnerId": widget.userId,
         "postOwnerImage": widget.postOwnerImg,
          "postOwnername": widget.postOwnername,
-        "likes": widget.likes,
-        "downloads": widget.downloads,
         'Read Status': false
           });
     }
     ids!.clear();
     commentController.clear();
   }
-//
-// addComment() {
-//   FirebaseFirestore.instance.collection('comment').doc(commentId).set({
-//     "comment": commentController.text,
-//     "commenterImage": myImage,
-//     "commenterName": myName,
-//     "timestamp": DateTime.now(),
-//     "commenterId": id,
-//     "originalCommentId": null,
-//     "commentId": commentId,
-//     "postId": widget.postId,
-//     'subCommentIds': <String>[],
-//     'likes': <String>[],
-//     'Image': widget.Image,
-//   });
-//
-//   if (commentController.text.startsWith('@')) {
-//     for (var item in ids!) {
-//       FirebaseFirestore.instance.collection('Activity Feed')
-//           .doc(item)
-//           .collection('FeedItems')
-//           .add({
-//         "type": "tag",
-//         "name": myName,
-//         "userId": _auth.currentUser!.uid,
-//         "userProfileImage": myImage,
-//         "postId": widget.postId,
-//         "Image": widget.Image,
-//         "timestamp": DateTime.now(),
-//         "commentData": commentController.text,
-//         "description": widget.description,
-//         "downloads": widget.downloads,
-//         "likes": widget.likes,
-//         "postOwnerId": widget.userId,
-//         "postOwnerImage": widget.postOwnerImg,
-//         "postOwnername": widget.postOwnername,
-//         "likes": widget.likes,
-//         "downloads": widget.downloads,
-//         "Read Status": false,
-//       });
-//     }
-//     ids!.clear();
-//     commentController.clear();
-//   }
-// }
+
   addComment() {
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
@@ -185,22 +131,21 @@ class CommentState extends State<Comment> {
       "postId": widget.postId,
       'subCommentIds': <String>[],
       'likes': <String>[],
-      'Image': widget.Image,
+      'Image': widget.image,
     });
 
     if (commentController.text.startsWith('@')) {
       for (var item in ids!) {
         FirebaseFirestore.instance.collection('Activity Feed')
-            .doc(item)
-            .collection('FeedItems').doc(ActivityId).
+            .doc(item).collection('FeedItems').doc(activityId).
         set({
           "type": "tag",
           "name": myName,
           "userId": _auth.currentUser!.uid,
           "userProfileImage": myImage,
           "postId": widget.postId,
-          "Activity Id": ActivityId,
-          "Image": widget.Image,
+          "Activity Id": activityId,
+          "Image": widget.image,
           "timestamp": DateTime.now(),
           "commentData": commentController.text,
           "description": widget.description,
@@ -212,22 +157,22 @@ class CommentState extends State<Comment> {
           "likes": widget.likes,
           "downloads": widget.downloads,
           "Read Status": false,
-          "Activity Id": ActivityId
+          "Activity Id": activityId
         });
       }
       ids!.clear();
     }
 
-
     addCommentTaggingToActivityFeed();
-    sendNotification();
+
+    sendNotification("Commented on your post");
     commentController.clear();
+    commentId = const Uuid().v4();
     FocusScope.of(context).unfocus();
   }
 
   void readUserInfo() async {
-    FirebaseFirestore.instance.collection('users').doc(
-        FirebaseAuth.instance.currentUser!.uid)
+    FirebaseFirestore.instance.collection('users').doc(myUserId)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
@@ -240,19 +185,9 @@ class CommentState extends State<Comment> {
     super.initState();
     myUserId = _auth.currentUser!.uid;
     readUserInfo();
-    getDataFromDatabase2();
+    getOPToken();
     notificationManager = NotificationManager();
     notificationManager?.initServer();
-  }
-
-  showProfile(String s) {
-    showDialog(
-        context: context,
-        builder: (con) =>
-            AlertDialog(
-                title: Text('Profile of $s'),
-                content: const Text('Show the user profile!')
-            ));
   }
 
   @override
@@ -273,7 +208,7 @@ class CommentState extends State<Comment> {
         ),
         body: Column(
           children: <Widget>[
-            Expanded(child: buildComments()),
+            Expanded(child: loadAndBuildComments()),
             const Divider(),
             ListTile(title: TextFormField(
                 controller: commentController,

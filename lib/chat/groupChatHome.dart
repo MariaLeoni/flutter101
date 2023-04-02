@@ -1,36 +1,30 @@
-//import 'package:chatapp_firebase/pages/auth/login_page.dart';
-//import 'package:chatapp_firebase/pages/search_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/profile/profile_screen.dart';
 import 'package:sharedstudent1/widgets/group_tile.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 import 'DatabasService.dart';
-import 'chatHelper.dart';
 import 'chatSearch.dart';
 
-class ChatHome extends StatefulWidget {
+class GroupChatHome extends StatefulWidget {
 
 
   @override
-  State<ChatHome> createState() => _ChatHomeState();
+  State<GroupChatHome> createState() => _GroupChatHomeState();
 }
 
-class _ChatHomeState extends State<ChatHome> {
+class _GroupChatHomeState extends State<GroupChatHome> {
   String email = "";
   String? userName;
 
- // AuthService authService = AuthService();
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
-  FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
     gettingUserData();
-   // getDataFromDatabase2();
   }
 
   // string manipulation
@@ -43,9 +37,9 @@ class _ChatHomeState extends State<ChatHome> {
   }
 
   gettingUserData() async {
-    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
+    await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
-     // groups = snapshot.get('groups');
+      // groups = snapshot.get('groups');
       userName = snapshot.get('name');
       email = snapshot.get('email');
     });
@@ -60,7 +54,6 @@ class _ChatHomeState extends State<ChatHome> {
     //   });
     // });
     // // getting the list of snapshots in our stream
-
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserGroups()
         .then((snapshot) {
@@ -69,145 +62,27 @@ class _ChatHomeState extends State<ChatHome> {
       });
     });
   }
-  // void getDataFromDatabase2() async {
-  //   await FirebaseFirestore.instance.collection("users")
-  //       .doc(_auth.currentUser!.uid)
-  //       .get()
-  //       .then((snapshot) async { if (snapshot.exists) {
-  //     setState(() {
-  //       groups = List.from(snapshot.get('groups')) as Stream?;
-  //     });
-  //   }
-  //   });
-  // }
 
-  // void readUserInfo() async {
-  //   FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid).get()
-  //       .then<dynamic>((DocumentSnapshot snapshot) async {
-  //     groups = List.from(snapshot.get('groups')) as Stream?;
-  //
-  //
-  //   });
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                nextScreen(context, const SearchPage());
-              },
-              icon: const Icon(
-                Icons.search,
-              ))
-        ],
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text(
-          "Groups",
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 27),
-        ),
-      ),
-      drawer: Drawer(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 50),
-            children: <Widget>[
-              Icon(
-                Icons.account_circle,
-                size: 150,
-                color: Colors.grey[700],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              // Text(
-              //   userName!,
-              //   textAlign: TextAlign.center,
-              //   style: const TextStyle(fontWeight: FontWeight.bold),
-              // ),
-              const SizedBox(
-                height: 30,
-              ),
-              const Divider(
-                height: 2,
-              ),
-              ListTile(
-                onTap: () {},
-                selectedColor: Theme.of(context).primaryColor,
-                selected: true,
-                contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                leading: const Icon(Icons.group),
-                title: const Text(
-                  "Groups",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  nextScreenReplace(
-                      context,
-                      ProfileScreen(
-                      ));
-                },
-                contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                leading: const Icon(Icons.group),
-                title: const Text(
-                  "Profile",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              ListTile(
-                onTap: () async {
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text("Logout"),
-                          content: const Text("Are you sure you want to logout?"),
-                          actions: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                              ),
-                            ),
-                            // IconButton(
-                            //   onPressed: () async {
-                            //     await authService.signOut();
-                            //     Navigator.of(context).pushAndRemoveUntil(
-                            //         MaterialPageRoute(
-                            //             builder: (context) => const LoginPage()),
-                            //             (route) => false);
-                            //   },
-                            //   icon: const Icon(
-                            //     Icons.done,
-                            //     color: Colors.green,
-                            //   ),
-                            // ),
-                          ],
-                        );
-                      });
-                },
-                contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                leading: const Icon(Icons.exit_to_app),
-                title: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.black),
-                ),
-              )
-            ],
-          )),
-      body: groupList(),
+      body: Stack(
+          children: [
+            Column(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        nextScreen(context, const SearchPage());
+                      },
+                      icon: const Icon(
+                        Icons.search,
+                      )),
+                  Expanded(
+                      child: groups == null ? const Center(
+                        child: Text('You are not a part of any group yet...'),
+                      ) : groupList()
+                  )]
+            )]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           popUpDialog(context);
@@ -317,7 +192,7 @@ class _ChatHomeState extends State<ChatHome> {
                   return GroupTile(
                       groupId: getId(snapshot.data['groups'][reverseIndex]),
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
-                      userName: snapshot.data['name']);
+                      userName: snapshot.data['fullName']);
                 },
               );
             } else {
