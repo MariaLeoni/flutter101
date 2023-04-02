@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 import 'DatabasService.dart';
-import '../chat/chathome.dart';
+import '../chat/groupChatHome.dart';
 
 class GroupInfo extends StatefulWidget {
   final String groupId;

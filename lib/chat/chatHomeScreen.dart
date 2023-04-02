@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../home_screen/home.dart';
 import '../profile/profile_screen.dart';
 import 'chatListScreen.dart';
-import 'chathome.dart';
+import 'groupChatHome.dart';
 
 class ChatHomeScreen extends StatefulWidget {
   const ChatHomeScreen({super.key});
@@ -39,7 +39,7 @@ class ChatHomeScreenState extends State<ChatHomeScreen> {
             bottom: const TabBar(tabs: [
               Tab(icon: Icon(Icons.chat_bubble),),
               Tab(icon: Icon(Icons.group_outlined),),
-              Tab(icon: Icon(Icons.star),)
+              Tab(icon: Icon(Icons.emoji_emotions_rounded),)
             ],),
             title: const Text('Chats'),
             actions: [
@@ -66,6 +66,4 @@ class ChatHomeScreenState extends State<ChatHomeScreen> {
         ],),
     ));
   }
-
-
 }
