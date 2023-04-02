@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
-import '../chat/chatListScreen.dart';
+import '../chat/chatHomeScreen.dart';
 import 'picturesHomescreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -78,7 +78,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
               IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => ChatListScreen(chatees: myChatees ?? List.empty()),),);
+                    builder: (_) => const ChatHomeScreen(),),);
                 },
                 icon: const Icon(Icons.chat_bubble),
               )
@@ -128,7 +128,8 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
             textStyle: TextStyle(fontSize: fontSize),
             onPressed: (item) {
               selectedInterest = item.title;
-              Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forCategory(category: selectedInterest,)));
+              Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                  PictureHomeScreen.forCategory(category: selectedInterest,)));
             }
         );
       },
