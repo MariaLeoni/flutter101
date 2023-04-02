@@ -30,7 +30,7 @@ class _ChatHomeState extends State<ChatHome> {
   void initState() {
     super.initState();
     gettingUserData();
-    getDataFromDatabase2();
+   // getDataFromDatabase2();
   }
 
   // string manipulation
@@ -61,25 +61,25 @@ class _ChatHomeState extends State<ChatHome> {
     // });
     // // getting the list of snapshots in our stream
 
-    // await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-    //     .getUserGroups()
-    //     .then((snapshot) {
-    //   setState(() {
-    //     groups = snapshot;
-    //   });
-    // });
-  }
-  void getDataFromDatabase2() async {
-    await FirebaseFirestore.instance.collection("users")
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .then((snapshot) async { if (snapshot.exists) {
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getUserGroups()
+        .then((snapshot) {
       setState(() {
-        groups = List.from(snapshot.get('groups')) as Stream?;
+        groups = snapshot;
       });
-    }
     });
   }
+  // void getDataFromDatabase2() async {
+  //   await FirebaseFirestore.instance.collection("users")
+  //       .doc(_auth.currentUser!.uid)
+  //       .get()
+  //       .then((snapshot) async { if (snapshot.exists) {
+  //     setState(() {
+  //       groups = List.from(snapshot.get('groups')) as Stream?;
+  //     });
+  //   }
+  //   });
+  // }
 
   // void readUserInfo() async {
   //   FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid).get()
@@ -317,7 +317,7 @@ class _ChatHomeState extends State<ChatHome> {
                   return GroupTile(
                       groupId: getId(snapshot.data['groups'][reverseIndex]),
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
-                      userName: snapshot.data['fullName']);
+                      userName: snapshot.data['name']);
                 },
               );
             } else {

@@ -1,19 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
-
 import 'DatabasService.dart';
 import 'chathome.dart';
 
 class GroupInfo extends StatefulWidget {
-  final String groupId;
-  final String groupName;
-  final String adminName;
-  const GroupInfo(
+   String? groupId;
+  String? groupName;
+   String? adminName;
+   GroupInfo(
       {Key? key,
-        required this.adminName,
-        required this.groupName,
-        required this.groupId})
+         this.adminName,
+         this.groupName,
+         this.groupId})
       : super(key: key);
 
   @override
@@ -81,9 +80,9 @@ class _GroupInfoState extends State<GroupInfo> {
                                   uid: FirebaseAuth
                                       .instance.currentUser!.uid)
                                   .toggleGroupJoin(
-                                  widget.groupId,
-                                  getName(widget.adminName),
-                                  widget.groupName)
+                                  widget.groupId!,
+                                  getName(widget.adminName!),
+                                  widget.groupName!)
                                   .whenComplete(() {
                                 nextScreenReplace(context,  ChatHome());
                               });
@@ -116,7 +115,7 @@ class _GroupInfoState extends State<GroupInfo> {
                     radius: 30,
                     backgroundColor: Theme.of(context).primaryColor,
                     child: Text(
-                      widget.groupName.substring(0, 1).toUpperCase(),
+                      widget.groupName!.substring(0, 1).toUpperCase(),
                       style: const TextStyle(
                           fontWeight: FontWeight.w500, color: Colors.white),
                     ),
@@ -134,7 +133,7 @@ class _GroupInfoState extends State<GroupInfo> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Text("Admin: ${getName(widget.adminName)}")
+                      Text("Admin: ${getName(widget.adminName!)}")
                     ],
                   )
                 ],
@@ -155,7 +154,7 @@ class _GroupInfoState extends State<GroupInfo> {
           if (snapshot.data['members'] != null) {
             if (snapshot.data['members'].length != 0) {
               return ListView.builder(
-                itemCount: snapshot.data['members'].length,
+                itemCount: snapshot.data['members'].length.compareTo(0),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return Container(

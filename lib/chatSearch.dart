@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sharedstudent1/search_post/searchGroupTile.dart';
+import 'package:sharedstudent1/search_post/users_design_widget.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 
 import 'DatabasService.dart';
 import 'chatHelper.dart';
 import 'chatPage.dart';
+import 'groupInfo.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -22,7 +25,8 @@ class _SearchPageState extends State<SearchPage> {
   String userName = "";
   bool isJoined = false;
   User? user;
-
+Future <QuerySnapshot>? GroupDocumentslist;
+String UserGroupText = '';
   @override
   void initState() {
     super.initState();
@@ -56,100 +60,187 @@ class _SearchPageState extends State<SearchPage> {
   String getId(String res) {
     return res.substring(0, res.indexOf("_"));
   }
+  void startSearch(String searchText) {
 
+
+      GroupDocumentslist = FirebaseFirestore.instance.collection("groups")
+          .where("groupName", isGreaterThanOrEqualTo: searchText)
+          .where("groupName", isLessThanOrEqualTo: '$searchText\uf8ff').get();
+
+
+    setState(() {
+      GroupDocumentslist;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Theme.of(context).primaryColor,
-        title: const Text(
-          "Search",
-          style: TextStyle(
-              fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-      ),
-      body: Column(
-        children: [
-          Container(
-            color: Theme.of(context).primaryColor,
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Search groups....",
-                        hintStyle:
-                        TextStyle(color: Colors.white, fontSize: 16)),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    initiateSearchMethod();
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(40)),
-                    child: const Icon(
-                      Icons.search,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
-              ],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.red.shade800, Colors.red,],
             ),
           ),
-          isLoading
-              ? Center(
-            child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor),
-          )
-              : groupList(),
-        ],
-      ),
+        ),
+        title: TextField(
+          onChanged: (textEntered) {
+            setState(() {
+              UserGroupText = textEntered;
+            });
+            startSearch(textEntered);
+          },
+          decoration: InputDecoration(hintText: "Search here...",
+            hintStyle: const TextStyle(color: Colors.white54),
+            border: InputBorder.none,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.search, color: Colors.white,),
+              onPressed: () {
+                startSearch(UserGroupText);
+              },
+            ),
+          ),
+        ),
+
+      //   title: const Text(
+      //     "Search",
+      //     style: TextStyle(
+      //         fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
+      //   ),
+      // ),
+      // body: Column(
+      //   children: [
+      //     Container(
+      //       color: Theme.of(context).primaryColor,
+      //       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      //       child: Row(
+      //         children: [
+      //           Expanded(
+      //             child: TextField(
+      //               controller: searchController,
+      //               onChanged: (textEntered) {
+      //                 setState(() {
+      //                   searchController.text = textEntered;
+      //                 });
+      //                 initiateSearchMethod(textEntered);
+      //               },
+      //               style: const TextStyle(color: Colors.white),
+      //               decoration: const InputDecoration(
+      //                   border: InputBorder.none,
+      //                   hintText: "Search groups....",
+      //                   hintStyle:
+      //                   TextStyle(color: Colors.white, fontSize: 16),
+      //       //           suffixIcon: IconButton(
+      //       //         icon: const Icon(Icons.search, color: Colors.white,),
+      //       //   onPressed: () {
+      //       //     initiateSearchMethod(searchController.text);
+      //       //   },
+      //       // ),
+      //               ),
+      //             ),
+      //           ),
+      //           GestureDetector(
+      //             onTap: () {
+      //               initiateSearchMethod(searchController.text);
+      //             },
+      //             child: Container(
+      //               width: 40,
+      //               height: 40,
+      //               decoration: BoxDecoration(
+      //                   color: Colors.white.withOpacity(0.1),
+      //                   borderRadius: BorderRadius.circular(40)),
+      //               child: const Icon(
+      //                 Icons.search,
+      //                 color: Colors.white,
+      //               ),
+      //             ),
+      //           )
+      //         ],
+      //       ),
+      //     ),
+      //     // isLoading
+      //     //     ? Center(
+      //     //   child: CircularProgressIndicator(
+      //     //       color: Theme.of(context).primaryColor),
+      //     // )
+      //     //     : groupList(),
+      //   ],
+      // ),
+    ),
+        body: FutureBuilder<QuerySnapshot>(
+        future: GroupDocumentslist,
+        builder: (context, snapshot) {
+          return snapshot.hasData ?
+          Container(
+              color: Colors.red,
+              child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
+                Groups model = Groups.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
+                  return SearchGroupTile(model: model, context: context,);
+
+              })
+          ):
+          const Center(child: Text("No Record Exists",
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),),);
+        }
+    ),
     );
   }
 
-  initiateSearchMethod() async {
-    if (searchController.text.isNotEmpty) {
-      setState(() {
-        isLoading = true;
-      });
-      await DatabaseService()
-          .searchByName(searchController.text)
-          .then((snapshot) {
-        setState(() {
-          searchSnapshot = snapshot;
-          isLoading = false;
-          hasUserSearched = true;
-        });
-      });
-    }
-  }
+  // initiateSearchMethod( String searchText) async {
+  //
+  //   // if (searchController.text.isNotEmpty) {
+  //   //   setState(() {
+  //   //     isLoading = true;
+  //   //   });
+  //     await DatabaseService()
+  //         .searchByName(searchText)
+  //         .then((snapshot) {
+  //       setState(() {
+  //         searchSnapshot = snapshot;
+  //         isLoading = false;
+  //        hasUserSearched = true;
+  //       });
+  //     });
+  //     ListView.builder(
+  //       shrinkWrap: true,
+  //       itemCount: searchSnapshot!.docs.length,
+  //       itemBuilder: (context, index) {
+  //         return groupTile(
+  //           userName,
+  //           searchSnapshot!.docs[index]['groupId'],
+  //           searchSnapshot!.docs[index]['groupName'],
+  //           searchSnapshot!.docs[index]['admin'],
+  //         );
+  //       },
+  //     );
+  //   // }
+  // }
+  //
 
-  groupList() {
-    return hasUserSearched
-        ? ListView.builder(
-      shrinkWrap: true,
-      itemCount: searchSnapshot!.docs.length,
-      itemBuilder: (context, index) {
-        return groupTile(
-          userName,
-          searchSnapshot!.docs[index]['groupId'],
-          searchSnapshot!.docs[index]['groupName'],
-          searchSnapshot!.docs[index]['admin'],
-        );
-      },
-    )
-        : Container();
-  }
+
+  // groupList() {
+  //    return hasUserSearched
+  //     ?
+  //   ListView.builder(
+  //     shrinkWrap: true,
+  //     itemCount: searchSnapshot!.docs.length,
+  //     itemBuilder: (context, index) {
+  //       return groupTile(
+  //         userName,
+  //         searchSnapshot!.docs[index]['groupId'],
+  //         searchSnapshot!.docs[index]['groupName'],
+  //         searchSnapshot!.docs[index]['admin'],
+  //       );
+  //     },
+  //   )
+  //       : Container();
+  // }
 
   joinedOrNot(
       String userName, String groupId, String groupname, String admin) async {
@@ -162,27 +253,29 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  Widget groupTile(
-      String userName, String groupId, String groupName, String admin) {
+  Widget SearchGroupTile( {required Groups model, required BuildContext context}
+      // String userName, String groupId, String groupName, String admin
+  ) {
     // function to check whether user already exists in group
-    joinedOrNot(userName, groupId, groupName, admin);
+    var groupName = model!.groupName!;
+    joinedOrNot(userName, model!.groupId!, model!.groupName!, model!.admin!);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       leading: CircleAvatar(
         radius: 30,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context!).primaryColor,
         child: Text(
-          groupName.substring(0, 1).toUpperCase(),
+          model!.groupName!.substring(0, 1).toUpperCase(),
           style: const TextStyle(color: Colors.white),
         ),
       ),
       title:
-      Text(groupName, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text("Admin: ${getName(admin)}"),
+      Text(model!.groupName!, style: const TextStyle(fontWeight: FontWeight.w600)),
+      subtitle: Text("Admin: ${getName(model!.admin!)}"),
       trailing: InkWell(
         onTap: () async {
           await DatabaseService(uid: user!.uid)
-              .toggleGroupJoin(groupId, userName, groupName);
+              .toggleGroupJoin(model!.groupId!, userName, model!.groupName!);
           if (isJoined) {
             setState(() {
               isJoined = !isJoined;
@@ -192,8 +285,8 @@ class _SearchPageState extends State<SearchPage> {
               nextScreen(
                   context,
                   ChatPage(
-                      groupId: groupId,
-                      groupName: groupName,
+                      groupId: model!.groupId!,
+                      groupName: model!.groupName!,
                       userName: userName));
             });
           } else {

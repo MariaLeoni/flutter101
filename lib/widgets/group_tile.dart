@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/chatPage.dart';
+import 'package:sharedstudent1/groupInfo.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 
 import '../chathome.dart';
 
 class GroupTile extends StatefulWidget {
-  final String userName;
-  final String groupId;
-  final String groupName;
-  const GroupTile(
+  Groups? model;
+  BuildContext? context;
+
+   String? userName;
+  String? groupId;
+   String? groupName;
+  GroupTile(
       {Key? key,
-        required this.groupId,
-        required this.groupName,
-        required this.userName})
+        this.model,
+        this.context,
+         this.groupId,
+         this.groupName,
+         this.userName})
       : super(key: key);
 
   @override
@@ -27,9 +33,9 @@ class _GroupTileState extends State<GroupTile> {
         nextScreen(
             context,
              ChatPage(
-             groupId: widget.groupId,
-              groupName: widget.groupName,
-              userName: widget.userName,
+             groupId: widget.groupId!,
+              groupName: widget.groupName!,
+              userName: widget.userName!,
             ));
       },
       child: Container(
@@ -39,14 +45,14 @@ class _GroupTileState extends State<GroupTile> {
             radius: 30,
             backgroundColor: Theme.of(context).primaryColor,
             child: Text(
-              widget.groupName.substring(0, 1).toUpperCase(),
+              widget.groupName!.substring(0, 1).toUpperCase(),
               textAlign: TextAlign.center,
               style: const TextStyle(
                   color: Colors.white, fontWeight: FontWeight.w500),
             ),
           ),
           title: Text(
-            widget.groupName,
+            widget.groupName!,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(

@@ -8,8 +8,8 @@ class Search extends StatefulWidget {
 
   PostType? postType;
   Search({super.key, this.postType});
-
   @override
+
   State<Search> createState() => SearchState();
 }
 
