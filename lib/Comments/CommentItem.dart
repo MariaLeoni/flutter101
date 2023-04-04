@@ -68,7 +68,7 @@ class CommentItem extends StatelessWidget {
   //   if (isNotPostOwner) {
   //     FirebaseFirestore.instance.collection('Activity Feed').doc(commenterId)
   //         .collection('FeedItems').doc(ActivityId).set({
-  //       "type": "comment reply",
+  //       "type": "commentReply",
   //       "name": myName,
   //       "userId": _auth.currentUser!.uid,
   //       "userProfileImage": myImage,

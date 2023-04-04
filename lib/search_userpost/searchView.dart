@@ -58,7 +58,7 @@ class SearchScreenState extends State<SearchScreen> {
 
     Post post = videoListData.post;
 
-    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+    Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
       vid: post.source, userImg: post.userImage, name: post.userName,
       date: post.createdAt, docId: post.id, userId: post.email, downloads: post.downloads,
       description: post.description,

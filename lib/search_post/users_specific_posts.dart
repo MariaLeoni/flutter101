@@ -128,7 +128,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     });
   }
 
-  void readUserInfo()async {
+  void readUserInfo() async {
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .get().then<dynamic>((DocumentSnapshot snapshot) async {
       myImage = snapshot.get('userImage');
@@ -190,7 +190,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               children: [
                 GestureDetector(
                   onTap:() {
-                    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                    Navigator.push(context, MaterialPageRoute(builder:(_)  => PictureDetailsScreen(
                       img: img, userImg: userImg, name: name, date: date, docId: docId,
                       userId: userId, downloads: downloads, postId: postId, likes: likes,
                     description: description,
@@ -309,7 +309,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               ),
               IconButton(
                 onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
                 },
                 icon: const Icon(Icons.home),
               ),

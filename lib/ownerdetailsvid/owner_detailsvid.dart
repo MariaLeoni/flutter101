@@ -9,7 +9,7 @@ import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 
-class  OwnerDetails extends StatefulWidget {
+class  VideoDetailsScreen extends StatefulWidget {
   String? likeruserId;
   String? vid;
   String? userImg;
@@ -24,16 +24,16 @@ class  OwnerDetails extends StatefulWidget {
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
 
-  OwnerDetails({super.key, this.likeruserId,this.vid, this.userImg, this.name, this.date,
+  VideoDetailsScreen({super.key, this.likeruserId,this.vid, this.userImg, this.name, this.date,
     this.docId, this.userId, this.downloads, this.postId, this.likes, this. description,
   });
 
   @override
-  State<OwnerDetails> createState() => _OwnerDetailsState();
+  State<VideoDetailsScreen> createState() => _VideoDetailsScreenState();
 
 }
 
-class _OwnerDetailsState extends State<OwnerDetails> {
+class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
   int? total;
   int likesCount = 0;
   int followersCount = 0;

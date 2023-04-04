@@ -49,9 +49,22 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
+  updateActivityFeed() async{
+    var feedItems = firestore.collectionGroup('FeedItems').where('type', isEqualTo: "comment reply");
+    feedItems.get().then((feeds) {
+      feeds.docs.forEach((feed) {
+        feed.reference.update({'type': "commentReply" }).then((value) =>
+            print("FeedItem Id ${feed.id} updated")
+        );
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    //updateActivityFeed();
+
      getAllProducts();
 
      notificationManager = NotificationManager();
@@ -104,13 +117,12 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
       List<String>? likes, List<String>? viewers,String description) {
 
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
-        OwnerDetails(img: img, userImg: userImg, name: name,
+        PictureDetailsScreen(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
           viewCount: viewCount, postId: postId, likes: likes, viewers: viewers,
           description: description,
         )));
   }
-
 
    getAllProducts() async {
      final collection = firestore.collection("Activity Feed")
@@ -208,7 +220,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     });
 
     goToDetails(img, userImg, name, date, docId, userId, downloads, viewCount,
-        postId, likes,viewers, description);
+        postId, likes, viewers, description);
   }
 
   void updateInterests(Map<String, List<String>?> interests) {
@@ -336,7 +348,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
                         return listViewWidget(post.id, post.source, post.userImage,
                             post.userName, post.createdAt, post.email,
-                            post.downloads, post.viewCount, post.postId, post.likes, post.viewers, post.description);
+                            post.downloads, post.viewCount, post.postId, post.likes,
+                            post.viewers, post.description);
                       },
                     );
                   }

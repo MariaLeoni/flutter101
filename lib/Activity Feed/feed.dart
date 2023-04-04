@@ -3,8 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../Comments/CommentItem.dart';
+import '../Comments/SubComment.dart';
+import '../home_screen/post.dart';
+import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
+import '../ownerdetailsvid/owner_detailsvid.dart';
 import '../search_post/users_specific_posts.dart';
+import '../search_post/users_specifics_page.dart';
 import 'feedpost.dart';
 
 class ActivityFeed extends StatefulWidget {
@@ -15,29 +21,100 @@ class ActivityFeed extends StatefulWidget {
 
 class _ActivityFeedState extends State<ActivityFeed> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  Widget? mediaPreview;
+  String? activityItemText;
 
   @override
   void initState() {
     super.initState();
-
-    print("ActivityFeed myId: ${_auth.currentUser!.uid}");
   }
 
-  Widget listViewWidget (String Image, String name, String postId, DateTime timestamp, String type,
-      String userId, String userProfileImage, String commentData, String description, String postOwnerId, String postOwnername, String postOwnerImage,
-      List<String>? likes, int downloads, String ActivityId, bool ReadStatus ) {
-    if (type == "like" || type == 'comment'|| type == 'follow'|| type == 'tag' || type =='comment reply') {
+  handNavigation(FeedPost feed, Post post, PostType postType){
+    if (feed.type == 'likePost'){
+      if (postType == PostType.image){
+        Navigator.push(context, MaterialPageRoute(builder: (_) =>
+            PictureDetailsScreen(img: post.source, userImg: post.userImage, name: post.userName,
+              date: post.createdAt, docId: post.id, userId: post.email,
+              downloads: post.downloads, viewCount: post.viewCount,
+              postId: post.postId, likes: post.likes,
+              viewers: post.viewers, description: post.description,
+            )));
+      }
+      else{
+        Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+          vid:post.source, userImg: post.userImage, name: post.userName,
+          date: post.createdAt, docId: post.id, userId: post.email,
+          downloads: post.downloads, description: post.description,
+          likes: const [], postId: post.postId,
+        )));
+      }
+    }
+    else{
+      loadComment(feed, post, postType);
+    }
+  }
+
+  loadComment(FeedPost feed, Post post, PostType postType) async {
+    var comment = await firestore.collection('comment').where("comment", isEqualTo: feed.commentData).get();
+    navigateToComment(comment);
+  }
+
+  void navigateToComment(QuerySnapshot<Map<String, dynamic>> comment) {
+    CommentItem commentItem = CommentItem.fromDocument(comment.docs.first);
+
+    Navigator.push(context, MaterialPageRoute(
+        builder: (_) => SubComment(commentItem: commentItem)));
+  }
+
+  prepareNavigation(FeedPost feed) async {
+    if (feed.type == 'follow') {
+      goToUserProfile(feed);
+    }
+    else {
+      String? postId = feed.postId;
+      Map<String, dynamic>? data;
+      PostType postType;
+      var snapshot = await firestore.collection('wallpaper').doc(postId).get();
+      data = snapshot.data();
+      if (data == null){
+        snapshot = await firestore.collection('wallpaper2').doc(postId).get();
+        data = snapshot.data();
+        postType = PostType.video;
+      }
+      postType = PostType.image;
+      Post post = Post.getPostSnapshot(data as Map<String, dynamic>, postType);
+
+      handNavigation(feed, post, postType);
+    }
+  }
+
+  void goToUserProfile(FeedPost feed) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+      userId: feed.userId,
+      userName: feed.name,
+      userImage: feed.userProfileImage,
+    )));
+  }
+
+  Widget listViewWidget (String image, String name, String? postId, DateTime timestamp,
+      String type, String userId, String userProfileImage, String commentData,
+      String description, String postOwnerId, String postOwnerName, String postOwnerImage,
+      List<String>? likes, int downloads, String activityId, bool readStatus ) {
+
+    if (type.contains("like") || type == 'comment'|| type == 'follow'|| type == 'tag' || type =='commentReply') {
       mediaPreview = GestureDetector(
           onTap:() {
-            FirebaseFirestore.instance.collection('Activity Feed').doc(_auth.currentUser!.uid).collection('FeedItems').doc(ActivityId).update({'Read Status': true});
-            Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
-              img: Image, userImg: postOwnerImage, name: postOwnername, date: timestamp, docId: userId,
+            FirebaseFirestore.instance.collection('Activity Feed').doc(_auth.currentUser!.uid).collection('FeedItems').doc(activityId).update({'Read Status': true});
+
+            Navigator.push(context, MaterialPageRoute(builder:(_)  => PictureDetailsScreen(
+              img: image, userImg: postOwnerImage, name: postOwnerName, date: timestamp, docId: userId,
               userId: postOwnerId,  postId: postId,
               description: description, likes: likes, downloads: downloads,
             )));
           },
-          child: Container(
+          child: SizedBox(
               height: 50.0,
               width: 50.0,
               child: AspectRatio(
@@ -46,92 +123,108 @@ class _ActivityFeedState extends State<ActivityFeed> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: CachedNetworkImageProvider(Image),
+                          image: CachedNetworkImageProvider(image),
                         )
                     ),
                   )
               )
           )
       );
-    }else{
-      mediaPreview = Text('');
+    } else{
+      mediaPreview = Container();
     }
-    if (type == 'like') {
-      ActivityItemText = "liked your post";
-    } else if (type == 'comment') {
-      ActivityItemText = 'replied : $commentData';
+    if (type == 'likePost') {
+      activityItemText = "liked your post";
+    }
+    else if (type == 'likeComment') {
+      activityItemText = " liked your comment: $commentData";
+    }
+    else if (type == 'comment') {
+      activityItemText = 'replied : $commentData';
     } else if (type == 'follow') {
-      ActivityItemText = ' started following you';
+      activityItemText = ' started following you';
     } else if (type == 'tag'){
-      ActivityItemText = ' tagged you in a post ';
-    }else if (type == 'comment reply'){
-      ActivityItemText = 'replied to your comment: $commentData ';
+      activityItemText = ' tagged you in a post';
+    }else if (type == 'commentReply'){
+      activityItemText = 'replied to your comment: $commentData';
     }
     else {
-      ActivityItemText = "Error : Uknown type '$type'";
+      activityItemText = "Update '$type'";
     }
 
     return Padding(
-        padding:EdgeInsets.only(bottom: 2.0),
+        padding:const EdgeInsets.only(bottom: 2.0),
         child: Container(
             color: Colors.white54,
             child: GestureDetector(
                 onTap: () {
-                  FirebaseFirestore.instance.collection('Activity Items').doc(_auth.currentUser!.uid).collection('FeedItems').doc(ActivityId).update({'Read Status': true });
-                },child: ListTile(
-              title: GestureDetector(
-                  onTap: ()=> print('show profile'),
-                  child: RichText(
-                      overflow: TextOverflow. ellipsis,
-                      text: TextSpan(
-                          style: TextStyle(
-                            fontSize:14.0,
-                            color:Colors.black,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: name,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: ' $ActivityItemText',
+                  FeedPost feedPost = FeedPost(image: image, name: name, postId: postId,
+                    timestamp: timestamp, type: type, userId: userId,
+                    userProfileImage: userProfileImage, commentData: commentData,
+                    description: description, postOwnerId: postOwnerId,
+                    postOwnerName: postOwnerName, postOwnerImage: postOwnerImage,
+                    likes: likes, downloads: downloads, activityId: activityId,
+                    readStatus: readStatus);
 
-                            ),
-                          ]
-                      )
-                  )
-              ),
-              leading:
-              ReadStatus == false ?
-              IconButton(onPressed: () async{
+                    prepareNavigation(feedPost);
 
-              }, icon: const Icon(Icons.circle, color: Colors.red)):
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (_) =>
-                      UsersSpecificPostsScreen(
+                  // firestore.collection('Activity Feed')
+                  //     .doc(_auth.currentUser!.uid).collection('FeedItems')
+                  //     .doc(activityId).update({'Read Status': true });
+                },
+                child: ListTile(
+                  title: GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
                         userId: userId,
                         userName: name,
-                      )));
-                },
-                child: CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(userProfileImage),
-                ),
-              ),
-              // ReadStatus == false ?
-              // IconButton(onPressed: () async{
-              //
-              // }, icon: const Icon(Icons.circle, color: Colors.red)): Container(),
-              subtitle: Text(
-                DateFormat("dd MMM, yyyy - hh:mn a").format(timestamp).toString(),
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: mediaPreview,
-            )
+                        userImage: userProfileImage,
+                      ))),
+                      child: RichText(
+                          overflow: TextOverflow. ellipsis,
+                          text: TextSpan(
+                              style: const TextStyle(
+                                fontSize:14.0,
+                                color:Colors.black,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: name,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text: ' $activityItemText',
+                                ),
+                              ]
+                          )
+                      )
+                  ),
+                  leading: readStatus == false ? IconButton(onPressed: () {
+                    goToUserPostsScreen(userId, name);
+                  }, icon: const Icon(Icons.circle, color: Colors.red)) :
+                  GestureDetector(
+                    onTap: () {
+                      goToUserPostsScreen(userId, name);
+                    },
+                    child: CircleAvatar(
+                      backgroundImage: CachedNetworkImageProvider(userProfileImage),
+                    ),
+                  ),
+                  subtitle: Text(
+                    DateFormat("dd MMM, yyyy - hh:mm a").format(timestamp).toString(),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: SizedBox(width: 50, height: 50,
+                    child:mediaPreview,
+                ))
             )
         )
     );
+  }
+
+  void goToUserPostsScreen(String userId, String name) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+        UsersSpecificPostsScreen(userId: userId, userName: name,
+        )));
   }
 
   @override
@@ -156,7 +249,9 @@ class _ActivityFeedState extends State<ActivityFeed> {
       ),
     ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('Activity Feed').doc(_auth.currentUser!.uid).collection('FeedItems')
+        stream: firestore.collection('Activity Feed')
+            .doc(_auth.currentUser!.uid).collection('FeedItems')
+            .where("Read Status", isEqualTo: false)
             .orderBy('timestamp', descending: true).snapshots(),
         builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting ) {
@@ -168,10 +263,13 @@ class _ActivityFeedState extends State<ActivityFeed> {
                 return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    FeedPost post = FeedPost.getPost(snapshot, index);
+                    FeedPost feed = FeedPost.getPost(snapshot, index);
 
-                    return listViewWidget(post.image, post.name, post.postId, post.timestamp,post.type,
-                      post.userId, post.userProfileImage, post.commentData, post. description, post.postOwnerId, post.postOwnerName, post.postOwnerImage, post.likes, post.downloads, post.activityId,post.readStatus,
+                    return listViewWidget(feed.image, feed.name, feed.postId,
+                      feed.timestamp,feed.type, feed.userId, feed.userProfileImage,
+                      feed.commentData, feed. description, feed.postOwnerId,
+                      feed.postOwnerName, feed.postOwnerImage, feed.likes,
+                      feed.downloads, feed.activityId,feed.readStatus,
                     );
                   },
                 );
@@ -195,5 +293,3 @@ class _ActivityFeedState extends State<ActivityFeed> {
     );
   }
 }
-Widget? mediaPreview;
-String? ActivityItemText;

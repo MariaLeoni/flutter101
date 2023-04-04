@@ -73,7 +73,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       String docId, String userId, int downloads, String description,
       List<String>? likes, String postId) {
 
-    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+    Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
       vid:vid, userImg: userImg, name: name, date: date,
       docId: docId, userId: userId, downloads: downloads, description: description,
       likes: const [], postId: postId,

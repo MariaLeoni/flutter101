@@ -97,7 +97,7 @@ class UserProfileState extends State<UserProfile> {
               children: [
                 GestureDetector(
                   onTap:() {
-                    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
+                    Navigator.push(context, MaterialPageRoute(builder:(_)  => PictureDetailsScreen(
                       img: img, userImg: userImg, name: name, date: date, docId: docId,
                       userId: userId, downloads: downloads, postId: postId, likes: likes,
                       description: description,

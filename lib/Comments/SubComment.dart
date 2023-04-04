@@ -41,7 +41,7 @@ class CommentState extends State<SubComment> {
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.commentItem!.commenterId)
           .collection('FeedItems').doc(activityId).set({
-        "type": "comment reply",
+        "type": "commentReply",
         "name": myName,
         "userId": _auth.currentUser!.uid,
         "userProfileImage": myImage,
@@ -152,8 +152,6 @@ class CommentState extends State<SubComment> {
     super.initState();
     myUserId = _auth.currentUser!.uid;
     postId = widget.commentItem!.postId;
-
-    print("CommentId A $commentId and postId A $postId");
 
     readUserInfo();
     loadPostInfo();

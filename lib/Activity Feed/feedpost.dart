@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 class FeedPost {
   String image= "";
   String name = "";
-  String postId = "";
+  String? postId;
   String activityId = "";
   String type = "";
   DateTime timestamp = DateTime.now();
@@ -43,7 +43,8 @@ class FeedPost {
       image: snapshot.data!.docs[index]['Image'] ?? "",
       name: snapshot.data!.docs[index]['name'] ?? "",
       postId: snapshot.data!.docs[index]['postId'],
-      activityId: snapshot.data!.docs[index].toString().contains('Activity Id') ? snapshot.data!.docs[index]['Activity Id'] : "",
+      activityId: snapshot.data!.docs[index].toString().contains('Activity Id') ?
+      snapshot.data!.docs[index]['Activity Id'] : snapshot.data!.docs[index].id,
       timestamp: snapshot.data!.docs[index]['timestamp'].toDate(),
       type: snapshot.data!.docs[index]['type'] ?? "",
       userId: snapshot.data!.docs[index]['userId'],
@@ -55,7 +56,8 @@ class FeedPost {
       postOwnerImage:snapshot.data!.docs[index]['postOwnerImage'],
       postOwnerName:snapshot.data!.docs[index]['postOwnername'],
       likes: List.from(snapshot.data!.docs[index]['likes']),
-      readStatus: snapshot.data!.docs[index].toString().contains('Read Status') ? snapshot.data!.docs[index]['Read Status'] : false,
+      readStatus: snapshot.data!.docs[index].toString().contains('Read Status') ?
+      snapshot.data!.docs[index]['Read Status'] : false,
     );
   }
 }

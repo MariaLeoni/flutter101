@@ -35,7 +35,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   readUserInfo() async {
     fireStore.collection('users').doc(auth.currentUser!.uid).get()
         .then<dynamic>((DocumentSnapshot snapshot) {
-          myChatees = List.from(snapshot.get('chatWith'));
+          //myChatees = List.from(snapshot.get('chatWith'));
       var data = jsonDecode(jsonEncode(snapshot.get('interests')));
       data.forEach((key, value) {
         List<String> subList = List.empty(growable: true);

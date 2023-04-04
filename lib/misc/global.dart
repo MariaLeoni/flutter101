@@ -46,6 +46,17 @@ enum FFType{
   following
 }
 
+enum FeedType{
+  like("like"),
+  comment("comment"),
+  follow("follow"),
+  tag("tag"),
+  reply("commentReply");
+
+  const FeedType(this.value);
+  final String value;
+}
+
 typedef InterestCallback = void Function(Map<String, List<String>?> interests);
 
 typedef VideoSelected = void Function(VideoListData);
