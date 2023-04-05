@@ -4,6 +4,7 @@ import '../home_screen/home.dart';
 import '../profile/profile_screen.dart';
 import 'chatListScreen.dart';
 import 'groupChatHome.dart';
+import 'moodHomeScreen.dart';
 
 class ChatHomeScreen extends StatefulWidget {
   const ChatHomeScreen({super.key});
@@ -62,7 +63,7 @@ class ChatHomeScreenState extends State<ChatHomeScreen> {
         body: TabBarView(children: [
             ChatListScreen(chatees: List.empty(),),
             GroupChatHome(),
-            GroupChatHome()
+            const MoodScreen()
         ],),
     ));
   }

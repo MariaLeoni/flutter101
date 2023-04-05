@@ -10,6 +10,7 @@ class ChatProvider{
   final FirebaseFirestore firebaseFirestore;
   final FirebaseStorage firebaseStorage;
   bool saved = false;
+  final todayDate = DateTime.now();
 
   ChatProvider({
         required this.firebaseStorage,
@@ -70,5 +71,14 @@ class ChatProvider{
         .doc(userId).update({FirestoreConstants.chatWith: FieldValue.arrayUnion(users)
     });
     saved = true;
+  }
+
+  Stream<QuerySnapshot> getMoods(List<String>? followingList) {
+    print("followingList $followingList");
+    return firebaseFirestore.collection(FirestoreConstants.pathMoodCollection)
+        .where(FieldPath.documentId, whereIn: followingList)
+        .where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: todayDate)
+        //.orderBy(FirestoreConstants.timestamp, descending: true)
+        .limit(2000).snapshots();
   }
 }
