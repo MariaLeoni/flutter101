@@ -114,70 +114,86 @@ class MoodScreenState extends State<MoodScreen> {
       barrierLabel: '', barrierColor: Colors.black38,
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (ctx, anim1, anim2) => AlertDialog(
-        title: const Text("Please choose an option"),
+        title: const Text("What do you want to Mood?"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            InkWell(
-              onTap: () {
-                getImage(ImageSource.camera);
-                Navigator.pop(ctx);
-              },
-              child: Row(
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(4.0,),
-                    child: Icon(Icons.camera, color: Colors.red,),
+            const Text("Media from Gallery", style: TextStyle(fontWeight: FontWeight.bold,
+                fontSize: 20, color: Colors.white, backgroundColor: Colors.lightBlueAccent),),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                  onTap: () {
+                    getImage(ImageSource.gallery);
+                    Navigator.pop(ctx);
+                  },
+                  child: Row(
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.all(4.0,),
+                        child: Icon(Icons.browse_gallery, color: Colors.red,),
+                      ),
+                      Text("Image", style: TextStyle(color: Colors.black),),
+                    ],
                   ),
-                  Text("Image from Camera", style: TextStyle(color: Colors.black),),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                getImage(ImageSource.gallery);
-                Navigator.pop(ctx);
-              },
-              child: Row(
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(4.0,),
-                    child: Icon(Icons.browse_gallery, color: Colors.red,),
+                ),
+                InkWell(
+                  onTap: () {
+                    getVideo(ImageSource.gallery);
+                    Navigator.pop(ctx);
+                  },
+                  child: Row(
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.all(4.0,),
+                        child: Icon(Icons.image, color: Colors.redAccent,),
+                      ),
+                      Text("Video", style: TextStyle(color: Colors.black),),
+                    ],
                   ),
-                  Text("Image from Gallery", style: TextStyle(color: Colors.black),),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                getVideo(ImageSource.camera);
-                Navigator.pop(ctx);
-              },
-              child: Row(
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(4.0,),
-                    child: Icon(Icons.video_call, color: Colors.red,),
+                ),
+              ],),
+            const Divider(),
+            const Text("Media from Camera", style: TextStyle(fontWeight: FontWeight.bold,
+                fontSize: 20, color: Colors.white, backgroundColor: Colors.lightBlueAccent),),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      getImage(ImageSource.camera);
+                      Navigator.pop(ctx);
+                    },
+                    child: Row(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.all(4.0,),
+                          child: Icon(Icons.camera, color: Colors.red,),
+                        ),
+                        Text("Image", style: TextStyle(color: Colors.black),),
+                      ],
+                    ),
                   ),
-                  Text("Video from Camera", style: TextStyle(color: Colors.black),),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                getVideo(ImageSource.gallery);
-                Navigator.pop(ctx);
-              },
-              child: Row(
-                children: const [
-                  Padding(
-                    padding: EdgeInsets.all(4.0,),
-                    child: Icon(Icons.image, color: Colors.redAccent,),
+                  InkWell(
+                    onTap: () {
+                      getVideo(ImageSource.camera);
+                      Navigator.pop(ctx);
+                    },
+                    child: Row(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.all(4.0,),
+                          child: Icon(Icons.video_call, color: Colors.red,),
+                        ),
+                        Text("Video", style: TextStyle(color: Colors.black),),
+                      ],
+                    ),
                   ),
-                  Text("Video from Gallery", style: TextStyle(color: Colors.black),),
-                ],
-              ),
-            ),
+                ]),
+            const Divider(),
+            MaterialButton(onPressed: () {
+              Navigator.pop(ctx);
+              showTextPopAlert();
+            }, child: const Text("Mood update", style: TextStyle(color: Colors.black),),)
           ],
         ),
       ),
@@ -190,6 +206,25 @@ class MoodScreenState extends State<MoodScreen> {
       ),
       context: context,
     );
+  }
+
+  void showTextPopAlert(){
+      showGeneralDialog(barrierDismissible: true,
+        barrierLabel: '', barrierColor: Colors.black38,
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (ctx, anim1, anim2) => AlertDialog(
+          title: null,
+          content: buildMessageInput(),
+        ),
+        transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4 * anim1.value, sigmaY: 4 * anim1.value),
+          child: FadeTransition(
+            opacity: anim1,
+            child: child,
+          ),
+        ),
+        context: context,
+      );
   }
 
   void getSticker() {
@@ -223,7 +258,6 @@ class MoodScreenState extends State<MoodScreen> {
       });
     });
   }
-
 
   void uploadFile(PostType type) async {
     LoadingIndicatorDialog().show(context);
@@ -314,7 +348,7 @@ class MoodScreenState extends State<MoodScreen> {
               heroTag: "1",
               backgroundColor: Colors.deepPurple,
               onPressed: () {
-                //Show dialog here
+                showAlert();
               },
               child: const Icon(Icons.mood),
             ),
@@ -324,68 +358,55 @@ class MoodScreenState extends State<MoodScreen> {
     );
   }
 
-  // Widget buildMessageInput() {
-  //   var screen = MediaQuery.of(context).size;
-  //   return SizedBox(
-  //       width: screen.width,
-  //       height: 70,
-  //       child: Padding(
-  //       padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_8),
-  //   child:Container(
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(Sizes.dimen_30),
-  //           color: AppColors.greyColor,
-  //         ),
-  //         child: Row(
-  //           children: [
-  //             Container(
-  //               margin: const EdgeInsets.only(right: Sizes.dimen_4),
-  //               decoration: BoxDecoration(
-  //                 color: AppColors.greyColor,
-  //                 borderRadius: BorderRadius.circular(Sizes.dimen_20),
-  //               ),
-  //               child: IconButton(
-  //                 onPressed: showAlert,
-  //                 icon: const Icon(Icons.add_a_photo, size: Sizes.dimen_18,
-  //                 ),
-  //                 color: AppColors.white,
-  //               ),
-  //             ),
-  //             Flexible(child: TextField(
-  //               focusNode: focusNode,
-  //               textInputAction: TextInputAction.send,
-  //               keyboardType: TextInputType.text,
-  //               textCapitalization: TextCapitalization.sentences,
-  //               controller: textEditingController,
-  //               decoration: const InputDecoration.collapsed(
-  //                 hintText: 'Type here...',
-  //                 hintStyle: TextStyle(color: AppColors.white)),
-  //               onSubmitted: (value) {
-  //                 onSendMessage(textEditingController.text, PostType.text, "");
-  //               },
-  //               style: const TextStyle(backgroundColor: AppColors.greyColor,
-  //               color: AppColors.white),
-  //             )),
-  //             Container(
-  //               margin: const EdgeInsets.only(left: Sizes.dimen_4),
-  //               decoration: BoxDecoration(
-  //                 color: AppColors.greyColor,
-  //                 borderRadius: BorderRadius.circular(Sizes.dimen_20),
-  //               ),
-  //               child: IconButton(
-  //                 onPressed: () {
-  //                   onSendMessage(textEditingController.text, PostType.text, "");
-  //                 },
-  //                 icon: const Icon(Icons.send_rounded),
-  //                 color: AppColors.white,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       )
-  //   ));
-  // }
-  //
+  Widget buildMessageInput() {
+    var screen = MediaQuery.of(context).size;
+    return SizedBox(
+        width: screen.width,
+        height: 70,
+        child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_4, horizontal: Sizes.dimen_4),
+            child:Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                color: AppColors.greyColor,
+              ),
+              child: Row(
+                children: [
+                  Flexible(child: TextField(
+                    focusNode: focusNode,
+                    textInputAction: TextInputAction.send,
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: textEditingController,
+                    decoration: const InputDecoration.collapsed(
+                        hintText: "Your Mood...",
+                        hintStyle: TextStyle(color: AppColors.white)),
+                    onSubmitted: (value) {
+                      onSendMessage(textEditingController.text, PostType.text, "");
+                    },
+                    style: const TextStyle(backgroundColor: AppColors.greyColor,
+                        color: AppColors.white),
+                  )),
+                  Container(
+                    margin: const EdgeInsets.only(left: Sizes.dimen_4),
+                    decoration: BoxDecoration(
+                      color: AppColors.greyColor,
+                      borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        onSendMessage(textEditingController.text, PostType.text, "");
+                      },
+                      icon: const Icon(Icons.send_rounded),
+                      color: AppColors.white,
+                    ),
+                  ),
+                ],
+              ),
+            )
+        ));
+  }
+  
   Widget buildItem(BuildContext context, DocumentSnapshot? documentSnapshot) {
     if (documentSnapshot != null) {
       ChatMessages chatMessages = ChatMessages.fromDocument(documentSnapshot);
@@ -481,39 +502,4 @@ class MoodScreenState extends State<MoodScreen> {
       return const SizedBox.shrink();
     }
   }
-
-// Widget buildListMessage() {
-//   return Flexible(
-//     child: groupChatId.isNotEmpty
-//         ? StreamBuilder<QuerySnapshot>(
-//         stream: chatProvider.getChatMessage(groupChatId, _limit),
-//         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//           if (snapshot.hasData) {
-//             myFollowees = snapshot.data!.docs;
-//             if (myFollowees.isNotEmpty) {
-//               return ListView.builder(
-//                   padding: const EdgeInsets.all(10),
-//                   itemCount: snapshot.data?.docs.length,
-//                   reverse: true,
-//                   controller: scrollController,
-//                   itemBuilder: (context, index) =>
-//                       buildItem(index, snapshot.data?.docs[index]));
-//             } else {
-//               return const Center(
-//                 child: Text('No messages...'),
-//               );
-//             }
-//           } else {
-//             return const Center(child: CircularProgressIndicator(
-//               color: AppColors.burgundy,
-//             ),
-//             );
-//           }
-//         })
-//         : const Center(child: CircularProgressIndicator(
-//       color: AppColors.burgundy,
-//     ),
-//     ),
-//   );
-// }
 }

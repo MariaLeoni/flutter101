@@ -63,6 +63,9 @@ typedef VideoSelected = void Function(VideoListData);
 
 typedef GoToPageWithTypeAndId = void Function(dynamic type, String Id);
 
+List<String> images = ['jpeg', 'jpg', 'png', 'gif', 'tiff'];
+List<String> videos = ['mp4', 'mov', 'wmv', 'avi', 'mkv'];
+
 bool checkCanBuildVideo() {
   return true;
 }

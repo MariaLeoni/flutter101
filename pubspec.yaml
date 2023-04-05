@@ -47,7 +47,6 @@ dependencies:
   image_picker: ^0.8.6
   flutter_3d_choice_chip: ^0.1.4
   video_thumbnail: ^0.5.0
-
   image_cropper: ^3.0.0
   image_downloader: ^0.31.0
   intl: ^0.17.0
@@ -76,6 +75,7 @@ dependencies:
       url: https://github.com/tintran-dev/betterplayer.git
   firebase_database: ^10.0.10
   firebase_in_app_messaging: ^0.7.0+13
+  file_picker:
 
 dev_dependencies:
   flutter_test:
