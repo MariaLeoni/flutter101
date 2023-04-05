@@ -6,20 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/chat/fullImageView.dart';
+import 'package:sharedstudent1/chat/moodModel.dart';
 import 'package:sharedstudent1/misc/progressIndicator.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:io';
-import 'chatModel.dart';
 import 'chatProvider.dart';
 import 'chatWidgets.dart';
 import 'constants.dart';
 import 'package:sharedstudent1/misc/global.dart';
-
 import 'fullScreenVideo.dart';
 
 class MoodScreen extends StatefulWidget {
-
-
   const MoodScreen({Key? key,}) : super(key: key);
 
   @override
@@ -214,7 +211,7 @@ class MoodScreenState extends State<MoodScreen> {
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (ctx, anim1, anim2) => AlertDialog(
           title: null,
-          content: buildMessageInput(),
+          content: buildMessageInput(ctx),
         ),
         transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 4 * anim1.value, sigmaY: 4 * anim1.value),
@@ -283,7 +280,7 @@ class MoodScreenState extends State<MoodScreen> {
 
       setState(() {
         isLoading = false;
-        onSendMessage(imageUrl, type, thumbnail);
+        onSendMood(imageUrl, type);
         LoadingIndicatorDialog().dismiss();
       });
     } on FirebaseException catch (e) {
@@ -296,17 +293,16 @@ class MoodScreenState extends State<MoodScreen> {
     }
   }
 
-  void onSendMessage(String content, PostType type, String? thumbnail) {
-    // if (content.trim().isNotEmpty) {
-    //   textEditingController.clear();
-    //   chatProvider.sendChatMessage(content, type, groupChatId, currentUserId,
-    //       "widget.peerId", thumbnail);
-    //   scrollController.animateTo(0,
-    //       duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    // } else {
-    //   ScaffoldMessenger.of(context)
-    //       .showSnackBar(const SnackBar(content: Text("Nothing to send")));
-    // }
+  void onSendMood(String content, PostType type) {
+    if (content.trim().isNotEmpty) {
+      textEditingController.clear();
+      chatProvider.sendMood(content, type, currentUserId);
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Nothing to send")));
+    }
   }
 
   @override
@@ -358,7 +354,7 @@ class MoodScreenState extends State<MoodScreen> {
     );
   }
 
-  Widget buildMessageInput() {
+  Widget buildMessageInput(BuildContext ctx) {
     var screen = MediaQuery.of(context).size;
     return SizedBox(
         width: screen.width,
@@ -382,7 +378,8 @@ class MoodScreenState extends State<MoodScreen> {
                         hintText: "Your Mood...",
                         hintStyle: TextStyle(color: AppColors.white)),
                     onSubmitted: (value) {
-                      onSendMessage(textEditingController.text, PostType.text, "");
+                      onSendMood(textEditingController.text, PostType.text);
+                      Navigator.pop(ctx);
                     },
                     style: const TextStyle(backgroundColor: AppColors.greyColor,
                         color: AppColors.white),
@@ -395,7 +392,8 @@ class MoodScreenState extends State<MoodScreen> {
                     ),
                     child: IconButton(
                       onPressed: () {
-                        onSendMessage(textEditingController.text, PostType.text, "");
+                        onSendMood(textEditingController.text, PostType.text);
+                        Navigator.pop(ctx);
                       },
                       icon: const Icon(Icons.send_rounded),
                       color: AppColors.white,
@@ -406,42 +404,42 @@ class MoodScreenState extends State<MoodScreen> {
             )
         ));
   }
-  
+
   Widget buildItem(BuildContext context, DocumentSnapshot? documentSnapshot) {
     if (documentSnapshot != null) {
-      ChatMessages chatMessages = ChatMessages.fromDocument(documentSnapshot);
+      MoodModel mood = MoodModel.fromDocument(documentSnapshot);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              chatMessages.type == PostType.text.name
-                  ? messageBubble(chatContent: chatMessages.content,
+              mood.type == PostType.text.name
+                  ? messageBubble(chatContent: mood.content,
                 color: AppColors.spaceLight,
                 textColor: AppColors.white,
                 margin: const EdgeInsets.only(right: Sizes.dimen_10),)
-                  : chatMessages.type == PostType.image.name ? Container(
+                  : mood.type == PostType.image.name ? Container(
                 margin: const EdgeInsets.only(
                     right: Sizes.dimen_10, top: Sizes.dimen_10),
                 child: GestureDetector(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => FullImageView(url: chatMessages.content))
+                          builder: (_) => FullImageView(url: mood.content))
                       );
                     },
-                    child: chatImage(imageSrc: chatMessages.content)
+                    child: chatImage(imageSrc: mood.content)
                 ),
-              ) : chatMessages.type == PostType.video.name ? Container(
+              ) : mood.type == PostType.video.name ? Container(
                 margin: const EdgeInsets.only(
                     right: Sizes.dimen_10, top: Sizes.dimen_10),
                 child: GestureDetector(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => FullScreenVideoView(url: chatMessages.content))
+                          builder: (_) => FullScreenVideoView(url: mood.content))
                       );
                     },
-                    child: chatVideoThumbnail(videoSrc: chatMessages.thumbnail!)
+                    child: chatVideoThumbnail(videoSrc: mood.content)
                 ),
               ) : const SizedBox.shrink(),
               Container(clipBehavior: Clip.hardEdge,
@@ -487,7 +485,7 @@ class MoodScreenState extends State<MoodScreen> {
             child: Text(
               DateFormat('dd MMM yyyy, hh:mm a').format(
                 DateTime.fromMillisecondsSinceEpoch(
-                  int.parse(chatMessages.timestamp),
+                  int.parse(mood.timestamp),
                 ),
               ),
               style: const TextStyle(

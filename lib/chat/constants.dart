@@ -17,4 +17,9 @@ class FirestoreConstants {
   static const thumbnail = "thumbnail";
   static const email = "email";
   static const pathMoodCollection = "moods";
+
+  static const like = "like";
+  static const loveIt = "loveIt";
+  static const sad = "sad";
+  static const angry = "angry";
 }

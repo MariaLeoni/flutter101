@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../misc/global.dart';
 import 'chatModel.dart';
 import 'constants.dart';
+import 'moodModel.dart';
 
 class ChatProvider{
 
@@ -74,11 +75,27 @@ class ChatProvider{
   }
 
   Stream<QuerySnapshot> getMoods(List<String>? followingList) {
-    print("followingList $followingList");
     return firebaseFirestore.collection(FirestoreConstants.pathMoodCollection)
-        .where(FieldPath.documentId, whereIn: followingList)
-        .where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: todayDate)
-        //.orderBy(FirestoreConstants.timestamp, descending: true)
+        .where(FirestoreConstants.idFrom, whereIn: followingList)
+        //.where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: todayDate)
         .limit(2000).snapshots();
+  }
+
+  void sendMood(String content, PostType type, String currentUserId) {
+
+    DocumentReference documentReference = firebaseFirestore
+        .collection(FirestoreConstants.pathMoodCollection)
+        .doc(DateTime.now().millisecondsSinceEpoch.toString());
+
+    MoodModel mood = MoodModel(
+        idFrom: currentUserId,
+        timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
+        content: content, type: type.name, like: List<String>.empty(),
+        angry: List<String>.empty(), loveIt: List<String>.empty(),
+        sad: List<String>.empty(), );
+
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      transaction.set(documentReference, mood.toJson());
+    });
   }
 }

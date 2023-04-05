@@ -309,13 +309,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 // ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const ChatHomeScreen(),),);
-                  },
-                  icon: const Icon(Icons.chat_bubble),
-                ),
-                IconButton(
-                  onPressed: () {
                     if (widget.user == null){
                       Navigator.push(context, MaterialPageRoute(builder: (_) =>
                           VideoHomeScreen.forCategory(category: widget.category,),),);
@@ -325,6 +318,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     }
                   },
                   icon: const Icon(Icons.play_circle_outlined),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const ChatHomeScreen(),),);
+                  },
+                  icon: const Icon(Icons.chat_bubble),
                 ),
                 activityBadgeView,
               ]
