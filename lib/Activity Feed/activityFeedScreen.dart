@@ -9,7 +9,6 @@ import '../home_screen/post.dart';
 import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
-import '../search_post/users_specific_posts.dart';
 import '../search_post/users_specifics_page.dart';
 import 'feedpost.dart';
 
@@ -112,17 +111,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
       List<String>? likes, int downloads, String activityId, bool readStatus ) {
 
     if (type.contains("like") || type == 'comment'|| type == 'follow'|| type == 'tag' || type =='commentReply') {
-      mediaPreview = GestureDetector(
-          onTap:() {
-            FirebaseFirestore.instance.collection('Activity Feed').doc(_auth.currentUser!.uid).collection('FeedItems').doc(activityId).update({'Read Status': true});
-
-            Navigator.push(context, MaterialPageRoute(builder:(_)  => PictureDetailsScreen(
-              img: image, userImg: postOwnerImage, name: postOwnerName, date: timestamp, docId: userId,
-              userId: postOwnerId,  postId: postId,
-              description: description, likes: likes, downloads: downloads,
-            )));
-          },
-          child: SizedBox(
+      mediaPreview = SizedBox(
               height: 50.0,
               width: 50.0,
               child: AspectRatio(
@@ -136,8 +125,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
                     ),
                   )
               )
-          )
-      );
+          );
     } else{
       mediaPreview = Container();
     }
@@ -176,9 +164,9 @@ class _ActivityFeedState extends State<ActivityFeed> {
 
                     prepareNavigation(feedPost);
 
-                  // firestore.collection('Activity Feed')
-                  //     .doc(_auth.currentUser!.uid).collection('FeedItems')
-                  //     .doc(activityId).update({'Read Status': true });
+                  firestore.collection('Activity Feed')
+                      .doc(_auth.currentUser!.uid).collection('FeedItems')
+                      .doc(activityId).update({'Read Status': true });
                 },
                 child: ListTile(
                   title: GestureDetector(
@@ -206,17 +194,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
                           )
                       )
                   ),
-                  leading: readStatus == false ? IconButton(onPressed: () {
-                    goToUserPostsScreen(userId, name);
-                  }, icon: const Icon(Icons.circle, color: Colors.red)) :
-                  GestureDetector(
-                    onTap: () {
-                      goToUserPostsScreen(userId, name);
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: CachedNetworkImageProvider(userProfileImage),
-                    ),
-                  ),
+                  leading: readStatus == false ?
+                  const Icon(Icons.notifications_active_outlined, color: Colors.red) : const Icon(Icons.notifications_none, color: Colors.green),
                   subtitle: Text(
                     DateFormat("dd MMM, yyyy - hh:mm a").format(timestamp).toString(),
                     overflow: TextOverflow.ellipsis,
@@ -227,12 +206,6 @@ class _ActivityFeedState extends State<ActivityFeed> {
             )
         )
     );
-  }
-
-  void goToUserPostsScreen(String userId, String name) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) =>
-        UsersSpecificPostsScreen(userId: userId, userName: name,
-        )));
   }
 
   @override
