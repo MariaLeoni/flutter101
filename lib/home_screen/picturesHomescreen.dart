@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/Activity%20Feed/feed.dart';
+import 'package:sharedstudent1/Activity%20Feed/activityFeedScreen.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/notification/server.dart';

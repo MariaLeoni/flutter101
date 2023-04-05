@@ -33,36 +33,44 @@ class _ActivityFeedState extends State<ActivityFeed> {
 
   handNavigation(FeedPost feed, Post post, PostType postType){
     if (feed.type == 'likePost'){
-      if (postType == PostType.image){
-        Navigator.push(context, MaterialPageRoute(builder: (_) =>
-            PictureDetailsScreen(img: post.source, userImg: post.userImage, name: post.userName,
-              date: post.createdAt, docId: post.id, userId: post.email,
-              downloads: post.downloads, viewCount: post.viewCount,
-              postId: post.postId, likes: post.likes,
-              viewers: post.viewers, description: post.description,
-            )));
-      }
-      else{
-        Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
-          vid:post.source, userImg: post.userImage, name: post.userName,
-          date: post.createdAt, docId: post.id, userId: post.email,
-          downloads: post.downloads, description: post.description,
-          likes: const [], postId: post.postId,
-        )));
-      }
+      goToPostDetails(postType, post);
     }
     else{
       loadComment(feed, post, postType);
     }
   }
 
-  loadComment(FeedPost feed, Post post, PostType postType) async {
-    var comment = await firestore.collection('comment').where("comment", isEqualTo: feed.commentData).get();
-    navigateToComment(comment);
+  void goToPostDetails(PostType postType, Post post) {
+    if (postType == PostType.image){
+      Navigator.push(context, MaterialPageRoute(builder: (_) =>
+          PictureDetailsScreen(img: post.source, userImg: post.userImage, name: post.userName,
+            date: post.createdAt, docId: post.id, userId: post.email,
+            downloads: post.downloads, viewCount: post.viewCount,
+            postId: post.postId, likes: post.likes,
+            viewers: post.viewers, description: post.description,
+          )));
+    }
+    else{
+      Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+        vid:post.source, userImg: post.userImage, name: post.userName,
+        date: post.createdAt, docId: post.id, userId: post.email,
+        downloads: post.downloads, description: post.description,
+        likes: const [], postId: post.postId,
+      )));
+    }
   }
 
-  void navigateToComment(QuerySnapshot<Map<String, dynamic>> comment) {
+  loadComment(FeedPost feed, Post post, PostType postType) async {
+    var comment = await firestore.collection('comment')
+        .where("comment", isEqualTo: feed.commentData).get();
+    navigateToComment(comment, postType, post);
+  }
+
+  void navigateToComment(QuerySnapshot<Map<String, dynamic>> comment,
+      PostType postType, Post post) {
     CommentItem commentItem = CommentItem.fromDocument(comment.docs.first);
+
+    goToPostDetails(postType, post);
 
     Navigator.push(context, MaterialPageRoute(
         builder: (_) => SubComment(commentItem: commentItem)));
