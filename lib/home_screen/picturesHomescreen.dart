@@ -11,7 +11,7 @@ import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:uuid/uuid.dart';
-import '../chat/chatHomeScreen.dart';
+import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
@@ -131,7 +131,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
      final query = collection.where("Read Status", isEqualTo: false);
      final countQuery = query.count();
      final AggregateQuerySnapshot snapshot = await countQuery.get();
-     debugPrint("Count: ${snapshot.count}");
      activityCount = snapshot.count;
    }
 
@@ -300,13 +299,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   },
                   icon: const Icon(Icons.person_search),
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //      Navigator.push(context,
-                //        MaterialPageRoute(builder: (_) => ProfileScreen(),),);
-                //   },
-                //   icon: const Icon(Icons.person),
-                // ),
                 IconButton(
                   onPressed: () {
                     if (widget.user == null){
@@ -322,7 +314,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 IconButton(
                   onPressed: () {
                     Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const ChatHomeScreen(),),);
+                      MaterialPageRoute(builder: (_) => const SocialHomeScreen(),),);
                   },
                   icon: const Icon(Icons.chat_bubble),
                 ),

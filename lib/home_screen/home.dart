@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
-import '../chat/chatHomeScreen.dart';
+import '../chat/socialHomeScreen.dart';
 import 'picturesHomescreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -93,7 +93,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
               IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => const ChatHomeScreen(),),);
+                    builder: (_) => const SocialHomeScreen(),),);
                 },
                 icon: const Icon(Icons.chat_bubble),
               )

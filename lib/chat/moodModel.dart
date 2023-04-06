@@ -3,7 +3,9 @@ import 'constants.dart';
 
 class MoodModel {
   String idFrom;
-  String timestamp;
+  String? photoUrl;
+  String displayName;
+  Timestamp timestamp;
   String content;
   String type;
   List<String> like;
@@ -18,7 +20,9 @@ class MoodModel {
     required this.like,
     required this.angry,
     required this.loveIt,
-    required this.sad
+    required this.sad,
+    required this.photoUrl,
+    required this.displayName
   });
 
   Map<String, dynamic> toJson() {
@@ -31,21 +35,28 @@ class MoodModel {
       FirestoreConstants.angry: angry,
       FirestoreConstants.loveIt: loveIt,
       FirestoreConstants.sad: sad,
+      FirestoreConstants.photoUrl: photoUrl,
+      FirestoreConstants.displayName: displayName,
     };
   }
 
   factory MoodModel.fromDocument(DocumentSnapshot documentSnapshot) {
     String idFrom = documentSnapshot.get(FirestoreConstants.idFrom);
-    String timestamp = documentSnapshot.get(FirestoreConstants.timestamp);
+    Timestamp timestamp = documentSnapshot.get(FirestoreConstants.timestamp);
     String content = documentSnapshot.get(FirestoreConstants.content);
     String type = documentSnapshot.get(FirestoreConstants.type);
     List<String> like = List.from(documentSnapshot.get(FirestoreConstants.like));
     List<String> angry = List.from(documentSnapshot.get(FirestoreConstants.angry));
     List<String> loveIt = List.from(documentSnapshot.get(FirestoreConstants.loveIt));
     List<String> sad = List.from(documentSnapshot.get(FirestoreConstants.sad));
+    String photoUrl = documentSnapshot.toString().contains(FirestoreConstants.photoUrl) ?
+    documentSnapshot.get(FirestoreConstants.photoUrl) : "";
+    String displayName = documentSnapshot.toString().contains(FirestoreConstants.displayName) ?
+    documentSnapshot.get(FirestoreConstants.displayName) : "user";
 
     return MoodModel(idFrom: idFrom, timestamp: timestamp, content: content,
-        type: type, like: like, angry: angry, loveIt: loveIt, sad: sad);
+        type: type, like: like, angry: angry, loveIt: loveIt, sad: sad,
+        photoUrl: photoUrl, displayName: displayName);
   }
 
   @override

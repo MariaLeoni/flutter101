@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Search.dart';
-import '../chat/chatHomeScreen.dart';
+import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import 'home.dart';
 import 'post.dart';
@@ -150,7 +150,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               IconButton(
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => const ChatHomeScreen()));
+                    builder: (_) => const SocialHomeScreen()));
                 },
                 icon: const Icon(Icons.chat_bubble),
               ),
