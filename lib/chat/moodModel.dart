@@ -50,7 +50,7 @@ class MoodModel {
     List<String> loveIt = List.from(documentSnapshot.get(FirestoreConstants.loveIt));
     List<String> sad = List.from(documentSnapshot.get(FirestoreConstants.sad));
     String photoUrl = documentSnapshot.toString().contains(FirestoreConstants.photoUrl) ?
-    documentSnapshot.get(FirestoreConstants.photoUrl) : "";
+    documentSnapshot.get(FirestoreConstants.photoUrl) : null;
     String displayName = documentSnapshot.toString().contains(FirestoreConstants.displayName) ?
     documentSnapshot.get(FirestoreConstants.displayName) : "user";
 

@@ -29,6 +29,9 @@ class MoodScreenState extends State<MoodScreen> {
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 
+  final PageController _pageController = PageController(initialPage: 0,
+      keepPage: true);
+
   File? imageFile;
   bool isLoading = false;
   bool isShowSticker = false;
@@ -38,7 +41,6 @@ class MoodScreenState extends State<MoodScreen> {
 
   final TextEditingController textEditingController = TextEditingController();
   late ChatProvider chatProvider;
-  List<QueryDocumentSnapshot> documents = [];
 
   @override
   void initState() {
@@ -289,14 +291,15 @@ class MoodScreenState extends State<MoodScreen> {
                 return const Center(child: CircularProgressIndicator(),);
               }
               if (snapshot.hasData) {
-                documents = snapshot.data!.docs;
-                if (documents.isNotEmpty) {
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: documents.length,
-                    itemBuilder: (context, index) => buildItem(context, documents[index]),
-                    separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
+                if (snapshot.data!.docs.isNotEmpty) {
+                  return PageView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    controller: _pageController,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return buildItem(context, snapshot.data!.docs[index]);
+                    },
                   );
                 }
                 return const Center(

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/chat/moodModel.dart';
 import '../misc/global.dart';
 import '../search_post/users_specifics_page.dart';
+import '../widgets/ssbadge.dart';
 import 'chatWidgets.dart';
 
 class MoodWidget extends StatefulWidget {
@@ -20,11 +21,68 @@ class MoodWidget extends StatefulWidget {
 class MoodWidgetState extends State<MoodWidget> {
   Size? size;
 
+  late Widget likeBadgeView;
+  late Widget angryBadgeView;
+  late Widget loveItBadgeView;
+  late Widget sadBadgeView;
+
   @override
   void initState() {
     super.initState();
 
     size = MediaQuery.of(widget.context).size;
+
+    buildActionViews();
+  }
+
+  buildActionViews(){
+    likeBadgeView = SSBadge(top: 0, right: 2,
+        value: widget.moodModel.like.length.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.thumb_up_alt_outlined), color: Colors.green,
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => handleLikes()));
+        }));
+
+    loveItBadgeView = SSBadge(top: 0, right: 2,
+        value: widget.moodModel.loveIt.length.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.favorite_border), color: Colors.red,
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => handleLoves()));
+        }));
+
+    sadBadgeView = SSBadge(top: 0, right: 2,
+        value: widget.moodModel.sad.length.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.sentiment_dissatisfied), color: Colors.indigo,
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => handleSadness()));
+        }));
+
+    angryBadgeView = SSBadge(top: 0, right: 2,
+        value: widget.moodModel.angry.length.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.sentiment_very_dissatisfied), color: Colors.purple,
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => handleAnger()));
+        }));
+  }
+
+  handleLikes() async {
+
+  }
+
+  handleLoves() async {
+
+  }
+
+  handleSadness() async {
+
+  }
+
+  handleAnger() async {
+
   }
 
   @override
@@ -49,8 +107,7 @@ class MoodWidgetState extends State<MoodWidget> {
                 widget.moodModel.type == PostType.video.name ? Container(
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_10, top: Sizes.dimen_10),
-                    child:
-                    AspectRatio(aspectRatio: 4/3,
+                    child: AspectRatio(aspectRatio: 4/3,
                       child: BetterPlayer.network(widget.moodModel.content,
                         betterPlayerConfiguration: const BetterPlayerConfiguration(
                           aspectRatio: 4/3,
@@ -62,16 +119,19 @@ class MoodWidgetState extends State<MoodWidget> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10), // Image border
                   child: SizedBox.fromSize(
-                      size: Size(
-                          500.0, size == null ? 400 : size!.height * 0.75),
+                      size: Size(500.0, size == null ? 400 : size!.height * 0.5),
                       // Image radius
                       child: Image.network(widget.moodModel.content, fit: BoxFit.cover)
                   ),
-                ) : messageBubble(chatContent: widget.moodModel.content,
-                  color: AppColors.spaceLight,
-                  textColor: AppColors.white,
-                  margin: const EdgeInsets.only(right: Sizes.dimen_10),),
+                ) :
+                messageBubble(chatContent: widget.moodModel.content,
+                  color: AppColors.spaceLight, textColor: AppColors.white,
+                  margin: const EdgeInsets.only(right: Sizes.dimen_10), width: 500.0),
                 const SizedBox(height: 12.0,),
+                Row(children: [ likeBadgeView!, loveItBadgeView!,
+                  angryBadgeView, sadBadgeView
+                ],),
+                const SizedBox(height: 15.0,),
                 Row(children: [
                   GestureDetector(
                       onTap: () {
@@ -81,7 +141,7 @@ class MoodWidgetState extends State<MoodWidget> {
                               userName: widget.moodModel.displayName,
                               userImage: widget.moodModel.photoUrl,)));
                       },
-                      child: widget.moodModel.photoUrl == null ? Image.asset("assets/images/wolf.webp") : CircleAvatar(
+                      child: widget.moodModel.photoUrl == null ? Image.asset("assets/images/wolf.webp", width: 50, height: 50,) : CircleAvatar(
                         radius: 35,
                         backgroundImage: NetworkImage(widget.moodModel.photoUrl!,),
                       )

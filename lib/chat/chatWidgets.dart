@@ -80,15 +80,13 @@ Widget chatVideoThumbnail({required String videoSrc}) {
   );
 }
 
-Widget messageBubble(
-    {required String chatContent,
+Widget messageBubble({required String chatContent,
       required EdgeInsetsGeometry? margin,
-      Color? color,
-      Color? textColor}) {
+      Color? color, Color? textColor, double? width}) {
   return Container(
     padding: const EdgeInsets.all(Sizes.dimen_10),
     margin: margin,
-    width: Sizes.dimen_200,
+    width: width ?? Sizes.dimen_200,
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(Sizes.dimen_10),
