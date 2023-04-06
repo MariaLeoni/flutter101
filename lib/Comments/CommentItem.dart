@@ -22,20 +22,29 @@ class CommentItem extends StatelessWidget {
   String? userId;
   String? comment;
   String? commentId;
-  String? commenterId;
   String? postImage;
   String? postId;
-  String? image;
+  String? Image;
+  String? myImage;
+  String? myName;
   Timestamp? timestamp;
-  String activityId = const Uuid().v4();
+  String ActivityId = const Uuid().v4();
   List<String>? likes = List.empty(growable: true);
   List<String>? subCommentsIds = List.empty(growable: true);
-  String? originalCommentId;
+  String? OriginalCommentId;
+  String? OriginalCommenterId;
+  String? postdescription;
+ List<String>? postlikes = List.empty(growable:true);
+  int? postdownloads;
+  String? postOwnername;
+  String? postOwnerId;
+  String? postOwnerImage;
 
   CommentItem({super.key, this.userName, this.userId,
     this.comment, this.timestamp, this.userImage,
-    this.commentId, this.commenterId, required this.postId,
-    this.image, this.subCommentsIds, this.likes
+    this.commentId, this.OriginalCommentId,this.OriginalCommenterId,
+     required this.postId,
+    this.Image, this.subCommentsIds, this.likes, this.postdescription, this.postlikes,this.postdownloads,this.postOwnername, this.postOwnerId, this.postOwnerImage
   });
 
   handleLikeComment() {
@@ -53,16 +62,36 @@ class CommentItem extends StatelessWidget {
     }).then((value) {
       likesCount = (likes?.length ?? 0);
     });
+   AddLike();
   }
+AddLike(){
+    bool isNotPostOwner = _auth.currentUser!.uid != userId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(userId)
+          .collection('FeedItems').doc(ActivityId)
+          .set({
+        "type": "like Comment",
+        "name": myName,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": myImage,
+        "postId": postId,
+        "Activity Id": ActivityId,
+        "Image": Image,
+        "timestamp": DateTime.now(),
+        "commentData": null,
+        "downloads": postdownloads,
+        "description": postdescription,
+        "likes": postlikes,
+        "postOwnerId": postOwnerId,
+        "postOwnerImage": postOwnerImage,
+        "postOwnername": postOwnername,
+        "likes": postlikes,
+        "Read Status": false,
+      });
+    }
 
-  // void readUserInfo() async {
-  //   FirebaseFirestore.instance.collection('users').doc(myUserId)
-  //       .get().then<dynamic>((DocumentSnapshot snapshot) {
-  //     myImage = snapshot.get('userImage');
-  //     myName = snapshot.get('name');
-  //     id = snapshot.get('id');
-  //   });
-  // }
+}
+
   // addCommentTaggingToActivityFeed() {
   //   bool isNotPostOwner = _auth.currentUser!.uid != commenterId;
   //   if (isNotPostOwner) {
@@ -109,6 +138,21 @@ class CommentItem extends StatelessWidget {
           .from(doc.get('likes')) : List.empty(growable: true),
       postId: doc.data().toString().contains('postId') ? doc.get(
           'postId') : '',
+      Image: doc.data().toString().contains('Image') ? doc.get(
+          'Image') : '',
+      postdescription: doc.data().toString().contains('description') ? doc.get(
+          'description') : '',
+      // postdownloads: doc.data().toString().contains('downloads') ? doc.get(
+      //     'downloads') : '',
+      postlikes: doc.data().toString().contains('postlikes') ? List
+          .from(doc.get('postlikes')) : List.empty(growable: true),
+      postOwnerId: doc.data().toString().contains('postOwnerId') ? doc.get(
+          'postOwnerId') : '',
+      postOwnerImage: doc.data().toString().contains('postOwnerImage') ? doc.get(
+          'postOwnerImage') : '',
+      postOwnername: doc.data().toString().contains('postOwnername') ? doc.get(
+          'postOwnername') : '',
+
     );
   }
 
@@ -117,7 +161,8 @@ class CommentItem extends StatelessWidget {
       userId: userId, comment: comment, timestamp: timestamp,
       userImage: userImage, commentId: commentId,
       subCommentsIds: subCommentsIds, likes: likes,
-      postId: postId, image: image, commenterId: commenterId,
+      postId: postId, Image: Image, postdescription: postdescription, postdownloads: postdownloads,
+      postlikes: postlikes, postOwnerId: postOwnerId, postOwnerImage: postOwnerImage, postOwnername: postOwnername,
     );
 
     Navigator.push(context, MaterialPageRoute(
@@ -128,6 +173,14 @@ class CommentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     likerUserId = _auth.currentUser?.uid;
     likesCount = likes?.length ?? 0;
+
+
+      FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid)
+          .get().then<dynamic>((DocumentSnapshot snapshot) {
+        myImage = snapshot.get('userImage');
+        myName = snapshot.get('name');
+
+      });
 
     var likeBadgeView = SSBadge(top: 0, right: 2,
         value: likesCount.toString(),

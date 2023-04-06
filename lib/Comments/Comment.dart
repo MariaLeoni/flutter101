@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
 import '../notification/notification.dart';
@@ -28,6 +29,7 @@ class Comment extends StatefulWidget {
 
 class CommentState extends State<Comment> {
   String? userId;
+  String? commenterId;
   String? myImage;
   String? myName;
   String? id;
@@ -42,7 +44,8 @@ class CommentState extends State<Comment> {
   final firebaseFirestore = FirebaseFirestore.instance;
   TextEditingController commentController = TextEditingController();
   List<String>? ids = List.empty(growable: true);
-
+  List<String>? likes = List.empty(growable: true);
+  int likesCount = 0;
   loadAndBuildComments(){
     final firebaseCollection = FirebaseFirestore.instance.collection('comment');
 
@@ -92,6 +95,51 @@ class CommentState extends State<Comment> {
     }
   }
 
+  // handleLikeComment() {
+  //   if (likes!= null && likes!.contains(_auth.currentUser!.uid)) {
+  //     Fluttertoast.showToast(msg: "You unliked this comment!");
+  //     likes!.remove(_auth.currentUser!.uid);
+  //   }
+  //   else {
+  //     Fluttertoast.showToast(msg: "You liked this comment!");
+  //     likes!.add(_auth.currentUser!.uid);
+  //   }
+  //
+  //   FirebaseFirestore.instance.collection('comment').doc(commentId)
+  //       .update({'likes': likes!,
+  //   }).then((value) {
+  //     likesCount = (likes?.length ?? 0);
+  //   });
+  //   AddLike();
+  // }
+  //
+  // AddLike(){
+  //   bool isNotPostOwner = _auth.currentUser!.uid != commenterId;
+  //   if (isNotPostOwner) {
+  //     FirebaseFirestore.instance.collection('Activity Feed').doc(commenterId)
+  //         .collection('FeedItems').doc(activityId)
+  //         .set({
+  //       "type": "like Comment main",
+  //       "name": myName,
+  //       "userId": _auth.currentUser!.uid,
+  //       "userProfileImage": myImage,
+  //       "postId": widget.postId,
+  //       "Activity Id": activityId,
+  //       "Image": widget.image,
+  //       "timestamp": DateTime.now(),
+  //       "commentData": null,
+  //       "downloads": widget.downloads,
+  //       "description": widget.description,
+  //       "likes": widget.likes,
+  //       "postOwnerId": widget.userId,
+  //       "postOwnerImage": widget.postOwnerImg,
+  //       "postOwnername": widget.postOwnername,
+  //       "Read Status": false,
+  //
+  //     });
+  //   }
+  //
+  // }
   addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
@@ -132,6 +180,12 @@ class CommentState extends State<Comment> {
       'subCommentIds': <String>[],
       'likes': <String>[],
       'Image': widget.image,
+      "description": widget.description,
+      "downloads": widget.downloads,
+      "postlikes": widget.likes,
+      "postOwnerId": widget.userId,
+      "postOwnerImage": widget.postOwnerImg,
+      "postOwnername": widget.postOwnername,
     });
 
     if (commentController.text.startsWith('@')) {
@@ -179,13 +233,21 @@ class CommentState extends State<Comment> {
       id = snapshot.get('id');
     });
   }
+  void commentLikes() async {
+    FirebaseFirestore.instance.collection('comment').doc(commentId).get()
+        .then<dynamic>((DocumentSnapshot snapshot) async {
+      likes = List.from(snapshot.get('likes'));
+      commenterId = snapshot.get('commenterId');
 
+    });
+  }
   @override
   void initState() {
     super.initState();
     myUserId = _auth.currentUser!.uid;
     readUserInfo();
     getOPToken();
+    commentLikes();
     notificationManager = NotificationManager();
     notificationManager?.initServer();
   }

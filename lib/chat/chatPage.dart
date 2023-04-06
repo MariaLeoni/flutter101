@@ -4,17 +4,21 @@ import 'package:sharedstudent1/widgets/message_tile.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 
 import 'DatabasService.dart';
+import 'chatWidgets.dart';
 import 'group_info.dart';
 
 class ChatPage extends StatefulWidget {
   final String groupId;
   final String groupName;
   final String userName;
+  final String userImage;
   const ChatPage(
       {Key? key,
         required this.groupId,
         required this.groupName,
-        required this.userName})
+        required this.userName,
+        required this.userImage,
+      })
       : super(key: key);
 
   @override
@@ -75,20 +79,32 @@ class _ChatPageState extends State<ChatPage> {
             alignment: Alignment.bottomCenter,
             width: MediaQuery.of(context).size.width,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               width: MediaQuery.of(context).size.width,
-              color: Colors.grey[700],
+              color: Colors.transparent,
               child: Row(children: [
-                Expanded(
-                    child: TextFormField(
-                      controller: messageController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        hintText: "Send a message...",
-                        hintStyle: TextStyle(color: Colors.white, fontSize: 16),
-                        border: InputBorder.none,
-                      ),
-                    )),
+                Flexible(child: TextField(
+                  textInputAction: TextInputAction.send,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: messageController,
+                  decoration: const InputDecoration.collapsed(
+                      hintText: 'Type here...',
+                      hintStyle: TextStyle(color: AppColors.white)),
+                  style: const TextStyle(backgroundColor: AppColors.greyColor,
+                      color: AppColors.white),
+                )),
+                //
+                // Expanded(
+                //     child: TextFormField(
+                //       controller: messageController,
+                //       style: const TextStyle(color: Colors.white),
+                //       decoration: const InputDecoration(
+                //         hintText: "Send a message...",
+                //         hintStyle: TextStyle(color: Colors.white, fontSize: 16),
+                //         border: InputBorder.none,
+                //       ),
+                //     )),
                 const SizedBox(
                   width: 12,
                 ),
@@ -130,7 +146,9 @@ class _ChatPageState extends State<ChatPage> {
                 message: snapshot.data.docs[index]['message'],
                 sender: snapshot.data.docs[index]['sender'],
                 sentByMe: widget.userName ==
-                    snapshot.data.docs[index]['sender']);
+                    snapshot.data.docs[index]['sender'],
+              senderImage: snapshot.data.docs[index]['senderImg']
+            );
           },
         )
             : Container();
@@ -144,6 +162,7 @@ class _ChatPageState extends State<ChatPage> {
         "message": messageController.text,
         "sender": widget.userName,
         "time": DateTime.now().millisecondsSinceEpoch,
+        "senderImg": widget.userImage,
       };
 
       DatabaseService().sendMessage(widget.groupId, chatMessageMap);

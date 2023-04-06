@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/Activity%20Feed/activityFeedScreen.dart';
+import 'package:sharedstudent1/Activity%20Feed/feed.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/notification/server.dart';
@@ -11,7 +11,6 @@ import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:uuid/uuid.dart';
-import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
@@ -50,22 +49,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
-  updateActivityFeed() async{
-    var feedItems = firestore.collectionGroup('FeedItems').where('type', isEqualTo: "comment reply");
-    feedItems.get().then((feeds) {
-      feeds.docs.forEach((feed) {
-        feed.reference.update({'type': "commentReply" }).then((value) =>
-            print("FeedItem Id ${feed.id} updated")
-        );
-      });
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    //updateActivityFeed();
-
      getAllProducts();
 
      notificationManager = NotificationManager();
@@ -118,12 +104,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
       List<String>? likes, List<String>? viewers,String description) {
 
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
-        PictureDetailsScreen(img: img, userImg: userImg, name: name,
+        OwnerDetails(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
           viewCount: viewCount, postId: postId, likes: likes, viewers: viewers,
           description: description,
         )));
   }
+
 
    getAllProducts() async {
      final collection = firestore.collection("Activity Feed")
@@ -131,6 +118,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
      final query = collection.where("Read Status", isEqualTo: false);
      final countQuery = query.count();
      final AggregateQuerySnapshot snapshot = await countQuery.get();
+     debugPrint("Count: ${snapshot.count}");
      activityCount = snapshot.count;
    }
 
@@ -220,7 +208,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     });
 
     goToDetails(img, userImg, name, date, docId, userId, downloads, viewCount,
-        postId, likes, viewers, description);
+        postId, likes,viewers, description);
   }
 
   void updateInterests(Map<String, List<String>?> interests) {
@@ -301,6 +289,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 ),
                 IconButton(
                   onPressed: () {
+                     Navigator.push(context,
+                       MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                  },
+                  icon: const Icon(Icons.person),
+                ),
+                IconButton(
+                  onPressed: () {
                     if (widget.user == null){
                       Navigator.push(context, MaterialPageRoute(builder: (_) =>
                           VideoHomeScreen.forCategory(category: widget.category,),),);
@@ -310,13 +305,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     }
                   },
                   icon: const Icon(Icons.play_circle_outlined),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const SocialHomeScreen(),),);
-                  },
-                  icon: const Icon(Icons.chat_bubble),
                 ),
                 activityBadgeView,
               ]
@@ -348,8 +336,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
                         return listViewWidget(post.id, post.source, post.userImage,
                             post.userName, post.createdAt, post.email,
-                            post.downloads, post.viewCount, post.postId, post.likes,
-                            post.viewers, post.description);
+                            post.downloads, post.viewCount, post.postId, post.likes, post.viewers, post.description);
                       },
                     );
                   }

@@ -15,7 +15,7 @@ import 'package:sharedstudent1/Comments/Comment.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 
 
-class PictureDetailsScreen extends StatefulWidget {
+class OwnerDetails extends StatefulWidget {
   String? likeruserId;
   String? img;
   String? userImg;
@@ -32,16 +32,16 @@ class PictureDetailsScreen extends StatefulWidget {
   List<String>? viewers = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
 
-  PictureDetailsScreen({super.key, this.likeruserId, this.img, this.userImg, this.name, this.date,
+  OwnerDetails({super.key, this.likeruserId, this.img, this.userImg, this.name, this.date,
     this.docId, this.userId, this.downloads, this.viewCount, this.postId, this.likes,
     this.viewers, this.description, this.isRead
   });
 
   @override
-  State<PictureDetailsScreen> createState() => _PictureDetailsScreenState();
+  State<OwnerDetails> createState() => _OwnerDetailsState();
 }
 
-class _PictureDetailsScreenState extends State<PictureDetailsScreen> with TickerProviderStateMixin {
+class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMixin {
 
   int? total;
   int likesCount = 0;
@@ -70,7 +70,6 @@ class _PictureDetailsScreenState extends State<PictureDetailsScreen> with Ticker
     }
     });
   }
-
   void getDataFromDatabase3() async {
     await FirebaseFirestore.instance.collection("Activity Feed")
         .doc(widget.docId).collection('Feed Count').doc(widget.docId)
@@ -119,7 +118,7 @@ class _PictureDetailsScreenState extends State<PictureDetailsScreen> with Ticker
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
           .collection('FeedItems').doc(activityId)
           .set({
-        "type": "likePost",
+        "type": "like",
         "name": name,
         "userId": _auth.currentUser!.uid,
         "userProfileImage": image,
@@ -175,6 +174,7 @@ class _PictureDetailsScreenState extends State<PictureDetailsScreen> with Ticker
       addLikeToActivityFeed();
       sendNotification();
     }
+
 
     FirebaseFirestore.instance.collection('wallpaper').doc(widget.postId)
         .update({'likes': widget.likes!,
@@ -281,7 +281,7 @@ class _PictureDetailsScreenState extends State<PictureDetailsScreen> with Ticker
                           FirebaseFirestore.instance.collection('wallpaper')
                               .doc(widget.postId).update({'downloads': total,
                           }).then((value) {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> const HomeScreen()));
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
                           });
                         } on PlatformException catch (error)
                         {
@@ -327,7 +327,7 @@ class _PictureDetailsScreenState extends State<PictureDetailsScreen> with Ticker
                       icon: const Icon(Icons.share, color: Colors.white),
                     ),
                     IconButton(onPressed: () async{
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                     }, icon: const Icon(Icons.home, color: Colors.white))
                   ],
                 ),
@@ -342,7 +342,7 @@ class _PictureDetailsScreenState extends State<PictureDetailsScreen> with Ticker
                           FirebaseFirestore.instance.collection('wallpaper')
                               .doc(widget.postId).delete().then((value) {
                             Fluttertoast.showToast(msg: 'Your post has been deleted');
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                           });
                         }
                     )

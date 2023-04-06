@@ -20,6 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   QuerySnapshot? searchSnapshot;
   bool hasUserSearched = false;
   String userName = "";
+  String? userImage;
   bool isJoined = false;
   User? user;
 Future <QuerySnapshot>? GroupDocumentslist;
@@ -37,6 +38,7 @@ String UserGroupText = '';
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
         userName = snapshot.data()!["name"];
+        userImage = snapshot.data()!["userImage"];
        // image = snapshot.data()!["userImage"];
 
       });
@@ -284,7 +286,8 @@ String UserGroupText = '';
                   ChatPage(
                       groupId: model!.groupId!,
                       groupName: model!.groupName!,
-                      userName: userName));
+                      userName: userName,
+                  userImage: userImage!,));
             });
           } else {
             setState(() {
