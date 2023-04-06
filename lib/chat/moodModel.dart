@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'constants.dart';
 
 class MoodModel {
+  String moodId;
   String idFrom;
   String? photoUrl;
   String displayName;
@@ -22,7 +23,8 @@ class MoodModel {
     required this.loveIt,
     required this.sad,
     required this.photoUrl,
-    required this.displayName
+    required this.displayName,
+    required this.moodId,
   });
 
   Map<String, dynamic> toJson() {
@@ -41,6 +43,7 @@ class MoodModel {
   }
 
   factory MoodModel.fromDocument(DocumentSnapshot documentSnapshot) {
+    String moodId = documentSnapshot.id;
     String idFrom = documentSnapshot.get(FirestoreConstants.idFrom);
     Timestamp timestamp = documentSnapshot.get(FirestoreConstants.timestamp);
     String content = documentSnapshot.get(FirestoreConstants.content);
@@ -56,7 +59,7 @@ class MoodModel {
 
     return MoodModel(idFrom: idFrom, timestamp: timestamp, content: content,
         type: type, like: like, angry: angry, loveIt: loveIt, sad: sad,
-        photoUrl: photoUrl, displayName: displayName);
+        photoUrl: photoUrl, displayName: displayName, moodId: moodId);
   }
 
   @override

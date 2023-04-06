@@ -1,6 +1,9 @@
 import 'package:better_player/better_player.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sharedstudent1/chat/constants.dart';
 import 'package:sharedstudent1/chat/moodModel.dart';
 import '../misc/global.dart';
 import '../search_post/users_specifics_page.dart';
@@ -20,6 +23,9 @@ class MoodWidget extends StatefulWidget {
 
 class MoodWidgetState extends State<MoodWidget> {
   Size? size;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore fireStore = FirebaseFirestore.instance;
+  String? myUserId = "";
 
   late Widget likeBadgeView;
   late Widget angryBadgeView;
@@ -31,62 +37,114 @@ class MoodWidgetState extends State<MoodWidget> {
     super.initState();
 
     size = MediaQuery.of(widget.context).size;
-
-    buildActionViews();
+    myUserId = _auth.currentUser?.uid;
   }
 
   buildActionViews(){
     likeBadgeView = SSBadge(top: 0, right: 2,
         value: widget.moodModel.like.length.toString(),
         child: IconButton(
-            icon: const Icon(Icons.thumb_up_alt_outlined), color: Colors.green,
+            icon: Icon(widget.moodModel.like.contains(myUserId) ? Icons.thumb_up :
+            Icons.thumb_up_alt_outlined), color: Colors.green,
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => handleLikes()));
+              handleLikes();
         }));
 
     loveItBadgeView = SSBadge(top: 0, right: 2,
         value: widget.moodModel.loveIt.length.toString(),
         child: IconButton(
-            icon: const Icon(Icons.favorite_border), color: Colors.red,
+            icon: Icon(widget.moodModel.loveIt.contains(myUserId) ? Icons.favorite_outlined :
+            Icons.favorite_border), color: Colors.red,
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => handleLoves()));
+              handleLoves();
         }));
 
     sadBadgeView = SSBadge(top: 0, right: 2,
         value: widget.moodModel.sad.length.toString(),
         child: IconButton(
-            icon: const Icon(Icons.sentiment_dissatisfied), color: Colors.indigo,
+            icon: Icon(widget.moodModel.sad.contains(myUserId) ? Icons.sentiment_dissatisfied_outlined :
+            Icons.sentiment_dissatisfied), color: Colors.indigo,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => handleSadness()));
+          handleSadness();
         }));
 
     angryBadgeView = SSBadge(top: 0, right: 2,
         value: widget.moodModel.angry.length.toString(),
         child: IconButton(
-            icon: const Icon(Icons.sentiment_very_dissatisfied), color: Colors.purple,
+            icon: Icon(widget.moodModel.angry.contains(myUserId) ? Icons.sentiment_very_dissatisfied_outlined :
+            Icons.sentiment_very_dissatisfied), color: Colors.purple,
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => handleAnger()));
+            handleAnger();
         }));
   }
 
-  handleLikes() async {
+  handleLikes() {
+    if (widget.moodModel.like.contains(myUserId)) {
+      widget.moodModel.like.remove(myUserId);
+    }
+    else {
+      widget.moodModel.like.add(myUserId!);
+    }
 
+    fireStore.collection(FirestoreConstants.pathMoodCollection).doc(widget.moodModel.moodId)
+        .update({FirestoreConstants.like: widget.moodModel.like,});
+
+    setState(() {
+      widget.moodModel.like;
+    });
   }
 
-  handleLoves() async {
+  handleLoves() {
+    if (widget.moodModel.loveIt.contains(myUserId)) {
+      widget.moodModel.loveIt.remove(myUserId);
+    }
+    else {
+      widget.moodModel.loveIt.add(myUserId!);
+    }
 
+    fireStore.collection(FirestoreConstants.pathMoodCollection).doc(widget.moodModel.moodId)
+        .update({FirestoreConstants.loveIt: widget.moodModel.loveIt,});
+
+    setState(() {
+      widget.moodModel.loveIt;
+    });
   }
 
-  handleSadness() async {
+  handleSadness() {
+    if (widget.moodModel.sad.contains(myUserId)) {
+      widget.moodModel.sad.remove(myUserId);
+    }
+    else {
+      widget.moodModel.sad.add(myUserId!);
+    }
 
+    fireStore.collection(FirestoreConstants.pathMoodCollection).doc(widget.moodModel.moodId)
+        .update({FirestoreConstants.sad: widget.moodModel.sad,});
+    setState(() {
+      widget.moodModel.sad;
+    });
   }
 
-  handleAnger() async {
+  handleAnger() {
+    if (widget.moodModel.angry.contains(myUserId)) {
+      widget.moodModel.angry.remove(myUserId);
+    }
+    else {
+      widget.moodModel.angry.add(myUserId!);
+    }
 
+    fireStore.collection(FirestoreConstants.pathMoodCollection).doc(widget.moodModel.moodId)
+        .update({FirestoreConstants.angry: widget.moodModel.angry,});
+
+    setState(() {
+      widget.moodModel.angry;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    buildActionViews();
+
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -128,7 +186,7 @@ class MoodWidgetState extends State<MoodWidget> {
                   color: AppColors.spaceLight, textColor: AppColors.white,
                   margin: const EdgeInsets.only(right: Sizes.dimen_10), width: 500.0),
                 const SizedBox(height: 12.0,),
-                Row(children: [ likeBadgeView!, loveItBadgeView!,
+                Row(children: [ likeBadgeView, loveItBadgeView,
                   angryBadgeView, sadBadgeView
                 ],),
                 const SizedBox(height: 15.0,),
