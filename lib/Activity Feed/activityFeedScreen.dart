@@ -42,7 +42,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
   void goToPostDetails(PostType postType, Post post) {
     if (postType == PostType.image){
       Navigator.push(context, MaterialPageRoute(builder: (_) =>
-          PictureDetailsScreen(img: post.source, userImg: post.userImage, name: post.userName,
+          OwnerDetails(img: post.source, userImg: post.userImage, name: post.userName,
             date: post.createdAt, docId: post.id, userId: post.email,
             downloads: post.downloads, viewCount: post.viewCount,
             postId: post.postId, likes: post.likes,
