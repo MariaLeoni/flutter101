@@ -70,7 +70,7 @@ AddLike(){
       FirebaseFirestore.instance.collection('Activity Feed').doc(userId)
           .collection('FeedItems').doc(ActivityId)
           .set({
-        "type": "like Comment",
+        "type": "likeComment",
         "name": myName,
         "userId": _auth.currentUser!.uid,
         "userProfileImage": myImage,

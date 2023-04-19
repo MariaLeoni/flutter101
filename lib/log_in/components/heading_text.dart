@@ -10,6 +10,7 @@ class  HeadText extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return Padding(
+
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 15.0),
       child: Column(
         children: [

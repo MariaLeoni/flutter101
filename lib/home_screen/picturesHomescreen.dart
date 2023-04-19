@@ -242,15 +242,22 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
             direction: Axis.horizontal,
             children: [
               Container(
+                width: 100,
                 margin: const EdgeInsets.all(10.0),
                 child: FloatingActionButton(
                   heroTag: "1",
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.transparent,
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) =>
                         PostUploader(postType: PostType.image,)));
                   },
-                  child: const Icon(Icons.camera_enhance),
+                  child:
+                  ImageIcon(
+                    AssetImage('assets/images/ttent.png'),
+                    size: 600,
+                    color: Colors.red,
+                  ),
+                 // const Icon(Icons.camera_enhance),
                 ),
               ),
             ],
@@ -267,18 +274,23 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   ),
                 ),
               ),
-              title: const Text("Photos", style: TextStyle(color: Colors.white,
+              title: const Text("Camp", style: TextStyle(color: Colors.white,
                   fontWeight: FontWeight.bold),
               ),
               centerTitle: true,
-              leading: GestureDetector(
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()));
-                },
-                child: const Icon(Icons.login_outlined),
-              ),
+              leading: IconButton(
+                                onPressed: () {
+                                  if (widget.user == null){
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                                        VideoHomeScreen.forCategory(category: widget.category,),),);
+                                  }
+                                  else{
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+                                  }
+                                },
+                                icon: const Icon(Icons.play_circle_outlined),
+                              ),
+
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
@@ -294,18 +306,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   },
                   icon: const Icon(Icons.person),
                 ),
-                IconButton(
-                  onPressed: () {
-                    if (widget.user == null){
-                      Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                          VideoHomeScreen.forCategory(category: widget.category,),),);
-                    }
-                    else{
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
-                    }
-                  },
-                  icon: const Icon(Icons.play_circle_outlined),
-                ),
+
                 activityBadgeView,
               ]
           ),

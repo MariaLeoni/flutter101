@@ -10,7 +10,7 @@ class SignUpScreen extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.black54, Colors.black26],
+          colors: [Colors.black12, Colors.black12],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           stops: [0.2, 0.9],

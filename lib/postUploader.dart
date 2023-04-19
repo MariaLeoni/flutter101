@@ -299,8 +299,9 @@ class PostUploaderState extends State<PostUploader> {
     return Scaffold(
         body: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[SliverAppBar(title: Text(title,),
-                centerTitle: true, pinned: true, floating: true,),
+              return <Widget>[SliverAppBar(
+            title: Text(title,),
+                centerTitle: true, ),
               ];
             },
             body: Column(
@@ -309,14 +310,14 @@ class PostUploaderState extends State<PostUploader> {
                   onTap:() {
                     showAlert();
                   },
-                  child: widget.postType == PostType.video ? (videoFile == null ? Image.asset("assets/images/wolf.webp") :
+                  child: widget.postType == PostType.video ? (videoFile == null ? Image.asset("assets/images/Capuss.png") :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
                     child: BetterPlayer.file(videoFile!.path,
                       betterPlayerConfiguration: const BetterPlayerConfiguration(
                         aspectRatio: 16 / 9,
                       ),
                     ),
-                  ))) : (imageFile == null ? Image.asset("assets/images/wolf.webp") :
+                  ))) : (imageFile == null ? Image.asset("assets/images/Capuss.png") :
                   Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
@@ -331,6 +332,8 @@ class PostUploaderState extends State<PostUploader> {
                 OutlinedButton(
                   onPressed: uploadPost,
                   child: const Text("Post"),
+
+
                 )
               ],
             )

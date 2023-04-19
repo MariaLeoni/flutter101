@@ -136,13 +136,13 @@ class _ActivityFeedState extends State<ActivityFeed> {
       activityItemText = " liked your comment: $commentData";
     }
     else if (type == 'comment') {
-      activityItemText = 'replied : $commentData';
+      activityItemText = 'commented: $commentData';
     } else if (type == 'follow') {
       activityItemText = ' started following you';
     } else if (type == 'tag'){
       activityItemText = ' tagged you in a post';
     }else if (type == 'commentReply'){
-      activityItemText = 'replied to your comment: $commentData';
+      activityItemText = 'replied: $commentData';
     }
     else {
       activityItemText = "Update '$type'";

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sharedstudent1/account_check/account_check.dart';
+import 'package:sharedstudent1/sign_up/sign_up_screen.dart';
 import 'package:sharedstudent1/widgets/input_field.dart';
 
 import '../../log_in/login_screen.dart';
@@ -64,7 +65,7 @@ final TextEditingController _emailTextController = TextEditingController(text:''
 
           TextButton(
             onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const SignUpScreen()));
             },
             child: const Center(child: Text("Create Account")),
           ),

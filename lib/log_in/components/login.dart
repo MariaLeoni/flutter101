@@ -28,11 +28,11 @@ class Credentials extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Center(child: CircleAvatar(
-                radius: 130,
+                radius: 125,
                 backgroundColor: Colors.red,
                 child: CircleAvatar(
                   radius: 120,
-                  backgroundImage: AssetImage('assets/images/wolf.webp'),
+                  backgroundImage: AssetImage('assets/images/Capuss.png'),
                 ),
               )),
               const SizedBox(height: 15.0,),

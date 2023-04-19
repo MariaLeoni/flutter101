@@ -22,7 +22,7 @@ class UsersPostWidgetState extends State<UsersPostWidget> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder:(_)  => PictureDetailsScreen(
+        Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
               img: post.source, userImg: post.userImage, name: post.userName,
               date: post.createdAt, docId: post.id, userId: post.email,
               downloads: post.downloads, postId: post.postId, likes: post.likes,
