@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +8,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
+import '../misc/alertbox.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../widgets/button_square.dart';
@@ -184,7 +188,34 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       });
     });
   }
+  showAlertDialog(BuildContext context) {
 
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+              print('tap negative button');
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Description"),
+      content: Text(widget.description!),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     likerUserId = _auth.currentUser?.uid;
@@ -220,19 +251,20 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                   ),
                 ),
                 const SizedBox(height: 30.0,),
-                const Text('Post Information', style: TextStyle(
-                  fontSize: 20.0, color: Colors.white54, fontWeight: FontWeight.bold,),
-                ) ,
-                const SizedBox(height: 30.0,),
+                // const Text('Post Information', style: TextStyle(
+                //   fontSize: 20.0, color: Colors.white54, fontWeight: FontWeight.bold,),
+                // ) ,
+                // const SizedBox(height: 30.0,),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                   child: Row(
                       children:[
                         GestureDetector(
                             onTap:(){
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
                                 userId:widget.docId,
                                 userName:widget.name,
+                                userImage: widget.userImg,
                               )));
                             },
                             child: CircleAvatar(radius:35,
@@ -253,23 +285,35 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                                     style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height:10.0),
-
-                                  SizedBox(width: 250, child: Text(widget.description!,
-                                    maxLines: 3, overflow: TextOverflow.fade,
-                                    textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
-                                        fontWeight: FontWeight.bold),
+                                  GestureDetector(
+                                    onTap: (){
+                                      showAlertDialog(context);
+                                    },
+                                    child: SizedBox(width: 250, child: Text(widget.description!,
+                                      maxLines: 3, overflow: TextOverflow.fade,
+                                      textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                    )
                                   )
-                                  )
+                                  // SizedBox(width: 250, child: Text(widget.description!,
+                                  //   maxLines: 3, overflow: TextOverflow.fade,
+                                  //   textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
+                                  //       fontWeight: FontWeight.bold),
+                                  // )
+                                  // )
                                 ]
                             )
                         )
                       ]
                   ),
                 ),
+        Padding(padding: const EdgeInsets.all(10.0),
+          child:
                 Row(mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      onPressed: () async {
+                    GestureDetector(
+                      onTap: () async {
                         try{
                           var imageId = await ImageDownloader.downloadImage(widget.img!);
                           if(imageId == null) {
@@ -289,7 +333,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         }
 
                       },
-                      icon: const Icon(Icons.download, color:Colors.white,),
+                      child: const Icon(Icons.download, color:Colors.white,),
                     ),
                     Text("${widget.downloads}",
                       style: const TextStyle(
@@ -298,17 +342,8 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        handleLikePost();
-                      },
-                      child: const Icon (
-                        Icons.thumb_up_sharp,
-                        size:20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                    likeText,
+                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                    child:
                     IconButton(
                       onPressed: () async {
                         Navigator.push(context, MaterialPageRoute(builder: (_) =>
@@ -320,17 +355,36 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       },
                       icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
                     ),
-                    IconButton(
+                    ),
+                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                      child:
+                      IconButton(
                       onPressed: () async {
                         Share.share(widget.img!);
                       },
                       icon: const Icon(Icons.share, color: Colors.white),
                     ),
-                    IconButton(onPressed: () async{
+                    ),
+                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                      child:
+                      IconButton(onPressed: () async{
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
-                    }, icon: const Icon(Icons.home, color: Colors.white))
+                    }, icon: const Icon(Icons.home, color: Colors.white))),
+                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                        child:
+                        GestureDetector(
+                          onTap: () {
+                            handleLikePost();
+                          },
+                          child: const Icon (
+                            Icons.thumb_up_sharp,
+                            color: Colors.white,
+                          ),
+                        )),
+                    likeText,
                   ],
                 ),
+        ),
                 const SizedBox(height: 50.0,),
                 FirebaseAuth.instance.currentUser!.uid == widget.docId
                     ?

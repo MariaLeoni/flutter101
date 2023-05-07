@@ -300,8 +300,18 @@ class PostUploaderState extends State<PostUploader> {
         body: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[SliverAppBar(
-            title: Text(title,),
-                centerTitle: true, ),
+                flexibleSpace:Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.black],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      stops: [0.2],
+                    ),
+                  ),
+                ),
+                title: Text(title,),
+                centerTitle: true, pinned: true, floating: true,),
               ];
             },
             body: Column(
@@ -310,14 +320,14 @@ class PostUploaderState extends State<PostUploader> {
                   onTap:() {
                     showAlert();
                   },
-                  child: widget.postType == PostType.video ? (videoFile == null ? Image.asset("assets/images/Capuss.png") :
+                  child: widget.postType == PostType.video ? (videoFile == null ? Container ( height: 100, child: Image.asset("assets/images/Capuss.png")) :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
                     child: BetterPlayer.file(videoFile!.path,
                       betterPlayerConfiguration: const BetterPlayerConfiguration(
                         aspectRatio: 16 / 9,
                       ),
                     ),
-                  ))) : (imageFile == null ? Image.asset("assets/images/Capuss.png") :
+                  ))) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
                   Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);

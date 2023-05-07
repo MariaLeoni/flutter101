@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sharedstudent1/profile/profile_screen.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
 import '../home_screen/picturesHomescreen.dart';
@@ -64,14 +65,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
     return Scaffold(
       appBar: AppBar(
           flexibleSpace:Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
+          color: Colors.grey.shade900,
           ),
           title: Text(widget.userName!,),
           centerTitle: true,
@@ -99,11 +93,13 @@ class UsersProfilePageState extends State<UsersProfilePage> {
             ),
           ]
       ),
-      body: ListView(
+      body:Container(
+    color:Colors.grey.shade900, child:
+      ListView(
         physics: const BouncingScrollPhysics(),
         children: [
           CircleAvatar(
-              backgroundColor: Colors.white54,
+              backgroundColor: Colors.transparent,
               minRadius: 90.0,
               child: CircleAvatar(
                   radius:80.0,
@@ -113,18 +109,34 @@ class UsersProfilePageState extends State<UsersProfilePage> {
               )
           ),
           const SizedBox(height: 24),
+          FirebaseAuth.instance.currentUser!.uid == widget.userId
+              ?
+          
+          OutlinedButton(
+              onPressed: () async {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(
+                )));
+              },
+              child: Text("Settings",
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18 , ),
+              ),
+            
+
+          ):
+
           OutlinedButton(
               onPressed: () async {
                 handleFollowerPost();
               },
               child: Text(amFollowingUser ? "Unfollow $myName" : "Follow $myName",
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              )
-          ),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, ),
+              ),
+
+                  ),
           const SizedBox(height: 24),
           NumbersWidget(followers: widget.followers, following: widget.following, userName: myName ?? "",),
           const SizedBox(height:24),
-          const Center(child: Text("User Posts", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),),
+          const Center(child: Text("User Posts", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color:Colors.white),),),
           const SizedBox(height:8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -134,23 +146,27 @@ class UsersProfilePageState extends State<UsersProfilePage> {
                     handlePostView(PostType.video);
                   },
                   child: Text(videosCount > 1 ? "$videosCount Videos" : "$videosCount Video",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )
-              ),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,  ),
+                  ),
+
+
+           ),
               buildDivider(),
               OutlinedButton(
                   onPressed: () async {
                     handlePostView(PostType.image);
                   },
-                  child: Text(picturesCount > 1 ? "$picturesCount Pictures" : "$picturesCount Picture",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  )
+                  child: Text(picturesCount > 1 ?"$picturesCount Pictures" : "$picturesCount Picture",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,  ),
+                  ) ,
+
+
               ),
             ],
           )
         ],
       ),
-    );
+    ));
   }
 
   handlePostView(PostType type){

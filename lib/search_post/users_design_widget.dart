@@ -27,9 +27,10 @@ class UsersDesignWidgetState extends State<UsersDesignWidget> {
         )));
       },
       child: Card(
+        color: Colors.grey.shade900,
           child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
+              child:SizedBox(
                   height: 240,
                   width: MediaQuery.of(context).size.width,
                   child: Column(
@@ -47,19 +48,20 @@ class UsersDesignWidgetState extends State<UsersDesignWidget> {
                       const SizedBox(height: 10.0,),
                       Text(widget.model!.name!,
                           style: const TextStyle(
-                            color: Colors.purple,
+                            color: Colors.white,
                             fontSize: 20,
                             fontFamily: "Bebas",
                           )
                       ),
-                      const SizedBox (height: 10.0,),
-                      Text(widget.model!.email!,
+                      const SizedBox (height: 5.0,),
+                      Text(widget.model!.name!,
                         style: const TextStyle(
-                          color: Colors.purple,
-                          fontSize:12,
+                          color: Colors.white,
+                          fontSize:16,
                         ),
                       )
                     ],
+
                   )
               )
           )

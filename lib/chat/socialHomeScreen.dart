@@ -47,14 +47,7 @@ class SocialHomeScreenState extends State<SocialHomeScreen> {
             appBar: AppBar(
                 centerTitle: true,
                 flexibleSpace: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.black, Colors.black],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      stops: [0.2, 0.9],
-                    ),
-                  ),
+                  color: Colors.grey.shade800
                 ),
                 bottom: const TabBar(tabs: [
                   Tab(icon: Icon(Icons.chat_bubble),),
@@ -79,12 +72,12 @@ class SocialHomeScreenState extends State<SocialHomeScreen> {
                       },
                       icon: const Icon(Icons.person)),
                 ]),
-            body: TabBarView(children: [
+            body:Container(color:Colors.black,child: TabBarView(children: [
               ChatListScreen(chatees: List.empty(),),
               GroupChatHome(),
               const MoodScreen()
             ],),
-          );
+          ));
         })
     );
   }

@@ -1,13 +1,17 @@
+import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import '../misc/alertbox.dart';
 import '../search_post/users_specific_posts.dart';
+import '../search_post/users_specifics_page.dart';
 import '../widgets/ssbadge.dart';
 import 'SubComment.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentItem extends StatelessWidget {
 
@@ -27,7 +31,7 @@ class CommentItem extends StatelessWidget {
   String? Image;
   String? myImage;
   String? myName;
-  Timestamp? timestamp;
+  DateTime? timestamp = DateTime.now();
   String ActivityId = const Uuid().v4();
   List<String>? likes = List.empty(growable: true);
   List<String>? subCommentsIds = List.empty(growable: true);
@@ -127,7 +131,7 @@ AddLike(){
       comment: doc.data().toString().contains('comment')
           ? doc.get('comment') : '',
       timestamp: doc.data().toString().contains('timestamp') ? doc.get(
-          'timestamp') : '',
+          'timestamp').toDate() : '',
       userImage: doc.data().toString().contains('commenterImage') ? doc.get(
           'commenterImage') : '',
       commentId: doc.data().toString().contains('commentId') ? doc.get(
@@ -155,7 +159,6 @@ AddLike(){
 
     );
   }
-
   showSubcomments(BuildContext context){
     CommentItem commentItem = CommentItem(userName: userName,
       userId: userId, comment: comment, timestamp: timestamp,
@@ -169,8 +172,46 @@ AddLike(){
         builder: (_) => SubComment(commentItem: commentItem)));
   }
 
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed:  () {
+        Navigator.of(context, rootNavigator: true).pop();
+        print('tap negative button');
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Ok"),
+      onPressed:  () {
+        FirebaseFirestore.instance.collection('comment')
+            .doc(commentId).delete().then((value) {
+          Fluttertoast.showToast(msg: 'Your comment has been deleted');
+        });
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      //title: Text("AlertDialog"),
+      content: const Text("Are you sure you want your comment to be permanently deleted ?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
+
     likerUserId = _auth.currentUser?.uid;
     likesCount = likes?.length ?? 0;
 
@@ -185,32 +226,80 @@ AddLike(){
     var likeBadgeView = SSBadge(top: 0, right: 2,
         value: likesCount.toString(),
         child: IconButton(
-            icon: const Icon(Icons.thumb_up_sharp), onPressed: () {
+            icon: const Icon(Icons.thumb_up_sharp, color: Colors.white,size:20 ,), onPressed: () {
           handleLikeComment();
         }));
-
-    return Column(
+    return
+        Column(
       children: <Widget>[
+        Container(
+          color:Colors.grey.shade900,
+    child:
         ListTile(
-          title: Text(comment!),
-          subtitle: Text(userName!),
-          trailing: Container(
-            child: likeBadgeView,
-          ),
+          selectedColor: Colors.grey,
+          hoverColor: Colors.black,
+          title: Column(crossAxisAlignment: CrossAxisAlignment.start,children:[Text(userName!, style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,)),Text(comment!, style: TextStyle(color: Colors.white),),
+    ],),     subtitle: Text(
+          DateFormat("dd MMM, yyyy ").format(timestamp!).toString(),
+          style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+        ),
+          trailing: FirebaseAuth.instance.currentUser!.uid == userId
+              ?
+
+
+
+
+
+              Wrap(children:[
+                likeBadgeView,
+              PopupMenuButton(
+                icon: Icon(Icons.more_vert, color: Colors.white,),
+                  color: Colors.white,
+                  itemBuilder: (context)
+              {
+                return[
+                  PopupMenuItem<int>( value: 0, child: Text("Delete"),),
+                  PopupMenuItem<int>( value: 1,child: Text("Edit Comment")),
+
+                ];
+              },
+              onSelected: (value){
+                if(value == 0){
+                  showAlertDialog(context);
+                }
+                else if (value == 1){
+                  print("yay");
+
+                }
+              },)]):
+  //         Wrap(
+  //           spacing: 0,
+  //           children: <Widget> [ likeBadgeView,
+  //                IconButton( icon: Icon(Icons.delete_outline),
+  //                   onPressed: () async {
+  //                     showAlertDialog(context);
+  //                   }
+  //               )
+  // ]
+  //         ):
+                    likeBadgeView,
           onTap: () {
             showSubcomments(context);
           },
           leading: GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
-                  userId: userId, userName: userName,
+                Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                  userId:userId,
+                  userName:userName,
+                  userImage: userImage,
                 )));
               },
               child: CircleAvatar(
-                radius: 35,
+                radius: 30,
                 backgroundImage: CachedNetworkImageProvider(userImage!),
               )
           ),
+        ),
         ),
         const Divider(),
       ],

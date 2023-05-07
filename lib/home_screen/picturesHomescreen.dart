@@ -17,6 +17,7 @@ import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
 import '../search_post/users_specific_posts.dart';
+import '../search_post/users_specifics_page.dart';
 import '../widgets/ssbadge.dart';
 
 final themeMode = ValueNotifier(2);
@@ -26,7 +27,7 @@ class PictureHomeScreen extends StatefulWidget {
   UserWithNameAndId? user;
 
   PictureHomeScreen.forCategory({super.key, required this.category});
-  PictureHomeScreen.forUser({super.key, required this.user});
+  PictureHomeScreen.forUser({super.key, required this.user, });
 
   @override
   State<PictureHomeScreen> createState() => PictureHomeScreenState();
@@ -36,7 +37,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String changeTitle = "Grid View";
   int activityCount  = 0;
   int? total;
-
+  String? name;
+  String? image;
   int? viewCount = 0;
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
@@ -53,7 +55,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   void initState() {
     super.initState();
      getAllProducts();
-
+     getDataFromDatabase();
      notificationManager = NotificationManager();
      notificationManager?.initServer();
 
@@ -121,7 +123,18 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
      debugPrint("Count: ${snapshot.count}");
      activityCount = snapshot.count;
    }
-
+  getDataFromDatabase() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        name = snapshot.data()!["name"];
+        image = snapshot.data()!["userImage"];
+      });
+    }
+    });
+  }
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, int viewCount, String postId,
       List<String>? likes, List<String>? viewers, String description) {
@@ -301,8 +314,11 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                     Navigator.push(context,
-                       MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                      userId:userIdx,
+                      userName:name,
+                      userImage: image,
+                    )));
                   },
                   icon: const Icon(Icons.person),
                 ),

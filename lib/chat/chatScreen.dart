@@ -324,6 +324,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.grey.shade900,
         centerTitle: true,
         title: Text('Chatting with ${widget.peerNickname}'.trim()),
         actions: const [
@@ -340,7 +341,7 @@ class ChatScreenState extends State<ChatScreen> {
           // ),
         ],
       ),
-      body: SafeArea(
+      body: Container( color: Colors.grey.shade800,child:SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
           child: Column(
@@ -351,7 +352,7 @@ class ChatScreenState extends State<ChatScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget buildMessageInput() {
@@ -364,14 +365,14 @@ class ChatScreenState extends State<ChatScreen> {
     child:Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Sizes.dimen_30),
-            color: AppColors.greyColor,
+            color: Colors.grey.shade700,
           ),
           child: Row(
             children: [
               Container(
                 margin: const EdgeInsets.only(right: Sizes.dimen_4),
                 decoration: BoxDecoration(
-                  color: AppColors.greyColor,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(Sizes.dimen_20),
                 ),
                 child: IconButton(
@@ -393,13 +394,13 @@ class ChatScreenState extends State<ChatScreen> {
                 onSubmitted: (value) {
                   onSendMessage(textEditingController.text, PostType.text, "");
                 },
-                style: const TextStyle(backgroundColor: AppColors.greyColor,
+                style: const TextStyle(backgroundColor: Colors.transparent,
                 color: AppColors.white),
               )),
               Container(
                 margin: const EdgeInsets.only(left: Sizes.dimen_4),
                 decoration: BoxDecoration(
-                  color: AppColors.greyColor,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(Sizes.dimen_20),
                 ),
                 child: IconButton(
@@ -622,7 +623,7 @@ class ChatScreenState extends State<ChatScreen> {
               listMessages = snapshot.data!.docs;
               if (listMessages.isNotEmpty) {
                 return ListView.builder(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.only(top:17, bottom:17, left:20 ,right:20),
                     itemCount: snapshot.data?.docs.length,
                     reverse: true,
                     controller: scrollController,

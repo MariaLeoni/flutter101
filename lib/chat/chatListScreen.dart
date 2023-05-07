@@ -90,7 +90,7 @@ class ChatListScreenState extends State<ChatListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: Stack(
+      body: Container(color:Colors.grey.shade900,child:Stack(
         children: [
           Column(
             children: [
@@ -98,7 +98,7 @@ class ChatListScreenState extends State<ChatListScreen> {
               Expanded(
                 child: widget.chatees.isEmpty ? const Center(
                   child: Text('You have not started any chat yet...'),
-                ) : StreamBuilder<QuerySnapshot>(
+                 ) : StreamBuilder<QuerySnapshot>(
                   stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, widget.chatees).snapshots(),
                   builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
                     if (snapshot.hasData) {
@@ -111,7 +111,6 @@ class ChatListScreenState extends State<ChatListScreen> {
                               .contains(searchText.toLowerCase());
                         }).toList();
                       }
-
                       if (documents.isNotEmpty) {
                         return ListView.separated(
                           shrinkWrap: true,
@@ -124,7 +123,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                         );
                       } else {
                         return const Center(
-                          child: Text('You have not started any chat yet...'),
+                          child: Text('You have not started any chat yet...', style:TextStyle(color: Colors.white)),
                         );
                       }
                     } else {
@@ -136,12 +135,12 @@ class ChatListScreenState extends State<ChatListScreen> {
                 ),
               ),
             ],
-          ),
+       ),
           Positioned(
             child: isLoading ? const LoadingView() : const SizedBox.shrink(),
           ),
         ],
-      ),
+      ),),
       floatingActionButton: Wrap(
         direction: Axis.horizontal,
         children: [
@@ -149,7 +148,7 @@ class ChatListScreenState extends State<ChatListScreen> {
             margin: const EdgeInsets.all(10.0),
             child: FloatingActionButton(
               heroTag: "1",
-              backgroundColor: Colors.deepPurple,
+              backgroundColor: Colors.red.shade900,
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const ContactListScreen()));
               },
@@ -167,7 +166,7 @@ class ChatListScreenState extends State<ChatListScreen> {
       height: Sizes.dimen_50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(Sizes.dimen_30),
-        color: AppColors.greyColor,
+        color: Colors.grey.shade700,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -273,7 +272,7 @@ class ChatListScreenState extends State<ChatListScreen> {
               : const Icon(Icons.account_circle, size: 50,
           ),
             title: Text(userChat.displayName,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         );

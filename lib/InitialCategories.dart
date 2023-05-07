@@ -50,7 +50,7 @@ class InitialCategoriesState extends State<InitialCategories> {
   void initState() {
     super.initState();
     readUserInfo();
-    title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
+    title = "Select your Campuses";
   }
 
   void updateInterests(Map<String, List<String>?> interests) {
@@ -75,16 +75,20 @@ skip(){
     return Scaffold(
         body: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[SliverAppBar(title: Text(title,),
+              return <Widget>[SliverAppBar(
+                flexibleSpace:Container(
+                  color: Colors.red.shade900,
+                ),
+                title: Text(title,),
                 centerTitle: true, pinned: true, floating: true,),
               ];
             },
-            body: Column(
+            body:Container(color:Colors.black12,child: Column(
               children: <Widget>[
-                Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
+               Center(child: new Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
                 }, isEditable: false,)
-                ),
+                )),
                 const SizedBox(height: 10.0,),
                 OutlinedButton(
                  onPressed: addInterest,
@@ -97,6 +101,6 @@ skip(){
               ],
             )
         )
-    );
+    ));
   }
 }

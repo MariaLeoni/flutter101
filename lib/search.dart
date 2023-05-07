@@ -20,47 +20,48 @@ class SearchState extends State<Search> {
 
     return Scaffold(
         appBar: AppBar(
-          flexibleSpace: Container(color: Colors.red,),
+          flexibleSpace: Container(color: Colors.grey.shade900,),
           actions: <Widget> [
-            IconButton(
-              onPressed: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
-              },
-              icon: const Icon(Icons.home, color: Colors.white,),
-            ),
+            // IconButton(
+            //   onPressed: (){
+            //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
+            //   },
+            //   icon: const Icon(Icons.home, color: Colors.white,),
+            // ),
           ],
-        ),
-
-        body: ListView(
-          children:[
-            IconButton(iconSize: 50.0, onPressed: (){
+        ),body: Container( color:Colors.grey.shade900,
+    child:Center(child: new ListView(
+      shrinkWrap: true,
+      children:[
+           Center(child:IconButton(iconSize: 50.0, onPressed: (){
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchScreen(type: SearchType.post,
                   postType: widget.postType,),),);
               },
-              icon: const Icon(Icons.search, color: Colors.black, ),
-            ),
+              icon: const Icon(Icons.search, color: Colors.white, ),
+            )),
             const Center(child: Text('Search Post',
               style: TextStyle(
                 fontSize: 20.0,
-                color: Colors.black,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             )),
             const SizedBox( height: 50.0,),
-            IconButton(iconSize: 50.0, onPressed: (){
+          Center(child:  IconButton(iconSize: 50.0, onPressed: (){
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SearchScreen(type: SearchType.user),),);
               },
-              icon: const Icon(Icons.person_search, color: Colors.red,),
-            ),
+              icon: const Icon(Icons.person_search, color: Colors.white,),
+            )),
             const Center(child: Text('Search User',
               style: TextStyle(
                 fontSize: 20.0,
-                color: Colors.red,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             )),
           ],
         )
-    );
+    )
+    ));
   }
 }

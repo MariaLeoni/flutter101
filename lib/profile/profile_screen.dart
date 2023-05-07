@@ -69,11 +69,11 @@ class ProfileScreenState extends State<ProfileScreen> {
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
                           Icons.camera,
-                          color: Colors.deepPurple,
+                          color: Colors.black,
                         ),
                       ),
                       Text("Camera",
-                        style: TextStyle(color: Colors.purple),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -88,12 +88,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
                             Icons.image,
-                            color: Colors.purpleAccent
+                            color: Colors.black
                         ),
                       ),
                       Text(
                         "Gallery",
-                        style: TextStyle(color: Colors.purple),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -169,7 +169,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
+                    primary: Colors.black,
                   ),
                   child: const Text('Cancel', style: TextStyle(color: Colors.white),),
                 ),
@@ -180,7 +180,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         MaterialPageRoute(builder: (_) => HomeScreen()));
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.amber,
+                    primary: Colors.red,
                   ),
                   child: const Text('Save', style: TextStyle(color: Colors.white),),
                 )
@@ -231,18 +231,24 @@ class ProfileScreenState extends State<ProfileScreen> {
         child: Scaffold(
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[const SliverAppBar(title: Text('Profile', style: TextStyle(
-              fontSize: 35, color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: "Signatra",
-            ),),
-              centerTitle: true, pinned: true, floating: true,),
-            ];
+            return <Widget>[ SliverAppBar(  flexibleSpace:Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2],
+                ),
+              ),
+            ),title: Text('Profile', style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,fontFamily: "Signatra", fontSize: 35),
+            ),
+            centerTitle:true, pinned:true, floating:true, ),
+             ];
           },
           body: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple.shade300],
+                colors: [Colors.black, Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 stops: const [0.2, 0.9],
@@ -274,22 +280,22 @@ class ProfileScreenState extends State<ProfileScreen> {
                       onPressed: () {
                         displayTextInputDialog(context);
                       },
-                      icon: const Icon(Icons.edit),
+                      icon: const Icon(Icons.edit, color:Colors.white),
                     )
                   ],
                 ),
                 const SizedBox( height: 10.0,),
                 Text('Email: ${email!}',
                   style: const TextStyle(
-                    fontSize: 25.0,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox( height: 20.0,),
+                const SizedBox( height: 5.0,),
                 Text('Phone Number: ${phoneNo!}',
                   style: const TextStyle(
-                    fontSize: 25.0,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -304,7 +310,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amberAccent,
+                      backgroundColor: Colors.red.shade900,
                       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     child: const Text("Logout")

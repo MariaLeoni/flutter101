@@ -151,7 +151,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
     return Padding(
         padding:const EdgeInsets.only(bottom: 2.0),
         child: Container(
-            color: Colors.white54,
+            color: Colors.grey.shade900,
             child: GestureDetector(
                 onTap: () {
                   FeedPost feedPost = FeedPost(image: image, name: name, postId: postId,
@@ -185,10 +185,10 @@ class _ActivityFeedState extends State<ActivityFeed> {
                               children: [
                                 TextSpan(
                                   text: name,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color:Colors.white),
                                 ),
                                 TextSpan(
-                                  text: ' $activityItemText',
+                                  text: ' $activityItemText', style: TextStyle(color:Colors.white)
                                 ),
                               ]
                           )
@@ -198,7 +198,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
                   const Icon(Icons.notifications_active_outlined, color: Colors.red) : const Icon(Icons.notifications_none, color: Colors.green),
                   subtitle: Text(
                     DateFormat("dd MMM, yyyy - hh:mm a").format(timestamp).toString(),
-                    overflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis, style:TextStyle(color: Colors.white)
                   ),
                   trailing: SizedBox(width: 50, height: 50,
                     child:mediaPreview,
@@ -212,14 +212,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
   Widget build(BuildContext context) {
     return Scaffold( appBar: AppBar(
       flexibleSpace:Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            stops: [0.2],
-          ),
-        ),
+    color: Colors.grey.shade900,
       ),
       title:const Text('Activity Feed',
         style: TextStyle(
@@ -271,6 +264,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
           );
         },
       ),
+      backgroundColor: Colors.grey.shade900,
     );
   }
 }

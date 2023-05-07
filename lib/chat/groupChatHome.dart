@@ -66,7 +66,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: Container( color:Colors.grey.shade900,child:Stack(
           children: [
             Column(
                 children: [
@@ -75,20 +75,20 @@ class _GroupChatHomeState extends State<GroupChatHome> {
                         nextScreen(context, const SearchPage());
                       },
                       icon: const Icon(
-                        Icons.search,
+                        Icons.search, color: Colors.white,
                       )),
                   Expanded(
                       child: groups == null ? const Center(
                         child: Text('You are not a part of any group yet...'),
                       ) : groupList()
                   )]
-            )]),
+            )])),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           popUpDialog(context);
         },
         elevation: 0,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.red.shade900,
         child: const Icon(
           Icons.add,
           color: Colors.white,
@@ -127,7 +127,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
                     decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor),
+                                color: Colors.black),
                             borderRadius: BorderRadius.circular(20)),
                         errorBorder: OutlineInputBorder(
                             borderSide:
@@ -135,7 +135,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
                             borderRadius: BorderRadius.circular(20)),
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor),
+                                color: Colors.black),
                             borderRadius: BorderRadius.circular(20))),
                   ),
                 ],
@@ -146,7 +146,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).primaryColor),
+                      backgroundColor: Colors.black),
                   child: const Text("CANCEL"),
                 ),
                 ElevatedButton(
@@ -168,7 +168,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).primaryColor),
+                      backgroundColor: Colors.red.shade900),
                   child: const Text("CREATE"),
                 )
               ],
@@ -225,7 +225,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
             },
             child: Icon(
               Icons.add_circle,
-              color: Colors.grey[700],
+              color: Colors.red.shade900,
               size: 75,
             ),
           ),
@@ -234,7 +234,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
           ),
           const Text(
             "You've not joined any groups, tap on the add icon to create a group or also search from top search button.",
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.center, style: TextStyle(color:Colors.white),
           )
         ],
       ),

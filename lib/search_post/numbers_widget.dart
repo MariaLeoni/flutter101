@@ -41,9 +41,9 @@ class NumbersWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(getString(users),
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
           ),
-          const SizedBox(height: 2), Text(text, style: const TextStyle(fontWeight: FontWeight.bold),
+          const SizedBox(height: 2), Text(text, style: const TextStyle(fontWeight: FontWeight.bold, color:Colors.white),
           ),
         ],
       ),

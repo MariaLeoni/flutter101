@@ -75,6 +75,7 @@ class ContactListScreenState extends State<ContactListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.grey.shade800,
             centerTitle: true,
             title: const Text('Search for User'),
             actions: [
@@ -94,7 +95,7 @@ class ContactListScreenState extends State<ContactListScreen> {
                   },
                   icon: const Icon(Icons.person)),
             ]),
-        body: Stack(
+        body: Container( color:Colors.grey.shade900,child:Stack(
           children: [
             Column(
               children: [
@@ -136,7 +137,8 @@ class ContactListScreenState extends State<ContactListScreen> {
             ),
           ],
         ),
-    );
+    )
+    ,);
   }
 
   Widget buildSearchBar() {
@@ -145,7 +147,7 @@ class ContactListScreenState extends State<ContactListScreen> {
       height: Sizes.dimen_50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(Sizes.dimen_30),
-        color: AppColors.greyColor,
+        color: Colors.grey.shade700,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -251,7 +253,7 @@ class ContactListScreenState extends State<ContactListScreen> {
                 : const Icon(Icons.account_circle, size: 50,
             ),
             title: Text(userChat.displayName,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         );

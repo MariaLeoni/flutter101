@@ -48,15 +48,83 @@ class _ChatPageState extends State<ChatPage> {
       });
     });
   }
+  Widget chatbox() {
+
+    var screen = MediaQuery.of(context).size;
+    return SizedBox(
+        width: screen.width,
+        height: 60,
+        child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_8),
+            child:Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Sizes.dimen_30),
+                color: Colors.grey.shade700,
+              ),
+              child: Row(
+                children: [
+                  // Container(
+                  //   margin: const EdgeInsets.only(right: Sizes.dimen_4),
+                  //   decoration: BoxDecoration(
+                  //     color: AppColors.greyColor,
+                  //     borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                  //   ),
+                  //   child: IconButton(
+                  //     onPressed: sendMessage,
+                  //     icon: const Icon(Icons.add_a_photo, size: Sizes.dimen_18,
+                  //     ),
+                  //     color: AppColors.white,
+                  //   ),
+                  // ),
+                  Flexible(child: TextField(
+                    textInputAction: TextInputAction.send,
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: messageController,
+                    decoration: const InputDecoration.collapsed(
+                        hintText: 'Type here...',
+                        hintStyle: TextStyle(color: AppColors.white)),
+
+                    style: const TextStyle(
+                        color: Colors.white),
+                  )),
+                  // Container(
+                  //   margin: const EdgeInsets.only(left: Sizes.dimen_4),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.red.shade900,
+                  //     borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                  //   ),
+                  //   child: IconButton(
+                  //     onPressed: () {
+                  //       sendMessage();
+                  //     },
+                  //     icon: const Icon(Icons.send_rounded),
+                  //     color: AppColors.white,
+                  //   ),
+                  // ),
+                  IconButton(
+                    onPressed: () {
+                      sendMessage();
+                    },
+                    icon: const Icon(Icons.send_rounded),
+                    color: AppColors.white,
+                  ),
+                ],
+              ),
+            )
+        ));
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
         title: Text(widget.groupName),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.grey.shade900,
         actions: [
           IconButton(
               onPressed: () {
@@ -71,66 +139,22 @@ class _ChatPageState extends State<ChatPage> {
               icon: const Icon(Icons.info))
         ],
       ),
-      body: Stack(
-        children: <Widget>[
-          // chat messages here
-          chatMessages(),
-          Container(
-            alignment: Alignment.bottomCenter,
-            width: MediaQuery.of(context).size.width,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-              width: MediaQuery.of(context).size.width,
-              color: Colors.transparent,
-              child: Row(children: [
-                Flexible(child: TextField(
-                  textInputAction: TextInputAction.send,
-                  keyboardType: TextInputType.text,
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: messageController,
-                  decoration: const InputDecoration.collapsed(
-                      hintText: 'Type here...',
-                      hintStyle: TextStyle(color: AppColors.white)),
-                  style: const TextStyle(backgroundColor: AppColors.greyColor,
-                      color: AppColors.white),
-                )),
-                //
-                // Expanded(
-                //     child: TextFormField(
-                //       controller: messageController,
-                //       style: const TextStyle(color: Colors.white),
-                //       decoration: const InputDecoration(
-                //         hintText: "Send a message...",
-                //         hintStyle: TextStyle(color: Colors.white, fontSize: 16),
-                //         border: InputBorder.none,
-                //       ),
-                //     )),
-                const SizedBox(
-                  width: 12,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    sendMessage();
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                        child: Icon(
-                          Icons.send,
-                          color: Colors.white,
-                        )),
-                  ),
-                )
-              ]),
-            ),
-          )
-        ],
-      ),
+      body: Container(color: Colors.grey.shade800,child:SafeArea(
+    child:
+    Padding(
+    padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
+          child:
+              chatMessages(),
+        //    Column(children:[
+        //   // chat messages here
+        //  chatMessages(),
+        //     //chatbox(),
+        //  ]
+        // )
+     ),
+
+   )
+    )
     );
   }
 

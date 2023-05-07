@@ -73,7 +73,7 @@ class SearchScreenState extends State<SearchScreen> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red.shade800, Colors.red,],
+              colors: [Colors.grey.shade900, Colors.grey.shade900,],
             ),
           ),
         ),
@@ -101,7 +101,7 @@ class SearchScreenState extends State<SearchScreen> {
           builder: (context, snapshot) {
             return snapshot.hasData ?
             Container(
-                color: Colors.black,
+                color: Colors.grey.shade900,
                 child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
                   if (widget.type == SearchType.post){
                     Post model = Post.getPostSnapshot(snapshot.data!.docs[index].data()! as Map<String, dynamic>,
@@ -130,12 +130,12 @@ class SearchScreenState extends State<SearchScreen> {
             const Center(child: Text("No Record Exists",
               style: TextStyle(
                 fontSize: 20.0,
-                color: Colors.black,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),),);
           }
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.grey.shade900,
     );
   }
 }

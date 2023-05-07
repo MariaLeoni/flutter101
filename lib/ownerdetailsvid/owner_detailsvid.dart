@@ -2,8 +2,11 @@ import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import '../home_screen/home.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
@@ -120,11 +123,6 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 30.0,),
-                const Text('Post Information', style: TextStyle(
-                    fontSize: 20.0, color: Colors.white54,
-                    fontWeight: FontWeight.bold,
-                  ),) ,
-                const SizedBox(height: 30.0,),
                 GestureDetector(
                     onTap:(){
                       Navigator.push(context, MaterialPageRoute(builder: (_) => UsersSpecificPostsScreen(
@@ -157,19 +155,51 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.download_outlined,
-                      size:40,
-                      color: Colors.white,
+                    GestureDetector(
+                      onTap: () async {
+                        try{
+                          var imageId = await ImageDownloader.downloadImage(widget.vid!);
+                          if(imageId == null) {
+                            return;
+                          }
+                          Fluttertoast.showToast(msg: "Image saved to Gallery");
+                          total= widget.downloads! +1;
+
+                          FirebaseFirestore.instance.collection('wallpaper2')
+                              .doc(widget.postId).update({'downloads': total,
+                          }).then((value) {
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
+                          });
+                        } on PlatformException catch (error)
+                        {
+                          print(error);
+                        }
+
+                      },
+                      child: const Icon(Icons.download, color:Colors.white,),
                     ),
-                    Text(
-                      "${widget.downloads}",
+                    Text("${widget.downloads}",
                       style: const TextStyle(
                         fontSize: 28.0,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    IconButton(
+                      onPressed: () async {
+                        Share.share(widget.vid!);
+                      },
+                      icon: const Icon(Icons.share, color: Colors.white),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
+                      },
+                      icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
+                    ),
+                    IconButton(onPressed: () async{
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                    }, icon: const Icon(Icons.home, color: Colors.white)),
                     GestureDetector(
                       onTap: () {
                         handleLikePost();
@@ -181,15 +211,6 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                       ),
                     ),
                     likeText,
-                    IconButton(
-                      onPressed: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,)));
-                      },
-                      icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
-                    ),
-                    IconButton(onPressed: () async{
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
-                    }, icon: const Icon(Icons.home, color: Colors.white))
                   ],
                 ),
                 const SizedBox(height: 50.0,),

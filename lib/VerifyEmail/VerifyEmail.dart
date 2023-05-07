@@ -65,20 +65,21 @@ class VerifyEmailState extends State<VerifyEmail> {
   Widget build(BuildContext context) =>
       isEmailVerified ? InitialCategories(): Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.grey.shade900,
             title: const Text('Verify Email'),
           ),
-          body: Padding(
+          body: Container(color:Colors.grey.shade800,child:Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:[
                     const Text(
                       'A verification email has been sent to your email',
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20, color:Colors.white),
                       textAlign: TextAlign.center,),
                     const SizedBox(height:24),
                     ElevatedButton.icon(
-                      style:ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50),
+                      style:ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50),backgroundColor: Colors.red.shade900,
                       ),
                       icon: const Icon(Icons.email, size:32),
                       label: const Text(
@@ -89,15 +90,15 @@ class VerifyEmailState extends State<VerifyEmail> {
                     ),
                     const SizedBox(height:8),
                     TextButton(
-                      style:ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+                      style:ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50), ),
                       child: const Text(
                         'Cancel',
-                        style: TextStyle(fontSize: 24),
+                        style: TextStyle(fontSize: 24, color:Colors.white,),
                       ),
                       onPressed: () => FirebaseAuth.instance.signOut(),
                     )
                   ]
               )
           )
-      );
+      ));
 }

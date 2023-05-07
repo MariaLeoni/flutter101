@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
+import '../chat/chatWidgets.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../search_post/user.dart';
@@ -168,6 +170,7 @@ class CommentState extends State<Comment> {
   }
 
   addComment() {
+    commentController.text.isNotEmpty?
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
       "commenterImage": myImage,
@@ -186,7 +189,7 @@ class CommentState extends State<Comment> {
       "postOwnerId": widget.userId,
       "postOwnerImage": widget.postOwnerImg,
       "postOwnername": widget.postOwnername,
-    });
+    }): Fluttertoast.showToast(msg: 'Your comment box is empty');
 
     if (commentController.text.startsWith('@')) {
       for (var item in ids!) {
@@ -254,6 +257,7 @@ class CommentState extends State<Comment> {
 
   @override
   Widget build(BuildContext context) {
+    var screen = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
@@ -268,29 +272,102 @@ class CommentState extends State<Comment> {
           ),
           title: const Text("Comments"),
         ),
-        body: Column(
+        body: Container(
+            decoration:  BoxDecoration(
+              gradient: LinearGradient(
+                  colors:[Colors.grey.shade900, Colors.grey.shade900],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2,0.9]
+              ),
+            ),
+    child: Column(
           children: <Widget>[
             Expanded(child: loadAndBuildComments()),
             const Divider(),
-            ListTile(title: TextFormField(
-                controller: commentController,
-                decoration: const InputDecoration(labelText: "Write a comment.."),
-                onChanged: (val) {
-                  words = val.split(' ');
-                  String taggedComment = words.isNotEmpty && words[words.length - 1].startsWith('@')
-                      ? words[words.length - 1] : '';
-                  if (taggedComment.length > 1){
-                    setState(() {
-                      str = taggedComment;
-                    });
-                  }
-                }
+            ListTile(title:
+    SizedBox(
+    width: screen.width,
+    height: 60,
+    child: Padding(
+    padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_8),
+    child:Container(
+    decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(Sizes.dimen_30),
+    color: AppColors.greyColor,
+    ),child:Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(right: Sizes.dimen_4),
+                  decoration: BoxDecoration(
+                    color: AppColors.greyColor,
+                    borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                  ),
+                  // child: CircleAvatar(
+                  //   radius: 20,
+                  //   backgroundImage: CachedNetworkImageProvider(myImage!),
+                  // ),
+                ),
+                Flexible(child: TextField(
+                  textInputAction: TextInputAction.send,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: commentController,
+                  decoration: const InputDecoration.collapsed(
+                      hintText: 'Type here...',
+                      hintStyle: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,)),
+                    onChanged: (val) {
+                      words = val.split(' ');
+                      String taggedComment = words.isNotEmpty && words[words.length - 1].startsWith('@')
+                          ? words[words.length - 1] : '';
+                      if (taggedComment.length > 1){
+                        setState(() {
+                          str = taggedComment;
+                        });
+                      }
+                    },
+                  style: const TextStyle(backgroundColor: AppColors.greyColor,
+                      color: Colors.black),
+                )),
+                Container(
+                  margin: const EdgeInsets.only(left: Sizes.dimen_4),
+                  decoration: BoxDecoration(
+                    color: AppColors.greyColor,
+                    borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      addComment();
+                    },
+                    icon: const Icon(Icons.send_rounded),
+                    color: Colors.red.shade900,
+                  ),
+                ),
+              ],
             ),
-                trailing: OutlinedButton(
-                  onPressed: addComment,
-                  child: const Text("Post"),
-                )
+    ),
+    ),
+    ),
+            // TextFormField(
+            //     controller: commentController,
+            //     decoration: const InputDecoration(labelText: "Write a comment..",),
+            //     onChanged: (val) {
+            //       words = val.split(' ');
+            //       String taggedComment = words.isNotEmpty && words[words.length - 1].startsWith('@')
+            //           ? words[words.length - 1] : '';
+            //       if (taggedComment.length > 1){
+            //         setState(() {
+            //           str = taggedComment;
+            //         });
+            //       }
+            //     }
+            // // ),
+            //     trailing: OutlinedButton(
+            //       onPressed: addComment,
+            //       child: const Text("Post"),
+            //     )
             ),
+
             str.length > 1 ?
             StreamBuilder<QuerySnapshot>(
                 stream: searchForUser("users", 100, str.split("@")[1]),
@@ -303,7 +380,11 @@ class CommentState extends State<Comment> {
                         itemBuilder: (context, index) {
                           Users model = Users.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
                           return ListTile(
-                              title: Text(model.name!, style: const TextStyle(color: Colors.black),),
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundImage: CachedNetworkImageProvider(model.userImage!),
+                            ),
+                              title: Text(model.name!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                               onTap: () {
                                 String tmp = str.substring(1, str.length);
                                 setState(() {
@@ -332,6 +413,7 @@ class CommentState extends State<Comment> {
             const SizedBox(height: 25),
           ],
         )
+    )
     );
   }
 

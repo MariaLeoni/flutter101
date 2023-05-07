@@ -76,7 +76,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
       vid:vid, userImg: userImg, name: name, date: date,
       docId: docId, userId: userId, downloads: downloads, description: description,
-      likes: const [], postId: postId,
+      likes: likes, postId: postId,
     )));
   }
 
@@ -99,14 +99,20 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
           direction: Axis.horizontal,
           children: [
             Container(
+              width: 100,
               margin: const EdgeInsets.all(10.0),
               child: FloatingActionButton(
                 heroTag: "1",
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Colors.transparent,
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video)));
                 },
-                child: const Icon(Icons.video_camera_back_outlined),
+                child:
+                ImageIcon(
+                  AssetImage('assets/images/ttent.png'),
+                  size: 600,
+                  color: Colors.red,
+                ),
               ),
             ),
           ],
@@ -125,15 +131,22 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             ),
             title: const Text("Videos"),
             centerTitle: true,
-            leading: GestureDetector(
-              onTap: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-              },
-              child: const Icon(
-                  Icons.login_outlined
-              ),
-            ),
+             leading:
+             IconButton(
+               onPressed: (){
+                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
+               },
+               icon: const Icon(Icons.home),
+             ),
+            // GestureDetector(
+            //   onTap: () {
+            //     FirebaseAuth.instance.signOut();
+            //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+            //   },
+            //   child: const Icon(
+            //       Icons.login_outlined
+            //   ),
+            // ),
             actions: <Widget>[
               IconButton(
                 onPressed: (){
@@ -152,13 +165,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => const SocialHomeScreen()));
                 },
-                icon: const Icon(Icons.chat_bubble),
-              ),
-              IconButton(
-                onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
-                },
-                icon: const Icon(Icons.home),
+                icon: const Icon(Icons.message_sharp),
               ),
             ]
         ),
