@@ -139,22 +139,7 @@ class _ChatPageState extends State<ChatPage> {
               icon: const Icon(Icons.info))
         ],
       ),
-      body: Container(color: Colors.grey.shade800,child:SafeArea(
-    child:
-    Padding(
-    padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
-          child:
-              chatMessages(),
-        //    Column(children:[
-        //   // chat messages here
-        //  chatMessages(),
-        //     //chatbox(),
-        //  ]
-        // )
-     ),
-
-   )
-    )
+      body: Column( children: [chatMessages(),chatbox(), ])
     );
   }
 
