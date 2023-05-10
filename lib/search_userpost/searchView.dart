@@ -94,6 +94,8 @@ class SearchScreenState extends State<SearchScreen> {
               },
             ),
           ),
+          style: const TextStyle(
+              color: Colors.white),
         ),
       ),
       body: FutureBuilder<QuerySnapshot>(
@@ -101,7 +103,7 @@ class SearchScreenState extends State<SearchScreen> {
           builder: (context, snapshot) {
             return snapshot.hasData ?
             Container(
-                color: Colors.grey.shade900,
+                color: Colors.black,
                 child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
                   if (widget.type == SearchType.post){
                     Post model = Post.getPostSnapshot(snapshot.data!.docs[index].data()! as Map<String, dynamic>,
@@ -135,7 +137,7 @@ class SearchScreenState extends State<SearchScreen> {
               ),),);
           }
       ),
-      backgroundColor: Colors.grey.shade900,
+      backgroundColor: Colors.black,
     );
   }
 }

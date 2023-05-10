@@ -11,6 +11,7 @@ import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:uuid/uuid.dart';
 import '../Activity Feed/activityFeedScreen.dart';
+import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../notification/notification.dart';
 import '../profile/profile_screen.dart';
@@ -303,7 +304,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                                 },
                                 icon: const Icon(Icons.play_circle_outlined),
                               ),
-
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
@@ -324,6 +324,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 ),
 
                 activityBadgeView,
+                IconButton(
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => const SocialHomeScreen()));
+                  },
+                  icon: const Icon(Icons.message_sharp),
+                )
               ]
           ),
           body: StreamBuilder(

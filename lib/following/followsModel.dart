@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../search_post/users_specifics_page.dart';
+
 class FollowerModel extends StatelessWidget {
 
   String? userName;
@@ -31,11 +33,27 @@ class FollowerModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       ListTile(contentPadding: const EdgeInsets.only(left: 2.0, right: 0.0),
-        title: Text(userName!),
+        title: GestureDetector(
+        onTap:(){
+    Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+    userId:userId,
+    userName:userName,
+    userImage: userImage,
+    )));
+    },
+            child:Text(userName!, style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold))),
         //subtitle: Text(userId!),
-        leading: CircleAvatar(
+        leading: GestureDetector(
+          onTap:(){
+            Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+              userId:userId,
+              userName:userName,
+              userImage: userImage,
+            )));
+          },
+    child:CircleAvatar(
           backgroundImage: CachedNetworkImageProvider(userImage!),
-        ),
+        ),),
       ),
       const Divider(),
     ]);

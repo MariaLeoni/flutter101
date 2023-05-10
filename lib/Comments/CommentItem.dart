@@ -258,8 +258,8 @@ AddLike(){
                   itemBuilder: (context)
               {
                 return[
-                  PopupMenuItem<int>( value: 0, child: Text("Delete"),),
-                  PopupMenuItem<int>( value: 1,child: Text("Edit Comment")),
+                  PopupMenuItem<int>( value: 0, child: Text("Delete Comment"),),
+
 
                 ];
               },
@@ -267,10 +267,7 @@ AddLike(){
                 if(value == 0){
                   showAlertDialog(context);
                 }
-                else if (value == 1){
-                  print("yay");
 
-                }
               },)]):
   //         Wrap(
   //           spacing: 0,

@@ -91,12 +91,12 @@ class FollowsState extends State<Follows> {
           ),
           title: Text("${widget.user}'s ${widget.type.name}s"),
         ),
-        body: Column(
+        body:Container(color:Colors.black,child:Column(
           children: <Widget>[
             Expanded(child: buildView()),
             const Divider(),
           ],
         )
-    );
+        ));
   }
 }

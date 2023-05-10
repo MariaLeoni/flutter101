@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/search_post/users_specifics_page.dart';
+import 'package:sharedstudent1/widgets/ssbadge.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
 import '../misc/alertbox.dart';
@@ -201,8 +202,9 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Description"),
-      content: Text(widget.description!),
+      backgroundColor: Colors.black,
+      title: Container(color:Colors.black,child:Text("Description", style: TextStyle(color:Colors.red.shade900))),
+      content: Container(color:Colors.black,child:Text(widget.description!, style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold))),
       actions: [
         okButton,
       ],
@@ -221,9 +223,47 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     likerUserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
 
-    var likeText = Text(likesCount.toString(),
-        style: const TextStyle(fontSize: 28.0,
-            color: Colors.white, fontWeight: FontWeight.bold));
+    var likeText = SSBadge(top:0, right:2,child:  IconButton(
+      onPressed: () {
+        handleLikePost();
+      },
+      icon: const Icon (
+        Icons.thumb_up_sharp,
+        color: Colors.white,
+        size: 25,
+      ),
+    )
+        , value: likesCount.toString(), );
+    var downloadText = SSBadge(top:0, right:2,child:  IconButton(
+      onPressed: () async {
+        try{
+          var imageId = await ImageDownloader.downloadImage(widget.img!);
+          if(imageId == null) {
+            return;
+          }
+          Fluttertoast.showToast(msg: "Image saved to Gallery");
+          total= widget.downloads! +1;
+
+          FirebaseFirestore.instance.collection('wallpaper')
+              .doc(widget.postId).update({'downloads': total,
+          }).then((value) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
+          });
+        } on PlatformException catch (error)
+        {
+          print(error);
+        }
+      },
+      icon: const Icon (
+        Icons.download,
+        color: Colors.white,
+        size: 25,
+      ),
+    )
+      , value: widget.downloads.toString(), );
+    // Text(likesCount.toString(),
+    //     style: const TextStyle(fontSize: 28.0,
+    //         color: Colors.white, fontWeight: FontWeight.bold));
 
     return Scaffold(
       body: Container(
@@ -312,36 +352,37 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
           child:
                 Row(mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () async {
-                        try{
-                          var imageId = await ImageDownloader.downloadImage(widget.img!);
-                          if(imageId == null) {
-                            return;
-                          }
-                          Fluttertoast.showToast(msg: "Image saved to Gallery");
-                          total= widget.downloads! +1;
-
-                          FirebaseFirestore.instance.collection('wallpaper')
-                              .doc(widget.postId).update({'downloads': total,
-                          }).then((value) {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
-                          });
-                        } on PlatformException catch (error)
-                        {
-                          print(error);
-                        }
-
-                      },
-                      child: const Icon(Icons.download, color:Colors.white,),
-                    ),
-                    Text("${widget.downloads}",
-                      style: const TextStyle(
-                        fontSize: 28.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  downloadText,
+                    // GestureDetector(
+                    //   onTap: () async {
+                    //     try{
+                    //       var imageId = await ImageDownloader.downloadImage(widget.img!);
+                    //       if(imageId == null) {
+                    //         return;
+                    //       }
+                    //       Fluttertoast.showToast(msg: "Image saved to Gallery");
+                    //       total= widget.downloads! +1;
+                    //
+                    //       FirebaseFirestore.instance.collection('wallpaper')
+                    //           .doc(widget.postId).update({'downloads': total,
+                    //       }).then((value) {
+                    //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
+                    //       });
+                    //     } on PlatformException catch (error)
+                    //     {
+                    //       print(error);
+                    //     }
+                    //
+                    //   },
+                    //   child: const Icon(Icons.download, color:Colors.white,),
+                    // ),
+                    // Text("${widget.downloads}",
+                    //   style: const TextStyle(
+                    //     fontSize: 28.0,
+                    //     color: Colors.white,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
                     Padding(padding: const EdgeInsets.only(left: 8.0, ),
                     child:
                     IconButton(
@@ -370,18 +411,21 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       IconButton(onPressed: () async{
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
                     }, icon: const Icon(Icons.home, color: Colors.white))),
+
                     Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                        child:
-                        GestureDetector(
-                          onTap: () {
-                            handleLikePost();
-                          },
-                          child: const Icon (
-                            Icons.thumb_up_sharp,
-                            color: Colors.white,
-                          ),
-                        )),
-                    likeText,
+                       child:
+                            likeText,
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     handleLikePost();
+                        //   },
+                        //   child: const Icon (
+                        //     Icons.thumb_up_sharp,
+                        //     color: Colors.white,
+                        //   ),
+                        // )
+                      ),
+                    // likeText,
                   ],
                 ),
         ),

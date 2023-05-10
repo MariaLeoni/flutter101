@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
+import '../Activity Feed/activityFeedScreen.dart';
 import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
+import '../search_post/users_specifics_page.dart';
+import '../widgets/ssbadge.dart';
 import 'home.dart';
 import 'post.dart';
 import '../misc/global.dart';
@@ -19,8 +22,9 @@ import '../vidlib/VideoListData.dart';
 class VideoHomeScreen extends StatefulWidget {
 
   String category = "";
-  UserWithNameAndId? user;
 
+  UserWithNameAndId? user;
+  String? userId;
   VideoHomeScreen.forUser({super.key, required this.user});
   VideoHomeScreen.forCategory({super.key, required this.category});
 
@@ -30,7 +34,7 @@ class VideoHomeScreen extends StatefulWidget {
 
 class VideoHomeScreenState extends State<VideoHomeScreen> {
   bool checkView = false;
-
+  int activityCount  = 0;
   ReusableVideoListController videoListController = ReusableVideoListController();
   int lastMilli = DateTime.now().millisecondsSinceEpoch;
   int _currentPage = 0;
@@ -38,6 +42,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Size? size;
+  String? name;
+  String? image;
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
@@ -59,8 +65,9 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   @override
   void initState() {
     super.initState();
-
     _pageController.addListener(_scrollListener);
+    getAllProducts();
+    getDataFromDatabase();
   }
 
   void videoSelected(VideoListData videoListData){
@@ -79,10 +86,35 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       likes: likes, postId: postId,
     )));
   }
-
-
+  getAllProducts() async {
+    final collection = firestore.collection("Activity Feed")
+        .doc(FirebaseAuth.instance.currentUser!.uid).collection('FeedItems');
+    final query = collection.where("Read Status", isEqualTo: false);
+    final countQuery = query.count();
+    final AggregateQuerySnapshot snapshot = await countQuery.get();
+    debugPrint("Count: ${snapshot.count}");
+    activityCount = snapshot.count;
+  }
+  getDataFromDatabase() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        name = snapshot.data()!["name"];
+        image = snapshot.data()!["userImage"];
+      });
+    }
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    var activityBadgeView = SSBadge(top: 0, right: 2,
+        value: activityCount.toString(),
+        child: IconButton(
+            icon: const Icon(Icons.doorbell_outlined), onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
+        }));
     size = MediaQuery.of(context).size;
 
     return Container(
@@ -155,11 +187,16 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 icon: const Icon(Icons.person_search),
               ),
               IconButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                    userId:FirebaseAuth.instance.currentUser!.uid,
+                    userName:name,
+                    userImage: image,
+                  )));
                 },
                 icon: const Icon(Icons.person),
               ),
+              activityBadgeView,
               IconButton(
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(
