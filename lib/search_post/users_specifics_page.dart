@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sharedstudent1/profile/profile_screen.dart';
+import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
 import '../home_screen/picturesHomescreen.dart';
@@ -65,19 +66,11 @@ class UsersProfilePageState extends State<UsersProfilePage> {
     return Scaffold(
       appBar: AppBar(
           flexibleSpace:Container(
-          color: Colors.grey.shade900,
+          color: Colors.black,
           ),
           title: Text(widget.userName!,),
           centerTitle: true,
-          leading: GestureDetector(
-            onTap: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-            },
-            child: const Icon(
-                Icons.login_outlined
-            ),
-          ),
+          //leading:
           actions: <Widget>[
             IconButton(
               onPressed: (){
@@ -94,7 +87,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
           ]
       ),
       body:Container(
-    color:Colors.grey.shade900, child:
+    color:Colors.black, child:
       ListView(
         physics: const BouncingScrollPhysics(),
         children: [
@@ -143,7 +136,8 @@ class UsersProfilePageState extends State<UsersProfilePage> {
             children: <Widget>[
               OutlinedButton(
                   onPressed: () async {
-                    handlePostView(PostType.video);
+                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                        UsersSpecificPostsScreen(userId: widget.userId, userName: myName!, postType: PostType.video,)));
                   },
                   child: Text(videosCount > 1 ? "$videosCount Videos" : "$videosCount Video",
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,  ),
@@ -154,8 +148,9 @@ class UsersProfilePageState extends State<UsersProfilePage> {
               buildDivider(),
               OutlinedButton(
                   onPressed: () async {
-                    handlePostView(PostType.image);
-                  },
+                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                        UsersSpecificPostsScreen(userId: widget.userId, userName: myName!, postType: PostType.image,)));
+                    },
                   child: Text(picturesCount > 1 ?"$picturesCount Pictures" : "$picturesCount Picture",
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,  ),
                   ) ,
@@ -171,11 +166,18 @@ class UsersProfilePageState extends State<UsersProfilePage> {
 
   handlePostView(PostType type){
     UserWithNameAndId user = UserWithNameAndId(userId: widget.userId!, userName: myName!);
-    if (type == PostType.image){
-      Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: user,)));
-    }
+    if (type == PostType.image)
+    //{
+    //   Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: user,)));
+    // }
+        {
+    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+          UsersSpecificPostsScreen(userId: widget.userId, userName: myName!, postType: PostType.image,)));
+
+   }
     else{
-      Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: user,)));
+      Navigator.push(context, MaterialPageRoute(builder: (_) =>
+          UsersSpecificPostsScreen(userId: widget.userId, userName: myName!, postType: PostType.video,)));
     }
   }
 

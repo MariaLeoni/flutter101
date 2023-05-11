@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/ownerdetailsvid/owner_detailsvid.dart';
 import 'package:sharedstudent1/search_userpost/searchView.dart';
 import '../following/follows.dart';
 import '../home_screen/home.dart';
@@ -13,6 +14,9 @@ import '../notification/server.dart';
 import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import'package:fluttertoast/fluttertoast.dart';
+import '../vidlib/ReusableVideoListController.dart';
+import '../vidlib/ReusableVideoListWidget.dart';
+import '../vidlib/VideoListData.dart';
 import '../widgets/ssbadge.dart';
 
 
@@ -20,6 +24,7 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
   String? userId;
   String? userName;
   String? docId;
+ PostType? postType;
   List<String>? followers = List.empty(growable: true);
 
   UsersSpecificPostsScreen({super.key,
@@ -27,6 +32,7 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
     this.userName,
    this.followers,
     this.docId,
+    this.postType,
   });
 
   @override
@@ -44,7 +50,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
-
+  ReusableVideoListController videoListController = ReusableVideoListController();
   void getUserToken() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId).get().then((snapshot) async { if (snapshot.exists) {
@@ -127,7 +133,21 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       });
     });
   }
+  void videoSelected(VideoListData videoListData){
+    Post post = videoListData.post;
+    goToDetails(post.source, post.userImage, post.userName, post.createdAt, post.id, post.email,
+        post.downloads, post.description, post.likes, post.postId);
+  }
+  void goToDetails(String vid, String userImg, String name, DateTime date,
+      String docId, String userId, int downloads, String description,
+      List<String>? likes, String postId) {
 
+    Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+      vid:vid, userImg: userImg, name: name, date: date,
+      docId: docId, userId: userId, downloads: downloads, description: description,
+      likes: likes, postId: postId,
+    )));
+  }
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .get().then<dynamic>((DocumentSnapshot snapshot) async {
@@ -253,6 +273,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
           handleFollowerPost();
         }));
 
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -277,45 +298,11 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             ),
             title: Text(widget.userName!,),
             centerTitle: true,
-            leading: GestureDetector(
-              onTap: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-              },
-              child: const Icon(
-                  Icons.login_outlined
-              ),
-            ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => SearchScreen(),),);
-                },
-                icon: const Icon(Icons.search),
-              ),
-              FirebaseAuth.instance.currentUser!.uid == widget.userId ? IconButton(onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(),),);
-                },
-                icon: const Icon(Icons.person),
-              ):
-              followersBadgeView,
-              IconButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => Follows(
-                    follow: widget.followers, user: myName ?? "", type: FFType.follower,
-                  )));
-                },
-                icon: const Icon(Icons.person_search),
-              ),
-              IconButton(
-                onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
-                },
-                icon: const Icon(Icons.home),
-              ),
-            ]
+          //  leading:
         ),
-        body: StreamBuilder(
+         body:
+         widget.postType == PostType.image?
+        StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('wallpaper').where("id", isEqualTo: widget.userId)
               .orderBy('createdAt',descending: true).snapshots(),
@@ -349,7 +336,48 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
               ),
             );
           },
-        ),
+        ):
+        StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('wallpaper2').where("id", isEqualTo: widget.userId)
+              .orderBy('createdAt',descending: true).snapshots(),
+
+          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting ) {
+              return const Center(child: CircularProgressIndicator(),);
+            }
+            else if (snapshot.connectionState == ConnectionState.active) {
+                if(snapshot.data!.docs.isNotEmpty) {
+                  return PageView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Post post = Post.getPost(snapshot, index, PostType.video);
+
+                      VideoListData videoListData = VideoListData(post);
+                      return ReusableVideoListWidget(videoListData: videoListData,
+                        videoListController: videoListController,
+                        canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+                          videoSelected(videoListData);
+                        },
+                      );
+                    },
+                  );
+                }
+              else{
+                return const Center(child: Text("This user has  no Posts.",
+                    style: TextStyle(fontSize: 20, color: Colors.white))
+                );
+              }
+            }
+            return const Center(child: Text(
+              'Something went wrong',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+            ),
+            );
+          },
+        )
       ),
     );
   }
