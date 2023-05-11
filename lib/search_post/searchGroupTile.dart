@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/groupInfo.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
-import '../chat/chatPage.dart';
+import '../chat/groupChatScreen.dart';
 
 class SearchGroupTile extends StatefulWidget {
   Groups? model;

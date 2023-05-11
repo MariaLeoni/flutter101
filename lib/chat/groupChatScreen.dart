@@ -48,8 +48,8 @@ class _ChatPageState extends State<ChatPage> {
       });
     });
   }
-  Widget chatbox() {
 
+  Widget chatbox() {
     var screen = MediaQuery.of(context).size;
     return SizedBox(
         width: screen.width,
@@ -118,8 +118,8 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+<<<<<<< HEAD:lib/chat/chatPage.dart
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -140,28 +140,61 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       body: Stack(children:[chatMessages()])
+=======
+        appBar: AppBar(
+          centerTitle: true,
+          elevation: 0,
+          title: Text(widget.groupName),
+          backgroundColor: Colors.grey.shade900,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  nextScreen(
+                      context,
+                      GroupInfo(
+                        groupId: widget.groupId,
+                        groupName: widget.groupName,
+                        adminName: admin,
+                      ));
+                },
+                icon: const Icon(Icons.info))
+          ],
+        ),
+        body: Container( color: Colors.grey.shade800,child:SafeArea(
+            child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
+                child: Column(children: [
+                  chatMessages(),
+                  chatbox(),
+                ])
+            )
+        )
+        )
+>>>>>>> fbcdc1bc5d4c7c2522869e5163ef0926974ed7fb:lib/chat/groupChatScreen.dart
     );
   }
 
   chatMessages() {
-    return StreamBuilder(
-      stream: chats,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-          itemCount: snapshot.data.docs.length,
-          itemBuilder: (context, index) {
-            return MessageTile(
-                message: snapshot.data.docs[index]['message'],
-                sender: snapshot.data.docs[index]['sender'],
-                sentByMe: widget.userName ==
-                    snapshot.data.docs[index]['sender'],
-              senderImage: snapshot.data.docs[index]['senderImg']
-            );
+    return Flexible(
+        child: StreamBuilder(
+          stream: chats,
+          builder: (context, AsyncSnapshot snapshot) {
+            return snapshot.hasData
+                ? ListView.builder(
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                return MessageTile(
+                    message: snapshot.data.docs[index]['message'],
+                    sender: snapshot.data.docs[index]['sender'],
+                    sentByMe: widget.userName ==
+                        snapshot.data.docs[index]['sender'],
+                    senderImage: snapshot.data.docs[index]['senderImg']
+                );
+              },
+            )
+                : Container();
           },
         )
-            : Container();
-      },
     );
   }
 

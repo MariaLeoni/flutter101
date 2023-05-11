@@ -52,20 +52,18 @@ class _MessageTileState extends State<MessageTile> {
                 ? Theme.of(context).primaryColor
                 : Colors.grey[700]),
         child:
-        // Row (
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children:[
-        //   GestureDetector(
-        //       onTap:(){
-        //       },
-        //       child: CircleAvatar(radius:15,
-        //         backgroundImage: NetworkImage(
-        //           widget.senderImage!,),
-        //       )
-        //   ),
+
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            GestureDetector(
+                onTap:(){
+                },
+                child: CircleAvatar(radius:15,
+                  backgroundImage: NetworkImage(
+                    widget.senderImage!,),
+                )
+            ),
             Text(
               widget.sender.toUpperCase(),
               textAlign: TextAlign.start,
@@ -79,22 +77,17 @@ class _MessageTileState extends State<MessageTile> {
               height: 8,
 
             ),
-            SizedBox(width: 150, child:  Text(widget.message,
+            Text(widget.message,
                 textAlign: TextAlign.start,
                 style: const TextStyle(fontSize: 16, color: Colors.white))
-            )
+
 
           ],
         ),
 
 
-        )
 
-
-
-
-
-              );
+    ));
 
     // )//        Container   (
     //     //           clipBehavior: Clip.hardEdge,
