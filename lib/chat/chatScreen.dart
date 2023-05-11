@@ -432,10 +432,10 @@ class ChatScreenState extends State<ChatScreen> {
                     ? messageBubble(chatContent: chatMessages.content,
                   color: AppColors.spaceLight,
                   textColor: AppColors.white,
-                  margin: const EdgeInsets.only(right: Sizes.dimen_10),)
+                  margin: const EdgeInsets.only(right: Sizes.dimen_10, bottom: 5),)
                     : chatMessages.type == PostType.image.name ? Container(
                   margin: const EdgeInsets.only(
-                      right: Sizes.dimen_10, top: Sizes.dimen_10),
+                      right: Sizes.dimen_10, top: Sizes.dimen_10, ),
                   child: GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
