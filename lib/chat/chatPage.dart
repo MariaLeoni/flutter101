@@ -139,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
               icon: const Icon(Icons.info))
         ],
       ),
-      body: Column( children: [chatMessages(),chatbox(), ])
+      body: Stack(children:[chatMessages()])
     );
   }
 

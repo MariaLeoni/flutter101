@@ -32,8 +32,8 @@ class _MessageTileState extends State<MessageTile> {
       alignment: widget.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: widget.sentByMe
-            ? const EdgeInsets.only(left: 150)
-            : const EdgeInsets.only(right: 150),
+            ? const EdgeInsets.only(left: 30)
+            : const EdgeInsets.only(right: 30),
         padding:
         const EdgeInsets.only(top: 17, bottom: 17, left: 20, right: 20),
         decoration: BoxDecoration(
@@ -51,17 +51,19 @@ class _MessageTileState extends State<MessageTile> {
             color: widget.sentByMe
                 ? Theme.of(context).primaryColor
                 : Colors.grey[700]),
-        child:  Row (
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children:[
-          GestureDetector(
-              onTap:(){
-              },
-              child: CircleAvatar(radius:15,
-                backgroundImage: NetworkImage(
-                  widget.senderImage!,),
-              )
-          ), Column(
+        child:
+        // Row (
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children:[
+        //   GestureDetector(
+        //       onTap:(){
+        //       },
+        //       child: CircleAvatar(radius:15,
+        //         backgroundImage: NetworkImage(
+        //           widget.senderImage!,),
+        //       )
+        //   ),
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -74,7 +76,7 @@ class _MessageTileState extends State<MessageTile> {
                   letterSpacing: -0.5),
             ),
             const SizedBox(
-              height: 4,
+              height: 8,
 
             ),
             SizedBox(width: 150, child:  Text(widget.message,
@@ -86,12 +88,11 @@ class _MessageTileState extends State<MessageTile> {
         ),
 
 
-]
         )
 
 
 
-      ),
+
 
               );
 
