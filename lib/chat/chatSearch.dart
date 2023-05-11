@@ -5,7 +5,7 @@ import 'package:sharedstudent1/widgets/widgets.dart';
 import '../groupInfo.dart';
 import 'DatabasService.dart';
 import 'chatHelper.dart';
-import 'chatPage.dart';
+import 'groupChatScreen.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
