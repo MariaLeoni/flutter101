@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/widgets/message_tile.dart';
-import 'package:sharedstudent1/widgets/widgets.dart';
-
+import '../widgets/widgets.dart';
 import 'DatabasService.dart';
 import 'chatWidgets.dart';
 import 'group_info.dart';
@@ -63,19 +62,6 @@ class _ChatPageState extends State<ChatPage> {
               ),
               child: Row(
                 children: [
-                  // Container(
-                  //   margin: const EdgeInsets.only(right: Sizes.dimen_4),
-                  //   decoration: BoxDecoration(
-                  //     color: AppColors.greyColor,
-                  //     borderRadius: BorderRadius.circular(Sizes.dimen_20),
-                  //   ),
-                  //   child: IconButton(
-                  //     onPressed: sendMessage,
-                  //     icon: const Icon(Icons.add_a_photo, size: Sizes.dimen_18,
-                  //     ),
-                  //     color: AppColors.white,
-                  //   ),
-                  // ),
                   Flexible(child: TextField(
                     textInputAction: TextInputAction.send,
                     keyboardType: TextInputType.text,
@@ -88,20 +74,6 @@ class _ChatPageState extends State<ChatPage> {
                     style: const TextStyle(
                         color: Colors.white),
                   )),
-                  // Container(
-                  //   margin: const EdgeInsets.only(left: Sizes.dimen_4),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.red.shade900,
-                  //     borderRadius: BorderRadius.circular(Sizes.dimen_20),
-                  //   ),
-                  //   child: IconButton(
-                  //     onPressed: () {
-                  //       sendMessage();
-                  //     },
-                  //     icon: const Icon(Icons.send_rounded),
-                  //     color: AppColors.white,
-                  //   ),
-                  // ),
                   IconButton(
                     onPressed: () {
                       sendMessage();
@@ -119,28 +91,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD:lib/chat/chatPage.dart
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        title: Text(widget.groupName),
-        backgroundColor: Colors.grey.shade900,
-        actions: [
-          IconButton(
-              onPressed: () {
-                nextScreen(
-                    context,
-                    GroupInfo(
-                      groupId: widget.groupId,
-                      groupName: widget.groupName,
-                      adminName: admin,
-                    ));
-              },
-              icon: const Icon(Icons.info))
-        ],
-      ),
-      body: Stack(children:[chatMessages()])
-=======
         appBar: AppBar(
           centerTitle: true,
           elevation: 0,
@@ -170,7 +120,6 @@ class _ChatPageState extends State<ChatPage> {
             )
         )
         )
->>>>>>> fbcdc1bc5d4c7c2522869e5163ef0926974ed7fb:lib/chat/groupChatScreen.dart
     );
   }
 
