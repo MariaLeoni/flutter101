@@ -303,10 +303,10 @@ class MoodScreenState extends State<MoodScreen> {
                   );
                 }
                 return const Center(
-                  child: Text('You have not moods yet...'),);
+                  child: Text('You have not moods yet...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),);
               } else {
                 return const Center(
-                  child: Text('You have not moods yet...'),);
+                  child: Text('You have not moods yet...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),);
               }
             },
           )

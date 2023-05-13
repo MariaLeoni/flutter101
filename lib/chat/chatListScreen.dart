@@ -14,9 +14,7 @@ import 'chatUsersProvider.dart';
 import 'chatWidgets.dart';
 
 class ChatListScreen extends StatefulWidget {
-  List<String> chatees = List.empty(growable: true);
-
-  ChatListScreen({super.key, required this.chatees});
+  const ChatListScreen({super.key});
 
   @override
   State<ChatListScreen> createState() => ChatListScreenState();
@@ -25,8 +23,6 @@ class ChatListScreen extends StatefulWidget {
 class ChatListScreenState extends State<ChatListScreen> {
   final ScrollController scrollController = ScrollController();
 
-  int _limit = 20;
-  final int _limitIncrement = 20;
   String searchText = "";
   bool isLoading = false;
 
@@ -39,12 +35,13 @@ class ChatListScreenState extends State<ChatListScreen> {
   StreamController<bool> buttonClearController = StreamController<bool>();
   TextEditingController searchTextEditingController = TextEditingController();
   List<QueryDocumentSnapshot> documents = [];
+  Stream? peopleIChatWith;
+  List<String>? chatees;
 
   void scrollListener() {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
       setState(() {
-        _limit += _limitIncrement;
       });
     }
   }
@@ -74,32 +71,31 @@ class ChatListScreenState extends State<ChatListScreen> {
   }
 
   readUserInfo() async {
-    if (widget.chatees.isEmpty){
       fireStore.collection('users').doc(currentUserId).get()
           .then<dynamic>((DocumentSnapshot snapshot) {
-        widget.chatees = List.from(snapshot.get('chatWith'));
+        List<String> chateesx = List.from(snapshot.get('chatWith'));
         setState(() {
-          widget.chatees;
+          chatees = chateesx;
           chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
         });
       });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: Container(color:Colors.grey.shade900,child:Stack(
+      body: Container(color:Colors.grey.shade900,
+        child:Stack(
         children: [
           Column(
             children: [
               buildSearchBar(),
               Expanded(
-                child: widget.chatees.isEmpty ? const Center(
-                  child: Text('You have not started any chat yet...'),
+                child: chatees == null ? const Center(
+                  child: Text('You have not started any chat yet...x', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
                  ) : StreamBuilder<QuerySnapshot>(
-                  stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, widget.chatees).snapshots(),
+                  stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, chatees).snapshots(),
                   builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
                     if (snapshot.hasData) {
                       documents = snapshot.data!.docs;
@@ -123,7 +119,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                         );
                       } else {
                         return const Center(
-                          child: Text('You have not started any chat yet...', style:TextStyle(color: Colors.white)),
+                          child: Text('You have not started any chat yet...', style:TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
                         );
                       }
                     } else {
