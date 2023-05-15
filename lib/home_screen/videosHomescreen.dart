@@ -201,7 +201,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   controller: _pageController,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    print("Videos found ${snapshot.data!.docs.length}");
                     Post post = Post.getPost(snapshot, index, PostType.video);
 
                     VideoListData videoListData = VideoListData(post);

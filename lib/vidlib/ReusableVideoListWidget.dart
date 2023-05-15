@@ -139,11 +139,10 @@ class ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                     fit: BoxFit.cover,
                     child: SizedBox(
                         width: screen.width,
-                        height: screen.height * 0.75,
-                        child: controller != null
-                            ? BetterPlayer(controller: controller!,)
-                            : Container(color: Colors.black, child: const Center(
-                          child: CircularProgressIndicator(valueColor:
+                        height: screen.height * 0.65,
+                        child: controller != null ? BetterPlayer(controller: controller!,)
+                            : Container(color: Colors.black,
+                            child: const Center(child: CircularProgressIndicator(valueColor:
                           AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
