@@ -35,8 +35,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   int activityCount  = 0;
   ReusableVideoListController videoListController = ReusableVideoListController();
   int lastMilli = DateTime.now().millisecondsSinceEpoch;
-  int _currentPage = 0;
-  bool _isOnPageTurning = false;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Size? size;
@@ -45,25 +43,10 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
-  void _scrollListener() {
-    if (_isOnPageTurning && _pageController.page == _pageController.page!.round()){
-      setState(() {
-        _currentPage = _pageController.page!.toInt();
-        _isOnPageTurning = false;
-      });
-    } else if (!_isOnPageTurning && _currentPage.toDouble() != _pageController.page) {
-      if ((_currentPage.toDouble() - _pageController.page!).abs()>0.7){
-        setState(() {
-          _isOnPageTurning = true;
-        });
-      }
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    _pageController.addListener(_scrollListener);
     getAllProducts();
     getDataFromDatabase();
   }
@@ -84,6 +67,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       likes: likes, postId: postId,
     )));
   }
+
   getAllProducts() async {
     final collection = firestore.collection("Activity Feed")
         .doc(FirebaseAuth.instance.currentUser!.uid).collection('FeedItems');
@@ -217,10 +201,11 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   controller: _pageController,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
+                    print("Videos found ${snapshot.data!.docs.length}");
                     Post post = Post.getPost(snapshot, index, PostType.video);
 
                     VideoListData videoListData = VideoListData(post);
-                    return ReusableVideoListWidget(videoListData: videoListData,
+                    return  ReusableVideoListWidget(videoListData: videoListData,
                       videoListController: videoListController,
                       canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
                         videoSelected(videoListData);

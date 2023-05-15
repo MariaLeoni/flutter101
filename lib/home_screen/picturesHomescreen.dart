@@ -55,24 +55,24 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   @override
   void initState() {
     super.initState();
-     getAllProducts();
-     getDataFromDatabase();
-     notificationManager = NotificationManager();
-     notificationManager?.initServer();
+    getAllProducts();
+    getDataFromDatabase();
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
 
-  //  sendNotification();
+    //  sendNotification();
 
-      _messaging.getToken().then((value) {
-        print(value);
-        if (mounted) {
-          setState(() {
-            currentToken = value!;
-          });
-        }
-        firestore.collection('pushtokens')
-            .doc(userIdx)
-            .set({'token': value!, 'createdAt': DateTime.now()});
-      });
+    _messaging.getToken().then((value) {
+      print(value);
+      if (mounted) {
+        setState(() {
+          currentToken = value!;
+        });
+      }
+      firestore.collection('pushtokens')
+          .doc(userIdx)
+          .set({'token': value!, 'createdAt': DateTime.now()});
+    });
     // Timer.run(() {
     //   FancyAlertDialog.showFancyAlertDialog(
     //     context, 'Maria',
@@ -114,15 +114,15 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         )));
   }
 
-   getAllProducts() async {
-     final collection = firestore.collection("Activity Feed")
-         .doc(userIdx).collection('FeedItems');
-     final query = collection.where("Read Status", isEqualTo: false);
-     final countQuery = query.count();
-     final AggregateQuerySnapshot snapshot = await countQuery.get();
-     debugPrint("Count: ${snapshot.count}");
-     activityCount = snapshot.count;
-   }
+  getAllProducts() async {
+    final collection = firestore.collection("Activity Feed")
+        .doc(userIdx).collection('FeedItems');
+    final query = collection.where("Read Status", isEqualTo: false);
+    final countQuery = query.count();
+    final AggregateQuerySnapshot snapshot = await countQuery.get();
+    debugPrint("Count: ${snapshot.count}");
+    activityCount = snapshot.count;
+  }
 
   getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
@@ -170,37 +170,37 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                       ),
                     )
                 ),
-                 const SizedBox(height: 12.0,),
-                  Row(children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                                  UsersSpecificPostsScreen(userId: docId, userName: name,)));
-                            },
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundImage: NetworkImage(userImg,),
-                            )
-                        ),
-                        Padding(padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(name, style: const TextStyle(color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 10.0),
-                                Text(
-                                  DateFormat("dd MMM, yyyy - hh:mm a").format(
-                                      date).toString(),
-                                  style: const TextStyle(color: Colors.white54,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ]
-                          ),
-                        ),
-                      ]
+                const SizedBox(height: 12.0,),
+                Row(children: [
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                            UsersSpecificPostsScreen(userId: docId, userName: name,)));
+                      },
+                      child: CircleAvatar(
+                        radius: 35,
+                        backgroundImage: NetworkImage(userImg,),
+                      )
                   ),
+                  Padding(padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(name, style: const TextStyle(color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10.0),
+                          Text(
+                            DateFormat("dd MMM, yyyy - hh:mm a").format(
+                                date).toString(),
+                            style: const TextStyle(color: Colors.white54,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ]
+                    ),
+                  ),
+                ]
+                ),
               ],
             )
         ),
@@ -266,12 +266,10 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                         PostUploader(postType: PostType.image,)));
                   },
                   child:
-                  ImageIcon(
-                    AssetImage('assets/images/ttent.png'),
-                    size: 600,
-                    color: Colors.red,
+                  const ImageIcon(AssetImage('assets/images/ttent.png'),
+                    size: 600, color: Colors.red,
                   ),
-                 // const Icon(Icons.camera_enhance),
+                  // const Icon(Icons.camera_enhance),
                 ),
               ),
             ],
@@ -293,17 +291,17 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               ),
               centerTitle: true,
               leading: IconButton(
-                                onPressed: () {
-                                  if (widget.user == null){
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                                        VideoHomeScreen.forCategory(category: widget.category,),),);
-                                  }
-                                  else{
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
-                                  }
-                                },
-                                icon: const Icon(Icons.play_circle_outlined),
-                              ),
+                onPressed: () {
+                  if (widget.user == null){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                        VideoHomeScreen.forCategory(category: widget.category,),),);
+                  }
+                  else{
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+                  }
+                },
+                icon: const Icon(Icons.play_circle_outlined),
+              ),
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
