@@ -114,7 +114,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         )));
   }
 
-
    getAllProducts() async {
      final collection = firestore.collection("Activity Feed")
          .doc(userIdx).collection('FeedItems');
@@ -124,6 +123,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
      debugPrint("Count: ${snapshot.count}");
      activityCount = snapshot.count;
    }
+
   getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -165,7 +165,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10), // Image border
                       child: SizedBox.fromSize(
-                          size: Size(500.0, size == null ? 400 : size!.height * 0.75), // Image radius
+                          size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image radius
                           child: Image.network(img, fit: BoxFit.cover)
                       ),
                     )
