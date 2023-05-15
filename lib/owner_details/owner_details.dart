@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +10,10 @@ import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 import 'package:sharedstudent1/widgets/ssbadge.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
-import '../misc/alertbox.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
-import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 
 
 class OwnerDetails extends StatefulWidget {
@@ -75,10 +71,10 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     }
     });
   }
+
   void getDataFromDatabase3() async {
     await FirebaseFirestore.instance.collection("Activity Feed")
-        .doc(widget.docId).collection('Feed Count').doc(widget.docId)
-        .get()
+        .doc(widget.docId).collection('Feed Count').doc(widget.docId).get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
         feedCount = snapshot.data()!["Feed Count"];
@@ -189,14 +185,14 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       });
     });
   }
+
   showAlertDialog(BuildContext context) {
 
-    // set up the button
     Widget okButton = TextButton(
-      child: Text("OK"),
+      child: const Text("OK"),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
-              print('tap negative button');
+        print('tap negative button');
       },
     );
 
@@ -204,15 +200,16 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.black,
       title: Container(color:Colors.black,child:Text("Description", style: TextStyle(color:Colors.red.shade900))),
-      content: Container(color:Colors.black,child:Text(widget.description!, style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold))),
+      content: Container(color:Colors.black,
+          child:Text(widget.description!,
+          style:const TextStyle(color:Colors.white, fontWeight: FontWeight.bold))),
       actions: [
         okButton,
       ],
     );
 
     // show the dialog
-    showDialog(
-      context: context,
+    showDialog(context: context,
       builder: (BuildContext context) {
         return alert;
       },
@@ -223,7 +220,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     likerUserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
 
-    var likeText = SSBadge(top:0, right:2,child:  IconButton(
+    var likeText = SSBadge(top:0, right:2, value: likesCount.toString(),child:  IconButton(
       onPressed: () {
         handleLikePost();
       },
@@ -232,11 +229,13 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         color: Colors.white,
         size: 25,
       ),
-    )
-        , value: likesCount.toString(), );
-    var downloadText = SSBadge(top:0, right:2,child:  IconButton(
+    ),
+    );
+
+    var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),child:  IconButton(
       onPressed: () async {
         try{
+          print("Download image @ ${widget.img}");
           var imageId = await ImageDownloader.downloadImage(widget.img!);
           if(imageId == null) {
             return;
@@ -246,11 +245,8 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
 
           FirebaseFirestore.instance.collection('wallpaper')
               .doc(widget.postId).update({'downloads': total,
-          }).then((value) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
           });
-        } on PlatformException catch (error)
-        {
+        } on PlatformException catch (error) {
           print(error);
         }
       },
@@ -259,11 +255,8 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         color: Colors.white,
         size: 25,
       ),
-    )
-      , value: widget.downloads.toString(), );
-    // Text(likesCount.toString(),
-    //     style: const TextStyle(fontSize: 28.0,
-    //         color: Colors.white, fontWeight: FontWeight.bold));
+    ),
+    );
 
     return Scaffold(
       body: Container(
@@ -291,10 +284,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                   ),
                 ),
                 const SizedBox(height: 30.0,),
-                // const Text('Post Information', style: TextStyle(
-                //   fontSize: 20.0, color: Colors.white54, fontWeight: FontWeight.bold,),
-                // ) ,
-                // const SizedBox(height: 30.0,),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                   child: Row(
@@ -326,109 +315,62 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                                   ),
                                   const SizedBox(height:10.0),
                                   GestureDetector(
-                                    onTap: (){
-                                      showAlertDialog(context);
-                                    },
-                                    child: SizedBox(width: 250, child: Text(widget.description!,
-                                      maxLines: 3, overflow: TextOverflow.fade,
-                                      textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                    )
+                                      onTap: (){
+                                        showAlertDialog(context);
+                                      },
+                                      child: SizedBox(width: 250, child: Text(widget.description!,
+                                        maxLines: 3, overflow: TextOverflow.fade,
+                                        textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                      )
                                   )
-                                  // SizedBox(width: 250, child: Text(widget.description!,
-                                  //   maxLines: 3, overflow: TextOverflow.fade,
-                                  //   textAlign: TextAlign.start, style: const TextStyle(color: Colors.white54,
-                                  //       fontWeight: FontWeight.bold),
-                                  // )
-                                  // )
                                 ]
                             )
                         )
                       ]
                   ),
                 ),
-        Padding(padding: const EdgeInsets.all(10.0),
-          child:
-                Row(mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  downloadText,
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     try{
-                    //       var imageId = await ImageDownloader.downloadImage(widget.img!);
-                    //       if(imageId == null) {
-                    //         return;
-                    //       }
-                    //       Fluttertoast.showToast(msg: "Image saved to Gallery");
-                    //       total= widget.downloads! +1;
-                    //
-                    //       FirebaseFirestore.instance.collection('wallpaper')
-                    //           .doc(widget.postId).update({'downloads': total,
-                    //       }).then((value) {
-                    //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
-                    //       });
-                    //     } on PlatformException catch (error)
-                    //     {
-                    //       print(error);
-                    //     }
-                    //
-                    //   },
-                    //   child: const Icon(Icons.download, color:Colors.white,),
-                    // ),
-                    // Text("${widget.downloads}",
-                    //   style: const TextStyle(
-                    //     fontSize: 28.0,
-                    //     color: Colors.white,
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
-                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                    child:
-                    IconButton(
-                      onPressed: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                            Comment(postId: widget.postId, userId: widget.docId,
-                              image: widget.img, likes: widget.likes,
-                              description: widget.description,
-                              downloads: widget.downloads, postOwnerImg: widget.userImg,
-                              postOwnername: widget.name,)));
-                      },
-                      icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
-                    ),
-                    ),
-                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                      child:
-                      IconButton(
-                      onPressed: () async {
-                        Share.share(widget.img!);
-                      },
-                      icon: const Icon(Icons.share, color: Colors.white),
-                    ),
-                    ),
-                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                      child:
-                      IconButton(onPressed: () async{
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
-                    }, icon: const Icon(Icons.home, color: Colors.white))),
-
-                    Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                       child:
-                            likeText,
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     handleLikePost();
-                        //   },
-                        //   child: const Icon (
-                        //     Icons.thumb_up_sharp,
-                        //     color: Colors.white,
-                        //   ),
-                        // )
+                Padding(padding: const EdgeInsets.all(10.0),
+                  child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      downloadText,
+                      Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                        child:
+                        IconButton(
+                          onPressed: () async {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                                Comment(postId: widget.postId, userId: widget.docId,
+                                  image: widget.img, likes: widget.likes,
+                                  description: widget.description,
+                                  downloads: widget.downloads, postOwnerImg: widget.userImg,
+                                  postOwnername: widget.name,)));
+                          },
+                          icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
+                        ),
                       ),
-                    // likeText,
-                  ],
+                      Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                        child:
+                        IconButton(
+                          onPressed: () async {
+                            Share.share(widget.img!);
+                          },
+                          icon: const Icon(Icons.share, color: Colors.white),
+                        ),
+                      ),
+                      Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                          child:
+                          IconButton(onPressed: () async{
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
+                          }, icon: const Icon(Icons.home, color: Colors.white))),
+
+                      Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                        child: likeText,
+                      ),
+                    ],
+                  ),
                 ),
-        ),
                 const SizedBox(height: 50.0,),
                 FirebaseAuth.instance.currentUser!.uid == widget.docId
                     ?
@@ -440,7 +382,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                           FirebaseFirestore.instance.collection('wallpaper')
                               .doc(widget.postId).delete().then((value) {
                             Fluttertoast.showToast(msg: 'Your post has been deleted');
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> HomeScreen()));
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
                           });
                         }
                     )

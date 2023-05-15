@@ -23,6 +23,14 @@ Future<File> getImageFileFromAssets(String path) async {
   }
 }
 
+String getFileName(String url){
+  var filePath = url.split("userVideos");
+  var name = filePath[1].split("?alt");
+  var fileName = name[0];
+  var fileNameDecoded = Uri.decodeFull(fileName);
+  return fileNameDecoded;
+}
+
 Future<bool> usernameExist(String username) async {
   final usersWithUserName = FirebaseFirestore.instance.collection('users')
                             .where("name", isEqualTo: username).count();
