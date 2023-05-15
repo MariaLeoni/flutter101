@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
@@ -12,7 +11,6 @@ import 'home.dart';
 import 'post.dart';
 import '../misc/global.dart';
 import '../ownerdetailsvid/owner_detailsvid.dart';
-import '../profile/profile_screen.dart';
 import '../postUploader.dart';
 import '../vidlib/ReusableVideoListController.dart';
 import '../vidlib/ReusableVideoListWidget.dart';
@@ -95,6 +93,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     debugPrint("Count: ${snapshot.count}");
     activityCount = snapshot.count;
   }
+
   getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -107,6 +106,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     var activityBadgeView = SSBadge(top: 0, right: 2,
@@ -140,10 +140,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video)));
                 },
                 child:
-                ImageIcon(
-                  AssetImage('assets/images/ttent.png'),
-                  size: 600,
-                  color: Colors.red,
+                const ImageIcon(AssetImage('assets/images/ttent.png'),
+                  size: 600, color: Colors.red,
                 ),
               ),
             ),
@@ -170,15 +168,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                },
                icon: const Icon(Icons.home),
              ),
-            // GestureDetector(
-            //   onTap: () {
-            //     FirebaseAuth.instance.signOut();
-            //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-            //   },
-            //   child: const Icon(
-            //       Icons.login_outlined
-            //   ),
-            // ),
             actions: <Widget>[
               IconButton(
                 onPressed: (){
