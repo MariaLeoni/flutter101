@@ -48,17 +48,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
       userName = snapshot.get('name');
       email = snapshot.get('email');
     });
-    // await HelperFunctions.getUserEmailFromSF().then((value) {
-    //   setState(() {
-    //     email = value!;
-    //   });
-    // });
-    // await HelperFunctions.getUserNameFromSF().then((val) {
-    //   setState(() {
-    //     userName = val!;
-    //   });
-    // });
-    // // getting the list of snapshots in our stream
+    
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserGroups()
         .then((snapshot) {
