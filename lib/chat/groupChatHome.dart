@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:sharedstudent1/widgets/group_tile.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 import 'DatabasService.dart';
 import 'chatSearch.dart';
+import 'chatWidgets.dart';
 
 class GroupChatHome extends StatefulWidget {
 
@@ -20,6 +22,9 @@ class _GroupChatHomeState extends State<GroupChatHome> {
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
+  String searchText = "";
+  StreamController<bool> buttonClearController = StreamController<bool>();
+  TextEditingController searchTextEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -66,17 +71,11 @@ class _GroupChatHomeState extends State<GroupChatHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container( color:Colors.grey.shade900,child:Stack(
+      body: Container( color:Colors.grey.shade900, child:Stack(
           children: [
             Column(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        nextScreen(context, const SearchPage());
-                      },
-                      icon: const Icon(
-                        Icons.search, color: Colors.white,
-                      )),
+                  buildSearchBar(),
                   Expanded(
                       child: groups == null ? const Center(
                         child: Text('You are not a part of any group yet...'),
@@ -236,6 +235,45 @@ class _GroupChatHomeState extends State<GroupChatHome> {
             "You've not joined any groups, tap on the add icon to create a group or also search from top search button.",
             textAlign: TextAlign.center, style: TextStyle(color:Colors.white),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget buildSearchBar() {
+    return Container(
+      margin: const EdgeInsets.all(Sizes.dimen_10),
+      height: Sizes.dimen_50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(Sizes.dimen_30),
+        color: Colors.grey.shade700,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(
+            width: Sizes.dimen_10,
+          ),
+          const Icon(Icons.search,
+            color: AppColors.white,
+            size: Sizes.dimen_24,
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          Expanded(
+            child: TextFormField(
+              textInputAction: TextInputAction.search,
+              controller: searchTextEditingController,
+              onTap: () {
+                nextScreen(context, const SearchPage());
+              },
+              decoration: const InputDecoration.collapsed(
+                hintText: 'Search here...',
+                hintStyle: TextStyle(color: AppColors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );
