@@ -4,12 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 class DatabaseService {
   final String? uid;
   DatabaseService({this.uid});
-  FirebaseAuth _auth = FirebaseAuth.instance;
+
   // reference for our collections
-  final CollectionReference userCollection =
-  FirebaseFirestore.instance.collection("users");
-  final CollectionReference groupCollection =
-  FirebaseFirestore.instance.collection("groups");
+  final CollectionReference userCollection = FirebaseFirestore.instance.collection("users");
+  final CollectionReference groupCollection = FirebaseFirestore.instance.collection("groups");
 
   // saving the userdata
   Future savingUserData(String fullName, String email) async {
@@ -84,8 +82,7 @@ class DatabaseService {
   }
 
   // function -> bool
-  Future<bool> isUserJoined(
-      String groupName, String groupId, String userName) async {
+  Future<bool> isUserJoined(String groupName, String groupId) async {
     DocumentReference userDocumentReference = userCollection.doc(uid);
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
 
@@ -98,8 +95,7 @@ class DatabaseService {
   }
 
   // toggling the group join/exit
-  Future toggleGroupJoin(
-      String groupId, String userName, String groupName) async {
+  Future toggleGroupJoin(String groupId, String userName, String groupName) async {
     // doc reference
     DocumentReference userDocumentReference = userCollection.doc(uid);
     DocumentReference groupDocumentReference = groupCollection.doc(groupId);
@@ -133,5 +129,14 @@ class DatabaseService {
       "recentMessageSender": chatMessageData['sender'],
       "recentMessageTime": chatMessageData['time'].toString(),
     });
+  }
+
+  Query<Object?> getGroups(String? searchText) {
+    if (searchText?.isNotEmpty == true) {
+      return groupCollection.where("groupName", isGreaterThanOrEqualTo: searchText)
+        .where("groupName", isLessThanOrEqualTo: '$searchText\uf8ff');
+    } else {
+      return groupCollection;
+    }
   }
 }

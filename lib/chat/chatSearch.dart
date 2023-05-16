@@ -22,27 +22,34 @@ class _SearchPageState extends State<SearchPage> {
   String? userImage;
   bool isJoined = false;
   User? user;
-  Future <QuerySnapshot>? GroupDocumentslist;
-  String UserGroupText = '';
+  List<QueryDocumentSnapshot>? groupDocumentList = [];
+  String userGroupText = '';
+  String userId = "";
+  String userGroupId = "";
+
+  late DatabaseService databaseService;
 
   @override
   void initState() {
     super.initState();
+
+    userId = FirebaseAuth.instance.currentUser!.uid;
+    user = FirebaseAuth.instance.currentUser;
+
+    databaseService = DatabaseService(uid: userId);
     getCurrentUserIdandName();
   }
 
   getCurrentUserIdandName() async {
-    await FirebaseFirestore.instance.collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
+    await FirebaseFirestore.instance.collection("users").doc(userId).get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
         userName = snapshot.data()!["name"];
         userImage = snapshot.data()!["userImage"];
+        userGroupId = "${userId}_$userName";
       });
     }
     });
-    user = FirebaseAuth.instance.currentUser;
   }
 
   String getName(String r) {
@@ -51,16 +58,6 @@ class _SearchPageState extends State<SearchPage> {
 
   String getId(String res) {
     return res.substring(0, res.indexOf("_"));
-  }
-
-  void startSearch(String searchText) {
-    GroupDocumentslist = FirebaseFirestore.instance.collection("groups")
-        .where("groupName", isGreaterThanOrEqualTo: searchText)
-        .where("groupName", isLessThanOrEqualTo: '$searchText\uf8ff').get();
-    
-    setState(() {
-      GroupDocumentslist;
-    });
   }
 
   @override
@@ -79,37 +76,40 @@ class _SearchPageState extends State<SearchPage> {
         title: TextField(
           onChanged: (textEntered) {
             setState(() {
-              UserGroupText = textEntered;
+              userGroupText = textEntered;
             });
-            startSearch(textEntered);
           },
           decoration: InputDecoration(hintText: "Search here...",
             hintStyle: const TextStyle(color: Colors.white54),
             border: InputBorder.none,
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.search, color: Colors.white,),
-              onPressed: () {
-                startSearch(UserGroupText);
-              },
+            suffixIcon: IconButton(icon: const Icon(Icons.search, color: Colors.white,),
+              onPressed: () {  },
             ),
           ),
         ),
       ),
-      body: FutureBuilder<QuerySnapshot>(
-          future: GroupDocumentslist,
-          builder: (context, snapshot) {
-            return snapshot.hasData ?
-            Container(
-                color: Colors.red,
-                child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
+      body: StreamBuilder<QuerySnapshot>(
+          stream: databaseService.getGroups(null).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
+            groupDocumentList = snapshot.data?.docs;
+            
+            if (userGroupText.isNotEmpty) {
+              groupDocumentList = groupDocumentList?.where((group) {
+                return group.get("groupName")
+                    .toString()
+                    .toLowerCase()
+                    .contains(userGroupText.toLowerCase());
+              }).toList();
+            }
+            
+            return snapshot.hasData ? Container(color: Colors.red,
+                child: ListView.builder(itemCount: groupDocumentList?.length, itemBuilder: (context, index) {
                   Groups model = Groups.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
                   return SearchGroupTile(model: model, context: context,);
                 })
             ):
             const Center(child: Text("No Record Exists",
-              style: TextStyle(
-                fontSize: 20.0,
-                color: Colors.black,
+              style: TextStyle(fontSize: 20.0, color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),),);
           }
@@ -117,20 +117,9 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-
-  joinedOrNot(String userName, String groupId, String groupname, String admin) async {
-    await DatabaseService(uid: user!.uid)
-        .isUserJoined(groupname, groupId, userName)
-        .then((value) {
-      setState(() {
-        isJoined = value;
-      });
-    });
-  }
-
-  Widget SearchGroupTile( {required Groups model, required BuildContext context}) {
+  Widget SearchGroupTile({required Groups model, required BuildContext context}) {
     var groupName = model.groupName!;
-    joinedOrNot(userName, model.groupId!, model.groupName!, model.admin!);
+    isJoined = model.members.contains(userGroupId);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       leading: CircleAvatar(
@@ -142,56 +131,42 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
       title:
-      Text(model!.groupName!, style: const TextStyle(fontWeight: FontWeight.w600)),
+      Text(model.groupName!, style: const TextStyle(fontWeight: FontWeight.w600)),
       subtitle: Text("Admin: ${getName(model.admin!)}"),
       trailing: InkWell(
         onTap: () async {
-          await DatabaseService(uid: user!.uid)
-              .toggleGroupJoin(model.groupId!, userName, model.groupName!);
+          await databaseService.toggleGroupJoin(model.groupId!, userName, model.groupName!);
+          isJoined = await databaseService.isUserJoined(groupName, model.groupId!);
+          bool localIsJoined = await databaseService.isUserJoined(groupName, model.groupId!);
+          setState(() {
+            isJoined = localIsJoined;
+          });
+
           if (isJoined) {
-            setState(() {
-              isJoined = !isJoined;
-            });
-            showSnackbar(context, Colors.green, "Successfully joined he group");
+            showSnackbar(context, Colors.green, "You have successfully joined the group");
+
             Future.delayed(const Duration(seconds: 2), () {
-              nextScreen(
-                  context,
-                  ChatPage(
-                    groupId: model.groupId!,
-                    groupName: model.groupName!,
-                    userName: userName,
+              nextScreen(context, ChatPage(groupId: model.groupId!,
+                    groupName: model.groupName!, userName: userName,
                     userImage: userImage!,));
             });
-          } else {
-            setState(() {
-              isJoined = !isJoined;
-              showSnackbar(context, Colors.red, "Left the group $groupName");
-            });
+          }
+          else{
+            showSnackbar(context, Colors.red, "You have left the group $groupName");
           }
         },
-        child: isJoined
-            ? Container(
-          decoration: BoxDecoration(
+        child: isJoined ? Container(decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Colors.black,
-            border: Border.all(color: Colors.white, width: 1),
+            color: Colors.black, border: Border.all(color: Colors.white, width: 1),
           ),
-          padding:
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: const Text(
-            "Joined",
-            style: TextStyle(color: Colors.white),
-          ),
-        )
-            : Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: const Text("Joined", style: TextStyle(color: Colors.white),),
+        ) : Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
             color: Theme.of(context).primaryColor,
           ),
-          padding:
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: const Text("Join Now",
-              style: TextStyle(color: Colors.white)),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: const Text("Join Now", style: TextStyle(color: Colors.white)),
         ),
       ),
     );
