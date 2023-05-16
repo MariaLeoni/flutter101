@@ -1,19 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
-import 'package:image_downloader/image_downloader.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 import 'package:sharedstudent1/widgets/ssbadge.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
+import '../misc/global.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 class OwnerDetails extends StatefulWidget {
@@ -235,13 +238,24 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),child:  IconButton(
       onPressed: () async {
         try{
-          print("Download image @ ${widget.img}");
-          var imageId = await ImageDownloader.downloadImage(widget.img!);
-          if(imageId == null) {
-            return;
-          }
-          Fluttertoast.showToast(msg: "Image saved to Gallery");
-          total= widget.downloads! +1;
+          Dio dio = Dio();
+          var fileNameDecoded = getFileName(widget.img!, PostType.image);
+          var dir = await getExternalStorageDirectory();
+          final String savePath = "${dir?.path}/$fileNameDecoded.jpg";
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Downloading image...")));
+
+          await dio.download(widget.img!, savePath,
+              onReceiveProgress: (received, total) {
+                if (total != -1) {
+                  print("Downloaded ${(received / total * 100).toStringAsFixed(0)}%");
+                }
+              });
+          await ImageGallerySaver.saveFile(savePath);
+
+          Fluttertoast.showToast(msg: "Image saved to Image Gallery");
+          total = widget.downloads! + 1;
 
           FirebaseFirestore.instance.collection('wallpaper')
               .doc(widget.postId).update({'downloads': total,

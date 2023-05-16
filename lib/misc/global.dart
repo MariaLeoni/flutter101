@@ -23,8 +23,8 @@ Future<File> getImageFileFromAssets(String path) async {
   }
 }
 
-String getFileName(String url){
-  var filePath = url.split("userVideos");
+String getFileName(String url, PostType type){
+  var filePath = type == PostType.video ? url.split("userVideos") : url.split("userImages");
   var name = filePath[1].split("?alt");
   var fileName = name[0];
   var fileNameDecoded = Uri.decodeFull(fileName);

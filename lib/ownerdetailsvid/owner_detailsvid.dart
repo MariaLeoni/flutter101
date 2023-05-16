@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import '../home_screen/home.dart';
@@ -155,22 +156,23 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
       onPressed: () async {
         try {
           Dio dio = Dio();
-
-          var fileNameDecoded = getFileName(widget.vid!);
+          var fileNameDecoded = getFileName(widget.vid!, PostType.video);
           var dir = await getExternalStorageDirectory();
+          final String savePath = "${dir?.path}/$fileNameDecoded.mp4";
 
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text("Downloading video...")));
 
-          Response response = await dio.download(widget.vid!, "${dir?.path}/$fileNameDecoded.mp4",
+          await dio.download(widget.vid!, savePath,
               onReceiveProgress: (received, total) {
                 if (total != -1) {
                    print("Downloaded ${(received / total * 100).toStringAsFixed(0)}%");
                  }
           });
-          print("Download response ${response.statusMessage} saved to ${dir?.path}/$fileNameDecoded.mp4");
-          Fluttertoast.showToast(msg: "Video saved to Gallery");
-          total= widget.downloads! + 1;
+          await ImageGallerySaver.saveFile(savePath);
+
+          Fluttertoast.showToast(msg: "Video saved to Video Gallery");
+          total = widget.downloads! + 1;
 
           FirebaseFirestore.instance.collection('wallpaper2')
               .doc(widget.postId).update({'downloads': total,
