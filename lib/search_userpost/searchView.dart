@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/vidlib/VideoListData.dart';
 import '../home_screen/post.dart';
-import '../ownerdetailsvid/owner_detailsvid.dart';
+import '../owner_details/owner_detailsvid.dart';
 import '../search_post/user.dart';
 import '../search_post/users_design_widget.dart';
 import '../search_post/users_post_widget.dart';

@@ -8,7 +8,7 @@ import '../Comments/SubComment.dart';
 import '../home_screen/post.dart';
 import '../misc/global.dart';
 import '../owner_details/owner_details.dart';
-import '../ownerdetailsvid/owner_detailsvid.dart';
+import '../owner_details/owner_detailsvid.dart';
 import '../search_post/users_specifics_page.dart';
 import 'feedpost.dart';
 

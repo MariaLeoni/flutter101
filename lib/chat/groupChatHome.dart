@@ -32,7 +32,6 @@ class _GroupChatHomeState extends State<GroupChatHome> {
     gettingUserData();
   }
 
-  // string manipulation
   String getId(String res) {
     return res.substring(0, res.indexOf("_"));
   }
@@ -238,32 +237,18 @@ class _GroupChatHomeState extends State<GroupChatHome> {
         borderRadius: BorderRadius.circular(Sizes.dimen_30),
         color: Colors.grey.shade700,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(
-            width: Sizes.dimen_10,
-          ),
-          const Icon(Icons.search,
-            color: AppColors.white,
-            size: Sizes.dimen_24,
-          ),
-          const SizedBox(
-            width: 5,
-          ),
+          const SizedBox(width: Sizes.dimen_10,),
+          const Icon(Icons.search, color: AppColors.white, size: Sizes.dimen_24,),
+          const SizedBox(width: 5,),
           Expanded(
-            child: TextFormField(
-              textInputAction: TextInputAction.search,
-              controller: searchTextEditingController,
-              onTap: () {
+            child: OutlinedButton(
+              onPressed: (){
                 nextScreen(context, const SearchPage());
-              },
-              decoration: const InputDecoration.collapsed(
-                hintText: 'Search here...',
-                hintStyle: TextStyle(color: AppColors.white),
-              ),
+              }, style: OutlinedButton.styleFrom(side: BorderSide(width: 1.0, color: Colors.grey.shade700),),
+              child: const Text("Search here...", style: TextStyle(color: AppColors.white)))
             ),
-          ),
         ],
       ),
     );

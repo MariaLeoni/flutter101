@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sharedstudent1/owner_details/userListScreen.dart';
 import '../home_screen/home.dart';
 import '../misc/global.dart';
 import '../search_post/users_specifics_page.dart';
@@ -143,17 +144,30 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     likerUserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
 
-    var likeText = SSBadge(top:0, right:2, value: likesCount.toString(),child:  IconButton(
-      onPressed: () {
-        handleLikePost();
-      },
-      icon: const Icon(Icons.thumb_up_sharp,
-        color: Colors.white, size: 25,),
+    var likeText = SSBadge(top:0, right:2, value: likesCount.toString(),
+      child: GestureDetector(
+        onTap:(){},
+        onDoubleTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
+            users: widget.likes,
+          )));
+        },
+        child: IconButton(onPressed: () {
+          handleLikePost();
+        },
+            icon: const Icon(Icons.thumb_up_sharp, color: Colors.white, size: 25,)),
     ),
     );
 
-    var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),child:  IconButton(
-      onPressed: () async {
+    var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),
+      child: GestureDetector(
+        onTap:(){},
+        onDoubleTap: (){
+          // Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
+          //   users: widget.downloads,
+          // )));
+        },
+        child: IconButton(onPressed: () async {
         try {
           Dio dio = Dio();
           var fileNameDecoded = getFileName(widget.vid!, PostType.video);
@@ -184,7 +198,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
       icon: const Icon (Icons.download,
         color: Colors.white, size: 25,
       ),
-    ), );
+    )),);
 
     followUserId = _auth.currentUser?.uid;
     followersCount = (widget.followers?.length ?? 0);
@@ -268,8 +282,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                           children: [
                             downloadText,
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                              child:
-                              IconButton(
+                              child: IconButton(
                                 onPressed: () async {
                                   Share.share(widget.vid!);
                                 },
@@ -277,8 +290,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                               ),
                             ),
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                              child:
-                              IconButton(
+                              child: IconButton(
                                 onPressed: () async {
                                   Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,
                                     image: widget.vid, likes: widget.likes,
@@ -290,8 +302,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                               ),
                             ),
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                                child:
-                                IconButton(onPressed: () async{
+                                child: IconButton(onPressed: () async{
                                   Navigator.pushReplacement(context, MaterialPageRoute(builder:(_) => const HomeScreen()));
                                 }, icon: const Icon(Icons.home, color: Colors.white))),
 
@@ -302,8 +313,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                         ),),
                       const SizedBox(height: 50.0,),
                       FirebaseAuth.instance.currentUser!.uid == widget.docId  ?
-                      Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right:8.0,),
+                      Padding(padding: const EdgeInsets.only(left: 8.0, right:8.0,),
                           child: ButtonSquare(text:"Delete",
                               colors1: Colors.black,
                               colors2: Colors.black,

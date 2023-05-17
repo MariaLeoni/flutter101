@@ -10,7 +10,7 @@ import '../widgets/ssbadge.dart';
 import 'home.dart';
 import 'post.dart';
 import '../misc/global.dart';
-import '../ownerdetailsvid/owner_detailsvid.dart';
+import '../owner_details/owner_detailsvid.dart';
 import '../postUploader.dart';
 import '../vidlib/ReusableVideoListController.dart';
 import '../vidlib/ReusableVideoListWidget.dart';

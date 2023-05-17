@@ -4,30 +4,31 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/chat/constants.dart';
-import 'package:sharedstudent1/chat/contactListScreen.dart';
 import 'package:sharedstudent1/chat/userModel.dart';
+import '../chat/chatUsersProvider.dart';
+import '../chat/chatWidgets.dart';
 import '../log_in/login_screen.dart';
 import '../misc/keyboardUtil.dart';
 import '../misc/loadingView.dart';
-import 'chatScreen.dart';
-import 'chatUsersProvider.dart';
-import 'chatWidgets.dart';
+import '../search_post/users_specifics_page.dart';
 
-class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({super.key});
+class UserListScreen extends StatefulWidget {
+  List<String>? users;
+
+  UserListScreen({super.key, this.users });
 
   @override
-  State<ChatListScreen> createState() => ChatListScreenState();
+  State<UserListScreen> createState() => UserListScreenState();
 }
 
-class ChatListScreenState extends State<ChatListScreen> {
+class UserListScreenState extends State<UserListScreen> {
   final ScrollController scrollController = ScrollController();
 
   String searchText = "";
   bool isLoading = false;
 
   late String currentUserId;
-  late ChatUsersProvider chatUserProvider;
+  late ChatUsersProvider userListProvider;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
@@ -35,8 +36,7 @@ class ChatListScreenState extends State<ChatListScreen> {
   StreamController<bool> buttonClearController = StreamController<bool>();
   TextEditingController searchTextEditingController = TextEditingController();
   List<QueryDocumentSnapshot> documents = [];
-  Stream? peopleIChatWith;
-  List<String>? chatees;
+  Stream? userList;
 
   void scrollListener() {
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
@@ -63,28 +63,27 @@ class ChatListScreenState extends State<ChatListScreen> {
     }
     currentUserId = _auth.currentUser!.uid;
 
-    chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
-
-    readUserInfo();
+    userListProvider = ChatUsersProvider(firebaseFirestore: fireStore);
 
     scrollController.addListener(scrollListener);
-  }
-
-  readUserInfo() async {
-      fireStore.collection('users').doc(currentUserId).get()
-          .then<dynamic>((DocumentSnapshot snapshot) {
-        List<String> chateesx = List.from(snapshot.get('chatWith'));
-        setState(() {
-          chatees = chateesx;
-          chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
-        });
-      });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
+      appBar: AppBar(
+        flexibleSpace:Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.black, Colors.black],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              stops: [0.2, 0.9],
+            ),
+          ),
+        ),
+        title: const Text("Users"), centerTitle: true,
+      ),
       body: Container(color:Colors.grey.shade900,
         child:Stack(
         children: [
@@ -92,11 +91,11 @@ class ChatListScreenState extends State<ChatListScreen> {
             children: [
               buildSearchBar(),
               Expanded(
-                child: chatees == null ? const Center(
-                  child: Text('You have not started any chat yet...',
+                child: widget.users == null ? const Center(
+                  child: Text('Looks like this list is empty',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
                  ) : StreamBuilder<QuerySnapshot>(
-                  stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, chatees).snapshots(),
+                  stream: userListProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, widget.users).snapshots(),
                   builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
                     if (snapshot.hasData) {
                       documents = snapshot.data!.docs;
@@ -120,7 +119,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                         );
                       } else {
                         return const Center(
-                          child: Text('You have not started any chat yet...', style:TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
+                          child: Text('Looks like this list is empty', style:TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
                         );
                       }
                     } else {
@@ -138,22 +137,6 @@ class ChatListScreenState extends State<ChatListScreen> {
           ),
         ],
       ),),
-      floatingActionButton: Wrap(
-        direction: Axis.horizontal,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(10.0),
-            child: FloatingActionButton(
-              heroTag: "1",
-              backgroundColor: Colors.red.shade900,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ContactListScreen()));
-              },
-              child: const Icon(Icons.chat_bubble),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -226,54 +209,48 @@ class ChatListScreenState extends State<ChatListScreen> {
 
   Widget buildItem(BuildContext context, DocumentSnapshot? documentSnapshot) {
     if (documentSnapshot != null) {
-      ChatUser userChat = ChatUser.fromDocument(documentSnapshot);
-      if (userChat.id == currentUserId) {
-        return const SizedBox.shrink();
-      } else {
-        return TextButton(
-          onPressed: () {
-            if (KeyboardUtils.isKeyboardShowing()) {
-              KeyboardUtils.closeKeyboard(context);
-            }
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => ChatScreen(
-                  peerId: userChat.id,
-                  peerAvatar: userChat.photoUrl,
-                  peerNickname: userChat.displayName,
-                  userAvatar: userChat.photoUrl,
-                )));
-          },
-          child: ListTile(leading: userChat.photoUrl.isNotEmpty
-              ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
-            child: Image.network(userChat.photoUrl,
-              fit: BoxFit.cover, width: 50, height: 50,
-              loadingBuilder: (BuildContext ctx, Widget child,
-                  ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) {
-                  return child;
-                } else {
-                  return SizedBox(width: 50, height: 50,
-                    child: CircularProgressIndicator(color: Colors.grey,
-                        value: loadingProgress.expectedTotalBytes !=
-                            null ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null),
-                  );
-                }
-              },
-              errorBuilder: (context, object, stackTrace) {
-                return const Icon(Icons.account_circle, size: 50);
-              },
-            ),
-          )
-              : const Icon(Icons.account_circle, size: 50,
+      ChatUser userModel = ChatUser.fromDocument(documentSnapshot);
+      return TextButton(
+        onPressed: () {
+          if (KeyboardUtils.isKeyboardShowing()) {
+            KeyboardUtils.closeKeyboard(context);
+          }
+          Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+            userId: userModel.id,
+            userName: userModel.displayName,
+            userImage: userModel.photoUrl,
+          )));
+        },
+        child: ListTile(leading: userModel.photoUrl.isNotEmpty
+            ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
+          child: Image.network(userModel.photoUrl,
+            fit: BoxFit.cover, width: 50, height: 50,
+            loadingBuilder: (BuildContext ctx, Widget child,
+                ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) {
+                return child;
+              } else {
+                return SizedBox(width: 50, height: 50,
+                  child: CircularProgressIndicator(color: Colors.grey,
+                      value: loadingProgress.expectedTotalBytes !=
+                          null ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                          : null),
+                );
+              }
+            },
+            errorBuilder: (context, object, stackTrace) {
+              return const Icon(Icons.account_circle, size: 50);
+            },
           ),
-            title: Text(userChat.displayName,
-              style: const TextStyle(color: Colors.white),
-            ),
+        )
+            : const Icon(Icons.account_circle, size: 50,
+        ),
+          title: Text(userModel.displayName,
+            style: const TextStyle(color: Colors.white),
           ),
-        );
-      }
+        ),
+      );
     } else {
       return const SizedBox.shrink();
     }

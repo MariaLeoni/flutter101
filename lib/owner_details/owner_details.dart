@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sharedstudent1/owner_details/userListScreen.dart';
 import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 import 'package:sharedstudent1/widgets/ssbadge.dart';
 import 'package:uuid/uuid.dart';
@@ -223,20 +224,30 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     likerUserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
 
-    var likeText = SSBadge(top:0, right:2, value: likesCount.toString(),child:  IconButton(
-      onPressed: () {
-        handleLikePost();
-      },
-      icon: const Icon (
-        Icons.thumb_up_sharp,
-        color: Colors.white,
-        size: 25,
+    var likeText = SSBadge(top:0, right:2, value: likesCount.toString(),
+      child: GestureDetector(
+        onTap:(){},
+        onDoubleTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
+            users: widget.likes,
+          )));
+        },
+        child: IconButton(onPressed: () {
+          handleLikePost();
+        },
+            icon: const Icon(Icons.thumb_up_sharp, color: Colors.white, size: 25,)),
       ),
-    ),
     );
 
-    var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),child:  IconButton(
-      onPressed: () async {
+    var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),
+        child: GestureDetector(
+          onTap:(){},
+          onDoubleTap: (){
+            // Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
+            //   users: widget.downloads,
+            // )));
+          },
+          child:  IconButton(onPressed: () async {
         try{
           Dio dio = Dio();
           var fileNameDecoded = getFileName(widget.img!, PostType.image);
@@ -269,7 +280,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         color: Colors.white,
         size: 25,
       ),
-    ),
+    )),
     );
 
     return Scaffold(
