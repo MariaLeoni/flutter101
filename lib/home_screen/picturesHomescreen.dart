@@ -8,13 +8,11 @@ import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
-import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:uuid/uuid.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../notification/notification.dart';
-import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
 import '../search_post/users_specific_posts.dart';
@@ -104,13 +102,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   void goToDetails(String img, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, int viewCount, String postId,
-      List<String>? likes, List<String>? viewers,String description) {
+      List<String>? likes, List<String>? viewers,String description, List<String>? downloaders) {
 
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
         OwnerDetails(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
           viewCount: viewCount, postId: postId, likes: likes, viewers: viewers,
-          description: description,
+          description: description, downloaders: downloaders,
         )));
   }
 
@@ -138,7 +136,10 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   }
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, int viewCount, String postId,
-      List<String>? likes, List<String>? viewers, String description) {
+      List<String>? likes, List<String>? viewers, String description,
+      List<String>? downloaders) {
+
+    print("Downloaders ${downloaders} for $postId");
 
     return Padding(
       padding: const EdgeInsets.all (8.0),
@@ -159,8 +160,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      updateViewAndNavigate(viewCount, postId, viewers, img, userImg,
-                          name, date, docId, userId, downloads, likes, description);
+                      updateViewAndNavigate(viewCount, postId, viewers, img,
+                          userImg, name, date, docId, userId, downloads, likes,
+                          description, downloaders);
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10), // Image border
@@ -210,7 +212,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   void updateViewAndNavigate(int viewCount, String postId, List<String>? viewers, String img,
       String userImg, String name, DateTime date, String docId, String userId,
-      int downloads, List<String>? likes, String description) {
+      int downloads, List<String>? likes, String description, List<String>? downloaders) {
     total = viewCount + 1;
 
     if (viewers != null && !viewers.contains(userIdx)){
@@ -222,7 +224,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     });
 
     goToDetails(img, userImg, name, date, docId, userId, downloads, viewCount,
-        postId, likes,viewers, description);
+        postId, likes,viewers, description, downloaders);
   }
 
   void updateInterests(Map<String, List<String>?> interests) {
@@ -354,11 +356,12 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                       controller: _pageController,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (BuildContext context, int index) {
-                        Post post = Post.getPost(snapshot, index, PostType.image);
 
+                        Post post = Post.getPost(snapshot, index, PostType.image);
                         return listViewWidget(post.id, post.source, post.userImage,
-                            post.userName, post.createdAt, post.email,
-                            post.downloads, post.viewCount, post.postId, post.likes, post.viewers, post.description);
+                            post.userName, post.createdAt, post.email, post.downloads,
+                            post.viewCount, post.postId, post.likes, post.viewers,
+                            post.description, post.downloaders);
                       },
                     );
                   }

@@ -31,9 +31,10 @@ class  VideoDetailsScreen extends StatefulWidget {
 
   List<String>? likes = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
+  List<String>? downloaders = List.empty(growable: true);
 
   VideoDetailsScreen({super.key, this.likeruserId,this.vid, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.postId, this.likes, this. description,
+    this.docId, this.userId, this.downloads, this.postId, this.likes, this. description, this.downloaders
   });
 
   @override
@@ -42,24 +43,23 @@ class  VideoDetailsScreen extends StatefulWidget {
 }
 
 class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
-  int? total;
+  int? total = 0;
   int likesCount = 0;
   int followersCount = 0;
   String? postId;
-  String? likerUserId;
-  String? followUserId;
+  String? userId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? name;
   String? image;
 
   handleFollowerPost() {
-    if (widget.followers!= null && widget.followers!.contains(followUserId)) {
+    if (widget.followers!= null && widget.followers!.contains(userId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
-      widget.followers!.remove(followUserId);
+      widget.followers!.remove(userId);
     }
     else {
       Fluttertoast.showToast(msg: "You followed this person");
-      widget.followers!.add(followUserId!);
+      widget.followers!.add(userId!);
     }
 
     FirebaseFirestore.instance
@@ -74,13 +74,13 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
   }
 
   handleLikePost(){
-    if (widget.likes != null && widget.likes!.contains(likerUserId)) {
+    if (widget.likes != null && widget.likes!.contains(userId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
-      widget.likes!.remove(likerUserId);
+      widget.likes!.remove(userId);
     }
     else {
       Fluttertoast.showToast(msg: "You liked this image!");
-      widget.likes!.add(likerUserId!);
+      widget.likes!.add(userId!);
     }
 
     FirebaseFirestore.instance.collection('wallpaper2').doc(widget.postId)
@@ -136,13 +136,18 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
   @override
   void initState() {
     super.initState();
+
+    userId = _auth.currentUser?.uid;
     getDataFromDatabase();
   }
 
   @override
   Widget build(BuildContext context) {
-    likerUserId = _auth.currentUser?.uid;
+
     likesCount = (widget.likes?.length ?? 0);
+    setState(() {
+      total = widget.downloads ?? 0;
+    });
 
     var likeText = SSBadge(top:0, right:2, value: likesCount.toString(),
       child: GestureDetector(
@@ -159,13 +164,15 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     ),
     );
 
-    var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),
+    var downloadText = SSBadge(top:0, right:2, value: total.toString(),
       child: GestureDetector(
         onTap:(){},
         onDoubleTap: (){
-          // Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
-          //   users: widget.downloads,
-          // )));
+          if (widget.downloaders!.isNotEmpty){
+            Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
+              users: widget.downloaders,
+            )));
+          }
         },
         child: IconButton(onPressed: () async {
         try {
@@ -186,11 +193,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
           await ImageGallerySaver.saveFile(savePath);
 
           Fluttertoast.showToast(msg: "Video saved to Video Gallery");
-          total = widget.downloads! + 1;
-
-          FirebaseFirestore.instance.collection('wallpaper2')
-              .doc(widget.postId).update({'downloads': total,
-          });
+          handleDownloadComplete();
         } on PlatformException catch (error) {
           print(error);
         }
@@ -199,11 +202,8 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
         color: Colors.white, size: 25,
       ),
     )),);
-
-    followUserId = _auth.currentUser?.uid;
+    
     followersCount = (widget.followers?.length ?? 0);
-
-
     return Scaffold(
         body: Container(
             decoration: const BoxDecoration(
@@ -333,5 +333,18 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                 ])
         )
     );
+  }
+
+  void handleDownloadComplete() {
+    total = widget.downloads! + 1;
+    setState(() {
+      total;
+    });
+    List downloaders = List.from(widget.downloaders!);
+    downloaders.add(userId);
+
+    FirebaseFirestore.instance.collection('wallpaper2')
+        .doc(widget.postId).update({'downloads': total, 'downloaders': downloaders
+    });
   }
 }

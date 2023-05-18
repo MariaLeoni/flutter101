@@ -19,21 +19,13 @@ class Post {
   List<String>? likes = List.empty(growable: true);
   List<String>? viewers = List.empty(growable:true);
   List<String>? category = List.empty(growable: true);
+  List<String>? downloaders = List.empty(growable: true);
 
-  Post({
-    required this.id,
-    required this.source,
-    required this.userImage,
-    required this.createdAt,
-    required this.userName,
-    required this.email,
-    required this.postId,
-    required this.description,
-    required this.downloads,
-    required this.viewCount,
-    required this.likes,
-    required this.viewers,
-    required this.category,
+  Post({required this.id, required this.source, required this.userImage,
+    required this.createdAt, required this.userName, required this.email,
+    required this.postId, required this.description, required this.downloads,
+    required this.viewCount, required this.likes, required this.viewers,
+    required this.category, required this.downloaders,
   });
 
   static Post getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index, PostType type){
@@ -57,8 +49,10 @@ class Post {
         description: snapshot.data!.docs[index]['description'],
         likes: List.from(snapshot.data!.docs[index]['likes']),
         viewers: List.from(snapshot.data!.docs[index]['viewers']),
-        category: snapshot.data!.docs[index].toString().contains("category") ?
-        List.from(snapshot.data!.docs[index]['category']) : List.empty()
+        category: snapshot.data!.docs[index].data().toString().contains("category") ?
+        List.from(snapshot.data!.docs[index]['category']) : List.empty(),
+        downloaders: snapshot.data!.docs[index].data().toString().contains("downloaders") ?
+        List.from(snapshot.data!.docs[index]['downloaders']) : List.empty()
     );
   }
 
@@ -77,7 +71,8 @@ class Post {
         description: postModel.description!,
         likes: List.empty(),
         viewers: List.empty(),
-        category: List.empty()
+        category: List.empty(),
+        downloaders: List.empty(),
     );
   }
 }

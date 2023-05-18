@@ -36,25 +36,24 @@ class OwnerDetails extends StatefulWidget {
   List<String>? likes = List.empty(growable: true);
   List<String>? viewers = List.empty(growable: true);
   List<String>? followers = List.empty(growable: true);
+  List<String>? downloaders = List.empty(growable: true);
 
-  OwnerDetails({super.key, this.likeruserId, this.img, this.userImg, this.name, this.date,
-    this.docId, this.userId, this.downloads, this.viewCount, this.postId, this.likes,
-    this.viewers, this.description, this.isRead
-  });
+  OwnerDetails({super.key, this.likeruserId, this.img, this.userImg, this.name,
+    this.date, this.docId, this.userId, this.downloads, this.viewCount,
+    this.postId, this.likes, this.viewers, this.description, this.isRead,
+    this.downloaders});
 
   @override
   State<OwnerDetails> createState() => _OwnerDetailsState();
 }
 
 class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMixin {
-
-  int? total;
+  int? total = 0;
   int likesCount = 0;
   int followersCount = 0;
   String? postId;
   int? feedCount;
-  String? likerUserId;
-  String? followUserId;
+  String? userId;
   String? name;
   String? userImage;
   String?image;
@@ -64,10 +63,8 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   String activityId = const Uuid().v4();
 
   void getDataFromDatabase() async {
-    await FirebaseFirestore.instance.collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((snapshot) async { if (snapshot.exists) {
+    await FirebaseFirestore.instance.collection("users").doc(userId)
+        .get().then((snapshot) async { if (snapshot.exists) {
       setState(() {
         name = snapshot.data()!["name"];
         image = snapshot.data()!["userImage"];
@@ -111,6 +108,11 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
+
+    userId = _auth.currentUser!.uid;
+
+    print("Downloaders ${widget.downloaders}");
+
     getDataFromDatabase();
     getDataFromDatabase2();
     notificationManager = NotificationManager();
@@ -118,7 +120,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   }
 
   addLikeToActivityFeed() {
-    bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
+    bool isNotPostOwner = userId != widget.docId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
           .collection('FeedItems').doc(activityId)
@@ -152,7 +154,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   }
 
   removeLikeFromActivityFeed() {
-    bool isNotPostOwner = _auth.currentUser!.uid != widget.docId;
+    bool isNotPostOwner = userId != widget.docId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed')
           .doc(widget.docId)
@@ -168,14 +170,14 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   }
 
   handleLikePost(){
-    if (widget.likes != null && widget.likes!.contains(likerUserId)) {
+    if (widget.likes != null && widget.likes!.contains(userId)) {
       Fluttertoast.showToast(msg: "You unliked this image!");
-      widget.likes!.remove(likerUserId);
+      widget.likes!.remove(userId);
       removeLikeFromActivityFeed();
     }
     else {
       Fluttertoast.showToast(msg: "You liked this image!");
-      widget.likes!.add(likerUserId!);
+      widget.likes!.add(userId!);
       addLikeToActivityFeed();
       sendNotification();
     }
@@ -191,7 +193,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   }
 
   showAlertDialog(BuildContext context) {
-
     Widget okButton = TextButton(
       child: const Text("OK"),
       onPressed: () {
@@ -219,10 +220,13 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
-    likerUserId = _auth.currentUser?.uid;
     likesCount = (widget.likes?.length ?? 0);
+    setState(() {
+      total = widget.downloads ?? 0;
+    });
 
     var likeText = SSBadge(top:0, right:2, value: likesCount.toString(),
       child: GestureDetector(
@@ -239,13 +243,16 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       ),
     );
 
-    var downloadText = SSBadge(top:0, right:2, value: widget.downloads.toString(),
+    var downloadText = SSBadge(top:0, right:2, value: total.toString(),
         child: GestureDetector(
           onTap:(){},
           onDoubleTap: (){
-            // Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
-            //   users: widget.downloads,
-            // )));
+            print("Handle doubleTap ${widget.downloaders!.isNotEmpty}");
+            if (widget.downloaders!.isNotEmpty){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
+                users: widget.downloaders,
+              )));
+            }
           },
           child:  IconButton(onPressed: () async {
         try{
@@ -266,11 +273,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
           await ImageGallerySaver.saveFile(savePath);
 
           Fluttertoast.showToast(msg: "Image saved to Image Gallery");
-          total = widget.downloads! + 1;
-
-          FirebaseFirestore.instance.collection('wallpaper')
-              .doc(widget.postId).update({'downloads': total,
-          });
+          handleDownloadCompleted();
         } on PlatformException catch (error) {
           print(error);
         }
@@ -419,5 +422,19 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         ),
       ),
     );
+  }
+
+  void handleDownloadCompleted() {
+    total = widget.downloads! + 1;
+    setState(() {
+      total;
+    });
+    List downloaders = List.from(widget.downloaders!);
+    downloaders.add(userId);
+
+    FirebaseFirestore.instance.collection('wallpaper')
+        .doc(widget.postId)
+        .update({'downloads': total, 'downloaders': downloaders
+    });
   }
 }

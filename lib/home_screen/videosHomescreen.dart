@@ -54,12 +54,12 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   void videoSelected(VideoListData videoListData){
     Post post = videoListData.post;
     goToDetails(post.source, post.userImage, post.userName, post.createdAt, post.id, post.email,
-        post.downloads, post.description, post.likes, post.postId);
+        post.downloads, post.description, post.likes, post.postId, post.downloaders);
   }
 
   void goToDetails(String vid, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, String description,
-      List<String>? likes, String postId) {
+      List<String>? likes, String postId, List<String>? downloaders) {
 
     Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
       vid:vid, userImg: userImg, name: name, date: date,
