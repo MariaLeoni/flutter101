@@ -1,10 +1,12 @@
  import 'package:flutter/material.dart';
 import '../chat/chatWidgets.dart';
+import '../search_post/users_specifics_page.dart';
 
 class MessageTile extends StatefulWidget {
   final String message;
   final String sender;
   final String senderImage;
+  final String senderId;
   final bool sentByMe;
 
   const MessageTile(
@@ -12,6 +14,7 @@ class MessageTile extends StatefulWidget {
         required this.message,
         required this.sender,
         required this.senderImage,
+        required this.senderId,
         required this.sentByMe})
       : super(key: key);
 
@@ -58,6 +61,11 @@ class _MessageTileState extends State<MessageTile> {
           children: [
             GestureDetector(
                 onTap:(){
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                    userId:widget.senderId,
+                    userName:widget.sender,
+                    userImage:  widget.senderImage,
+                  )));
                 },
                 child: CircleAvatar(radius:15,
                   backgroundImage: NetworkImage(

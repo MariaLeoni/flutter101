@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 import 'package:sharedstudent1/widgets/ssbadge.dart';
 import 'package:uuid/uuid.dart';
@@ -62,7 +63,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String activityId = const Uuid().v4();
-
   void getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -87,7 +87,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     });
   }
 
-  void sendNotification() {
+  void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: name,
       body: "Liked your post", dataBody: widget.img,
       // dataTitle: "Should be post description"
@@ -140,14 +140,8 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         "postOwnername": widget.name,
         "likes": widget.likes,
         "Read Status": false,
-
-      }).then((value) {
-        FirebaseFirestore.instance.collection('Activity Feed')
-            .doc(widget.docId).collection('Feed Count').doc(widget.docId).update(
-            {'Feed Count': feedCount! + 1,
-            });
-      }
-      );
+         "PostType" : "image",
+      });
     }
   }
 
@@ -177,7 +171,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       Fluttertoast.showToast(msg: "You liked this image!");
       widget.likes!.add(likerUserId!);
       addLikeToActivityFeed();
-      sendNotification();
+      sendNotification("Liked your post");
     }
 
 
@@ -247,7 +241,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
           FirebaseFirestore.instance.collection('wallpaper')
               .doc(widget.postId).update({'downloads': total,
           }).then((value) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> HomeScreen()));
+             sendNotification("downloaded your post");
           });
         } on PlatformException catch (error)
         {
@@ -392,7 +386,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                               image: widget.img, likes: widget.likes,
                               description: widget.description,
                               downloads: widget.downloads, postOwnerImg: widget.userImg,
-                              postOwnername: widget.name,)));
+                              postOwnername: widget.name,postType: "image",)));
                       },
                       icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
                     ),

@@ -9,6 +9,8 @@ import 'package:sharedstudent1/chat/fullImageView.dart';
 import 'package:sharedstudent1/misc/progressIndicator.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:io';
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import 'chatModel.dart';
 import 'chatProvider.dart';
 import 'chatWidgets.dart';
@@ -40,7 +42,7 @@ class ChatScreenState extends State<ChatScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-
+  NotificationManager? notificationManager;
   int _limit = 20;
   final int _limitIncrement = 20;
   String groupChatId = '';
@@ -51,7 +53,7 @@ class ChatScreenState extends State<ChatScreen> {
   String imageUrl = "";
   String myImageURL = "";
   String name = "";
-
+  String? tokens;
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
@@ -69,6 +71,9 @@ class ChatScreenState extends State<ChatScreen> {
     currentUserId = _auth.currentUser!.uid;
     loadMe();
     readLocal();
+    getDataFromDatabase2();
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
   }
 
   _scrollListener() {
@@ -286,7 +291,26 @@ class ChatScreenState extends State<ChatScreen> {
           .showSnackBar(SnackBar(content: Text(e.message ?? e.toString())));
     }
   }
-
+  void getDataFromDatabase2() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.peerId)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        tokens = snapshot.data()!["devicetoken"];
+      });
+    }
+    });
+  }
+  void sendNotification(String action) {
+    NotificationModel model = NotificationModel(title: name,
+      body: action,
+      //dataBody: widget.img,
+      // dataTitle: "Should be post description"
+    );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
+  }
   void onSendMessage(String content, PostType type, String? thumbnail) {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
@@ -294,6 +318,7 @@ class ChatScreenState extends State<ChatScreen> {
           widget.peerId, thumbnail);
       scrollController.animateTo(0,
           duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      sendNotification(content);
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Nothing to send")));

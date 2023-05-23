@@ -58,13 +58,6 @@ class SocialHomeScreenState extends State<SocialHomeScreen> {
                 actions: [
                   IconButton(
                       onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (_) => const HomeScreen()));
-                      },
-                      icon: const Icon(Icons.home)),
-                  IconButton(
-                      onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

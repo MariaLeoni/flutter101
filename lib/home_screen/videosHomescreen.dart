@@ -161,7 +161,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 ),
               ),
             ),
-            title: const Text("Videos"),
+            title: Text("${widget.category}"),
             centerTitle: true,
              leading:
              IconButton(

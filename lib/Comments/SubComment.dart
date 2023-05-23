@@ -6,6 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
 import '../chat/chatWidgets.dart';
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import '../search_post/user.dart';
 import '../search_post/users_specifics_page.dart';
 import 'CommentItem.dart';
@@ -44,7 +46,8 @@ class CommentState extends State<SubComment> {
   String activityId = const Uuid().v4();
   List<String>? likes = List.empty(growable: true);
   List<String>? ids = List.empty(growable: true);
-
+  NotificationManager? notificationManager;
+  String? tokens;
   addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.commentItem!.userId;
     if (isNotPostOwner) {
@@ -65,12 +68,41 @@ class CommentState extends State<SubComment> {
         "postOwnerId": postOwnerId,
         "postOwnerImage": postOwnerImage,
         "postOwnername": postOwnername,
-        'Read Status': false
+        'Read Status': false,
+        "PostType": widget.commentItem!.postType
       });
     }
+    addCommentTaggingToActivityFeed2();
+    sendNotification("replied to your comment");
     commentController.clear();
   }
-
+  addCommentTaggingToActivityFeed2() {
+    bool isNotPostOwner = _auth.currentUser!.uid != widget.commentItem!.postOwnerId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(widget.commentItem!.postOwnerId)
+          .collection('FeedItems').doc(activityId).set({
+        "type": "comment",
+        "name": myName,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": myImage,
+        "postId": widget.commentItem!.postId,
+        "Activity Id": activityId,
+        "Image": image,
+        "timestamp": DateTime.now(),
+        "commentData":  commentController.text,
+        "description": description,
+        "downloads": downloads,
+        "likes": likes,
+        "postOwnerId": postOwnerId,
+        "postOwnerImage": postOwnerImage,
+        "postOwnername": postOwnername,
+        'Read Status': false,
+        "PostType": widget.commentItem!.postType
+      });
+    }
+    sendNotification("replied to your comment");
+    commentController.clear();
+  }
   loadAndBuildComments(){
     if (widget.commentItem!.subCommentsIds != null && widget.commentItem!.subCommentsIds!.isEmpty){
       return const Text('There are no comments for this comment');
@@ -103,6 +135,14 @@ class CommentState extends State<SubComment> {
         },
       );
     }
+  }
+  void sendNotification(String action) {
+    NotificationModel model = NotificationModel(title: myName,
+      body: action, dataBody: image,
+      // dataTitle: "Should be post description"
+    );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
   }
   // AddLike(){
   //
@@ -200,11 +240,15 @@ class CommentState extends State<SubComment> {
           "postOwnerImage": postOwnerImage,
           "postOwnername": postOwnername,
           "Read Status": false,
+          "PostType":widget.commentItem!.postType,
         });
       }
       ids!.clear();
+      sendNotification(" tagged you in a post");
     }
      addCommentTaggingToActivityFeed();
+    addCommentTaggingToActivityFeed2();
+    sendNotification("commented on your post ");
     commentController.clear();
     commentId = const Uuid().v4();
 
@@ -240,6 +284,8 @@ class CommentState extends State<SubComment> {
 
     readUserInfo();
     loadPostInfo();
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
   }
 
   @override

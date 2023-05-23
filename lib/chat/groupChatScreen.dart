@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sharedstudent1/widgets/message_tile.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import 'DatabasService.dart';
 import 'chatWidgets.dart';
 import 'group_info.dart';
@@ -12,12 +14,14 @@ class ChatPage extends StatefulWidget {
   final String groupName;
   final String userName;
   final String userImage;
-  const ChatPage(
+  String? userId;
+   ChatPage(
       {Key? key,
         required this.groupId,
         required this.groupName,
         required this.userName,
         required this.userImage,
+         this.userId,
       })
       : super(key: key);
 
@@ -29,11 +33,16 @@ class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
   TextEditingController messageController = TextEditingController();
   String admin = "";
-
+  String? tokens;
+  NotificationManager? notificationManager;
+  List<String>? members = List.empty(growable: true);
   @override
   void initState() {
     getChatandAdmin();
     super.initState();
+    readUserInfo();
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
   }
 
   getChatandAdmin() {
@@ -119,7 +128,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD:lib/chat/chatPage.dart
+
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -139,27 +148,26 @@ class _ChatPageState extends State<ChatPage> {
               icon: const Icon(Icons.info))
         ],
       ),
-      body: Stack(children:[chatMessages()])
-=======
-        appBar: AppBar(
-          centerTitle: true,
-          elevation: 0,
-          title: Text(widget.groupName),
-          backgroundColor: Colors.grey.shade900,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  nextScreen(
-                      context,
-                      GroupInfo(
-                        groupId: widget.groupId,
-                        groupName: widget.groupName,
-                        adminName: admin,
-                      ));
-                },
-                icon: const Icon(Icons.info))
-          ],
-        ),
+      //body: Stack(children:[chatMessages()])
+        // appBar: AppBar(
+        //   centerTitle: true,
+        //   elevation: 0,
+        //   title: Text(widget.groupName),
+        //   backgroundColor: Colors.grey.shade900,
+        //   actions: [
+        //     IconButton(
+        //         onPressed: () {
+        //           nextScreen(
+        //               context,
+        //               GroupInfo(
+        //                 groupId: widget.groupId,
+        //                 groupName: widget.groupName,
+        //                 adminName: admin,
+        //               ));
+        //         },
+        //         icon: const Icon(Icons.info))
+        //   ],
+        // ),
         body: Container( color: Colors.grey.shade800,child:SafeArea(
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
@@ -170,10 +178,27 @@ class _ChatPageState extends State<ChatPage> {
             )
         )
         )
->>>>>>> fbcdc1bc5d4c7c2522869e5163ef0926974ed7fb:lib/chat/groupChatScreen.dart
+
     );
   }
 
+  void readUserInfo() async {
+    FirebaseFirestore.instance.collection('groups').doc(widget.groupId).get()
+        .then<dynamic>((DocumentSnapshot snapshot) async {
+      members = List.from(snapshot.get('members'.substring(0,'members'.indexOf("_"))));
+      for(var item in members!){
+        await FirebaseFirestore.instance.collection("users")
+            .doc(item)
+            .get()
+            .then((snapshot) async { if (snapshot.exists) {
+          setState(() {
+            tokens = snapshot.data()!["devicetoken"];
+          });
+        }
+        });
+      }
+    });
+  }
   chatMessages() {
     return Flexible(
         child: StreamBuilder(
@@ -188,7 +213,8 @@ class _ChatPageState extends State<ChatPage> {
                     sender: snapshot.data.docs[index]['sender'],
                     sentByMe: widget.userName ==
                         snapshot.data.docs[index]['sender'],
-                    senderImage: snapshot.data.docs[index]['senderImg']
+                    senderImage: snapshot.data.docs[index]['senderImg'],
+                    senderId: snapshot.data.docs[index]['senderId']
                 );
               },
             )
@@ -198,6 +224,15 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  void sendNotification(String action) {
+    NotificationModel model = NotificationModel(title: widget.userName,
+      body: action,
+      //dataBody: widget.img,
+      // dataTitle: "Should be post description"
+    );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
+  }
   sendMessage() {
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
@@ -205,12 +240,15 @@ class _ChatPageState extends State<ChatPage> {
         "sender": widget.userName,
         "time": DateTime.now().millisecondsSinceEpoch,
         "senderImg": widget.userImage,
+        "senderId": widget.userId,
       };
 
       DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      sendNotification(messageController.text);
       setState(() {
         messageController.clear();
       });
+
     }
   }
 }

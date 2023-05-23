@@ -1,3 +1,4 @@
+import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -108,9 +109,10 @@ class _ActivityFeedState extends State<ActivityFeed> {
   Widget listViewWidget (String image, String name, String? postId, DateTime timestamp,
       String type, String userId, String userProfileImage, String commentData,
       String description, String postOwnerId, String postOwnerName, String postOwnerImage,
-      List<String>? likes, int downloads, String activityId, bool readStatus ) {
+      List<String>? likes, int downloads, String activityId, bool readStatus, String postType ) {
 
-    if (type.contains("like") || type == 'comment'|| type == 'follow'|| type == 'tag' || type =='commentReply') {
+if (type.contains("like") || type == 'comment'|| type == 'tag' || type =='commentReply'|| type == 'follow') {
+      postType == 'image' ?
       mediaPreview = SizedBox(
               height: 50.0,
               width: 50.0,
@@ -125,11 +127,34 @@ class _ActivityFeedState extends State<ActivityFeed> {
                     ),
                   )
               )
-          );
-    } else{
-      mediaPreview = Container();
-    }
+          )
+           :
+      mediaPreview = SizedBox(
+          height: 50.0,
+          width: 50.0,
+          child:GestureDetector(
+              onTap:(){
+                  Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+                    vid:image, userImg: postOwnerImage, name: name, date: timestamp,
+                    docId: postOwnerId, userId: userId, downloads: downloads, description: description,
+                    likes: likes, postId: postId,
+                  )));},
+              child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child:  Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage("assets/images/playvideo.png"),
+                    )
+                ),
+              )
+                    )
+          ));
+    } else
+      {mediaPreview = Text("hey");}
     if (type == 'likePost') {
+
       activityItemText = "liked your post";
     }
     else if (type == 'likeComment') {
@@ -154,20 +179,21 @@ class _ActivityFeedState extends State<ActivityFeed> {
             color: Colors.grey.shade900,
             child: GestureDetector(
                 onTap: () {
-                  FeedPost feedPost = FeedPost(image: image, name: name, postId: postId,
-                    timestamp: timestamp, type: type, userId: userId,
-                    userProfileImage: userProfileImage, commentData: commentData,
-                    description: description, postOwnerId: postOwnerId,
-                    postOwnerName: postOwnerName, postOwnerImage: postOwnerImage,
-                    likes: likes, downloads: downloads, activityId: activityId,
-                    readStatus: readStatus);
+                    FeedPost feedPost = FeedPost(image: image, name: name, postType: postType, postId: postId,
+                      timestamp: timestamp, type: type, userId: userId,
+                      userProfileImage: userProfileImage, commentData: commentData,
+                      description: description, postOwnerId: postOwnerId,
+                      postOwnerName: postOwnerName, postOwnerImage: postOwnerImage,
+                      likes: likes, downloads: downloads, activityId: activityId,
+                      readStatus: readStatus);
 
-                    prepareNavigation(feedPost);
+                      prepareNavigation(feedPost);
 
-                  firestore.collection('Activity Feed')
-                      .doc(_auth.currentUser!.uid).collection('FeedItems')
-                      .doc(activityId).update({'Read Status': true });
-                },
+                    firestore.collection('Activity Feed')
+                        .doc(_auth.currentUser!.uid).collection('FeedItems')
+                        .doc(activityId).update({'Read Status': true });
+                  },
+
                 child: ListTile(
                   title: GestureDetector(
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
@@ -243,7 +269,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
                       feed.timestamp,feed.type, feed.userId, feed.userProfileImage,
                       feed.commentData, feed. description, feed.postOwnerId,
                       feed.postOwnerName, feed.postOwnerImage, feed.likes,
-                      feed.downloads, feed.activityId,feed.readStatus,
+                      feed.downloads, feed.activityId,feed.readStatus, feed.postType,
                     );
                   },
                 );

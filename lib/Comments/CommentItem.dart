@@ -7,6 +7,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../misc/alertbox.dart';
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import '../search_post/users_specific_posts.dart';
 import '../search_post/users_specifics_page.dart';
 import '../widgets/ssbadge.dart';
@@ -17,7 +19,7 @@ class CommentItem extends StatelessWidget {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebase = FirebaseFirestore.instance;
-
+  NotificationManager? notificationManager;
   int? total;
   int likesCount = 0;
   String? likerUserId;
@@ -43,12 +45,13 @@ class CommentItem extends StatelessWidget {
   String? postOwnername;
   String? postOwnerId;
   String? postOwnerImage;
-
-  CommentItem({super.key, this.userName, this.userId,
+  String? tokens;
+  String postType = "";
+  CommentItem({super.key, required this.postType,this.userName, this.userId,
     this.comment, this.timestamp, this.userImage,
     this.commentId, this.OriginalCommentId,this.OriginalCommenterId,
      required this.postId,
-    this.Image, this.subCommentsIds, this.likes, this.postdescription, this.postlikes,this.postdownloads,this.postOwnername, this.postOwnerId, this.postOwnerImage
+    this.Image, this.subCommentsIds, this.likes, this.postdescription, this.postlikes,this.postdownloads,this.postOwnername, this.postOwnerId, this.postOwnerImage,this.tokens,
   });
 
   handleLikeComment() {
@@ -91,11 +94,19 @@ AddLike(){
         "postOwnername": postOwnername,
         "likes": postlikes,
         "Read Status": false,
+        "PostType": postType
       });
     }
-
+sendNotification();
 }
-
+  void sendNotification() {
+    NotificationModel model = NotificationModel(title: myName,
+      body: "Liked your comment", dataBody: Image,
+      // dataTitle: "Should be post description"
+    );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
+  }
   // addCommentTaggingToActivityFeed() {
   //   bool isNotPostOwner = _auth.currentUser!.uid != commenterId;
   //   if (isNotPostOwner) {
@@ -156,6 +167,8 @@ AddLike(){
           'postOwnerImage') : '',
       postOwnername: doc.data().toString().contains('postOwnername') ? doc.get(
           'postOwnername') : '',
+      postType: doc.data().toString().contains('postType') ? doc.get(
+          'postType') : '',
 
     );
   }
@@ -165,7 +178,7 @@ AddLike(){
       userImage: userImage, commentId: commentId,
       subCommentsIds: subCommentsIds, likes: likes,
       postId: postId, Image: Image, postdescription: postdescription, postdownloads: postdownloads,
-      postlikes: postlikes, postOwnerId: postOwnerId, postOwnerImage: postOwnerImage, postOwnername: postOwnername,
+      postlikes: postlikes, postOwnerId: postOwnerId, postOwnerImage: postOwnerImage, postOwnername: postOwnername, postType: postType,
     );
 
     Navigator.push(context, MaterialPageRoute(
@@ -222,7 +235,12 @@ AddLike(){
         myName = snapshot.get('name');
 
       });
-
+    FirebaseFirestore.instance.collection("users")
+          .doc(userId)
+          .get()
+        .then<dynamic>((DocumentSnapshot snapshot) {
+      tokens = snapshot.get('devicetoken');
+    });
     var likeBadgeView = SSBadge(top: 0, right: 2,
         value: likesCount.toString(),
         child: IconButton(

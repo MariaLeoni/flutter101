@@ -11,6 +11,8 @@ import '../home_screen/videosHomescreen.dart';
 import '../log_in/login_screen.dart';
 import '../misc/global.dart';
 import '../misc/userModel.dart';
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import '../search_userpost/searchView.dart';
 import '../widgets/widgets.dart';
 import 'numbers_widget.dart';
@@ -49,6 +51,8 @@ class UsersProfilePageState extends State<UsersProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
   String ActivityId = const Uuid().v4();
+  String? tokens;
+  NotificationManager? notificationManager;
 
   @override
   void initState() {
@@ -232,6 +236,16 @@ class UsersProfilePageState extends State<UsersProfilePage> {
 
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .update({'followers': widget.followers!,});
+    sendNotification("Started following you");
+    AddFollowToActivityFeed();
+  }
+  void sendNotification(String action) {
+    NotificationModel model = NotificationModel(title: name,
+      body: action, dataBody: image,
+      // dataTitle: "Should be post description"
+    );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
   }
   AddFollowToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
@@ -242,17 +256,19 @@ class UsersProfilePageState extends State<UsersProfilePage> {
         "name": name,
         "userId": _auth.currentUser!.uid,
         "userProfileImage": image,
+        "Activity Id": ActivityId,
         "postId": null,
         "Image": null,
         "timestamp": DateTime.now(),
         "commentData":  null,
         "description": null,
         "likes": null,
-        "postOwnerId": widget.userId,
+        "postOwnerId": null,
         "postOwnerImage": null,
         "postOwnername": null,
         "downloads": null,
-        "Read Status": false,
+        "Read Status": null,
+        "PostType": "follow",
       });
     }
   }

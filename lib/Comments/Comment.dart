@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sharedstudent1/misc/global.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
 import '../chat/chatWidgets.dart';
@@ -16,13 +17,14 @@ class Comment extends StatefulWidget {
   String? postId;
   String? docId;
   String? image;
+  String postType = "";
   String? postOwnerImg;
   String? postOwnername;
   List<String>? likes = List.empty(growable: true);
   String? description;
   int? downloads;
 
-  Comment({super.key, this.userId, this.postId, this.docId, this.image, 
+  Comment({super.key, this.userId, this.postId, this.docId, this.image, required this.postType,
     this.likes, this.description,this.downloads, this.postOwnerImg, this.postOwnername, });
 
   @override
@@ -162,14 +164,16 @@ class CommentState extends State<Comment> {
         "postOwnerId": widget.userId,
         "postOwnerImage": widget.postOwnerImg,
          "postOwnername": widget.postOwnername,
-        'Read Status': false
+        'Read Status': false,
+        "PostType": widget.postType,
           });
     }
     ids!.clear();
     commentController.clear();
   }
 
-  addComment() {
+  addComment()
+  {
     commentController.text.isNotEmpty?
     FirebaseFirestore.instance.collection('comment').doc(commentId).set({
       "comment": commentController.text,
@@ -189,6 +193,7 @@ class CommentState extends State<Comment> {
       "postOwnerId": widget.userId,
       "postOwnerImage": widget.postOwnerImg,
       "postOwnername": widget.postOwnername,
+      "postType": widget.postType,
     }): Fluttertoast.showToast(msg: 'Your comment box is empty');
 
     if (commentController.text.startsWith('@')) {
@@ -214,15 +219,17 @@ class CommentState extends State<Comment> {
           "likes": widget.likes,
           "downloads": widget.downloads,
           "Read Status": false,
-          "Activity Id": activityId
+          "Activity Id": activityId,
+          "PostType":widget.postType,
         });
       }
+      sendNotification("tagged you");
       ids!.clear();
     }
 
     addCommentTaggingToActivityFeed();
 
-    sendNotification("Commented on your post");
+    sendNotification("commented on your post");
     commentController.clear();
     commentId = const Uuid().v4();
     FocusScope.of(context).unfocus();

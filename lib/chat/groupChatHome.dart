@@ -193,6 +193,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
                       groupId: getId(snapshot.data['groups'][reverseIndex]),
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
                       userName: snapshot.data['name'],
+                      userId: snapshot.data['id'],
                   userImage: snapshot.data['userImage']);
                 },
               );

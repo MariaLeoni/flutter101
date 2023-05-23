@@ -95,18 +95,14 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => const SocialHomeScreen(),),);
                 },
-                icon: const Icon(Icons.chat_bubble),
+                icon: const Icon(Icons.message_sharp),
               )
             ]),
-        body: CustomScrollView(
+        body: Container(color:Colors.black,child: CustomScrollView(
           slivers: <Widget>[
             SliverList(
                 delegate: SliverChildListDelegate([
                   const SizedBox(height: 20.0,),
-                  const Center(
-                      child: Text("These are your selected interests",
-                        style: TextStyle(fontSize: 20, color: Colors.orangeAccent),)
-                  ),
                   //const Text('These are your selected interests'),
                   const Padding(
                     padding: EdgeInsets.all(20),
@@ -114,7 +110,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                   categories,
                 ])),
           ],
-        ));
+        )));
   }
 
   Widget get categories {

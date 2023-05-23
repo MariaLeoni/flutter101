@@ -314,6 +314,16 @@ class ProfileScreenState extends State<ProfileScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     child: const Text("Logout")
+                ),
+                ElevatedButton(
+                    onPressed:() {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade900,
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    ),
+                    child: const Text("Delete Account")
                 )
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 class FeedPost {
   String image= "";
   String name = "";
+  String postType = "";
   String? postId;
   String activityId = "";
   String type = "";
@@ -22,6 +23,7 @@ class FeedPost {
   FeedPost({
     required this.image,
     required this.name,
+    required this.postType,
     required this.postId,
     required this.activityId,
     required this.type,
@@ -42,6 +44,7 @@ class FeedPost {
     return FeedPost(
       image: snapshot.data!.docs[index]['Image'] ?? "",
       name: snapshot.data!.docs[index]['name'] ?? "",
+      postType: snapshot.data!.docs[index]['PostType'] ?? "",
       postId: snapshot.data!.docs[index]['postId'],
       activityId: snapshot.data!.docs[index].toString().contains('Activity Id') ?
       snapshot.data!.docs[index]['Activity Id'] : snapshot.data!.docs[index].id,

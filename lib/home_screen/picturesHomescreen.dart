@@ -174,8 +174,11 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   Row(children: [
                         GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                                  UsersSpecificPostsScreen(userId: docId, userName: name,)));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                                userId:docId,
+                                userName:name,
+                                userImage: userImg,
+                              )));
                             },
                             child: CircleAvatar(
                               radius: 35,
@@ -288,9 +291,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   ),
                 ),
               ),
-              title: const Text("Camp", style: TextStyle(color: Colors.white,
-                  fontWeight: FontWeight.bold),
-              ),
+              title: Text("${widget.category}"),
               centerTitle: true,
               leading: IconButton(
                                 onPressed: () {

@@ -76,14 +76,7 @@ String UserGroupText = '';
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Theme.of(context).primaryColor,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.red.shade800, Colors.red,],
-            ),
-          ),
-        ),
+        backgroundColor: Colors.black,
         title: TextField(
           onChanged: (textEntered) {
             setState(() {
@@ -100,7 +93,7 @@ String UserGroupText = '';
                 startSearch(UserGroupText);
               },
             ),
-          ),
+          ), style: TextStyle(color:Colors.white)
         ),
 
       //   title: const Text(
@@ -173,7 +166,7 @@ String UserGroupText = '';
         builder: (context, snapshot) {
           return snapshot.hasData ?
           Container(
-              color: Colors.red,
+              color: Colors.black,
               child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) {
                 Groups model = Groups.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
                   return SearchGroupTile(model: model, context: context,);
@@ -183,7 +176,7 @@ String UserGroupText = '';
           const Center(child: Text("No Record Exists",
             style: TextStyle(
               fontSize: 20.0,
-              color: Colors.black,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),),);
         }
@@ -262,15 +255,15 @@ String UserGroupText = '';
       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       leading: CircleAvatar(
         radius: 30,
-        backgroundColor: Theme.of(context!).primaryColor,
+        backgroundColor: Colors.red.shade900,
         child: Text(
           model!.groupName!.substring(0, 1).toUpperCase(),
           style: const TextStyle(color: Colors.white),
         ),
       ),
       title:
-      Text(model!.groupName!, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text("Admin: ${getName(model!.admin!)}"),
+      Text(model!.groupName!, style: const TextStyle(fontWeight: FontWeight.w600, color:Colors.white)),
+      subtitle: Text("Admin: ${getName(model!.admin!)}", style: TextStyle(color:Colors.white)),
       trailing: InkWell(
         onTap: () async {
           await DatabaseService(uid: user!.uid)

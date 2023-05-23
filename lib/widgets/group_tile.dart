@@ -12,6 +12,7 @@ class GroupTile extends StatefulWidget {
   String? groupId;
    String? groupName;
    String? userImage;
+   String? userId;
   GroupTile(
       {Key? key,
         this.model,
@@ -19,7 +20,8 @@ class GroupTile extends StatefulWidget {
          this.groupId,
          this.groupName,
         this.userImage,
-         this.userName})
+         this.userName,
+      this.userId})
       : super(key: key);
 
   @override
@@ -37,7 +39,8 @@ class _GroupTileState extends State<GroupTile> {
              groupId: widget.groupId!,
               groupName: widget.groupName!,
               userName: widget.userName!,
-               userImage: widget.userImage!
+               userImage: widget.userImage!,
+                 userId: widget.userId!
             ));
       },
       child: Container(
