@@ -1,6 +1,8 @@
+import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../Search.dart';
@@ -60,6 +62,82 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
         });
       }
     }
+  }
+  Widget listViewWidget1 (String docId, String vid, String userImg, String name,
+      DateTime date, String userId, int downloads, String postId,
+      List<String>? likes, String description) {
+
+    return Padding(
+      padding: const EdgeInsets.all (8.0),
+      child: Card(
+        elevation: 16.0,
+        shadowColor: Colors.white10,
+        child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.2, 0.9],
+              ),
+            ),
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap:() {
+                    Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+                      vid: vid, userImg: userImg, name: name, date: date, docId: docId,
+                      userId: userId, downloads: downloads, postId: postId, likes: likes,
+                      description: description,
+                    )));
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Image border
+                    child: SizedBox.fromSize(
+                      size: const Size(500.0, 400.0), // Image radius
+                      child: BetterPlayer.network(vid,
+                        betterPlayerConfiguration: const BetterPlayerConfiguration(
+                          aspectRatio: 4/3,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15.0,),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                  child: Row(
+                      children:[
+                        CircleAvatar(
+                          radius: 35,
+                          backgroundImage: NetworkImage(
+                            userImg,
+                          ),
+                        ),
+                        const SizedBox(width: 10.0,),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:[
+                              Text(
+                                name,
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
+                                style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                              )
+                            ]
+                        )
+                      ]
+                  ),
+                )
+              ],
+            )
+        ),
+      ),
+    );
   }
 
   @override
@@ -222,23 +300,33 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             }
             else if (snapshot.connectionState == ConnectionState.active) {
               if(snapshot.data!.docs.isNotEmpty) {
-                return PageView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  controller: _pageController,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Post post = Post.getPost(snapshot, index, PostType.video);
 
-                    VideoListData videoListData = VideoListData(post);
-                    return ReusableVideoListWidget(videoListData: videoListData,
-                      videoListController: videoListController,
-                      canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
-                        videoSelected(videoListData);
-                      },
-                    );
+                return ListView.builder(itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (BuildContext context, int index) {
+
+                    Post post = Post.getPost(snapshot, index, PostType.video);
+                    return listViewWidget1(post.id, post.source, post.userImage,
+                        post.userName, post.createdAt, post.email,
+                        post.downloads, post.postId, post.likes, post.description);
                   },
                 );
+                // return PageView.builder(
+                //   physics: const BouncingScrollPhysics(),
+                //   scrollDirection: Axis.vertical,
+                //   controller: _pageController,
+                //   itemCount: snapshot.data!.docs.length,
+                //   itemBuilder: (BuildContext context, int index) {
+                //     Post post = Post.getPost(snapshot, index, PostType.video);
+                //
+                //     VideoListData videoListData = VideoListData(post);
+                //     return ReusableVideoListWidget(videoListData: videoListData,
+                //       videoListController: videoListController,
+                //       canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+                //         videoSelected(videoListData);
+                //       },
+                //     );
+                //   },
+                // );
               }
               else{
                 return const Center(

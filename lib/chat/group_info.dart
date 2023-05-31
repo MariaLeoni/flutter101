@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 import '../search_post/users_specifics_page.dart';
 import 'DatabasService.dart';
@@ -41,9 +42,18 @@ class _GroupInfoState extends State<GroupInfo> {
   }
 
   String getName(String r) {
-    return r.substring(r.indexOf("_") + 1);
+    String fullStringWithoutId = r.substring(r.indexOf("_")+1,);
+    List<String> name = fullStringWithoutId.split(",");
+    if (name.isEmpty) {
+      return "";
+    } else {
+      return name[0];
+    }
   }
-   getImage(String res) {
+  String getImage(String r){
+    return r.substring(r.indexOf(",")+1);
+  }
+   String? getImagex(String res) {
      FirebaseFirestore.instance.collection("users")
         .doc(res.substring(0, res.indexOf("_")))
         .get()
@@ -96,9 +106,10 @@ class _GroupInfoState extends State<GroupInfo> {
                                   .toggleGroupJoin(
                                   widget.groupId!,
                                   getName(widget.adminName!),
-                                  widget.groupName!)
+                                  widget.groupName!,
+                              getImage(FirebaseAuth.instance.currentUser!.uid))
                                   .whenComplete(() {
-                                nextScreenReplace(context,  GroupChatHome());
+                                nextScreenReplace(context,  SocialHomeScreen());
                               });
                             },
                             icon: const Icon(
@@ -164,61 +175,86 @@ class _GroupInfoState extends State<GroupInfo> {
     return StreamBuilder(
       stream: members,
       builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data['members'] != null) {
-            if (snapshot.data['members'].length != 0) {
-              return ListView.builder(
-                itemCount: snapshot.data['members'].length.compareTo(0),
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                    child: ListTile(
-                      leading: GestureDetector(  onTap:(){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
-                  userId:getId(snapshot.data['members'][index]),
-                  userName:getName(snapshot.data['members'][index]),
-                  userImage: getImage(snapshot.data['members'][index]),
-                  )));
-                  },
-                  child:CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(
-                        getImage(snapshot.data['members'][index]),),
-                        // Text(
-                        //   getName(snapshot.data['members'][index])
-                        //       .substring(0, 1)
-                        //       .toUpperCase(),
-                        //   style: const TextStyle(
-                        //       color: Colors.white,
-                        //       fontSize: 15,
-                        //       fontWeight: FontWeight.bold),
-                        // ),
-                      ),),
-                      title: Text(getName(snapshot.data['members'][index]), style: TextStyle(color:Colors.white)),
-                   //   subtitle: Text(getId(snapshot.data['members'][index])),
-                    ),
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator(),);
+        }
+        else if (snapshot.connectionState == ConnectionState.active) {
+             if (snapshot.hasData) {
+               if (snapshot.data['members'] != null) {
+                 if (snapshot.data['members'].length != 0) {
+                  return ListView.builder(
+                    itemCount: snapshot.data['members'].length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                        child: ListTile(
+          leading: GestureDetector(onTap: () {
+                            Navigator.push(
+                                context, MaterialPageRoute(builder: (_) =>
+                                UsersProfilePage(
+                                  userId: getId(
+                                      snapshot.data['members'][index]),
+                                  userName: getName(
+                                      snapshot.data['members'][index]),
+                                  userImage: getImage(
+                                      snapshot.data['members'][index]),
+                                )));
+                          },
+                            child: CircleAvatar(
+                              radius: 30,
+                              backgroundImage: NetworkImage(
+                                getImage(snapshot.data['members'][index]),),
+                             // child: Text(
+                             //    getName(snapshot.data['members'][index])
+                             //        .substring(0, 1)
+                             //        .toUpperCase(),
+                             //    style: const TextStyle(
+                             //        color: Colors.white,
+                             //        fontSize: 15,
+                             //        fontWeight: FontWeight.bold),
+                             //  ),
+                            ),),
+                          title: Text(getName(snapshot.data['members'][index]),
+                              style: TextStyle(color: Colors.white)),
+                          //   subtitle: Text(getId(snapshot.data['members'][index])),
+                        ),
+                      );
+                    },
                   );
-                },
-              );
+                } else {
+                  return const Center(
+                    child: Text("NO MEMBERS"),
+                  );
+                }
+            //   } else {
+            //     return const Center(
+            //       child: Text("NO MEMBERS"),
+            //     );
+            //   }
             } else {
-              return const Center(
-                child: Text("NO MEMBERS"),
-              );
+              return Center(
+                  child: CircularProgressIndicator(
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                  ));
             }
-          } else {
+          }
+          else {
             return const Center(
-              child: Text("NO MEMBERS"),
+                child: Text("Sorry, there are no Posts for selection",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),)
             );
           }
-        } else {
-          return Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ));
         }
-      },
+        return const Center(
+          child: Text('Something went wrong', style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
+          ),
+        );
+      }
     );
   }
 }

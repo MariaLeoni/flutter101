@@ -35,11 +35,11 @@ class DatabaseService {
   }
 
   // creating a group
-  Future createGroup(String userName, String id, String groupName) async {
+  Future createGroup(String userName, String id, String groupName, String userImage) async {
     DocumentReference groupDocumentReference = await groupCollection.add({
       "groupName": groupName,
       "groupIcon": "",
-      "admin": "${id}_$userName",
+      "admin": "${id}_$userName,$userImage",
       "members": [],
       "groupId": "",
       "recentMessage": "",
@@ -47,7 +47,7 @@ class DatabaseService {
     });
     // update the members
     await groupDocumentReference.update({
-      "members": FieldValue.arrayUnion(["${uid}_$userName"]),
+      "members": FieldValue.arrayUnion(["${uid}_$userName,$userImage"]),
       "groupId": groupDocumentReference.id,
     });
 
@@ -99,7 +99,7 @@ class DatabaseService {
 
   // toggling the group join/exit
   Future toggleGroupJoin(
-      String groupId, String userName, String groupName) async {
+      String groupId, String userName, String groupName, String userImage) async {
     // doc reference
     DocumentReference userDocumentReference = userCollection.doc(uid);
     DocumentReference groupDocumentReference = groupCollection.doc(groupId);
@@ -113,14 +113,14 @@ class DatabaseService {
         "groups": FieldValue.arrayRemove(["${groupId}_$groupName"])
       });
       await groupDocumentReference.update({
-        "members": FieldValue.arrayRemove(["${uid}_$userName"])
+        "members": FieldValue.arrayRemove(["${uid}_$userName,$userImage"])
       });
     } else {
       await userDocumentReference.update({
         "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
       });
       await groupDocumentReference.update({
-        "members": FieldValue.arrayUnion(["${uid}_$userName"])
+        "members": FieldValue.arrayUnion(["${uid}_$userName,$userImage"])
       });
     }
   }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/widgets/group_tile.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 import 'DatabasService.dart';
@@ -16,7 +17,7 @@ class GroupChatHome extends StatefulWidget {
 class _GroupChatHomeState extends State<GroupChatHome> {
   String email = "";
   String? userName;
-
+String? userImage;
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
@@ -42,6 +43,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
       // groups = snapshot.get('groups');
       userName = snapshot.get('name');
       email = snapshot.get('email');
+      userImage = snapshot.get('userImage');
     });
     // await HelperFunctions.getUserEmailFromSF().then((value) {
     //   setState(() {
@@ -66,6 +68,13 @@ class _GroupChatHomeState extends State<GroupChatHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      // leading:IconButton(
+      //   onPressed: (){
+      //     SocialHomeScreen();
+      //   },
+      //   icon: Icon(Icons.message_sharp),
+      // )),
       body: Container( color:Colors.grey.shade900,child:Stack(
           children: [
             Column(
@@ -158,7 +167,7 @@ class _GroupChatHomeState extends State<GroupChatHome> {
                       DatabaseService(
                           uid: FirebaseAuth.instance.currentUser!.uid)
                           .createGroup(userName!,
-                          FirebaseAuth.instance.currentUser!.uid, groupName)
+                          FirebaseAuth.instance.currentUser!.uid, groupName, userImage!)
                           .whenComplete(() {
                         _isLoading = false;
                       });

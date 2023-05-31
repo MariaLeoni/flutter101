@@ -267,7 +267,7 @@ String UserGroupText = '';
       trailing: InkWell(
         onTap: () async {
           await DatabaseService(uid: user!.uid)
-              .toggleGroupJoin(model!.groupId!, userName, model!.groupName!);
+              .toggleGroupJoin(model!.groupId!, userName, model!.groupName!, userImage!);
           if (isJoined) {
             setState(() {
               isJoined = !isJoined;

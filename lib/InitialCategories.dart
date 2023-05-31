@@ -52,7 +52,17 @@ class InitialCategoriesState extends State<InitialCategories> {
     readUserInfo();
     title = "Select your Campuses";
   }
+  Finish() async {
+    if (interests.isNotEmpty){
+      await FirebaseFirestore.instance.collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid).update({
+        'interests': interests,
+      });
+      skip();
+    }
+    return true;
 
+  }
   void updateInterests(Map<String, List<String>?> interests) {
     interests.forEach((key, value) {
       if (value == null || value.isEmpty) {
@@ -63,12 +73,9 @@ class InitialCategoriesState extends State<InitialCategories> {
       this.interests = interests;
     });
   }
-addInterest() {
-    FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid). update({'categories':interests});
-}
 
 skip(){
-  Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen ()));
+  Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
 }
   @override
   Widget build(BuildContext context) {
@@ -77,27 +84,29 @@ skip(){
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[SliverAppBar(
                 flexibleSpace:Container(
-                  color: Colors.red.shade900,
+                  color: Colors.black,
                 ),
                 title: Text(title,),
                 centerTitle: true, pinned: true, floating: true,),
               ];
             },
-            body:Container(color:Colors.black12,child: Column(
+            body:Container(color:Colors.black,child: Column(
               children: <Widget>[
-               Center(child: new Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
+                Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
-                }, isEditable: false,)
-                )),
-                const SizedBox(height: 10.0,),
-                OutlinedButton(
-                 onPressed: addInterest,
-                  child: const Text("Finish"),
-                 ),
-                OutlinedButton(
-                  onPressed: skip,
-                  child: const Text("skip"),
+                }, isEditable: true,)
                 ),
+               // const SizedBox(height: 10.0,),
+(
+                Container(color:Colors.red.shade900,child:OutlinedButton(
+                 onPressed:  Finish,
+                  child: const Text("Finish", style:TextStyle(color:Colors.white,)),
+                   ))),
+                SizedBox(height:10.0),
+                Container(color:Colors.red.shade900,child:OutlinedButton(
+                  onPressed: skip,
+                  child: const Text("skip", style:TextStyle(color:Colors.white)),
+                )),
               ],
             )
         )

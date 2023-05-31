@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tags/flutter_tags.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'misc/category.dart';
 
 class CategoryWidget extends StatefulWidget {
@@ -122,7 +122,7 @@ class CategoryViewState extends State<CategoryWidget> with SingleTickerProviderS
             index: index,
             title: item,
             pressEnabled: true,
-            activeColor: Colors.blueGrey[600],
+            activeColor: Colors.cyan,
             singleItem: true,
             splashColor: Colors.green,
             combine: ItemTagsCombine.withTextBefore,
@@ -133,7 +133,7 @@ class CategoryViewState extends State<CategoryWidget> with SingleTickerProviderS
             onPressed: (item) {
               setState(() {
                 if (selectedInterest != item.title){
-                  selectedInterest = item.title;
+                  selectedInterest = item.title!;
                   selectedSubInterests = List.empty(growable: true);
                 }
                 subCategoryList = catMap[item.title];
@@ -161,7 +161,7 @@ class CategoryViewState extends State<CategoryWidget> with SingleTickerProviderS
             title: item,
             active: false,
             pressEnabled: true,
-            activeColor: Colors.blueGrey[600],
+            activeColor: Colors.cyan,
             singleItem: false,
             splashColor: Colors.green,
             combine: ItemTagsCombine.withTextBefore,
@@ -175,13 +175,13 @@ class CategoryViewState extends State<CategoryWidget> with SingleTickerProviderS
                 selectedSubInterests?.remove(item.title);
               }
               else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
-                selectedSubInterests?.add(item.title);
+                selectedSubInterests?.add(item.title!);
               }
               else{
                 selectedSubInterests = List.empty(growable: true);
-                selectedSubInterests!.add(item.title);
+                selectedSubInterests!.add(item.title!);
               }
-              selectedInterests[item.title] = selectedSubInterests;
+              selectedInterests[item.title!] = selectedSubInterests;
               //Handle on press here
               // List<String> interest = List.empty(growable: true);
               // for (var element in _items) {
