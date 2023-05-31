@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tags/flutter_tags.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import '../chat/socialHomeScreen.dart';
 import 'picturesHomescreen.dart';
@@ -120,7 +120,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: myInterests?.length,
+      itemCount: myInterests!.length,
       itemBuilder: (index) {
         final item = myInterests![index];
         return ItemTags(
@@ -138,7 +138,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize),
             onPressed: (item) {
-              selectedInterest = item.title;
+              selectedInterest = item.title!;
               Navigator.push(context, MaterialPageRoute(builder: (_) =>
                   PictureHomeScreen.forCategory(category: selectedInterest,)));
             }

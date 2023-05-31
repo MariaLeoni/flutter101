@@ -7,18 +7,15 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:image_downloader/image_downloader.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:sharedstudent1/misc/global.dart';
+//import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 import 'package:sharedstudent1/widgets/ssbadge.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
-import '../misc/alertbox.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
-import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 
 
 class OwnerDetails extends StatefulWidget {
@@ -395,7 +392,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       child:
                       IconButton(
                       onPressed: () async {
-                        Share.share(widget.img!);
+                        //Share.share(widget.img!);
                       },
                       icon: const Icon(Icons.share, color: Colors.white),
                     ),
