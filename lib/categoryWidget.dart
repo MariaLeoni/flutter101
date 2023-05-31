@@ -114,7 +114,7 @@ class CategoryViewState extends State<CategoryWidget> with SingleTickerProviderS
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: categoryList?.length,
+      itemCount: categoryList!.length,
       itemBuilder: (index) {
         final item = categoryList![index];
         return ItemTags(
@@ -151,7 +151,7 @@ class CategoryViewState extends State<CategoryWidget> with SingleTickerProviderS
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: subCategoryList?.length,
+      itemCount: subCategoryList!.length,
       itemBuilder: (index) {
         final item = subCategoryList![index];
 
