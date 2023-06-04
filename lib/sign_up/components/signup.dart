@@ -223,6 +223,7 @@ class _CredentialsState extends State<Credentials> {
                         'categories': interests,
                         'devicetoken':token,
                         'groups':<String>[],
+                        'active': true,
                        });
                       if (!mounted) return;
                       Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));

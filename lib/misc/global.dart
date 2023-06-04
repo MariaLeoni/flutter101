@@ -6,6 +6,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:sharedstudent1/vidlib/VideoListData.dart';
 
+import '../search_post/user.dart';
+
 Future<File> getImageFileFromAssets(String path) async {
   Directory tempDir = await getTemporaryDirectory();
   String tempPath = tempDir.path;
@@ -29,6 +31,15 @@ Future<bool> usernameExist(String username) async {
   final AggregateQuerySnapshot snapshot = await usersWithUserName.get();
   return snapshot.count > 0 ? true : false;
 }
+
+
+Future<Users?> getUserWithEmail(String email) async {
+  final user = FirebaseFirestore.instance.collection('users')
+      .where("email", isEqualTo: email).get();
+  var userModel = await user;
+  return Users.fromJson(userModel.docs.first.data());
+}
+
 
 enum PostType{
   image,

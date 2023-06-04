@@ -2,29 +2,30 @@ import 'package:flutter/material.dart';
 import'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sharedstudent1/InitialCategories.dart';
+import 'package:sharedstudent1/categoryView.dart';
+import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
-class VerifyEmail extends StatefulWidget {
+class VerifyEmail2delete extends StatefulWidget {
 
   @override
-  VerifyEmailState createState() => VerifyEmailState();
+  VerifyEmail2deleteState createState() => VerifyEmail2deleteState();
 }
 
-class VerifyEmailState extends State<VerifyEmail> {
+class VerifyEmail2deleteState extends State<VerifyEmail2delete> {
   bool isEmailVerified = false;
   Timer? timer;
   bool canResendEmail = false;
   @override
   initState() {
     super.initState();
-    isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+   // isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
 
     if (!isEmailVerified) {
       sendVerificationEmail();
 
-      timer = Timer.periodic(const Duration(seconds: 3), (_) => checkEmailVerified(),);
+      timer = Timer.periodic(const Duration(seconds: 30), (_) => checkEmailVerified(),);
     }
     else{
       const LoginScreen();
@@ -39,7 +40,6 @@ class VerifyEmailState extends State<VerifyEmail> {
 
   Future checkEmailVerified() async{
     await FirebaseAuth.instance.currentUser!.reload();
-
     setState(() {
       isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
@@ -99,5 +99,5 @@ class VerifyEmailState extends State<VerifyEmail> {
                   ]
               )
           )
-      ));
+          ));
 }

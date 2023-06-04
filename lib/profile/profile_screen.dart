@@ -8,6 +8,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 
+import '../VerifyEmail/VerifyEmail2delete.dart';
 import '../categoryView.dart';
 import '../home_screen/home.dart';
 import '../misc/global.dart';
@@ -317,7 +318,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                 ),
                 ElevatedButton(
                     onPressed:() {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                     FirebaseFirestore.instance.collection('users')
+                          .doc(FirebaseAuth.instance.currentUser!.uid).update({'active':false });
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  LoginScreen()) );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red.shade900,
@@ -332,3 +335,5 @@ class ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+

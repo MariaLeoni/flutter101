@@ -44,7 +44,7 @@ class _SearchGroupTileState extends State<SearchGroupTile> {
             ChatPage(
               groupId: widget.model!.groupId!,
               groupName: widget.model!.groupName!,
-              userName: userName!,
+              userName: userName!, userImage: '',
             ));
       },
       child: Container(

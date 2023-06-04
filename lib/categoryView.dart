@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tags/flutter_tags.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'misc/category.dart';
 import 'misc/global.dart';
 
@@ -133,7 +133,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: categoryList?.length,
+      itemCount: categoryList!.length,
       itemBuilder: (index) {
         final item = categoryList![index];
         return ItemTags(
@@ -150,22 +150,22 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             icon: null, //ItemTagsIcon(icon: icons[random.nextInt(3)]),
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize),
-            onPressed: (item) {
-              if (!item.active && selectedInterests.keys.contains(item.title)){
-                subCategoryList.value = catMap[item.title];
-              }
-              if (!item.active && !selectedInterests.keys.contains(item.title)){
-                subCategoryList.value = null;
-                selectedInterests.remove(item.title);
-              }
-              else{
-                if (selectedInterest != item.title){
-                  selectedInterest = item.title;
-                  selectedSubInterests = List.empty(growable: true);
-                }
-                subCategoryList.value = catMap[item.title];
-              }
-            }
+            // onPressed: (item) {
+            //   if (!item.active && selectedInterests.keys.contains(item.title)){
+            //     subCategoryList.value = catMap[item.title];
+            //   }
+            //   if (!item.active && !selectedInterests.keys.contains(item.title)){
+            //     subCategoryList.value = null;
+            //     selectedInterests.remove(item.title);
+            //   }
+            //   else{
+            //     if (selectedInterest != item.title){
+            //       selectedInterest = item.title!;
+            //       selectedSubInterests = List.empty(growable: true);
+            //     }
+            //     subCategoryList.value = catMap[item.title];
+            //   }
+            // }
         );
       },
     );
@@ -178,14 +178,14 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: subCategoryList.value?.length,
+      itemCount: subCategoryList!.value!.length,
       itemBuilder: (index) {
         final item = subCategoryList.value?[index];
 
         return ItemTags(
             key: Key(index.toString()),
             index: index,
-            title: item,
+            title: item!,
             active: selectedInterests[selectedInterest] == null ? false : selectedInterests[selectedInterest]!.contains(item) ? true : false,
             pressEnabled: true,
             activeColor: activeColors[random.nextInt(5)],
@@ -196,21 +196,21 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             icon: null,
             textScaleFactor: utf8.encode(item!.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize,),
-            onPressed: (item) {
-              if (!item.active){
-                selectedSubInterests?.remove(item.title);
-              }
-              else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
-                selectedSubInterests?.add(item.title);
-              }
-              else{
-                selectedSubInterests = List.empty(growable: true);
-                selectedSubInterests!.add(item.title);
-              }
-              selectedInterests[selectedInterest] = selectedSubInterests;
-              print("Selected interests $selectedInterests");
-              interestCallback(selectedInterests);
-            }
+            // onPressed: (item) {
+            //   if (!item.active){
+            //     selectedSubInterests?.remove(item.title);
+            //   }
+            //   else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
+            //     selectedSubInterests?.add(item.title!);
+            //   }
+            //   else{
+            //     selectedSubInterests = List.empty(growable: true);
+            //     selectedSubInterests!.add(item.title!);
+            //   }
+            //   selectedInterests[selectedInterest] = selectedSubInterests;
+            //   print("Selected interests $selectedInterests");
+            //   interestCallback(selectedInterests);
+            // }
         );
       },
     );

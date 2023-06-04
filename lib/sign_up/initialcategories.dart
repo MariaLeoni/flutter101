@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tags/flutter_tags.dart';
+import 'package:flutter_tags_x/flutter_tags_x.dart';
 import '../home_screen/home.dart';
 import '../misc/category.dart';
 import '../misc/global.dart';
@@ -157,7 +157,7 @@ FirebaseAuth _auth = FirebaseAuth.instance;
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: categoryList?.length,
+      itemCount: categoryList!.length,
       itemBuilder: (index) {
         final item = categoryList![index];
         return ItemTags(
@@ -165,7 +165,7 @@ FirebaseAuth _auth = FirebaseAuth.instance;
             index: index,
             title: item,
             pressEnabled: true,
-            activeColor: Colors.blueGrey[600],
+            activeColor: Colors.cyan,
             singleItem: widget.isEditable ? false : true,
             splashColor: Colors.green,
             combine: ItemTagsCombine.withTextBefore,
@@ -175,7 +175,7 @@ FirebaseAuth _auth = FirebaseAuth.instance;
             textStyle: TextStyle(fontSize: fontSize),
             onPressed: (item) {
               if (selectedInterest != item.title){
-                selectedInterest = item.title;
+                selectedInterest = item.title!;
                 selectedSubInterests = List.empty(growable: true);
               }
 
@@ -195,7 +195,7 @@ FirebaseAuth _auth = FirebaseAuth.instance;
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
-      itemCount: subCategoryList?.length,
+      itemCount: subCategoryList!.length,
       itemBuilder: (index) {
         final item = subCategoryList![index];
 
@@ -205,7 +205,7 @@ FirebaseAuth _auth = FirebaseAuth.instance;
             title: item,
             active: false,
             pressEnabled: true,
-            activeColor: Colors.blueGrey[600],
+            activeColor: Colors.cyan,
             singleItem: false,
             splashColor: Colors.green,
             combine: ItemTagsCombine.withTextBefore,
@@ -213,21 +213,21 @@ FirebaseAuth _auth = FirebaseAuth.instance;
             icon: null,
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize,),
-            onPressed: (item) {
-              if (!item.active){
-                selectedSubInterests?.remove(item.title);
-              }
-              else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
-                selectedSubInterests?.add(item.title);
-              }
-              else{
-                selectedSubInterests = List.empty(growable: true);
-                selectedSubInterests!.add(item.title);
-              }
-              selectedInterests[selectedInterest] = selectedSubInterests;
-              print("Selected interests $selectedInterests");
-              interestCallback(selectedInterests);
-            }
+            // onPressed: (item) {
+            //   if (!item.active){
+            //     selectedSubInterests?.remove(item.title);
+            //   }
+            //   else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
+            //     selectedSubInterests?.add(item.title!);
+            //   }
+            //   else{
+            //     selectedSubInterests = List.empty(growable: true);
+            //     selectedSubInterests!.add(item.title!);
+            //   }
+            //   selectedInterests[selectedInterest] = selectedSubInterests;
+            //   print("Selected interests $selectedInterests");
+            //   interestCallback(selectedInterests);
+            // }
         );
       },
     );

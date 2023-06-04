@@ -6,6 +6,7 @@ class Users {
   String? userImage;
   Timestamp? createdAt;
   String? id;
+  bool? active = true;
 
   Users({
     this.email,
@@ -13,6 +14,7 @@ class Users {
     this.userImage,
     this.createdAt,
     this.id,
+    this.active,
   });
 
   Users.fromJson(Map<String, dynamic> json){
@@ -21,6 +23,7 @@ class Users {
     userImage = json ['userImage'];
     createdAt = json ['createdAt'];
     id = json ['id'];
+    active =json['active'];
   }
 
   Map<String, dynamic> toJson() {
@@ -30,7 +33,7 @@ class Users {
     data['userImage'] = userImage;
     data['createdAt'] = createdAt;
     data['id'] = id;
-
+    data['active'] = active;
     return data;
   }
 }

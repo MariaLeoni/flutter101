@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/owner_details/owner_details.dart';
 import '../following/follows.dart';
 import '../home_screen/home.dart';
 import '../home_screen/post.dart';
-import '../owner_details/owner_details.dart';
 import '../profile/profile_screen.dart';
 import'package:fluttertoast/fluttertoast.dart';
 import '../search_userpost/searchView.dart';
@@ -97,7 +97,7 @@ class UserProfileState extends State<UserProfile> {
               children: [
                 GestureDetector(
                   onTap:() {
-                    Navigator.push(context, MaterialPageRoute(builder:(_)  => PictureDetailsScreen(
+                    Navigator.push(context, MaterialPageRoute(builder:(_)  => OwnerDetails(
                       img: img, userImg: userImg, name: name, date: date, docId: docId,
                       userId: userId, downloads: downloads, postId: postId, likes: likes,
                       description: description,

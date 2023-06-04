@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/forgot_password/forgot_password.dart';
+import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/widgets/input_field.dart';
 import '../../VerifyEmail/VerifyEmail.dart';
 import '../../account_check/account_check.dart';
 import '../../home_screen/home.dart';
+import '../../search_post/user.dart';
 import '../../sign_up/sign_up_screen.dart';
 import '../../widgets/button_square.dart';
 
@@ -73,6 +75,12 @@ class Credentials extends StatelessWidget {
                   colors2: Colors.red,
                   press:() async{
                     try{
+                      Users? user = await getUserWithEmail(_emailTextController.text.trim().toLowerCase());
+                      print("User ${user?.active}");
+
+                      if (user != null && user.active == false){
+                        print("You don't exist");
+                      }
 
                       await _auth.signInWithEmailAndPassword(
                           email: _emailTextController.text.trim().toLowerCase(),

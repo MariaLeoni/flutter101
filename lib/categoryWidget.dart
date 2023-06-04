@@ -169,28 +169,28 @@ class CategoryViewState extends State<CategoryWidget> with SingleTickerProviderS
             icon: null,
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize,),
-            onPressed: (item) {
-              print("Selected ${item.title}: active - ${item.active}");
-              if (!item.active){
-                selectedSubInterests?.remove(item.title);
-              }
-              else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
-                selectedSubInterests?.add(item.title!);
-              }
-              else{
-                selectedSubInterests = List.empty(growable: true);
-                selectedSubInterests!.add(item.title!);
-              }
-              selectedInterests[item.title!] = selectedSubInterests;
-              //Handle on press here
-              // List<String> interest = List.empty(growable: true);
-              // for (var element in _items) {
-              //   interest.add(element.toString());
-              // }
-              // FirebaseFirestore.instance.collection('tags').doc(memberuserId).set({
-              //   "tagName": interest,
-              // });
-            }
+            // onPressed: (item) {
+            //   print("Selected ${item.title}: active - ${item.active}");
+            //   if (!item.active){
+            //     selectedSubInterests?.remove(item.title);
+            //   }
+            //   else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
+            //     selectedSubInterests?.add(item.title!);
+            //   }
+            //   else{
+            //     selectedSubInterests = List.empty(growable: true);
+            //     selectedSubInterests!.add(item.title!);
+            //   }
+            //   selectedInterests[item.title!] = selectedSubInterests;
+            //   //Handle on press here
+            //   // List<String> interest = List.empty(growable: true);
+            //   // for (var element in _items) {
+            //   //   interest.add(element.toString());
+            //   // }
+            //   // FirebaseFirestore.instance.collection('tags').doc(memberuserId).set({
+            //   //   "tagName": interest,
+            //   // });
+            // }
           //> print(item),
         );
       },

@@ -109,12 +109,21 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                   child: Row(
                       children:[
+                      GestureDetector(
+                      onTap:() {
+                Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+                vid: vid, userImg: userImg, name: name, date: date, docId: docId,
+                userId: userId, downloads: downloads, postId: postId, likes: likes,
+                description: description,
+                )));
+                },
+                    child:
                         CircleAvatar(
                           radius: 35,
                           backgroundImage: NetworkImage(
                             userImg,
                           ),
-                        ),
+                        )),
                         const SizedBox(width: 10.0,),
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
