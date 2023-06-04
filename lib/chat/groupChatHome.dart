@@ -1,11 +1,12 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/widgets/group_tile.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 import 'DatabasService.dart';
 import 'chatSearch.dart';
+import 'chatWidgets.dart';
 
 class GroupChatHome extends StatefulWidget {
 
@@ -21,6 +22,9 @@ String? userImage;
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
+  String searchText = "";
+  StreamController<bool> buttonClearController = StreamController<bool>();
+  TextEditingController searchTextEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -28,7 +32,6 @@ String? userImage;
     gettingUserData();
   }
 
-  // string manipulation
   String getId(String res) {
     return res.substring(0, res.indexOf("_"));
   }
@@ -45,17 +48,7 @@ String? userImage;
       email = snapshot.get('email');
       userImage = snapshot.get('userImage');
     });
-    // await HelperFunctions.getUserEmailFromSF().then((value) {
-    //   setState(() {
-    //     email = value!;
-    //   });
-    // });
-    // await HelperFunctions.getUserNameFromSF().then((val) {
-    //   setState(() {
-    //     userName = val!;
-    //   });
-    // });
-    // // getting the list of snapshots in our stream
+
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserGroups()
         .then((snapshot) {
@@ -68,24 +61,12 @@ String? userImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      // leading:IconButton(
-      //   onPressed: (){
-      //     SocialHomeScreen();
-      //   },
-      //   icon: Icon(Icons.message_sharp),
-      // )),
-      body: Container( color:Colors.grey.shade900,child:Stack(
+      body: Container( color:Colors.grey.shade900, child:Stack(
+
           children: [
             Column(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        nextScreen(context, const SearchPage());
-                      },
-                      icon: const Icon(
-                        Icons.search, color: Colors.white,
-                      )),
+                  buildSearchBar(),
                   Expanded(
                       child: groups == null ? const Center(
                         child: Text('You are not a part of any group yet...'),
@@ -135,7 +116,7 @@ String? userImage;
                     style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Colors.black),
                             borderRadius: BorderRadius.circular(20)),
                         errorBorder: OutlineInputBorder(
@@ -143,7 +124,7 @@ String? userImage;
                             const BorderSide(color: Colors.red),
                             borderRadius: BorderRadius.circular(20)),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Colors.black),
                             borderRadius: BorderRadius.circular(20))),
                   ),
@@ -167,7 +148,7 @@ String? userImage;
                       DatabaseService(
                           uid: FirebaseAuth.instance.currentUser!.uid)
                           .createGroup(userName!,
-                          FirebaseAuth.instance.currentUser!.uid, groupName, userImage!)
+                          FirebaseAuth.instance.currentUser!.uid, groupName)
                           .whenComplete(() {
                         _isLoading = false;
                       });
@@ -246,6 +227,31 @@ String? userImage;
             "You've not joined any groups, tap on the add icon to create a group or also search from top search button.",
             textAlign: TextAlign.center, style: TextStyle(color:Colors.white),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget buildSearchBar() {
+    return Container(
+      margin: const EdgeInsets.all(Sizes.dimen_10),
+      height: Sizes.dimen_50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(Sizes.dimen_30),
+        color: Colors.grey.shade700,
+      ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(width: Sizes.dimen_10,),
+          const Icon(Icons.search, color: AppColors.white, size: Sizes.dimen_24,),
+          const SizedBox(width: 5,),
+          Expanded(
+            child: OutlinedButton(
+              onPressed: (){
+                nextScreen(context, const SearchPage());
+              }, style: OutlinedButton.styleFrom(side: BorderSide(width: 1.0, color: Colors.grey.shade700),),
+              child: const Text("Search here...", style: TextStyle(color: AppColors.white)))
+            ),
         ],
       ),
     );

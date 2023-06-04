@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_userpost/searchView.dart';
-import 'home_screen/home.dart';
 
 
 class Search extends StatefulWidget {
@@ -21,16 +20,10 @@ class SearchState extends State<Search> {
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(color: Colors.grey.shade900,),
-          actions: <Widget> [
-            // IconButton(
-            //   onPressed: (){
-            //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(),),);
-            //   },
-            //   icon: const Icon(Icons.home, color: Colors.white,),
-            // ),
+          actions: const <Widget> [
           ],
         ),body: Container( color:Colors.grey.shade900,
-    child:Center(child: new ListView(
+    child:Center(child: ListView(
       shrinkWrap: true,
       children:[
            Center(child:IconButton(iconSize: 50.0, onPressed: (){

@@ -3,22 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/misc/global.dart';
-import 'package:sharedstudent1/ownerdetailsvid/owner_detailsvid.dart';
-import 'package:sharedstudent1/search_userpost/searchView.dart';
-import '../following/follows.dart';
-import '../home_screen/home.dart';
+import 'package:sharedstudent1/owner_details/owner_detailsvid.dart';
 import '../home_screen/post.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../owner_details/owner_details.dart';
-import '../profile/profile_screen.dart';
 import'package:fluttertoast/fluttertoast.dart';
 import '../vidlib/ReusableVideoListController.dart';
-import '../vidlib/ReusableVideoListWidget.dart';
 import '../vidlib/VideoListData.dart';
-import '../widgets/ssbadge.dart';
 
 
 class  UsersSpecificPostsScreen extends StatefulWidget {
@@ -31,7 +24,7 @@ class  UsersSpecificPostsScreen extends StatefulWidget {
   UsersSpecificPostsScreen({super.key,
     this.userId,
     this.userName,
-   this.followers,
+    this.followers,
     this.docId,
     this.postType,
   });
@@ -52,6 +45,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
   ReusableVideoListController videoListController = ReusableVideoListController();
+
   void getUserToken() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId).get().then((snapshot) async { if (snapshot.exists) {
@@ -134,11 +128,13 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       });
     });
   }
+
   void videoSelected(VideoListData videoListData){
     Post post = videoListData.post;
     goToDetails(post.source, post.userImage, post.userName, post.createdAt, post.id, post.email,
         post.downloads, post.description, post.likes, post.postId);
   }
+
   void goToDetails(String vid, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, String description,
       List<String>? likes, String postId) {
@@ -149,6 +145,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       likes: likes, postId: postId,
     )));
   }
+
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .get().then<dynamic>((DocumentSnapshot snapshot) async {
@@ -342,15 +339,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     followersCount = (widget.followers?.length ?? 0);
     amFollowingUser = widget.followers == null ? false : widget.followers!.contains(myUserId);
 
-    var followersBadgeView = SSBadge(top: 0, right: 2,
-        value: followersCount.toString(),
-        child: IconButton(
-            icon: amFollowingUser ? const Icon(Icons.person_remove_alt_1_outlined, color: Colors.red) :
-            const Icon(Icons.person_add_alt_outlined, color: Colors.white), onPressed: () {
-          handleFollowerPost();
-        }));
-
-
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -377,8 +365,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             centerTitle: true,
           //  leading:
         ),
-         body:
-         widget.postType == PostType.image?
+         body: widget.postType == PostType.image?
         StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('wallpaper').where("id", isEqualTo: widget.userId)
@@ -414,11 +401,11 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
             );
           },
         ):
-         StreamBuilder(
-           stream: FirebaseFirestore.instance
-               .collection('wallpaper2').where("id", isEqualTo: widget.userId)
-               .orderBy('createdAt',descending: true).snapshots(),
 
+        StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('wallpaper2').where("id", isEqualTo: widget.userId)
+              .orderBy('createdAt', descending: true).snapshots(),
            builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
              if(snapshot.connectionState == ConnectionState.waiting ) {
                return const Center(child: CircularProgressIndicator(),);

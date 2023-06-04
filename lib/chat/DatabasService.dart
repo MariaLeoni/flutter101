@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
   final String? uid;
   DatabaseService({this.uid});
-  FirebaseAuth _auth = FirebaseAuth.instance;
+
   // reference for our collections
-  final CollectionReference userCollection =
-  FirebaseFirestore.instance.collection("users");
-  final CollectionReference groupCollection =
-  FirebaseFirestore.instance.collection("groups");
+  final CollectionReference userCollection = FirebaseFirestore.instance.collection("users");
+  final CollectionReference groupCollection = FirebaseFirestore.instance.collection("groups");
 
   // saving the userdata
   Future savingUserData(String fullName, String email) async {
@@ -35,11 +32,11 @@ class DatabaseService {
   }
 
   // creating a group
-  Future createGroup(String userName, String id, String groupName, String userImage) async {
+  Future createGroup(String userName, String id, String groupName) async {
     DocumentReference groupDocumentReference = await groupCollection.add({
       "groupName": groupName,
       "groupIcon": "",
-      "admin": "${id}_$userName,$userImage",
+      "admin": "${id}_$userName",
       "members": [],
       "groupId": "",
       "recentMessage": "",
@@ -47,7 +44,7 @@ class DatabaseService {
     });
     // update the members
     await groupDocumentReference.update({
-      "members": FieldValue.arrayUnion(["${uid}_$userName,$userImage"]),
+      "members": FieldValue.arrayUnion(["${uid}_$userName"]),
       "groupId": groupDocumentReference.id,
     });
 
@@ -84,8 +81,7 @@ class DatabaseService {
   }
 
   // function -> bool
-  Future<bool> isUserJoined(
-      String groupName, String groupId, String userName) async {
+  Future<bool> isUserJoined(String groupName, String groupId) async {
     DocumentReference userDocumentReference = userCollection.doc(uid);
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
 
@@ -98,8 +94,7 @@ class DatabaseService {
   }
 
   // toggling the group join/exit
-  Future toggleGroupJoin(
-      String groupId, String userName, String groupName, String userImage) async {
+  Future toggleGroupJoin(String groupId, String userName, String groupName) async {
     // doc reference
     DocumentReference userDocumentReference = userCollection.doc(uid);
     DocumentReference groupDocumentReference = groupCollection.doc(groupId);
@@ -113,14 +108,14 @@ class DatabaseService {
         "groups": FieldValue.arrayRemove(["${groupId}_$groupName"])
       });
       await groupDocumentReference.update({
-        "members": FieldValue.arrayRemove(["${uid}_$userName,$userImage"])
+        "members": FieldValue.arrayRemove(["${uid}_$userName"])
       });
     } else {
       await userDocumentReference.update({
         "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
       });
       await groupDocumentReference.update({
-        "members": FieldValue.arrayUnion(["${uid}_$userName,$userImage"])
+        "members": FieldValue.arrayUnion(["${uid}_$userName"])
       });
     }
   }
@@ -133,5 +128,14 @@ class DatabaseService {
       "recentMessageSender": chatMessageData['sender'],
       "recentMessageTime": chatMessageData['time'].toString(),
     });
+  }
+
+  Query<Object?> getGroups(String? searchText) {
+    if (searchText?.isNotEmpty == true) {
+      return groupCollection.where("groupName", isGreaterThanOrEqualTo: searchText)
+          .where("groupName", isLessThanOrEqualTo: '$searchText\uf8ff');
+    } else {
+      return groupCollection;
+    }
   }
 }

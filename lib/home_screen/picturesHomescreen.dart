@@ -8,13 +8,11 @@ import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/notification/server.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
-import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:uuid/uuid.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../notification/notification.dart';
-import '../profile/profile_screen.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
 import '../search_post/users_specific_posts.dart';
@@ -55,24 +53,25 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   @override
   void initState() {
     super.initState();
-     getAllProducts();
-     getDataFromDatabase();
-     notificationManager = NotificationManager();
-     notificationManager?.initServer();
+    getAllProducts();
+    getDataFromDatabase();
+    notificationManager = NotificationManager();
+    notificationManager?.initServer();
 
-  //  sendNotification();
+    //  sendNotification();
 
-      _messaging.getToken().then((value) {
-        print(value);
-        if (mounted) {
-          setState(() {
-            currentToken = value!;
-          });
-        }
-        firestore.collection('pushtokens')
-            .doc(userIdx)
-            .set({'token': value!, 'createdAt': DateTime.now()});
-      });
+    _messaging.getToken().then((value) {
+      print(value);
+      if (mounted) {
+        setState(() {
+          currentToken = value!;
+        });
+      }
+      firestore.collection('pushtokens')
+          .doc(userIdx)
+          .set({'token': value!, 'createdAt': DateTime.now()});
+    });
+
     // Timer.run(() {
     //   FancyAlertDialog.showFancyAlertDialog(
     //     context, 'Maria',
@@ -94,6 +93,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     //   );
     // });
   }
+
   void sendNotification() {
     NotificationModel model = NotificationModel(title: "Hello from Jonas",
         body: "Jonas has just liked your post", dataBody: "should be post url",
@@ -104,26 +104,26 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   void goToDetails(String img, String userImg, String name, DateTime date,
       String docId, String userId, int downloads, int viewCount, String postId,
-      List<String>? likes, List<String>? viewers,String description) {
+      List<String>? likes, List<String>? viewers,String description, List<String>? downloaders) {
 
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
         OwnerDetails(img: img, userImg: userImg, name: name,
           date: date, docId: docId, userId: userId, downloads: downloads,
           viewCount: viewCount, postId: postId, likes: likes, viewers: viewers,
-          description: description,
+          description: description, downloaders: downloaders,
         )));
   }
 
+  getAllProducts() async {
+    final collection = firestore.collection("Activity Feed")
+        .doc(userIdx).collection('FeedItems');
+    final query = collection.where("Read Status", isEqualTo: false);
+    final countQuery = query.count();
+    final AggregateQuerySnapshot snapshot = await countQuery.get();
+    debugPrint("Count: ${snapshot.count}");
+    activityCount = snapshot.count;
+  }
 
-   getAllProducts() async {
-     final collection = firestore.collection("Activity Feed")
-         .doc(userIdx).collection('FeedItems');
-     final query = collection.where("Read Status", isEqualTo: false);
-     final countQuery = query.count();
-     final AggregateQuerySnapshot snapshot = await countQuery.get();
-     debugPrint("Count: ${snapshot.count}");
-     activityCount = snapshot.count;
-   }
   getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -136,9 +136,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     }
     });
   }
+
   Widget listViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, int viewCount, String postId,
-      List<String>? likes, List<String>? viewers, String description) {
+      List<String>? likes, List<String>? viewers, String description,
+      List<String>? downloaders) {
+
+    print("Downloaders $downloaders for $postId");
 
     return Padding(
       padding: const EdgeInsets.all (8.0),
@@ -159,51 +163,48 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               children: [
                 GestureDetector(
                     onTap: () {
-                      updateViewAndNavigate(viewCount, postId, viewers, img, userImg,
-                          name, date, docId, userId, downloads, likes, description);
+                      updateViewAndNavigate(viewCount, postId, viewers, img,
+                          userImg, name, date, docId, userId, downloads, likes,
+                          description, downloaders);
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10), // Image border
                       child: SizedBox.fromSize(
-                          size: Size(500.0, size == null ? 400 : size!.height * 0.75), // Image radius
+                          size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image radius
                           child: Image.network(img, fit: BoxFit.cover)
                       ),
                     )
                 ),
-                 const SizedBox(height: 12.0,),
-                  Row(children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
-                                userId:docId,
-                                userName:name,
-                                userImage: userImg,
-                              )));
-                            },
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundImage: NetworkImage(userImg,),
-                            )
-                        ),
-                        Padding(padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(name, style: const TextStyle(color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 10.0),
-                                Text(
-                                  DateFormat("dd MMM, yyyy - hh:mm a").format(
-                                      date).toString(),
-                                  style: const TextStyle(color: Colors.white54,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ]
-                          ),
-                        ),
-                      ]
+                const SizedBox(height: 12.0,),
+                Row(children: [
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                            UsersSpecificPostsScreen(userId: docId, userName: name,)));
+                      },
+                      child: CircleAvatar(
+                        radius: 35,
+                        backgroundImage: NetworkImage(userImg,),
+                      )
                   ),
+                  Padding(padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(name, style: const TextStyle(color: Colors.white,
+                              fontWeight: FontWeight.bold)
+                          ),
+                          const SizedBox(height: 10.0),
+                          Text(
+                            DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
+                            style: const TextStyle(color: Colors.white54,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ]
+                    ),
+                  ),
+                ]
+                ),
               ],
             )
         ),
@@ -213,7 +214,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
   void updateViewAndNavigate(int viewCount, String postId, List<String>? viewers, String img,
       String userImg, String name, DateTime date, String docId, String userId,
-      int downloads, List<String>? likes, String description) {
+      int downloads, List<String>? likes, String description, List<String>? downloaders) {
     total = viewCount + 1;
 
     if (viewers != null && !viewers.contains(userIdx)){
@@ -225,7 +226,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     });
 
     goToDetails(img, userImg, name, date, docId, userId, downloads, viewCount,
-        postId, likes,viewers, description);
+        postId, likes,viewers, description, downloaders);
   }
 
   void updateInterests(Map<String, List<String>?> interests) {
@@ -269,12 +270,10 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                         PostUploader(postType: PostType.image,)));
                   },
                   child:
-                  ImageIcon(
-                    AssetImage('assets/images/ttent.png'),
-                    size: 600,
-                    color: Colors.red,
+                  const ImageIcon(AssetImage('assets/images/ttent.png'),
+                    size: 600, color: Colors.red,
                   ),
-                 // const Icon(Icons.camera_enhance),
+                  // const Icon(Icons.camera_enhance),
                 ),
               ),
             ],
@@ -291,20 +290,20 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   ),
                 ),
               ),
-              title: Text("${widget.category}"),
+              title: Text(widget.category),
               centerTitle: true,
               leading: IconButton(
-                                onPressed: () {
-                                  if (widget.user == null){
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                                        VideoHomeScreen.forCategory(category: widget.category,),),);
-                                  }
-                                  else{
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
-                                  }
-                                },
-                                icon: const Icon(Icons.play_circle_outlined),
-                              ),
+                onPressed: () {
+                  if (widget.user == null){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                        VideoHomeScreen.forCategory(category: widget.category,),),);
+                  }
+                  else{
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+                  }
+                },
+                icon: const Icon(Icons.play_circle_outlined),
+              ),
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
@@ -357,11 +356,12 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                       controller: _pageController,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (BuildContext context, int index) {
-                        Post post = Post.getPost(snapshot, index, PostType.image);
 
+                        Post post = Post.getPost(snapshot, index, PostType.image);
                         return listViewWidget(post.id, post.source, post.userImage,
-                            post.userName, post.createdAt, post.email,
-                            post.downloads, post.viewCount, post.postId, post.likes, post.viewers, post.description);
+                            post.userName, post.createdAt, post.email, post.downloads,
+                            post.viewCount, post.postId, post.likes, post.viewers,
+                            post.description, post.downloaders);
                       },
                     );
                   }

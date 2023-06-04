@@ -52,8 +52,8 @@ class _CredentialsState extends State<Credentials> {
                   onTap: () {
                     _getFromCamera();
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
@@ -72,8 +72,8 @@ class _CredentialsState extends State<Credentials> {
                   onTap: () {
                     _getFromGallery();
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(

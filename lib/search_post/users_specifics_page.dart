@@ -6,9 +6,6 @@ import 'package:sharedstudent1/profile/profile_screen.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
-import '../home_screen/picturesHomescreen.dart';
-import '../home_screen/videosHomescreen.dart';
-import '../log_in/login_screen.dart';
 import '../misc/global.dart';
 import '../misc/userModel.dart';
 import '../notification/notification.dart';
@@ -114,11 +111,9 @@ class UsersProfilePageState extends State<UsersProfilePage> {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(
                 )));
               },
-              child: Text("Settings",
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18 , ),
+              child: const Text("Settings",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 , ),
               ),
-            
-
           ):
 
           OutlinedButton(
@@ -146,8 +141,6 @@ class UsersProfilePageState extends State<UsersProfilePage> {
                   child: Text(videosCount > 1 ? "$videosCount Videos" : "$videosCount Video",
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,  ),
                   ),
-
-
            ),
               buildDivider(),
               OutlinedButton(
@@ -157,9 +150,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
                     },
                   child: Text(picturesCount > 1 ?"$picturesCount Pictures" : "$picturesCount Picture",
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18,  ),
-                  ) ,
-
-
+                  ),
               ),
             ],
           )
@@ -237,17 +228,17 @@ class UsersProfilePageState extends State<UsersProfilePage> {
     FirebaseFirestore.instance.collection('users').doc(widget.userId)
         .update({'followers': widget.followers!,});
     sendNotification("Started following you");
-    AddFollowToActivityFeed();
+    addFollowToActivityFeed();
   }
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: name,
       body: action, dataBody: image,
-      // dataTitle: "Should be post description"
     );
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
-  AddFollowToActivityFeed() {
+
+  addFollowToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(widget.userId)

@@ -1,21 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
-import '../search_post/users_specifics_page.dart';
 import 'DatabasService.dart';
 import '../chat/groupChatHome.dart';
 
 class GroupInfo extends StatefulWidget {
-   String? groupId;
+  String? groupId;
   String? groupName;
-   String? adminName;
-   GroupInfo(
+  String? adminName;
+  GroupInfo(
       {Key? key,
-         this.adminName,
-         this.groupName,
-         this.groupId})
+        this.adminName,
+        this.groupName,
+        this.groupId})
       : super(key: key);
 
   @override
@@ -24,7 +21,6 @@ class GroupInfo extends StatefulWidget {
 
 class _GroupInfoState extends State<GroupInfo> {
   Stream? members;
-  String? image;
   @override
   void initState() {
     getMembers();
@@ -42,29 +38,9 @@ class _GroupInfoState extends State<GroupInfo> {
   }
 
   String getName(String r) {
-    String fullStringWithoutId = r.substring(r.indexOf("_")+1,);
-    List<String> name = fullStringWithoutId.split(",");
-    if (name.isEmpty) {
-      return "";
-    } else {
-      return name[0];
-    }
+    return r.substring(r.indexOf("_") + 1);
   }
-  String getImage(String r){
-    return r.substring(r.indexOf(",")+1);
-  }
-   String? getImagex(String res) {
-     FirebaseFirestore.instance.collection("users")
-        .doc(res.substring(0, res.indexOf("_")))
-        .get()
-        .then((snapshot) async { if (snapshot.exists) {
-      setState(() {
-        image = snapshot.data()!["userImage"];
-      });
-    }
-    });
-    return image;
-  }
+
   String getId(String res) {
     return res.substring(0, res.indexOf("_"));
   }
@@ -75,7 +51,7 @@ class _GroupInfoState extends State<GroupInfo> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text("Group Info"),
         actions: [
           IconButton(
@@ -106,10 +82,9 @@ class _GroupInfoState extends State<GroupInfo> {
                                   .toggleGroupJoin(
                                   widget.groupId!,
                                   getName(widget.adminName!),
-                                  widget.groupName!,
-                              getImage(FirebaseAuth.instance.currentUser!.uid))
+                                  widget.groupName!)
                                   .whenComplete(() {
-                                nextScreenReplace(context,  SocialHomeScreen());
+                                nextScreenReplace(context,  GroupChatHome());
                               });
                             },
                             icon: const Icon(
@@ -124,7 +99,7 @@ class _GroupInfoState extends State<GroupInfo> {
               icon: const Icon(Icons.exit_to_app))
         ],
       ),
-      body: Container( color: Colors.black,
+      body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
@@ -132,13 +107,13 @@ class _GroupInfoState extends State<GroupInfo> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: Colors.grey.shade900),
+                  color: Theme.of(context).primaryColor.withOpacity(0.2)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundColor: Colors.red.shade900,
+                    backgroundColor: Theme.of(context).primaryColor,
                     child: Text(
                       widget.groupName!.substring(0, 1).toUpperCase(),
                       style: const TextStyle(
@@ -153,12 +128,12 @@ class _GroupInfoState extends State<GroupInfo> {
                     children: [
                       Text(
                         "Group: ${widget.groupName}",
-                        style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(
                         height: 5,
                       ),
-                      Text("Admin: ${getName(widget.adminName!)}", style: TextStyle(color:Colors.white))
+                      Text("Admin: ${getName(widget.adminName!)}")
                     ],
                   )
                 ],
@@ -175,86 +150,53 @@ class _GroupInfoState extends State<GroupInfo> {
     return StreamBuilder(
       stream: members,
       builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(),);
-        }
-        else if (snapshot.connectionState == ConnectionState.active) {
-             if (snapshot.hasData) {
-               if (snapshot.data['members'] != null) {
-                 if (snapshot.data['members'].length != 0) {
-                  return ListView.builder(
-                    itemCount: snapshot.data['members'].length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                        child: ListTile(
-          leading: GestureDetector(onTap: () {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (_) =>
-                                UsersProfilePage(
-                                  userId: getId(
-                                      snapshot.data['members'][index]),
-                                  userName: getName(
-                                      snapshot.data['members'][index]),
-                                  userImage: getImage(
-                                      snapshot.data['members'][index]),
-                                )));
-                          },
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundImage: NetworkImage(
-                                getImage(snapshot.data['members'][index]),),
-                             // child: Text(
-                             //    getName(snapshot.data['members'][index])
-                             //        .substring(0, 1)
-                             //        .toUpperCase(),
-                             //    style: const TextStyle(
-                             //        color: Colors.white,
-                             //        fontSize: 15,
-                             //        fontWeight: FontWeight.bold),
-                             //  ),
-                            ),),
-                          title: Text(getName(snapshot.data['members'][index]),
-                              style: TextStyle(color: Colors.white)),
-                          //   subtitle: Text(getId(snapshot.data['members'][index])),
+        if (snapshot.hasData) {
+          if (snapshot.data['members'] != null) {
+            if (snapshot.data['members'].length != 0) {
+              return ListView.builder(
+                itemCount: snapshot.data['members'].length.compareTo(0),
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child: Text(
+                          getName(snapshot.data['members'][index])
+                              .substring(0, 1)
+                              .toUpperCase(),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
                         ),
-                      );
-                    },
+                      ),
+                      title: Text(getName(snapshot.data['members'][index])),
+                      subtitle: Text(getId(snapshot.data['members'][index])),
+                    ),
                   );
-                } else {
-                  return const Center(
-                    child: Text("NO MEMBERS"),
-                  );
-                }
-            //   } else {
-            //     return const Center(
-            //       child: Text("NO MEMBERS"),
-            //     );
-            //   }
+                },
+              );
             } else {
-              return Center(
-                  child: CircularProgressIndicator(
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                  ));
+              return const Center(
+                child: Text("NO MEMBERS"),
+              );
             }
-          }
-          else {
+          } else {
             return const Center(
-                child: Text("Sorry, there are no Posts for selection",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),)
+              child: Text("NO MEMBERS"),
             );
           }
+        } else {
+          return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ));
         }
-        return const Center(
-          child: Text('Something went wrong', style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
-          ),
-        );
-      }
+      },
     );
   }
 }

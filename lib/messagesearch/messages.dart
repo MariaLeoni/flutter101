@@ -98,12 +98,12 @@ class messageState extends State<message> {
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
+                stops: [0.2, 0.9],
               ),
             ),
           ),

@@ -66,7 +66,7 @@ class SocialHomeScreenState extends State<SocialHomeScreen> {
                       icon: const Icon(Icons.person)),
                 ]),
             body:Container(color:Colors.black,child: TabBarView(children: [
-              ChatListScreen(chatees: List.empty(),),
+              const ChatListScreen(),
               GroupChatHome(),
               const MoodScreen()
             ],),
