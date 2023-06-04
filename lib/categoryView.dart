@@ -150,6 +150,7 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             icon: null, //ItemTagsIcon(icon: icons[random.nextInt(3)]),
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize),
+<<<<<<< HEAD
             // onPressed: (item) {
             //   if (!item.active && selectedInterests.keys.contains(item.title)){
             //     subCategoryList.value = catMap[item.title];
@@ -166,6 +167,24 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             //     subCategoryList.value = catMap[item.title];
             //   }
             // }
+=======
+            onPressed: (item) {
+              if (!item.active! && selectedInterests.keys.contains(item.title)){
+                subCategoryList.value = catMap[item.title];
+              }
+              if (!item.active! && !selectedInterests.keys.contains(item.title)){
+                subCategoryList.value = null;
+                selectedInterests.remove(item.title);
+              }
+              else{
+                if (selectedInterest != item.title){
+                  selectedInterest = item.title!;
+                  selectedSubInterests = List.empty(growable: true);
+                }
+                subCategoryList.value = catMap[item.title];
+              }
+            }
+>>>>>>> 98c5f4b82c68abb65e82d42b740b5c9fbb624b31
         );
       },
     );
@@ -178,7 +197,11 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
       columns: column,
       horizontalScroll: false,
       heightHorizontalScroll: 60 * (fontSize / 14),
+<<<<<<< HEAD
       itemCount: subCategoryList!.value!.length,
+=======
+      itemCount: subCategoryList.value!.length,
+>>>>>>> 98c5f4b82c68abb65e82d42b740b5c9fbb624b31
       itemBuilder: (index) {
         final item = subCategoryList.value?[index];
 
@@ -194,8 +217,9 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             combine: ItemTagsCombine.withTextBefore,
             image: null,
             icon: null,
-            textScaleFactor: utf8.encode(item!.substring(0, 1)).length > 2 ? 0.8 : 1,
+            textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize,),
+<<<<<<< HEAD
             // onPressed: (item) {
             //   if (!item.active){
             //     selectedSubInterests?.remove(item.title);
@@ -211,6 +235,23 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
             //   print("Selected interests $selectedInterests");
             //   interestCallback(selectedInterests);
             // }
+=======
+            onPressed: (item) {
+              if (!item.active!){
+                selectedSubInterests?.remove(item.title);
+              }
+              else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
+                selectedSubInterests?.add(item.title!);
+              }
+              else{
+                selectedSubInterests = List.empty(growable: true);
+                selectedSubInterests!.add(item.title!);
+              }
+              selectedInterests[selectedInterest] = selectedSubInterests;
+              print("Selected interests $selectedInterests");
+              interestCallback(selectedInterests);
+            }
+>>>>>>> 98c5f4b82c68abb65e82d42b740b5c9fbb624b31
         );
       },
     );
