@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
@@ -29,6 +30,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   String? userImageURL;
   bool isFollowing = false;
   Map<String, List<String>?> interests = {};
+  TextEditingController deleteTextController = TextEditingController();
 
   Future getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users")
@@ -225,6 +227,84 @@ class ProfileScreenState extends State<ProfileScreen> {
     this.interests = interests;
   }
 
+  void showDeletionAlert(){
+    showGeneralDialog(
+      barrierDismissible: false,
+      barrierLabel: '',
+      barrierColor: Colors.black38,
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (ctx, anim1, anim2) => AlertDialog(
+        title: const Text("Are you sure you want to delete your Account?"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10.0,),
+            const Text("Type Delete in the text box below to confirm."),
+            const SizedBox(height: 10.0,),
+            TextFormField(
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.done,
+                controller: deleteTextController,
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Type delete...',
+                  hintStyle: TextStyle(color: Colors.grey),
+                )
+            ),
+            const SizedBox(height: 20.0,),
+            Center(child:  Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4.0,),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.brown),
+                        minimumSize: MaterialStateProperty.all(const Size(100, 40))
+                    ),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text("Account Deletion Cancelled")));
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0,),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                        minimumSize: MaterialStateProperty.all(const Size(100, 40))
+                    ),
+                    onPressed: () {
+                      if (deleteTextController.text.isNotEmpty && deleteTextController.text.trim() == "Delete"){
+                        Navigator.of(context, rootNavigator: true).pop();
+                        deleteTextController.clear();
+                        deleteAccount();
+                      }
+                      else{
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("Please enter a valid confirmation")));
+                      }
+                    },
+                    child: const Text('Continue'),
+                  ),
+                )
+              ],
+            )),
+          ],
+        ),
+      ),
+      transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 4 * anim1.value, sigmaY: 4 * anim1.value),
+        child: FadeTransition(
+          opacity: anim1,
+          child: child,
+        ),
+      ),
+      context: context,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -319,14 +399,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                 ),
                 ElevatedButton(
                     onPressed:() {
-                      var requestDate = DateTime.now();
-                      FirebaseFirestore.instance.collection('users')
-                          .doc(FirebaseAuth.instance.currentUser!.uid).update({
-                                'active': false,
-                                'requestDate': requestDate
-                          });
-                      signOutUser();
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  const LoginScreen()) );
+                      showDeletionAlert();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red.shade900,
@@ -339,6 +412,17 @@ class ProfileScreenState extends State<ProfileScreen> {
           ),
         ))
     );
+  }
+
+  void deleteAccount() {
+    var requestDate = DateTime.now();
+    FirebaseFirestore.instance.collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid).update({
+      'active': false,
+      'requestDate': requestDate
+    });
+    signOutUser();
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  const LoginScreen()) );
   }
 }
 
