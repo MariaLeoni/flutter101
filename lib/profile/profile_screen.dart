@@ -64,8 +64,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     getFromCamera();
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
@@ -83,8 +83,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     getFromGallery();
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(
@@ -241,18 +241,18 @@ class ProfileScreenState extends State<ProfileScreen> {
                   stops: [0.2],
                 ),
               ),
-            ),title: Text('Profile', style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,fontFamily: "Signatra", fontSize: 35),
+            ),title: const Text('Profile', style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,fontFamily: "Signatra", fontSize: 35),
             ),
             centerTitle:true, pinned:true, floating:true, ),
              ];
           },
           body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.black, Colors.black],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                stops: const [0.2, 0.9],
+                stops: [0.2, 0.9],
               ),
             ),
             child: Column(
@@ -308,6 +308,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                 ),
                 ElevatedButton(
                     onPressed:() {
+                      signOutUser();
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
                     },
                     style: ElevatedButton.styleFrom(
@@ -318,9 +319,14 @@ class ProfileScreenState extends State<ProfileScreen> {
                 ),
                 ElevatedButton(
                     onPressed:() {
-                     FirebaseFirestore.instance.collection('users')
-                          .doc(FirebaseAuth.instance.currentUser!.uid).update({'active':false });
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  LoginScreen()) );
+                      var requestDate = DateTime.now();
+                      FirebaseFirestore.instance.collection('users')
+                          .doc(FirebaseAuth.instance.currentUser!.uid).update({
+                                'active': false,
+                                'requestDate': requestDate
+                          });
+                      signOutUser();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  const LoginScreen()) );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red.shade900,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:sharedstudent1/vidlib/VideoListData.dart';
@@ -46,6 +47,10 @@ Future<Users?> getUserWithEmail(String email) async {
       .where("email", isEqualTo: email).get();
   var userModel = await user;
   return Users.fromJson(userModel.docs.first.data());
+}
+
+void signOutUser(){
+  FirebaseAuth.instance.signOut();
 }
 
 

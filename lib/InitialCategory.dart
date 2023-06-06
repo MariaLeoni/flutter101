@@ -307,6 +307,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                     ElevatedButton(
                         onPressed:() {
+                          signOutUser();
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
                         },
                         style: ElevatedButton.styleFrom(
@@ -317,6 +318,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                     ElevatedButton(
                         onPressed:() {
+                          signOutUser();
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
                         },
                         style: ElevatedButton.styleFrom(
