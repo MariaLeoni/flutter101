@@ -228,6 +228,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   void showDeletionAlert(){
+    print("show delete alert");
     showGeneralDialog(
       barrierDismissible: false,
       barrierLabel: '',
@@ -239,7 +240,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 10.0,),
-            const Text("Type Delete in the text box below to confirm."),
+            const Text("Type delete in the text box below to confirm."),
             const SizedBox(height: 10.0,),
             TextFormField(
                 keyboardType: TextInputType.text,
@@ -276,7 +277,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         minimumSize: MaterialStateProperty.all(const Size(100, 40))
                     ),
                     onPressed: () {
-                      if (deleteTextController.text.isNotEmpty && deleteTextController.text.trim() == "Delete"){
+                      if (deleteTextController.text.isNotEmpty && deleteTextController.text.trim() == "delete"){
                         Navigator.of(context, rootNavigator: true).pop();
                         deleteTextController.clear();
                         deleteAccount();
@@ -310,118 +311,126 @@ class ProfileScreenState extends State<ProfileScreen> {
     return WillPopScope(
         onWillPop: onBackPressed,
         child: Scaffold(
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[ SliverAppBar(  flexibleSpace:Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.black],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: [0.2],
+            body: NestedScrollView(
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                return <Widget>[ SliverAppBar(  flexibleSpace:Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.black],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      stops: [0.2],
+                    ),
+                  ),
+                ),title: const Text('Profile', style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,fontFamily: "Signatra", fontSize: 35),
                 ),
-              ),
-            ),title: const Text('Profile', style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,fontFamily: "Signatra", fontSize: 35),
-            ),
-            centerTitle:true, pinned:true, floating:true, ),
-             ];
-          },
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 10.0,),
-                GestureDetector(
-                  onTap: () {
-                    showImageDialog();
-                  },
-                  child: CircleAvatar(
-                    radius: 85.0, backgroundImage: imageXFile == null ? NetworkImage(image!) : Image.file(imageXFile!).image,
-                  )
+                  centerTitle:true, pinned:true, floating:true, ),
+                ];
+              },
+              body: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.black, Colors.black],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    stops: [0.2, 0.9],
+                  ),
                 ),
-                const SizedBox(height: 10.0,),
-                Row(crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text('Name: ${name!}',
-                      style: const TextStyle(fontSize: 25.0,
+                  children: [
+                    const SizedBox(height: 10.0,),
+                    GestureDetector(
+                        onTap: () {
+                          showImageDialog();
+                        },
+                        child: CircleAvatar(
+                          radius: 85.0, backgroundImage: imageXFile == null ? NetworkImage(image!) : Image.file(imageXFile!).image,
+                        )
+                    ),
+                    const SizedBox(height: 10.0,),
+                    Row(crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text('Name: ${name!}',
+                          style: const TextStyle(fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          )
+                      ),
+                        IconButton(
+                          onPressed: () {
+                            displayTextInputDialog(context);
+                          },
+                          icon: const Icon(Icons.edit, color:Colors.white),
+                        )
+                      ],
+                    ),
+                    const SizedBox( height: 10.0,),
+                    Text('Email: ${email!}',
+                      style: const TextStyle(
+                        fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                      )
-                  ),
-                    IconButton(
-                      onPressed: () {
-                        displayTextInputDialog(context);
-                      },
-                      icon: const Icon(Icons.edit, color:Colors.white),
+                      ),
+                    ),
+                    const SizedBox( height: 5.0,),
+                    Text('Phone Number: ${phoneNo!}',
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 10.0,),
+                    Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
+                      updateInterests(interests);
+                    }, isEditable: true,)
+                    ),
+                    ElevatedButton(
+                        onPressed:() {
+                          signOutUser();
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade900,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        ),
+                        child: const Text("Logout")
+                    ),
+                    ElevatedButton(
+                        onPressed:() {
+                          print("delete pressed");
+                          showDeletionAlert();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade900,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        ),
+                        child: const Text("Delete Account")
                     )
                   ],
                 ),
-                const SizedBox( height: 10.0,),
-                Text('Email: ${email!}',
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox( height: 5.0,),
-                Text('Phone Number: ${phoneNo!}',
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 10.0,),
-                Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
-                  updateInterests(interests);
-                }, isEditable: true,)
-                ),
-                ElevatedButton(
-                    onPressed:() {
-                      signOutUser();
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade900,
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                    ),
-                    child: const Text("Logout")
-                ),
-                ElevatedButton(
-                    onPressed:() {
-                      showDeletionAlert();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade900,
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                    ),
-                    child: const Text("Delete Account")
-                )
-              ],
-            ),
-          ),
-        ))
+              ),
+            ))
     );
   }
 
   void deleteAccount() {
     var requestDate = DateTime.now();
-    FirebaseFirestore.instance.collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid).update({
-      'active': false,
+
+    var user = FirebaseFirestore.instance.collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+
+    user.update({
+      'active': false
+    }).then((value) => print("deleted"))
+        .onError((error, stackTrace) => print("delete account error ${error.toString()}"));
+
+    user.set({
       'requestDate': requestDate
-    });
-    signOutUser();
+    }, SetOptions(merge: true));
+
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>  const LoginScreen()) );
   }
 }

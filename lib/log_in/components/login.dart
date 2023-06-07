@@ -73,7 +73,6 @@ class Credentials extends StatelessWidget {
                   press:() async{
                     try{
                       Users? user = await getUserWithEmail(_emailTextController.text.trim().toLowerCase());
-                      print("User ${user?.active}");
 
                       if (user != null && user.active == false && daysBetween(user.requested, DateTime.now()) > 7){
                         //Its more than a week since user requested to delete account.

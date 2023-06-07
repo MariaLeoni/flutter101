@@ -25,7 +25,7 @@ class Users {
     createdAt = json ['createdAt'];
     id = json ['id'];
     active = json['active'];
-    requested = json.containsKey("requested") ? json["requested"] : DateTime.now();
+    requested = json.containsKey("requestDate") ? json["requestDate"].toDate() : DateTime.now();
   }
 
   Map<String, dynamic> toJson() {
@@ -36,7 +36,7 @@ class Users {
     data['createdAt'] = createdAt;
     data['id'] = id;
     data['active'] = active;
-    data['requested'] = requested;
+    data['requestDate'] = requested;
     return data;
   }
 }

@@ -50,10 +50,11 @@ Future<Users?> getUserWithEmail(String email) async {
 
 Future<void> deleteUser(Users user)async {
   FirebaseAuth.instance.currentUser?.delete();
-  await FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.id)
-      .delete();
+
+  await FirebaseFirestore.instance.collection('users')
+      .doc(user.id).delete();
+
+  signOutUser();
 }
 
 void signOutUser(){
