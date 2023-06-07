@@ -69,32 +69,36 @@ class Credentials extends StatelessWidget {
                   )
                 ],
               ),
-              ButtonSquare(
-                  text:"Login",
-                  colors1: Colors.purple,
-                  colors2: Colors.red,
+              ButtonSquare(text:"Login", colors1: Colors.purple, colors2: Colors.red,
                   press:() async{
                     try{
                       Users? user = await getUserWithEmail(_emailTextController.text.trim().toLowerCase());
                       print("User ${user?.active}");
 
-                      if (user != null && user.active == false){
-                        print("You don't exist");
-                      }
-
-                      await _auth.signInWithEmailAndPassword(
-                          email: _emailTextController.text.trim().toLowerCase(),
-                          password: _passTextController.text.trim());
-
-                      if (!mounted) return;
-                      User? me = _auth.currentUser;
-                      if (me != null && me.emailVerified) {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                      if (user != null && user.active == false && daysBetween(user.requested, DateTime.now()) > 7){
+                        //Its more than a week since user requested to delete account.
+                        // Let's delete and ask them to create an account
+                        deleteUser(user);
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("This account no longer exist. Please create new one")));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const SignUpScreen()));
                       }
                       else{
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text("Please verify your email address and try again")));
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
+                        await _auth.signInWithEmailAndPassword(
+                            email: _emailTextController.text.trim().toLowerCase(),
+                            password: _passTextController.text.trim());
+
+                        if (!mounted) return;
+                        User? me = _auth.currentUser;
+                        if (me != null && me.emailVerified) {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+                        }
+                        else{
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(content: Text("Please verify your email address and try again")));
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> VerifyEmail()));
+                        }
                       }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'wrong-password') {

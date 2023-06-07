@@ -7,6 +7,7 @@ class Users {
   Timestamp? createdAt;
   String? id;
   bool? active = true;
+  var requested = DateTime.now();
 
   Users({
     this.email,
@@ -23,7 +24,8 @@ class Users {
     userImage = json ['userImage'];
     createdAt = json ['createdAt'];
     id = json ['id'];
-    active =json['active'];
+    active = json['active'];
+    requested = json.containsKey("requested") ? json["requested"] : DateTime.now();
   }
 
   Map<String, dynamic> toJson() {
@@ -34,6 +36,7 @@ class Users {
     data['createdAt'] = createdAt;
     data['id'] = id;
     data['active'] = active;
+    data['requested'] = requested;
     return data;
   }
 }

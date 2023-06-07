@@ -41,7 +41,6 @@ Future<bool> usernameExist(String username) async {
   return snapshot.count > 0 ? true : false;
 }
 
-
 Future<Users?> getUserWithEmail(String email) async {
   final user = FirebaseFirestore.instance.collection('users')
       .where("email", isEqualTo: email).get();
@@ -49,8 +48,22 @@ Future<Users?> getUserWithEmail(String email) async {
   return Users.fromJson(userModel.docs.first.data());
 }
 
+Future<void> deleteUser(Users user)async {
+  FirebaseAuth.instance.currentUser?.delete();
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.id)
+      .delete();
+}
+
 void signOutUser(){
   FirebaseAuth.instance.signOut();
+}
+
+int daysBetween(DateTime from, DateTime to) {
+  from = DateTime(from.year, from.month, from.day);
+  to = DateTime(to.year, to.month, to.day);
+  return (to.difference(from).inHours / 24).round();
 }
 
 

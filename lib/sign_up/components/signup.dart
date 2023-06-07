@@ -12,6 +12,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../VerifyEmail/VerifyEmail.dart';
 import '../../misc/global.dart';
+import '../../search_post/user.dart';
 
 class Credentials extends StatefulWidget {
   const Credentials({super.key});
@@ -184,10 +185,18 @@ class _CredentialsState extends State<Credentials> {
 
                     bool userExist = await usernameExist(_fullNameController.text.trim());
                     if (userExist){
-                      if (!mounted) return;
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text("Sorry username ${_fullNameController.text.trim()} already exist.")));
-                      return;
+                        Users? user = await getUserWithEmail(_emailTextController.text.trim().toLowerCase());
+                        if (user != null && user.active == false) {
+                          //Its more than a week since user requested to delete account.
+                          // Let's delete and ask them to create an account
+                          deleteUser(user);
+                        }
+                        else{
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text("Sorry username ${_fullNameController.text.trim()} already exist.")));
+                          return;
+                        }
                     }
 
                     try {
@@ -253,8 +262,7 @@ class _CredentialsState extends State<Credentials> {
                     }
                   }
               ),
-              AccountCheck(login: false,
-                press: (){
+              AccountCheck(login: false, press: (){
                   Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const LoginScreen()));
                 },
               )
