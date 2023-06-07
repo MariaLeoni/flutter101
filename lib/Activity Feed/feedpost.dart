@@ -42,23 +42,23 @@ class FeedPost {
 
   static FeedPost getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index) {
     return FeedPost(
-      image: snapshot.data!.docs[index]['Image'] ?? "",
-      name: snapshot.data!.docs[index]['name'] ?? "",
-      postType: snapshot.data!.docs[index]['PostType'] ?? "",
-      postId: snapshot.data!.docs[index]['postId'],
+      image: snapshot.data!.docs[index].toString().contains('Image') ? snapshot.data!.docs[index]['Image'] : "",
+      name: snapshot.data!.docs[index].toString().contains('name') ? snapshot.data!.docs[index]['name'] : "",
+      postType: snapshot.data!.docs[index].toString().contains('PostType') ? snapshot.data!.docs[index]['PostType'] : "",
+      postId: snapshot.data!.docs[index].toString().contains('postId') ? snapshot.data!.docs[index]['postId'] : "",
       activityId: snapshot.data!.docs[index].toString().contains('Activity Id') ?
       snapshot.data!.docs[index]['Activity Id'] : snapshot.data!.docs[index].id,
-      timestamp: snapshot.data!.docs[index]['timestamp'].toDate(),
-      type: snapshot.data!.docs[index]['type'] ?? "",
-      userId: snapshot.data!.docs[index]['userId'],
-      userProfileImage: snapshot.data!.docs[index]['userProfileImage'],
-      commentData: snapshot.data!.docs[index]['commentData'] ?? "",
-      description: snapshot.data!.docs[index]['description'] ?? "",
-      downloads:snapshot.data!.docs[index]['downloads'],
-      postOwnerId:snapshot.data!.docs[index]['postOwnerId'],
-      postOwnerImage:snapshot.data!.docs[index]['postOwnerImage'],
-      postOwnerName:snapshot.data!.docs[index]['postOwnername'],
-      likes: List.from(snapshot.data!.docs[index]['likes']),
+      timestamp: snapshot.data!.docs[index].toString().contains('timestamp') ? snapshot.data!.docs[index]['timestamp'].toDate() : DateTime.now(),
+      type: snapshot.data!.docs[index].toString().contains('type') ? snapshot.data!.docs[index]['type'] : "",
+      userId: snapshot.data!.docs[index].toString().contains('userId') ? snapshot.data!.docs[index]['userId'] : "",
+      userProfileImage: snapshot.data!.docs[index].toString().contains('userProfileImage') ? snapshot.data!.docs[index]['userProfileImage'] : "",
+      commentData: snapshot.data!.docs[index].toString().contains('commentData') ? snapshot.data!.docs[index]['commentData'] : "",
+      description: snapshot.data!.docs[index].toString().contains('description') ? snapshot.data!.docs[index]['description'] : "",
+      downloads: snapshot.data!.docs[index].toString().contains('downloads') ? snapshot.data!.docs[index]['downloads'] : 0,
+      postOwnerId: snapshot.data!.docs[index].toString().contains('postOwnerId')  ? snapshot.data!.docs[index]['postOwnerId'] : "",
+      postOwnerImage: snapshot.data!.docs[index].toString().contains('postOwnerImage') ? snapshot.data!.docs[index]['postOwnerImage'] : "",
+      postOwnerName: snapshot.data!.docs[index].toString().contains('postOwnername') ? snapshot.data!.docs[index]['postOwnername'] : "",
+      likes: snapshot.data!.docs[index].toString().contains('likes') ? List.from(snapshot.data!.docs[index]['likes']) : List.empty(),
       readStatus: snapshot.data!.docs[index].toString().contains('Read Status') ?
       snapshot.data!.docs[index]['Read Status'] : false,
     );

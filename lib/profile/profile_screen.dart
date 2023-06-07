@@ -8,8 +8,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-
-import '../VerifyEmail/VerifyEmail2delete.dart';
 import '../categoryView.dart';
 import '../home_screen/home.dart';
 import '../misc/global.dart';
