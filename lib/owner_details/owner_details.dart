@@ -17,6 +17,7 @@ import '../notification/notification.dart';
 import '../notification/server.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
+import '../search_userpost/searchView.dart';
 import '../widgets/button_square.dart';
 
 
@@ -280,6 +281,18 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     );
 
     return Scaffold(
+      appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.2],
+              ),
+            ),
+          ),
+   ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -293,16 +306,11 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
           children: [
             Column(
               children: [
-           Column(
-                    children: [
                       Image.network(
                         widget.img!,
                         width: MediaQuery.of(context).size.width,
                       ),
-                    ],
-                  ),
-
-                const SizedBox(height: 30.0,),
+                const SizedBox(height: 7.0,),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                   child: Row(
@@ -379,12 +387,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                           icon: const Icon(Icons.share, color: Colors.white),
                         ),
                       ),
-                      Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                          child:
-                          IconButton(onPressed: () async{
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
-                          }, icon: const Icon(Icons.home, color: Colors.white))),
-
                       Padding(padding: const EdgeInsets.only(left: 8.0, ),
                         child: likeText,
                       ),

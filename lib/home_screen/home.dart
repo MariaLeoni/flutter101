@@ -43,9 +43,9 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
           subList.add(subCategory);
         });
         myInterests?.addAll(subList);
-        if (myInterests != null && myInterests!.isNotEmpty){
-          myInterests!.add("random");
-        }
+        // if (myInterests != null && myInterests!.isNotEmpty){
+        //   myInterests!.add("random");
+        // }
       });
       setState(() {
         myInterests;
@@ -58,7 +58,10 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
     super.initState();
     readUserInfo();
   }
-
+  skip(){
+    Navigator.push(context, MaterialPageRoute(
+        builder: (_) => PictureHomeScreen.forCategory(category: "random")));
+  }
   @override
   Widget build(BuildContext context) {
     return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen.forCategory(category: "random",) :
@@ -108,6 +111,13 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                     padding: EdgeInsets.all(20),
                   ),
                   categories,
+                  SizedBox(height:20.0),
+                  SizedBox( height: 300,
+                      child:
+                      OutlinedButton(
+                        onPressed: skip,
+                        child: const Text("skip", style:TextStyle(color:Colors.white, backgroundColor: Colors.red, fontSize: 30 )),
+                      )),
                 ])),
           ],
         )));

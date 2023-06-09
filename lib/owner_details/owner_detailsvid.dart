@@ -262,6 +262,19 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     
     followersCount = (widget.followers?.length ?? 0);
     return Scaffold(
+        appBar: AppBar(
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2],
+                ),
+              ),
+            ),
+
+            ),
         body: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -358,11 +371,6 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                                 icon: const Icon(Icons.insert_comment_sharp, color: Colors.white),
                               ),
                             ),
-                            Padding(padding: const EdgeInsets.only(left: 8.0, ),
-                                child: IconButton(onPressed: () async{
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder:(_) => const HomeScreen()));
-                                }, icon: const Icon(Icons.home, color: Colors.white))),
-
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
                               child:
                               likeText,)
