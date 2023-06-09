@@ -111,8 +111,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
       String description, String postOwnerId, String postOwnerName, String postOwnerImage,
       List<String>? likes, int downloads, String activityId, bool readStatus, String postType ) {
 
-if (type.contains("like") || type == 'comment'|| type == 'tag' || type =='commentReply'|| type == 'follow') {
-      postType == 'image' ?
+if (type.contains("like") || type == 'comment'|| type == 'tag' || type =='commentReply' || type == 'follow') {
+      postType == 'image'?
       mediaPreview = SizedBox(
               height: 50.0,
               width: 50.0,
@@ -151,9 +151,8 @@ if (type.contains("like") || type == 'comment'|| type == 'tag' || type =='commen
               )
                     )
           ));
-    } else
-      {mediaPreview = Text("hey");}
-    if (type == 'likePost') {
+     }
+    if (type == 'like') {
 
       activityItemText = "liked your post";
     }
@@ -169,9 +168,9 @@ if (type.contains("like") || type == 'comment'|| type == 'tag' || type =='commen
     }else if (type == 'commentReply'){
       activityItemText = 'replied: $commentData';
     }
-    else {
-      activityItemText = "Update '$type'";
-    }
+    // else {
+    //   activityItemText = "Update '$type'";
+    // }
 
     return Padding(
         padding:const EdgeInsets.only(bottom: 2.0),

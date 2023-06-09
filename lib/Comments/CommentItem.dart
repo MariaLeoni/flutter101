@@ -85,7 +85,7 @@ AddLike(){
         "Activity Id": ActivityId,
         "Image": Image,
         "timestamp": DateTime.now(),
-        "commentData": null,
+        "commentData": "",
         "downloads": postdownloads,
         "description": postdescription,
         "likes": postlikes,
@@ -157,8 +157,8 @@ sendNotification();
           'Image') : '',
       postdescription: doc.data().toString().contains('description') ? doc.get(
           'description') : '',
-      // postdownloads: doc.data().toString().contains('downloads') ? doc.get(
-      //     'downloads') : '',
+       postdownloads: doc.data().toString().contains('downloads') ? doc.get(
+           'downloads') : '',
       postlikes: doc.data().toString().contains('postlikes') ? List
           .from(doc.get('postlikes')) : List.empty(growable: true),
       postOwnerId: doc.data().toString().contains('postOwnerId') ? doc.get(

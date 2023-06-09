@@ -131,9 +131,9 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         "userProfileImage": image,
         "postId": widget.postId,
         "Activity Id": activityId,
-        "Image": widget.userImg,
+        "Image": widget.img,
         "timestamp": DateTime.now(),
-        "commentData": null,
+        "commentData": "",
         "downloads": widget.downloads,
         "description": widget.description,
         "likes": widget.likes,
@@ -293,9 +293,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
           children: [
             Column(
               children: [
-                Container(
-                  color: Colors.red,
-                  child: Column(
+           Column(
                     children: [
                       Image.network(
                         widget.img!,
@@ -303,7 +301,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       ),
                     ],
                   ),
-                ),
+
                 const SizedBox(height: 30.0,),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),

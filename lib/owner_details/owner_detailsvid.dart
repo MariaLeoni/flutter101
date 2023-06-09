@@ -9,8 +9,11 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/owner_details/userListScreen.dart';
+import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
 import '../misc/global.dart';
+import '../notification/notification.dart';
+import '../notification/server.dart';
 import '../search_post/users_specifics_page.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
@@ -46,11 +49,14 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
   int? total = 0;
   int likesCount = 0;
   int followersCount = 0;
+  String activityId = const Uuid().v4();
   String? postId;
   String? userId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? name;
   String? image;
+  NotificationManager? notificationManager;
+  String? tokens;
 
   handleFollowerPost() {
     if (widget.followers!= null && widget.followers!.contains(userId)) {
@@ -75,11 +81,13 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
 
   handleLikePost(){
     if (widget.likes != null && widget.likes!.contains(userId)) {
-      Fluttertoast.showToast(msg: "You unliked this image!");
+      Fluttertoast.showToast(msg: "You unliked this video!");
       widget.likes!.remove(userId);
     }
     else {
-      Fluttertoast.showToast(msg: "You liked this image!");
+      Fluttertoast.showToast(msg: "You liked this video!");
+      addLikeToActivityFeed();
+      //sendNotification("Liked your post");
       widget.likes!.add(userId!);
     }
 
@@ -90,6 +98,41 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
         likesCount = (widget.likes?.length ?? 0);
       });
     });
+  }
+  addLikeToActivityFeed() {
+    bool isNotPostOwner = userId != widget.docId;
+    if (isNotPostOwner) {
+      FirebaseFirestore.instance.collection('Activity Feed').doc(widget.docId)
+          .collection('FeedItems').doc(activityId)
+          .set({
+        "type": "like",
+        "name": name,
+        "userId": _auth.currentUser!.uid,
+        "userProfileImage": image,
+        "postId": widget.postId,
+        "Activity Id": activityId,
+        "Image": widget.vid,
+        "timestamp": DateTime.now(),
+        "commentData": "",
+        "downloads": widget.downloads,
+        "description": widget.description,
+        "likes": widget.likes,
+        "postOwnerId": widget.docId,
+        "postOwnerImage": widget.vid,
+        "postOwnername": widget.name,
+        "Read Status": false,
+        "PostType" : "video",
+      });
+    }
+  }
+
+  void sendNotification(String action) {
+    NotificationModel model = NotificationModel(title: name,
+      body: "Liked your post",
+      // dataTitle: "Should be post description"
+    );
+    String? token = tokens;
+    notificationManager?.sendNotification(token!, model);
   }
 
   showAlertDialog(BuildContext context) {
@@ -132,6 +175,17 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     }
     });
   }
+  void getDataFromDatabase2() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.docId)
+        .get()
+        .then((snapshot) async { if (snapshot.exists) {
+      setState(() {
+        tokens = snapshot.data()!["devicetoken"];
+      });
+    }
+    });
+  }
 
   @override
   void initState() {
@@ -139,6 +193,9 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
 
     userId = _auth.currentUser?.uid;
     getDataFromDatabase();
+     notificationManager = NotificationManager();
+    notificationManager?.initServer();
+    getDataFromDatabase2();
   }
 
   @override
@@ -292,7 +349,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
                               child: IconButton(
                                 onPressed: () async {
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.userId,
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) => Comment(postId: widget.postId, userId: widget.docId,
                                     image: widget.vid, likes: widget.likes,
                                     description: widget.description,
                                     downloads: widget.downloads, postOwnerImg: widget.userImg,
