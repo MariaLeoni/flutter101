@@ -173,7 +173,7 @@ String? userImage;
       builder: (context, AsyncSnapshot snapshot) {
         // make some checks
         if (snapshot.hasData) {
-          if (snapshot.data['groups'] != null) {
+          if (snapshot.data.toString().contains("groups") && snapshot.data['groups'] != null) {
             if (snapshot.data['groups'].length != 0) {
               return ListView.builder(
                 itemCount: snapshot.data['groups'].length,

@@ -35,18 +35,16 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   readUserInfo() async {
     fireStore.collection('users').doc(auth.currentUser!.uid).get()
         .then<dynamic>((DocumentSnapshot snapshot) {
-          //myChatees = List.from(snapshot.get('chatWith'));
-      var data = jsonDecode(jsonEncode(snapshot.get('interests')));
-      data.forEach((key, value) {
-        List<String> subList = List.empty(growable: true);
-        value.forEach((subCategory){
-          subList.add(subCategory);
-        });
-        myInterests?.addAll(subList);
-        // if (myInterests != null && myInterests!.isNotEmpty){
-        //   myInterests!.add("random");
-        // }
-      });
+          if (snapshot.data().toString().contains('interests')){
+            var data = jsonDecode(jsonEncode(snapshot.get('interests')));
+            data.forEach((key, value) {
+              List<String> subList = List.empty(growable: true);
+              value.forEach((subCategory){
+                subList.add(subCategory);
+              });
+              myInterests?.addAll(subList);
+            });
+          }
       setState(() {
         myInterests;
       });
