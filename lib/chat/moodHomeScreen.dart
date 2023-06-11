@@ -99,8 +99,8 @@ class MoodScreenState extends State<MoodScreen> {
                     getImage(ImageSource.gallery);
                     Navigator.pop(ctx);
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(Icons.browse_gallery, color: Colors.red,),
@@ -114,8 +114,8 @@ class MoodScreenState extends State<MoodScreen> {
                     getVideo(ImageSource.gallery);
                     Navigator.pop(ctx);
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(4.0,),
                         child: Icon(Icons.image, color: Colors.redAccent,),
@@ -135,8 +135,8 @@ class MoodScreenState extends State<MoodScreen> {
                       getImage(ImageSource.camera);
                       Navigator.pop(ctx);
                     },
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         Padding(
                           padding: EdgeInsets.all(4.0,),
                           child: Icon(Icons.camera, color: Colors.red,),
@@ -150,8 +150,8 @@ class MoodScreenState extends State<MoodScreen> {
                       getVideo(ImageSource.camera);
                       Navigator.pop(ctx);
                     },
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         Padding(
                           padding: EdgeInsets.all(4.0,),
                           child: Icon(Icons.video_call, color: Colors.red,),
