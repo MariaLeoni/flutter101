@@ -73,7 +73,7 @@ class ChatListScreenState extends State<ChatListScreen> {
   readUserInfo() async {
       fireStore.collection('users').doc(currentUserId).get()
           .then<dynamic>((DocumentSnapshot snapshot) {
-        List<String> chateesx = List.from(snapshot.get('chatWith'));
+        List<String> chateesx = snapshot.data().toString().contains('chatWith') ? List.from(snapshot.get('chatWith')) : List.empty();
         setState(() {
           chatees = chateesx;
           chatUserProvider = ChatUsersProvider(firebaseFirestore: fireStore);
@@ -92,7 +92,7 @@ class ChatListScreenState extends State<ChatListScreen> {
             children: [
               buildSearchBar(),
               Expanded(
-                child: chatees == null ? const Center(
+                child: (chatees == null || chatees!.isEmpty) ? const Center(
                   child: Text('You have not started any chat yet...',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
                  ) : StreamBuilder<QuerySnapshot>(
