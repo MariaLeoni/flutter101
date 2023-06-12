@@ -85,7 +85,7 @@ class ChatListScreenState extends State<ChatListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: Container(color:Colors.grey.shade900,
+      body: Container(color:Colors.black,
         child:Stack(
         children: [
           Column(

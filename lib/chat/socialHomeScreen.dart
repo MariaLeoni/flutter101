@@ -47,7 +47,7 @@ class SocialHomeScreenState extends State<SocialHomeScreen> {
             appBar: AppBar(
                 centerTitle: true,
                 flexibleSpace: Container(
-                  color: Colors.grey.shade800
+                  color: Colors.black,
                 ),
                 bottom: const TabBar(tabs: [
                   Tab(icon: Icon(Icons.chat_bubble),),
