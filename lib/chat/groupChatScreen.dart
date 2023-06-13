@@ -125,27 +125,6 @@ class _ChatPageState extends State<ChatPage> {
               icon: const Icon(Icons.info))
         ],
       ),
-      //body: Stack(children:[chatMessages()])
-        // appBar: AppBar(
-        //   centerTitle: true,
-        //   elevation: 0,
-        //   title: Text(widget.groupName),
-        //   backgroundColor: Colors.grey.shade900,
-        //   actions: [
-        //     IconButton(
-        //         onPressed: () {
-        //           nextScreen(
-        //               context,
-        //               GroupInfo(
-        //                 groupId: widget.groupId,
-        //                 groupName: widget.groupName,
-        //                 adminName: admin,
-        //               ));
-        //         },
-        //         icon: const Icon(Icons.info))
-        //   ],
-        // ),
-
         body: Container( color: Colors.grey.shade800,child:SafeArea(
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
@@ -205,8 +184,6 @@ class _ChatPageState extends State<ChatPage> {
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: widget.userName,
       body: action,
-      //dataBody: widget.img,
-      // dataTitle: "Should be post description"
     );
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);

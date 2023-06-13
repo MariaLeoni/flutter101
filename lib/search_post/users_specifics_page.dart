@@ -159,22 +159,6 @@ class UsersProfilePageState extends State<UsersProfilePage> {
     ));
   }
 
-  handlePostView(PostType type){
-    UserWithNameAndId user = UserWithNameAndId(userId: widget.userId!, userName: myName!);
-    if (type == PostType.image)
-    //{
-    //   Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: user,)));
-    // }
-        {
-    Navigator.push(context, MaterialPageRoute(builder: (_) =>
-          UsersSpecificPostsScreen(userId: widget.userId, userName: myName!, postType: PostType.image,)));
-
-   }
-    else{
-      Navigator.push(context, MaterialPageRoute(builder: (_) =>
-          UsersSpecificPostsScreen(userId: widget.userId, userName: myName!, postType: PostType.video,)));
-    }
-  }
 
   void readUserInfo() async {
     FirebaseFirestore.instance.collection('users').doc(widget.userId).get()

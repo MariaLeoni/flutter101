@@ -45,7 +45,7 @@ class FullScreenVideoView extends StatelessWidget {
         if (!betterPlayerControllerStreamController.isClosed) {
           betterPlayerControllerStreamController.add(controller);
         }
-        //controller!.addEventsListener(onPlayerEvent);
+
       }
   }
 }

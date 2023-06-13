@@ -213,21 +213,6 @@ FirebaseAuth _auth = FirebaseAuth.instance;
             icon: null,
             textScaleFactor: utf8.encode(item.substring(0, 1)).length > 2 ? 0.8 : 1,
             textStyle: TextStyle(fontSize: fontSize,),
-            // onPressed: (item) {
-            //   if (!item.active){
-            //     selectedSubInterests?.remove(item.title);
-            //   }
-            //   else if (selectedSubInterests != null && !selectedSubInterests!.contains(item.title)){
-            //     selectedSubInterests?.add(item.title!);
-            //   }
-            //   else{
-            //     selectedSubInterests = List.empty(growable: true);
-            //     selectedSubInterests!.add(item.title!);
-            //   }
-            //   selectedInterests[selectedInterest] = selectedSubInterests;
-            //   print("Selected interests $selectedInterests");
-            //   interestCallback(selectedInterests);
-            // }
         );
       },
     );

@@ -58,8 +58,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
 
   void sendNotification() {
     NotificationModel model = NotificationModel(title: name,
-        body: "Followed you", //dataBody: "should be post url",
-        //dataTitle: "Should be post description"
+        body: "Followed you",
         );
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);

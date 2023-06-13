@@ -75,9 +75,9 @@ class ChatProvider{
 
   Stream<QuerySnapshot> getMoods(List<String>? followingList) {
     return firebaseFirestore.collection(FirestoreConstants.pathMoodCollection)
-        //.where(FirestoreConstants.idFrom, whereIn: followingList)
-        //.where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: todayDate.add(const Duration(days: -1)))
-        //.orderBy(FirestoreConstants.timestamp, descending: true)
+        .where(FirestoreConstants.idFrom, whereIn: followingList)
+        .where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: todayDate.add(const Duration(days: -1)))
+        .orderBy(FirestoreConstants.timestamp, descending: true)
         .snapshots();
   }
 

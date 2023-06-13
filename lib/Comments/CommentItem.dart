@@ -107,32 +107,6 @@ sendNotification();
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
-  // addCommentTaggingToActivityFeed() {
-  //   bool isNotPostOwner = _auth.currentUser!.uid != commenterId;
-  //   if (isNotPostOwner) {
-  //     FirebaseFirestore.instance.collection('Activity Feed').doc(commenterId)
-  //         .collection('FeedItems').doc(ActivityId).set({
-  //       "type": "commentReply",
-  //       "name": myName,
-  //       "userId": _auth.currentUser!.uid,
-  //       "userProfileImage": myImage,
-  //       "postId": postId,
-  //       "Activity Id": ActivityId,
-  //       "Image": Image,
-  //       "timestamp": DateTime.now(),
-  //       "commentData":  commentController1.text,
-  //       "description": description,
-  //       "downloads": downloads,
-  //       "likes": Likes,
-  //       "postOwnerId": postOwnerId,
-  //       "postOwnerImage": postOwnerImage,
-  //       "postOwnername": postOwnername,
-  //       'Read Status': false
-  //     });
-  //   }
-  //   commentController.clear();
-  // }
-
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
       userName: doc.data().toString().contains('commenterName') ? doc.get(
@@ -287,17 +261,7 @@ sendNotification();
                 }
 
               },)]):
-  //         Wrap(
-  //           spacing: 0,
-  //           children: <Widget> [ likeBadgeView,
-  //                IconButton( icon: Icon(Icons.delete_outline),
-  //                   onPressed: () async {
-  //                     showAlertDialog(context);
-  //                   }
-  //               )
-  // ]
-  //         ):
-                    likeBadgeView,
+          likeBadgeView,
           onTap: () {
             showSubcomments(context);
           },

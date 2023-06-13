@@ -58,8 +58,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     notificationManager = NotificationManager();
     notificationManager?.initServer();
 
-    //  sendNotification();
-
     _messaging.getToken().then((value) {
       print(value);
       if (mounted) {
@@ -72,26 +70,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
           .set({'token': value!, 'createdAt': DateTime.now()});
     });
 
-    // Timer.run(() {
-    //   FancyAlertDialog.showFancyAlertDialog(
-    //     context, 'Maria',
-    //     'just liked your post',
-    //     icon: const Icon(
-    //       Icons.clear,
-    //       color: Colors.black,
-    //     ),
-    //     labelPositiveButton: 'OKAY',
-    //     onTapPositiveButton: () {
-    //       Navigator.of(context).pop(false);
-    //       print('tap positive button');
-    //     },
-    //     labelNegativeButton: 'Cancel',
-    //     onTapNegativeButton: () {
-    //       Navigator.of(context, rootNavigator: true).pop();
-    //       print('tap negative button');
-    //     },
-    //   );
-    // });
   }
 
   void sendNotification() {
@@ -367,7 +345,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   }
                   else {
                     return const Center(
-                        child: Text("Sorry, there are no Posts for selection",
+                        child: Text("Be the first to post in this collection",
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),)
                     );
                   }

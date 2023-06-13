@@ -6,10 +6,6 @@ import 'package:sharedstudent1/misc/global.dart';
 import 'package:uuid/uuid.dart';
 import 'categoryView.dart';
 import 'home_screen/home.dart';
-
-import 'home_screen/picturesHomescreen.dart';
-import 'misc/progressIndicator.dart';
-
 class InitialCategories extends StatefulWidget {
 
   PostType? postType;

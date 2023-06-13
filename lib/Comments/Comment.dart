@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sharedstudent1/misc/global.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sharedstudent1/Comments/CommentItem.dart';
 import '../chat/chatWidgets.dart';
@@ -92,58 +91,12 @@ class CommentState extends State<Comment> {
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: myName,
       body: action, dataBody: widget.image,
-      //dataTitle: "Should be post description"
         );
     if (token != null) {
       notificationManager?.sendNotification(token!, model);
     }
   }
 
-  // handleLikeComment() {
-  //   if (likes!= null && likes!.contains(_auth.currentUser!.uid)) {
-  //     Fluttertoast.showToast(msg: "You unliked this comment!");
-  //     likes!.remove(_auth.currentUser!.uid);
-  //   }
-  //   else {
-  //     Fluttertoast.showToast(msg: "You liked this comment!");
-  //     likes!.add(_auth.currentUser!.uid);
-  //   }
-  //
-  //   FirebaseFirestore.instance.collection('comment').doc(commentId)
-  //       .update({'likes': likes!,
-  //   }).then((value) {
-  //     likesCount = (likes?.length ?? 0);
-  //   });
-  //   AddLike();
-  // }
-  //
-  // AddLike(){
-  //   bool isNotPostOwner = _auth.currentUser!.uid != commenterId;
-  //   if (isNotPostOwner) {
-  //     FirebaseFirestore.instance.collection('Activity Feed').doc(commenterId)
-  //         .collection('FeedItems').doc(activityId)
-  //         .set({
-  //       "type": "like Comment main",
-  //       "name": myName,
-  //       "userId": _auth.currentUser!.uid,
-  //       "userProfileImage": myImage,
-  //       "postId": widget.postId,
-  //       "Activity Id": activityId,
-  //       "Image": widget.image,
-  //       "timestamp": DateTime.now(),
-  //       "commentData": null,
-  //       "downloads": widget.downloads,
-  //       "description": widget.description,
-  //       "likes": widget.likes,
-  //       "postOwnerId": widget.userId,
-  //       "postOwnerImage": widget.postOwnerImg,
-  //       "postOwnername": widget.postOwnername,
-  //       "Read Status": false,
-  //
-  //     });
-  //   }
-  //
-  // }
   addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
     if (isNotPostOwner) {
@@ -355,24 +308,6 @@ class CommentState extends State<Comment> {
     ),
     ),
     ),
-            // TextFormField(
-            //     controller: commentController,
-            //     decoration: const InputDecoration(labelText: "Write a comment..",),
-            //     onChanged: (val) {
-            //       words = val.split(' ');
-            //       String taggedComment = words.isNotEmpty && words[words.length - 1].startsWith('@')
-            //           ? words[words.length - 1] : '';
-            //       if (taggedComment.length > 1){
-            //         setState(() {
-            //           str = taggedComment;
-            //         });
-            //       }
-            //     }
-            // // ),
-            //     trailing: OutlinedButton(
-            //       onPressed: addComment,
-            //       child: const Text("Post"),
-            //     )
             ),
 
             str.length > 1 ?

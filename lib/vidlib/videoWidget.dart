@@ -40,30 +40,6 @@ class VideoItemWidgetState extends State<VideoItemWidget>{
   StreamController<BetterPlayerController?>
   betterPlayerControllerStreamController = StreamController.broadcast();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   //LoadingIndicatorDialog().show(context);
-  //
-  //   _videoPlayerController = VideoPlayerController.network(widget.videoInfo.post.source);
-  //   _videoPlayerController?.addListener(_videoListener);
-  //   _videoPlayerController?.initialize().then((value) => {
-  //     setState(() {
-  //       initialized = true;
-  //     })
-  //   });
-  // }
-
-  // @override
-  // void dispose() {
-  //   if (initialized && _videoPlayerController != null) {
-  //     _videoPlayerController?.removeListener(_videoListener);
-  //     _videoPlayerController?.dispose();
-  //     _videoPlayerController = null;
-  //   }
-  //   super.dispose();
-  // }
-
   @override
   void dispose() {
     betterPlayerControllerStreamController.close();
@@ -128,7 +104,6 @@ class VideoItemWidgetState extends State<VideoItemWidget>{
 
   Widget _renderPortraitVideo(Size tmp) {
     print("A isInit $_initialized and controller null ${controller == null}");
-    //if (!_initialized) _freeController();
     if (controller == null) _setupController();
 
     double height = tmp.height * 0.75;
@@ -166,7 +141,6 @@ class VideoItemWidgetState extends State<VideoItemWidget>{
                   ));
                 },
               ))),
-      //VideoPlayer(_videoPlayerController!)),
     );
   }
 
@@ -189,11 +163,6 @@ class VideoItemWidgetState extends State<VideoItemWidget>{
       _freeController();
     }
   }
-
-  void _videoListener(){
-
-  }
-
   @override
   void deactivate() {
     if (controller != null) {

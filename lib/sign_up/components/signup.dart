@@ -274,7 +274,6 @@ class _CredentialsState extends State<Credentials> {
 
   @override
   void initState() {
-    //FirebaseAuth.instance.currentUser?.delete();
     super.initState();
   }
 }

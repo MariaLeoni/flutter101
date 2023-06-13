@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sharedstudent1/search_post/user.dart';
-import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 
 class UsersDesignWidget extends StatefulWidget {

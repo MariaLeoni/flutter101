@@ -144,51 +144,6 @@ class CommentState extends State<SubComment> {
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
-  // AddLike(){
-  //
-  //   bool isNotPostOwner = _auth.currentUser!.uid != widget.commentItem!.userId;
-  //   if (isNotPostOwner) {
-  //     FirebaseFirestore.instance.collection('Activity Feed').doc(widget.commentItem!.userId)
-  //         .collection('FeedItems').doc(activityId)
-  //         .set({
-  //       "type": "like Comment",
-  //       "name": myName,
-  //       "userId": _auth.currentUser!.uid,
-  //       "userProfileImage": myImage,
-  //       "postId": widget.commentItem!.postId,
-  //       "Activity Id": activityId,
-  //       "Image": image,
-  //       "timestamp": DateTime.now(),
-  //       "commentData": null,
-  //       "downloads": downloads,
-  //       "description": description,
-  //       "likes": likes,
-  //       "postOwnerId": postOwnerId,
-  //       "postOwnerImage": postOwnerImage,
-  //       "postOwnername": postOwnername,
-  //       "Read Status": false,
-  //
-  //     });
-  //   }
-  //
-  // }
-  // handleLikeComment() {
-  //   if (widget.commentItem!.likes!= null && widget.commentItem!.likes!.contains(_auth.currentUser!.uid)) {
-  //     Fluttertoast.showToast(msg: "You unliked this comment!");
-  //     widget.commentItem!.likes!.remove(_auth.currentUser!.uid);
-  //   }
-  //   else {
-  //     Fluttertoast.showToast(msg: "You liked this comment!");
-  //     widget.commentItem!.likes!.add(_auth.currentUser!.uid);
-  //   }
-  //
-  //   FirebaseFirestore.instance.collection('comment').doc(commentId)
-  //       .update({'likes':widget.commentItem!.likes!,
-  //   }).then((value) {
-  //     likesCount = (widget.commentItem!.likes?.length ?? 0);
-  //   });
-  //     AddLike();
-  // }
   addComment() {
     widget.commentItem!.subCommentsIds?.add(commentId);
     setState(() {

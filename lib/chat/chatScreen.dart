@@ -246,14 +246,7 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  // void _callPhoneNumber(String phoneNumber) async {
-  //   var url = 'tel://$phoneNumber';
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Error Occurred';
-  //   }
-  // }
+
 
   void uploadFile(PostType type) async {
     LoadingIndicatorDialog().show(context);
@@ -305,8 +298,7 @@ class ChatScreenState extends State<ChatScreen> {
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: name,
       body: action,
-      //dataBody: widget.img,
-      // dataTitle: "Should be post description"
+
     );
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
@@ -353,17 +345,7 @@ class ChatScreenState extends State<ChatScreen> {
         centerTitle: true,
         title: Text('Chatting with ${widget.peerNickname}'.trim()),
         actions: const [
-          // IconButton(
-          //   onPressed: () {
-          //     ProfileProvider profileProvider;
-          //     profileProvider = context.read<ProfileProvider>();
-          //     String callPhoneNumber =
-          //         profileProvider.getPrefs(FirestoreConstants.phoneNumber) ??
-          //             "";
-          //     _callPhoneNumber(callPhoneNumber);
-          //   },
-          //   icon: const Icon(Icons.phone),
-          // ),
+
         ],
       ),
       body: Container( color: Colors.grey.shade800,child:SafeArea(

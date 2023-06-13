@@ -43,7 +43,6 @@ String? userImage;
   gettingUserData() async {
     await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
-      // groups = snapshot.get('groups');
       userName = snapshot.get('name');
       email = snapshot.get('email');
       userImage = snapshot.get('userImage');
@@ -61,7 +60,7 @@ String? userImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container( color:Colors.grey.shade900, child:Stack(
+      body: Container( color:Colors.black, child:Stack(
 
           children: [
             Column(
@@ -69,7 +68,7 @@ String? userImage;
                   buildSearchBar(),
                   Expanded(
                       child: groups == null ? const Center(
-                        child: Text('You are not a part of any group yet...'),
+                        child: Text('Join a group...'),
                       ) : groupList()
                   )]
             )])),
@@ -224,7 +223,7 @@ String? userImage;
             height: 20,
           ),
           const Text(
-            "You've not joined any groups, tap on the add icon to create a group or also search from top search button.",
+           "Join your first group",
             textAlign: TextAlign.center, style: TextStyle(color:Colors.white),
           )
         ],
@@ -250,7 +249,7 @@ String? userImage;
               onPressed: (){
                 nextScreen(context, const SearchPage());
               }, style: OutlinedButton.styleFrom(side: BorderSide(width: 1.0, color: Colors.grey.shade700),),
-              child: const Text("Search here...", style: TextStyle(color: AppColors.white)))
+              child: const Text("Search here", style: TextStyle(color: AppColors.white)))
             ),
         ],
       ),

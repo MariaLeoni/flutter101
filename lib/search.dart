@@ -19,10 +19,10 @@ class SearchState extends State<Search> {
 
     return Scaffold(
         appBar: AppBar(
-          flexibleSpace: Container(color: Colors.grey.shade900,),
+          flexibleSpace: Container(color: Colors.black,),
           actions: const <Widget> [
           ],
-        ),body: Container( color:Colors.grey.shade900,
+        ),body: Container( color:Colors.black,
     child:Center(child: ListView(
       shrinkWrap: true,
       children:[

@@ -288,36 +288,13 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                         post.userName, post.createdAt, post.email,
                         post.downloads, post.postId, post.likes, post.description);
 
-                    // VideoListData videoListData = VideoListData(post);
-                    // return  ReusableVideoListWidget(videoListData: videoListData,
-                    //   videoListController: videoListController,
-                    //   canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
-                    //     videoSelected(videoListData);
-                    //   },
-                    // );
                   },
                 );
-                // return PageView.builder(
-                //   physics: const BouncingScrollPhysics(),
-                //   scrollDirection: Axis.vertical,
-                //   controller: _pageController,
-                //   itemCount: snapshot.data!.docs.length,
-                //   itemBuilder: (BuildContext context, int index) {
-                //     Post post = Post.getPost(snapshot, index, PostType.video);
-                //
-                //     VideoListData videoListData = VideoListData(post);
-                //     return ReusableVideoListWidget(videoListData: videoListData,
-                //       videoListController: videoListController,
-                //       canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
-                //         videoSelected(videoListData);
-                //       },
-                //     );
-                //   },
-                // );
+
               }
               else{
                 return const Center(
-                    child: Text("Sorry, there are no Posts for selection",
+                    child: Text("Be the first to post in this collection",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,
                           color: Colors.white),)
                 );
