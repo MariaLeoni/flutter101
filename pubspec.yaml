@@ -36,11 +36,18 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+
   firebase_auth: ^4.1.1
   firebase_core: ^2.1.1
-  uuid: ^3.0.6
+  cloud_functions: ^4.3.3
   cloud_firestore: ^4.0.4
   firebase_storage: ^11.0.4
+  firebase_messaging: ^14.0.4
+  firebase_database: ^10.0.10
+  firebase_in_app_messaging: ^0.7.0+13
+
+  uuid: ^3.0.6
+
   fluttertoast: ^8.0.9
   flutter_staggered_grid_view: ^0.6.2
   transparent_image: ^2.0.0
@@ -49,7 +56,6 @@ dependencies:
   video_thumbnail: ^0.5.0
   image_cropper: ^3.0.0
   intl: ^0.17.0
-  firebase_messaging: ^14.0.4
   shared_preferences: ^2.0.15
   flutter_local_notifications: ^12.0.3
   photo_view: ^0.14.0
@@ -70,9 +76,6 @@ dependencies:
   better_player:
     git:
       url: https://github.com/tintran-dev/betterplayer.git
-  firebase_database: ^10.0.10
-  firebase_in_app_messaging: ^0.7.0+13
-  firebase_admin: ^0.2.0
 
 dev_dependencies:
   flutter_test:

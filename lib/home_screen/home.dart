@@ -61,6 +61,8 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
     Navigator.push(context, MaterialPageRoute(
         builder: (_) => PictureHomeScreen.forCategory(category: "random")));
   }
+
+
   @override
   Widget build(BuildContext context) {
     return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen.forCategory(category: "random",) :
