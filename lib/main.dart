@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp(debugShowCheckedModeBanner: false,
             title: "Student Shared",
-            home: allowUser ? HomeScreen() : const LoginScreen(),
+            home: allowUser ? const HomeScreen() : const LoginScreen(),
           );// MaterialApp
         }
     ); // FutureBuilder

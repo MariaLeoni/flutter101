@@ -56,6 +56,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
     super.initState();
     readUserInfo();
   }
+
   skip(){
     Navigator.push(context, MaterialPageRoute(
         builder: (_) => PictureHomeScreen.forCategory(category: "random")));
