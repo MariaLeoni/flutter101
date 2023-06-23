@@ -1,13 +1,14 @@
 {
   "project_info": {
     "project_number": "462259146837",
+    "firebase_url": "https://studentshared1-default-rtdb.firebaseio.com",
     "project_id": "studentshared1",
     "storage_bucket": "studentshared1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:462259146837:android:397e12673e680754fac4dc",
+        "mobilesdk_app_id": "1:462259146837:android:6a692bf4ecfdc8e4fac4dc",
         "android_client_info": {
           "package_name": "com.example.sharedstudent1"
         }
@@ -29,6 +30,13 @@
             {
               "client_id": "462259146837-c8jqjh7t2uk9dmu9gncbe4ro4un4i7vc.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "462259146837-prsv83p1qg60sh52om1nnf7qpsosvkl1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sharedstudent1"
+              }
             }
           ]
         }

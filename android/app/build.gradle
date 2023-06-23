@@ -43,9 +43,21 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    flavorDimensions "env"
+    productFlavors {
+        dev {
+            dimension "env"
+            applicationId "com.example.sharedstudent1"
+            resValue "string", "app_name", "Campus Dev"
+        }
+        prod {
+            dimension "env"
+            applicationId "com.sharedstudent.campus"
+            resValue "string", "app_name", "Campus"
+        }
+    }
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.sharedstudent1"
         minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
