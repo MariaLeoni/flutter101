@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -49,10 +50,21 @@ Future<Users?> getUserWithEmail(String email) async {
 }
 
 Future<void> deleteUser(Users user)async {
-  FirebaseAuth.instance.currentUser?.delete();
+  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+      'deleteUser',
+      options: HttpsCallableOptions(
+        timeout: const Duration(seconds: 10),
+      )
+  );
 
-  await FirebaseFirestore.instance.collection('users')
-      .doc(user.id).delete();
+  try {
+    final result = await callable.call(<String, dynamic>{
+      'email': user.email,'coll': 'users'
+    });
+    print("Cloud function results ${result.data as String}");
+  } catch (e) {
+    print("Cloud function  ERROR: ${e.toString()}");
+  }
 
   signOutUser();
 }

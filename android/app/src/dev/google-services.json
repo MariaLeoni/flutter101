@@ -1,13 +1,24 @@
 {
   "project_info": {
+<<<<<<< HEAD:android/app/google-services.json
     "project_number": "212789154137",
     "project_id": "campus100",
     "storage_bucket": "campus100.appspot.com"
+=======
+    "project_number": "462259146837",
+    "firebase_url": "https://studentshared1-default-rtdb.firebaseio.com",
+    "project_id": "studentshared1",
+    "storage_bucket": "studentshared1.appspot.com"
+>>>>>>> 7fd3cda5d621838ceb9097128d54276cf1180c31:android/app/src/dev/google-services.json
   },
   "client": [
     {
       "client_info": {
+<<<<<<< HEAD:android/app/google-services.json
         "mobilesdk_app_id": "1:212789154137:android:9de98339ca7853e42e7c48",
+=======
+        "mobilesdk_app_id": "1:462259146837:android:6a692bf4ecfdc8e4fac4dc",
+>>>>>>> 7fd3cda5d621838ceb9097128d54276cf1180c31:android/app/src/dev/google-services.json
         "android_client_info": {
           "package_name": "com.example.campus"
         }
@@ -58,6 +69,13 @@
             {
               "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "462259146837-prsv83p1qg60sh52om1nnf7qpsosvkl1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sharedstudent1"
+              }
             }
           ]
         }

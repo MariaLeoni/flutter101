@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "212789154137",
+    "project_id": "campus100",
+    "storage_bucket": "campus100.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212789154137:android:9c543fe5c2b22e632e7c48",
+        "android_client_info": {
+          "package_name": "com.sharedstudent.campus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBimuGYlA9DrppuQyKXetRkyOFnCV0p9dk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "212789154137-d1r1to8u0tkqh4amiqotfk9ufsc9io8p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sharedstudent1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import  'package:firebase_core/firebase_core.dart';
-import 'package:sharedstudent1/home_screen/picturesHomescreen.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 
 import 'home_screen/home.dart';
@@ -62,7 +61,7 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp(debugShowCheckedModeBanner: false,
             title: "Student Shared",
-            home: allowUser ? HomeScreen() : const LoginScreen(),
+            home: allowUser ? const HomeScreen() : const LoginScreen(),
           );// MaterialApp
         }
     ); // FutureBuilder

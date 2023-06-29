@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sharedstudent1/main.dart';
 
-import 'package:sharedstudent1/notifications.dart';
+// import 'package:sharedstudent1/notifications.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
