@@ -92,12 +92,12 @@ skip(){
                   updateInterests(interests);
                 }, isEditable: true,)
                 ),
-               // const SizedBox(height: 10.0,),
-(
+               const SizedBox(height: 10.0,),
+
                 Container(color:Colors.red.shade900,child:OutlinedButton(
                  onPressed:  Finish,
                   child: const Text("Finish", style:TextStyle(color:Colors.white,)),
-                   ))),
+                   )),
                 SizedBox(height:10.0),
                 Container(color:Colors.red.shade900,child:OutlinedButton(
                   onPressed: skip,
