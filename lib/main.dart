@@ -4,6 +4,7 @@ import  'package:firebase_core/firebase_core.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 
 import 'home_screen/home.dart';
+import 'notification/server.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
               home: Scaffold(
                 body: Center(
                   child: Center(
-                    child: Text("Welcome to Student Shared", style: TextStyle(fontSize: 28.0,
+                    child: Text("Welcome to TheGist", style: TextStyle(fontSize: 28.0,
                         color: Colors.black, fontWeight: FontWeight.bold)),
                   ),
                 ),
@@ -59,8 +60,10 @@ class MyApp extends StatelessWidget {
             allowUser = true;
           }
 
+          NotificationManager().alertForNotificationPermission();
+
           return MaterialApp(debugShowCheckedModeBanner: false,
-            title: "Student Shared",
+            title: "TheGist",
             home: allowUser ? const HomeScreen() : const LoginScreen(),
           );// MaterialApp
         }
