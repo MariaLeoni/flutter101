@@ -181,7 +181,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
         .get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        tokens = snapshot.data()!["devicetoken"];
+        tokens = snapshot.data()!["token"];
       });
     }
     });

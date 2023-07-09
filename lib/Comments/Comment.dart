@@ -83,7 +83,7 @@ class CommentState extends State<Comment> {
   void getOPToken() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.userId).get().then<dynamic>((DocumentSnapshot snapshot) {
-      token = snapshot.get('devicetoken');
+      token = snapshot.get('token');
       print("Token $token");
     });
   }

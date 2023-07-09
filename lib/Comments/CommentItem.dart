@@ -40,18 +40,19 @@ class CommentItem extends StatelessWidget {
   String? OriginalCommentId;
   String? OriginalCommenterId;
   String? postdescription;
- List<String>? postlikes = List.empty(growable:true);
+  List<String>? postlikes = List.empty(growable:true);
   int? postdownloads;
   String? postOwnername;
   String? postOwnerId;
   String? postOwnerImage;
   String? tokens;
   String postType = "";
+
   CommentItem({super.key, required this.postType,this.userName, this.userId,
-    this.comment, this.timestamp, this.userImage,
-    this.commentId, this.OriginalCommentId,this.OriginalCommenterId,
-     required this.postId,
-    this.Image, this.subCommentsIds, this.likes, this.postdescription, this.postlikes,this.postdownloads,this.postOwnername, this.postOwnerId, this.postOwnerImage,this.tokens,
+    this.comment, this.timestamp, this.userImage, this.commentId, this.OriginalCommentId,
+    this.OriginalCommenterId, required this.postId, this.Image, this.subCommentsIds, this.likes,
+    this.postdescription, this.postlikes,this.postdownloads,this.postOwnername, this.postOwnerId,
+    this.postOwnerImage,this.tokens,
   });
 
   handleLikeComment() {
@@ -71,7 +72,8 @@ class CommentItem extends StatelessWidget {
     });
    AddLike();
   }
-AddLike(){
+
+  AddLike(){
     bool isNotPostOwner = _auth.currentUser!.uid != userId;
     if (isNotPostOwner) {
       FirebaseFirestore.instance.collection('Activity Feed').doc(userId)
@@ -92,12 +94,11 @@ AddLike(){
         "postOwnerId": postOwnerId,
         "postOwnerImage": postOwnerImage,
         "postOwnername": postOwnername,
-        "likes": postlikes,
         "Read Status": false,
         "PostType": postType
       });
     }
-sendNotification();
+  sendNotification();
 }
   void sendNotification() {
     NotificationModel model = NotificationModel(title: myName,
@@ -107,6 +108,7 @@ sendNotification();
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
+
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
       userName: doc.data().toString().contains('commenterName') ? doc.get(
@@ -146,6 +148,8 @@ sendNotification();
 
     );
   }
+
+
   showSubcomments(BuildContext context){
     CommentItem commentItem = CommentItem(userName: userName,
       userId: userId, comment: comment, timestamp: timestamp,
@@ -162,14 +166,13 @@ sendNotification();
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = TextButton(
-      child: Text("Cancel"),
+      child: const Text("Cancel"),
       onPressed:  () {
         Navigator.of(context, rootNavigator: true).pop();
-        print('tap negative button');
       },
     );
     Widget continueButton = TextButton(
-      child: Text("Ok"),
+      child: const Text("Ok"),
       onPressed:  () {
         FirebaseFirestore.instance.collection('comment')
             .doc(commentId).delete().then((value) {
@@ -202,19 +205,17 @@ sendNotification();
     likerUserId = _auth.currentUser?.uid;
     likesCount = likes?.length ?? 0;
 
-
-      FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid)
-          .get().then<dynamic>((DocumentSnapshot snapshot) {
-        myImage = snapshot.get('userImage');
-        myName = snapshot.get('name');
-
-      });
-    FirebaseFirestore.instance.collection("users")
-          .doc(userId)
-          .get()
-        .then<dynamic>((DocumentSnapshot snapshot) {
-      tokens = snapshot.get('devicetoken');
+    FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid)
+        .get().then<dynamic>((DocumentSnapshot snapshot) {
+      myImage = snapshot.get('userImage');
+      myName = snapshot.get('name');
     });
+
+    FirebaseFirestore.instance.collection("users").doc(userId).get()
+        .then<dynamic>((DocumentSnapshot snapshot) {
+      tokens = snapshot.get('token');
+    });
+
     var likeBadgeView = SSBadge(top: 0, right: 2,
         value: likesCount.toString(),
         child: IconButton(

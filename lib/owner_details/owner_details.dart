@@ -100,7 +100,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         .get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        tokens = snapshot.data()!["devicetoken"];
+        tokens = snapshot.data()!["token"];
       });
     }
     });

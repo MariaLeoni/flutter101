@@ -289,7 +289,7 @@ class ChatScreenState extends State<ChatScreen> {
         .get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        tokens = snapshot.data()!["devicetoken"];
+        tokens = snapshot.data()!["token"];
       });
     }
     });

@@ -148,7 +148,7 @@ class _ChatPageState extends State<ChatPage> {
             .get()
             .then((snapshot) async { if (snapshot.exists) {
           setState(() {
-            tokens = snapshot.data()!["devicetoken"];
+            tokens = snapshot.data()!["token"];
           });
         }
         });

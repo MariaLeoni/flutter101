@@ -130,6 +130,11 @@ class NotificationManager{
       sound: true,
     );
 
-    print('User granted permission: ${settings.authorizationStatus}');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized || settings.authorizationStatus == AuthorizationStatus.provisional) {
+      initServer();
+      print('User Notification permission ${settings.authorizationStatus}');
+    } else {
+      print('User declined or has not accepted permission');
+    }
   }
 }

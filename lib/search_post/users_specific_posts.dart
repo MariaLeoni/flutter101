@@ -50,7 +50,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId).get().then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        tokens = snapshot.data()!["devicetoken"];
+        tokens = snapshot.data()!["token"];
       });
     }
     });

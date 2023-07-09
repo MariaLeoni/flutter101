@@ -230,7 +230,7 @@ class _CredentialsState extends State<Credentials> {
                         'followers': <String>[],
                         'following':<String>[],
                         'categories': interests,
-                        'devicetoken':token,
+                        'token':token,
                         'groups':<String>[],
                         'active': true,
                        });
