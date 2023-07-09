@@ -117,7 +117,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     getDataFromDatabase();
     getDataFromDatabase2();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   addLikeToActivityFeed() {

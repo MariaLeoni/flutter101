@@ -193,8 +193,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
 
     userId = _auth.currentUser?.uid;
     getDataFromDatabase();
-     notificationManager = NotificationManager();
-    notificationManager?.initServer();
+    notificationManager = NotificationManager();
     getDataFromDatabase2();
   }
 

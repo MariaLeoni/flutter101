@@ -46,7 +46,6 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     readUserInfo();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   getChatandAdmin() {

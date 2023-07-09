@@ -212,7 +212,6 @@ class CommentState extends State<Comment> {
     getOPToken();
     commentLikes();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   @override

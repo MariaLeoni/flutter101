@@ -56,7 +56,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     getAllProducts();
     getDataFromDatabase();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
 
     _messaging.getToken().then((value) {
       print(value);

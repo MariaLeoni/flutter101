@@ -181,7 +181,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     readUserInfo();
 
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   Widget listViewWidget (String docId, String img, String userImg, String name,

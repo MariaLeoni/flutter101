@@ -73,7 +73,6 @@ class ChatScreenState extends State<ChatScreen> {
     readLocal();
     getDataFromDatabase2();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   _scrollListener() {
