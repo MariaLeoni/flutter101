@@ -277,7 +277,7 @@ if (type.contains("like") || type == 'comment'|| type == 'tag' || type =='commen
             else {
               return const Center(
                   child: Text("There are no Activities",
-                    style: TextStyle(fontSize: 20),)
+                    style: TextStyle(fontSize: 20, color:Colors.white),)
               );
             }
           }

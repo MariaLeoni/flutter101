@@ -93,7 +93,7 @@ class ChatListScreenState extends State<ChatListScreen> {
               buildSearchBar(),
               Expanded(
                 child: (chatees == null || chatees!.isEmpty) ? const Center(
-                  child: Text('You have not started any chat yet...',
+                  child: Text('Start your first chat...',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
                  ) : StreamBuilder<QuerySnapshot>(
                   stream: chatUserProvider.getUsersIChatWith(FirestoreConstants.pathUserCollection, chatees).snapshots(),
