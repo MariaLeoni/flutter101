@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +20,7 @@ class NotificationManager{
   String? deviceToken;
 
   void updateToken(String token) async{
+    print("Token $token");
     await FirebaseFirestore.instance.collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid).update({
       'token': token,
@@ -39,32 +41,7 @@ class NotificationManager{
   }
 
   void sendNotification(String token, NotificationModel model) async {
-    final collection = FirebaseFirestore.instance.collection('cms').doc("aiYFVBMWhZjcBdy4FTwg");
-    final cms = await collection.get();
-    serverKey = "$serverKey${cms.get("fcm").toString()}";
-
-    try {
-      await http.post(Uri.parse(fcmURL),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': serverKey
-        },
-        body: jsonEncode({
-          'to': token,
-          'data': {
-            'title': model.dataTitle,
-            'body': model.dataBody,
-          },
-          'notification': {
-            'title': model.title,
-            'body': model.body,
-          },
-        }),
-      );
-      print('FCM request for device sent!');
-    } catch (e) {
-      print("Error sending notif $e");
-    }
+    await sendPush(token, model);
   }
 
   void registerDevice() async {
@@ -115,5 +92,49 @@ class NotificationManager{
     }).onError((err) {
       print("Error with token ${err.toString()}");
     });
+  }
+
+  void alertForNotificationPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized || settings.authorizationStatus == AuthorizationStatus.provisional) {
+      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true, // Required to display a heads up notification
+        badge: true,
+        sound: true,
+      );
+      initServer();
+      print('User Notification permission ${settings.authorizationStatus}');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  Future<void> sendPush(String token, NotificationModel model)async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'sendByFCMAdmin',
+        options: HttpsCallableOptions(
+          timeout: const Duration(seconds: 10),
+        )
+    );
+
+    try {
+      final result = await callable.call(<String, dynamic>{
+        'title': model.title,'body': model.body, 'token': token, 'other': "${model.dataTitle}, ${model.dataBody}"
+      });
+      print("FCM function results ${result.data as String}");
+    } catch (e) {
+      print("FCM function  ERROR: ${e.toString()}");
+    }
   }
 }

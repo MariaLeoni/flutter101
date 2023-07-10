@@ -7,12 +7,12 @@ class HeadText extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Padding(
-      padding:EdgeInsets.symmetric(horizontal:30.0, vertical:15.0,),
+      padding:const EdgeInsets.symmetric(horizontal:30.0, vertical:15.0,),
       child:Column(
         children: [
           SizedBox(height: size.height * 0.05),
           const Center(
-            child: Text("Campus", style: TextStyle(
+            child: Text("TheGist", style: TextStyle(
               fontSize: 55,
               color: Colors.white,
               fontWeight: FontWeight.bold,

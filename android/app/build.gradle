@@ -48,12 +48,12 @@ android {
         dev {
             dimension "env"
             applicationId "com.example.sharedstudent1"
-            resValue "string", "app_name", "Campus Dev"
+            resValue "string", "app_name", "TheGistDev"
         }
         prod {
             dimension "env"
-            applicationId "com.sharedstudent.campus"
-            resValue "string", "app_name", "Campus"
+            applicationId "com.thegistapp.thegist"
+            resValue "string", "app_name", "TheGist"
         }
     }
 

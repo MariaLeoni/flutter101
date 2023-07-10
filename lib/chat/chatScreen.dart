@@ -73,7 +73,6 @@ class ChatScreenState extends State<ChatScreen> {
     readLocal();
     getDataFromDatabase2();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   _scrollListener() {
@@ -290,7 +289,7 @@ class ChatScreenState extends State<ChatScreen> {
         .get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        tokens = snapshot.data()!["devicetoken"];
+        tokens = snapshot.data()!["token"];
       });
     }
     });

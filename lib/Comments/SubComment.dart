@@ -240,7 +240,6 @@ class CommentState extends State<SubComment> {
     readUserInfo();
     loadPostInfo();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   @override

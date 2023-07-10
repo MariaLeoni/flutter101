@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import '../chat/socialHomeScreen.dart';
+import '../notification/server.dart';
 import 'picturesHomescreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -55,6 +56,8 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   void initState() {
     super.initState();
     readUserInfo();
+
+    NotificationManager().initServer();
   }
 
   skip(){

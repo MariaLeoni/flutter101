@@ -50,7 +50,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId).get().then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        tokens = snapshot.data()!["devicetoken"];
+        tokens = snapshot.data()!["token"];
       });
     }
     });
@@ -181,7 +181,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
     readUserInfo();
 
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
   }
 
   Widget listViewWidget (String docId, String img, String userImg, String name,

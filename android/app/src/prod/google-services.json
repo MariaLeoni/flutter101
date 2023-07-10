@@ -31,10 +31,46 @@
               "client_type": 3
             },
             {
-              "client_id": "212789154137-d1r1to8u0tkqh4amiqotfk9ufsc9io8p.apps.googleusercontent.com",
+              "client_id": "212789154137-8aalos278n6gglc009t92ft45lk8b6hd.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.sharedstudent1"
+                "bundle_id": "com.sharedstudent.campus"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212789154137:android:daa60cd66bf9ff762e7c48",
+        "android_client_info": {
+          "package_name": "com.thegistapp.thegist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBimuGYlA9DrppuQyKXetRkyOFnCV0p9dk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "212789154137-8aalos278n6gglc009t92ft45lk8b6hd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sharedstudent.campus"
               }
             }
           ]

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>212789154137-8aalos278n6gglc009t92ft45lk8b6hd.apps.googleusercontent.com</string>
+	<string>212789154137-pdk3ii1o0lmet3kk8hc1vtf6b6etlo2f.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.212789154137-8aalos278n6gglc009t92ft45lk8b6hd</string>
+	<string>com.googleusercontent.apps.212789154137-pdk3ii1o0lmet3kk8hc1vtf6b6etlo2f</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB5rOVG-lHfKIxYg7v66Y63zMVjj1iuLp0</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.sharedstudent.campus</string>
+	<string>com.thegistapp.thegist</string>
 	<key>PROJECT_ID</key>
 	<string>campus100</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:212789154137:ios:1da1f452894a19702e7c48</string>
+	<string>1:212789154137:ios:1a4f18e745f362392e7c48</string>
 </dict>
 </plist>

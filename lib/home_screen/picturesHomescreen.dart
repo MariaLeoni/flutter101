@@ -42,7 +42,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   late String currentToken;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
@@ -56,27 +55,16 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     getAllProducts();
     getDataFromDatabase();
     notificationManager = NotificationManager();
-    notificationManager?.initServer();
 
-    _messaging.getToken().then((value) {
-      print(value);
-      if (mounted) {
-        setState(() {
-          currentToken = value!;
-        });
-      }
-      firestore.collection('pushtokens')
-          .doc(userIdx)
-          .set({'token': value!, 'createdAt': DateTime.now()});
-    });
-
+    sendNotification();
   }
 
   void sendNotification() {
     NotificationModel model = NotificationModel(title: "Hello from Jonas",
         body: "Jonas has just liked your post", dataBody: "should be post url",
         dataTitle: "Should be post description");
-    String token = "fWrxOXwIS-i5hWV3hBRAuy:APA91bGho335472C4RUCFbzCIPzGzIS2Gb0j519yuSuGCxTiqeau4_PsG9pB0coGwEQyjhmEGzBUhLsL4eN4LrAcaBtG3uhKgeeS7uFleU7FUUzAg5a9F5ac-2cX9P7sTz6UMZ2831VQ";
+    //String token = "eSAPCBsyQwWJP6z6kRgFBi:APA91bHvFNUEpzCpv2D5N55mN3ZUDYWrOXAC4eU7WxkniR77y1BasqE9BCX1iKq-nPdFLNOAIFoc94aih7uVMSa8Vh5BvV0nJWcjJwEbTP1Zqr124DJ2DOeltzD__QFz_1KvkKyu6-QT";
+    String token = "fLRgmvCN_UoyjBS-dGNuHU:APA91bERh0OzPyfD5pLkbcNlt0AN5z9XZA2Dc1uHc8i4uj8xoxcp2aF_Jw8MMRefquARccKZhxMk1BY30ZSJ9E4UnwN-4Iz9bZh3aXzN2iPZgIyUJktY6Mp2wHTBah5TpxCyqMbCk5fi";
     notificationManager?.sendNotification(token, model);
   }
 

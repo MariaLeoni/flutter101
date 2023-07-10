@@ -42,7 +42,6 @@ class  VideoDetailsScreen extends StatefulWidget {
 
   @override
   State<VideoDetailsScreen> createState() => _VideoDetailsScreenState();
-
 }
 
 class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
@@ -99,6 +98,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
       });
     });
   }
+
   addLikeToActivityFeed() {
     bool isNotPostOwner = userId != widget.docId;
     if (isNotPostOwner) {
@@ -181,7 +181,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
         .get()
         .then((snapshot) async { if (snapshot.exists) {
       setState(() {
-        tokens = snapshot.data()!["devicetoken"];
+        tokens = snapshot.data()!["token"];
       });
     }
     });
@@ -193,8 +193,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
 
     userId = _auth.currentUser?.uid;
     getDataFromDatabase();
-     notificationManager = NotificationManager();
-    notificationManager?.initServer();
+    notificationManager = NotificationManager();
     getDataFromDatabase2();
   }
 
