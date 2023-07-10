@@ -42,7 +42,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
   NotificationManager? notificationManager;
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   late String currentToken;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
@@ -56,19 +55,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     getAllProducts();
     getDataFromDatabase();
     notificationManager = NotificationManager();
-
-    _messaging.getToken().then((value) {
-      print(value);
-      if (mounted) {
-        setState(() {
-          currentToken = value!;
-        });
-      }
-      firestore.collection('pushtokens')
-          .doc(userIdx)
-          .set({'token': value!, 'createdAt': DateTime.now()});
-    });
-
   }
 
   void sendNotification() {
