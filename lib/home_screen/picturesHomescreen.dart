@@ -55,6 +55,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     getAllProducts();
     getDataFromDatabase();
     notificationManager = NotificationManager();
+
+    sendNotification();
   }
 
   void sendNotification() {

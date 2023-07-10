@@ -237,30 +237,21 @@ class CommentItem extends StatelessWidget {
           style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
         ),
           trailing: FirebaseAuth.instance.currentUser!.uid == userId
-              ?
-
-
-
-
-
-              Wrap(children:[
+              ? Wrap(children:[
                 likeBadgeView,
               PopupMenuButton(
-                icon: Icon(Icons.more_vert, color: Colors.white,),
+                icon: const Icon(Icons.more_vert, color: Colors.white,),
                   color: Colors.white,
                   itemBuilder: (context)
               {
                 return[
-                  PopupMenuItem<int>( value: 0, child: Text("Delete Comment"),),
-
-
+                  const PopupMenuItem<int>( value: 0, child: Text("Delete Comment"),),
                 ];
               },
               onSelected: (value){
                 if(value == 0){
                   showAlertDialog(context);
                 }
-
               },)]):
           likeBadgeView,
           onTap: () {

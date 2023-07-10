@@ -134,7 +134,6 @@ class _ChatPageState extends State<ChatPage> {
             )
         )
         )
-
     );
   }
 
@@ -155,6 +154,7 @@ class _ChatPageState extends State<ChatPage> {
       }
     });
   }
+
   chatMessages() {
     return Flexible(
         child: StreamBuilder(
@@ -187,6 +187,7 @@ class _ChatPageState extends State<ChatPage> {
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
+
   sendMessage() {
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {

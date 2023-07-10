@@ -42,7 +42,6 @@ class  VideoDetailsScreen extends StatefulWidget {
 
   @override
   State<VideoDetailsScreen> createState() => _VideoDetailsScreenState();
-
 }
 
 class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
@@ -99,6 +98,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
       });
     });
   }
+
   addLikeToActivityFeed() {
     bool isNotPostOwner = userId != widget.docId;
     if (isNotPostOwner) {
