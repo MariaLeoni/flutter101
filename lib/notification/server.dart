@@ -108,6 +108,11 @@ class NotificationManager{
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized || settings.authorizationStatus == AuthorizationStatus.provisional) {
+      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true, // Required to display a heads up notification
+        badge: true,
+        sound: true,
+      );
       initServer();
       print('User Notification permission ${settings.authorizationStatus}');
     } else {
