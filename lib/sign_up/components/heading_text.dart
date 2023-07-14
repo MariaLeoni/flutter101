@@ -12,7 +12,7 @@ class HeadText extends StatelessWidget {
         children: [
           SizedBox(height: size.height * 0.05),
           const Center(
-            child: Text("TheGist", style: TextStyle(
+            child: Text("Gist", style: TextStyle(
               fontSize: 55,
               color: Colors.white,
               fontWeight: FontWeight.bold,

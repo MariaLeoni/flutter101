@@ -34,7 +34,7 @@ class Credentials extends StatelessWidget {
                 backgroundColor: Colors.red,
                 child: CircleAvatar(
                   radius: 120,
-                  backgroundImage: AssetImage('assets/images/Capuss.png'),
+                  backgroundImage: AssetImage('assets/images/TheGist.png'),
                 ),
               )),
               const SizedBox(height: 15.0,),

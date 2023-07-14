@@ -199,7 +199,7 @@ class MoodWidgetState extends State<MoodWidget> {
                               userName: widget.moodModel.displayName,
                               userImage: widget.moodModel.photoUrl,)));
                       },
-                      child: widget.moodModel.photoUrl == null ? Image.asset("assets/images/wolf.webp", width: 50, height: 50,) : CircleAvatar(
+                      child: widget.moodModel.photoUrl == null ? Image.asset("assets/images/TheGist.png", width: 50, height: 50,) : CircleAvatar(
                         radius: 35,
                         backgroundImage: NetworkImage(widget.moodModel.photoUrl!,),
                       )
