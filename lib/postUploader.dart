@@ -107,8 +107,8 @@ class PostUploaderState extends State<PostUploader> {
               onTap: () {
                 cameraSource();
               },
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Padding(
                     padding: EdgeInsets.all(4.0,),
                     child: Icon(Icons.camera, color: Colors.red,),
@@ -121,8 +121,8 @@ class PostUploaderState extends State<PostUploader> {
               onTap: () {
                 gallerySource();
               },
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Padding(
                     padding: EdgeInsets.all(4.0,),
                     child: Icon(Icons.image, color: Colors.redAccent,),
@@ -320,7 +320,7 @@ class PostUploaderState extends State<PostUploader> {
                   onTap:() {
                     showAlert();
                   },
-                  child: widget.postType == PostType.video ? (videoFile == null ? Container ( height: 100, child: Image.asset("assets/images/Capuss.png")) :
+                  child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
                     child: BetterPlayer.file(videoFile!.path,
                       betterPlayerConfiguration: const BetterPlayerConfiguration(

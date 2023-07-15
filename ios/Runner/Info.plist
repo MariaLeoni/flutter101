@@ -28,6 +28,11 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>TheGist need access to your Camera to take picture or video</string>
 	<key>NSPhotoLibraryUsageDescription</key>

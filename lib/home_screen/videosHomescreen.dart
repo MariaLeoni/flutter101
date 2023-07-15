@@ -46,6 +46,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
 
+    print("Video link $vid");
+
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
@@ -113,7 +115,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                               ),
                               const SizedBox(height: 10.0),
                               Text(
-                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
+                                DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
                                 style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
                               )
                             ]
@@ -227,7 +229,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 ),
               ),
             ),
-            title: Text("${widget.category}"),
+            title: Text(widget.category),
             centerTitle: true,
              leading:
              IconButton(
