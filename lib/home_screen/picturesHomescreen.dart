@@ -1,18 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
-import 'package:sharedstudent1/notification/server.dart';
-import 'package:sharedstudent1/postUploader.dart';
+import 'package:sharedstudent1/uploader/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:uuid/uuid.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
-import '../notification/notification.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
 import '../search_post/users_specific_posts.dart';
@@ -45,8 +42,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   late String currentToken;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
   Size? size;
-  final PageController _pageController = PageController(initialPage: 0,
-      keepPage: true);
+  final PageController _pageController = PageController(initialPage: 0, keepPage: true);
 
   @override
   void initState() {

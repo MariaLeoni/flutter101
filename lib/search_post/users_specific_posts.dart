@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../owner_details/owner_details.dart';
 import'package:fluttertoast/fluttertoast.dart';
-import '../vidlib/ReusableVideoListController.dart';
 import '../vidlib/VideoListData.dart';
 
 
@@ -44,7 +42,6 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
-  ReusableVideoListController videoListController = ReusableVideoListController();
 
   void getUserToken() async {
     await FirebaseFirestore.instance.collection("users")
@@ -288,11 +285,12 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                     borderRadius: BorderRadius.circular(10), // Image border
                     child: SizedBox.fromSize(
                         size: const Size(500.0, 400.0), // Image radius
-                        child: BetterPlayer.network(vid,
-                          betterPlayerConfiguration: const BetterPlayerConfiguration(
-                            aspectRatio: 4/3,
-                          ),
-                        ),
+                        child: Container()
+                        // BetterPlayer.network(vid,
+                        //   betterPlayerConfiguration: const BetterPlayerConfiguration(
+                        //     aspectRatio: 4/3,
+                        //   ),
+                        // ),
                     ),
                   ),
                 ),

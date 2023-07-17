@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -166,11 +165,12 @@ class MoodWidgetState extends State<MoodWidget> {
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_10, top: Sizes.dimen_10),
                     child: AspectRatio(aspectRatio: 4/3,
-                      child: BetterPlayer.network(widget.moodModel.content,
-                        betterPlayerConfiguration: const BetterPlayerConfiguration(
-                          aspectRatio: 4/3,
-                        ),
-                      ),
+                      child: Container()
+                      // BetterPlayer.network(widget.moodModel.content,
+                      //   betterPlayerConfiguration: const BetterPlayerConfiguration(
+                      //     aspectRatio: 4/3,
+                      //   ),
+                      // ),
                     )
                 ) :
                 widget.moodModel.type == PostType.image.name ?

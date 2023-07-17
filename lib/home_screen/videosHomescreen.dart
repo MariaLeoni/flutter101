@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +7,13 @@ import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../search_post/users_specifics_page.dart';
+import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/ssbadge.dart';
 import 'home.dart';
 import 'post.dart';
 import '../misc/global.dart';
 import '../owner_details/owner_detailsvid.dart';
-import '../postUploader.dart';
-import '../vidlib/ReusableVideoListController.dart';
+import '../uploader/postUploader.dart';
 import '../vidlib/VideoListData.dart';
 
 
@@ -34,9 +33,9 @@ class VideoHomeScreen extends StatefulWidget {
 class VideoHomeScreenState extends State<VideoHomeScreen> {
   bool checkView = false;
   int activityCount  = 0;
-  ReusableVideoListController videoListController = ReusableVideoListController();
-  int lastMilli = DateTime.now().millisecondsSinceEpoch;
+  //ReusableVideoListController videoListController = ReusableVideoListController();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final PageController _pageController = PageController(initialPage: 0, keepPage: true);
 
   Size? size;
   String? name;
@@ -45,8 +44,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   Widget listViewWidget1 (String docId, String vid, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
-
-    print("Video link $vid");
 
     return Padding(
       padding: const EdgeInsets.all (8.0),
@@ -73,16 +70,9 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                       description: description,
                     )));
                   },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10), // Image border
-                    child: SizedBox.fromSize(
-                      size: const Size(500.0, 400.0), // Image radius
-                      child: BetterPlayer.network(vid,
-                        betterPlayerConfiguration: const BetterPlayerConfiguration(
-                          aspectRatio: 4/3,
-                        ),
-                      ),
-                    ),
+                  child: SizedBox.fromSize(
+                      size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image border
+                      child:  ChewieVideoWidget(play: true, url: vid,)
                   ),
                 ),
                 const SizedBox(height: 15.0,),
@@ -90,21 +80,21 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                   child: Row(
                       children:[
-                      GestureDetector(
-                      onTap:() {
-                Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
-                vid: vid, userImg: userImg, name: name, date: date, docId: docId,
-                userId: userId, downloads: downloads, postId: postId, likes: likes,
-                description: description,
-                )));
-                },
-                    child:
-                        CircleAvatar(
-                          radius: 35,
-                          backgroundImage: NetworkImage(
-                            userImg,
-                          ),
-                        )),
+                        GestureDetector(
+                            onTap:() {
+                              Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+                                vid: vid, userImg: userImg, name: name, date: date, docId: docId,
+                                userId: userId, downloads: downloads, postId: postId, likes: likes,
+                                description: description,
+                              )));
+                            },
+                            child:
+                            CircleAvatar(
+                              radius: 35,
+                              backgroundImage: NetworkImage(
+                                userImg,
+                              ),
+                            )),
                         const SizedBox(width: 10.0,),
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,13 +221,13 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             ),
             title: Text(widget.category),
             centerTitle: true,
-             leading:
-             IconButton(
-               onPressed: (){
-                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
-               },
-               icon: const Icon(Icons.home),
-             ),
+            leading:
+            IconButton(
+              onPressed: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
+              },
+              icon: const Icon(Icons.home),
+            ),
             actions: <Widget>[
               IconButton(
                 onPressed: (){
@@ -259,7 +249,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               IconButton(
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => const SocialHomeScreen()));
+                      builder: (_) => const SocialHomeScreen()));
                 },
                 icon: const Icon(Icons.message_sharp),
               ),
@@ -282,17 +272,19 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             else if (snapshot.connectionState == ConnectionState.active) {
               if(snapshot.data!.docs.isNotEmpty) {
 
-                return ListView.builder(itemCount: snapshot.data!.docs.length,
+                return PageView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  controller: _pageController,
+                  itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
 
                     Post post = Post.getPost(snapshot, index, PostType.video);
                     return listViewWidget1(post.id, post.source, post.userImage,
                         post.userName, post.createdAt, post.email,
                         post.downloads, post.postId, post.likes, post.description);
-
                   },
                 );
-
               }
               else{
                 return const Center(

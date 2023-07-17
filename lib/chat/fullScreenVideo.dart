@@ -1,15 +1,14 @@
-import 'dart:async';
-import 'package:better_player/better_player.dart';
+
 import 'package:flutter/material.dart';
-import '../vidlib/ReusableVideoListController.dart';
 
 class FullScreenVideoView extends StatelessWidget {
   final String url;
+
   FullScreenVideoView({Key? key, required this.url}) : super(key: key);
 
-  BetterPlayerController? controller = ReusableVideoListController().getBetterPlayerController();
-  StreamController<BetterPlayerController?>
-  betterPlayerControllerStreamController = StreamController.broadcast();
+  // BetterPlayerController? controller = ReusableVideoListController().getBetterPlayerController();
+  // StreamController<BetterPlayerController?>
+  // betterPlayerControllerStreamController = StreamController.broadcast();
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +21,11 @@ class FullScreenVideoView extends StatelessWidget {
       child: SizedBox(
           width: screen.width,
           height: screen.height * 0.75,
-          child: controller != null
-              ? BetterPlayer(controller: controller!,)
-              : Container(color: Colors.black,
+          child:
+          // controller != null
+          //     ? BetterPlayer(controller: controller!,)
+          //     :
+          Container(color: Colors.black,
               child: const Center(child: CircularProgressIndicator(valueColor:
             AlwaysStoppedAnimation<Color>(Colors.white),
             ),
@@ -35,17 +36,17 @@ class FullScreenVideoView extends StatelessWidget {
   }
 
   void _setupController() {
-    if (controller == null) {
-      return;
-    }
-    else {
-        controller!.setupDataSource(BetterPlayerDataSource.network(
-            url, cacheConfiguration:
-            const BetterPlayerCacheConfiguration(useCache: true)));
-        if (!betterPlayerControllerStreamController.isClosed) {
-          betterPlayerControllerStreamController.add(controller);
-        }
-
-      }
+    // if (controller == null) {
+    //   return;
+    // }
+    // else {
+    //     controller!.setupDataSource(BetterPlayerDataSource.network(
+    //         url, cacheConfiguration:
+    //         const BetterPlayerCacheConfiguration(useCache: true)));
+    //     if (!betterPlayerControllerStreamController.isClosed) {
+    //       betterPlayerControllerStreamController.add(controller);
+    //     }
+    //
+    //   }
   }
 }

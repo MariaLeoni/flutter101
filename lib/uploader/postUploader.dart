@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,8 +9,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:uuid/uuid.dart';
-import 'categoryView.dart';
-import 'misc/progressIndicator.dart';
+import 'package:video_compress/video_compress.dart';
+import '../categoryView.dart';
+import '../misc/progressIndicator.dart';
 
 class PostUploader extends StatefulWidget {
 
@@ -105,7 +105,7 @@ class PostUploaderState extends State<PostUploader> {
           children: [
             InkWell(
               onTap: () {
-                cameraSource();
+                cameraSource(context);
               },
               child: const Row(
                 children: [
@@ -119,7 +119,7 @@ class PostUploaderState extends State<PostUploader> {
             ),
             InkWell(
               onTap: () {
-                gallerySource();
+                gallerySource(context);
               },
               child: const Row(
                 children: [
@@ -167,7 +167,7 @@ class PostUploaderState extends State<PostUploader> {
     });
   }
 
-  void getImageFromCamera() async {
+  void getImageFromCamera(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.camera);
     cropImage(pickedFile!.path);
@@ -175,7 +175,7 @@ class PostUploaderState extends State<PostUploader> {
     Navigator.pop(context);
   }
 
-  void getImageFromGallery() async {
+  void getImageFromGallery(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery);
     cropImage(pickedFile!.path);
@@ -184,21 +184,21 @@ class PostUploaderState extends State<PostUploader> {
     Navigator.pop(context);
   }
 
-  void cameraSource(){
+  void cameraSource(BuildContext context){
     if (widget.postType == PostType.video){
-      getVideoFromCamera();
+      getVideoFromCamera(context);
     }
     else {
-      getImageFromCamera();
+      getImageFromCamera(context);
     }
   }
 
-  void gallerySource(){
+  void gallerySource(BuildContext context){
     if (widget.postType == PostType.video){
-      getVideoFromGallery();
+      getVideoFromGallery(context);
     }
     else {
-      getImageFromGallery();
+      getImageFromGallery(context);
     }
   }
 
@@ -213,7 +213,7 @@ class PostUploaderState extends State<PostUploader> {
     }
   }
 
-  void getVideoFromCamera() async {
+  void getVideoFromCamera(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickVideo(
         source: ImageSource.camera);
     if (pickedFile != null) {
@@ -227,11 +227,11 @@ class PostUploaderState extends State<PostUploader> {
     }
   }
 
-  void getVideoFromGallery() async {
+  void getVideoFromGallery(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickVideo(
         source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() async {
+      setState(() {
         videoFile = File(pickedFile.path);
         setVideo();
       });
@@ -265,13 +265,23 @@ class PostUploaderState extends State<PostUploader> {
       LoadingIndicatorDialog().show(context);
 
       if (widget.postType == PostType.video){
-        final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}mp4');
-        await ref.putFile(videoFile!);
-        String path = await ref.getDownloadURL();
-        setState(() {
-          postUrl = path;
-          postVideo();
-        });
+        final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}.mp4');
+        MediaInfo? mediaInfo = await VideoCompress.compressVideo(videoFile!.path,
+          quality: VideoQuality.HighestQuality, deleteOrigin: false,);
+
+        if (mediaInfo != null && mediaInfo.file != null){
+          await ref.putFile(mediaInfo.file!);
+          String path = await ref.getDownloadURL();
+          setState(() {
+            postUrl = path;
+            postVideo();
+          });
+        }
+        else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Sorry, unknown error occurred")));
+        }
+        //_processVideo(videoFile!, postId);
       }
       else if (widget.postType == PostType.image){
         final ref = FirebaseStorage.instance.ref().child('userImages')
@@ -289,6 +299,7 @@ class PostUploaderState extends State<PostUploader> {
       }
     }
     catch(error) {
+      print("Upload error ${error.toString()}");
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(error.toString())));
     }
@@ -322,11 +333,12 @@ class PostUploaderState extends State<PostUploader> {
                   },
                   child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
-                    child: BetterPlayer.file(videoFile!.path,
-                      betterPlayerConfiguration: const BetterPlayerConfiguration(
-                        aspectRatio: 16 / 9,
-                      ),
-                    ),
+                     child: Container()
+                     //BetterPlayer.file(videoFile!.path,
+                    //   betterPlayerConfiguration: const BetterPlayerConfiguration(
+                    //     aspectRatio: 16 / 9,
+                    //   ),
+                    // ),
                   ))) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
                   Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
@@ -342,8 +354,6 @@ class PostUploaderState extends State<PostUploader> {
                 OutlinedButton(
                   onPressed: uploadPost,
                   child: const Text("Post"),
-
-
                 )
               ],
             )
