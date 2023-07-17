@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 import '../categoryView.dart';
 import '../misc/progressIndicator.dart';
+import '../vidlib/chewieVideoWidget.dart';
 
 class PostUploader extends StatefulWidget {
 
@@ -281,7 +282,6 @@ class PostUploaderState extends State<PostUploader> {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text("Sorry, unknown error occurred")));
         }
-        //_processVideo(videoFile!, postId);
       }
       else if (widget.postType == PostType.image){
         final ref = FirebaseStorage.instance.ref().child('userImages')
@@ -333,12 +333,7 @@ class PostUploaderState extends State<PostUploader> {
                   },
                   child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
                   Flexible(child: AspectRatio(aspectRatio: 16/9,
-                     child: Container()
-                     //BetterPlayer.file(videoFile!.path,
-                    //   betterPlayerConfiguration: const BetterPlayerConfiguration(
-                    //     aspectRatio: 16 / 9,
-                    //   ),
-                    // ),
+                     child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: videoFile!.path,)
                   ))) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
                   Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {

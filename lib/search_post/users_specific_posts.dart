@@ -10,6 +10,7 @@ import '../notification/server.dart';
 import '../owner_details/owner_details.dart';
 import'package:fluttertoast/fluttertoast.dart';
 import '../vidlib/VideoListData.dart';
+import '../vidlib/chewieVideoWidget.dart';
 
 
 class  UsersSpecificPostsScreen extends StatefulWidget {
@@ -285,12 +286,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                     borderRadius: BorderRadius.circular(10), // Image border
                     child: SizedBox.fromSize(
                         size: const Size(500.0, 400.0), // Image radius
-                        child: Container()
-                        // BetterPlayer.network(vid,
-                        //   betterPlayerConfiguration: const BetterPlayerConfiguration(
-                        //     aspectRatio: 4/3,
-                        //   ),
-                        // ),
+                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid,)
                     ),
                   ),
                 ),

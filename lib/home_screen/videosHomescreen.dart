@@ -72,7 +72,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   },
                   child: SizedBox.fromSize(
                       size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image border
-                      child:  ChewieVideoWidget(play: true, url: vid,)
+                      child:  ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid,)
                   ),
                 ),
                 const SizedBox(height: 15.0,),

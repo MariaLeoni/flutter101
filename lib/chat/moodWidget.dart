@@ -6,6 +6,7 @@ import 'package:sharedstudent1/chat/constants.dart';
 import 'package:sharedstudent1/chat/moodModel.dart';
 import '../misc/global.dart';
 import '../search_post/users_specifics_page.dart';
+import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/ssbadge.dart';
 import 'chatWidgets.dart';
 
@@ -165,12 +166,7 @@ class MoodWidgetState extends State<MoodWidget> {
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_10, top: Sizes.dimen_10),
                     child: AspectRatio(aspectRatio: 4/3,
-                      child: Container()
-                      // BetterPlayer.network(widget.moodModel.content,
-                      //   betterPlayerConfiguration: const BetterPlayerConfiguration(
-                      //     aspectRatio: 4/3,
-                      //   ),
-                      // ),
+                      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.moodModel.content,)
                     )
                 ) :
                 widget.moodModel.type == PostType.image.name ?

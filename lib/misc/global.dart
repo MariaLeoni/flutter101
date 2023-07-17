@@ -7,8 +7,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/vidlib/VideoListData.dart';
-
 import '../search_post/user.dart';
+import 'package:http/http.dart' as http;
 
 Future<File> getImageFileFromAssets(String path) async {
   Directory tempDir = await getTemporaryDirectory();
@@ -114,10 +114,6 @@ typedef GoToPageWithTypeAndId = void Function(dynamic type, String Id);
 
 List<String> images = ['jpeg', 'jpg', 'png', 'gif', 'tiff'];
 List<String> videos = ['mp4', 'mov', 'wmv', 'avi', 'mkv'];
-
-bool checkCanBuildVideo() {
-  return true;
-}
 
 void downloadAndShare(String fileUrl, String description, PostType type) async {
   String typeString = type == PostType.image ? "image.jpeg" : "video.mp4";
