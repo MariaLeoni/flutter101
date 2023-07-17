@@ -286,7 +286,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                     borderRadius: BorderRadius.circular(10), // Image border
                     child: SizedBox.fromSize(
                         size: const Size(500.0, 400.0), // Image radius
-                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid,)
+                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
                     ),
                   ),
                 ),

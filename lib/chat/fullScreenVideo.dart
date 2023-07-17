@@ -15,7 +15,7 @@ class FullScreenVideoView extends StatelessWidget {
       child: SizedBox(
           width: screen.width,
           height: screen.height * 0.75,
-          child: ChewieVideoWidget(autoPlayAndFullscreen: true, url: url,),
+          child: ChewieVideoWidget(autoPlayAndFullscreen: true, url: url, file: null,),
           )
     );
   }

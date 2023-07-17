@@ -166,7 +166,7 @@ class MoodWidgetState extends State<MoodWidget> {
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_10, top: Sizes.dimen_10),
                     child: AspectRatio(aspectRatio: 4/3,
-                      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.moodModel.content,)
+                      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.moodModel.content, file: null,)
                     )
                 ) :
                 widget.moodModel.type == PostType.image.name ?

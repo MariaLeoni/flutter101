@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -6,8 +8,9 @@ class ChewieVideoWidget extends StatefulWidget {
 
   final bool autoPlayAndFullscreen;
   final String url;
+  final File? file;
 
-  const ChewieVideoWidget({Key? key, required this.url, required this.autoPlayAndFullscreen}) : super(key: key);
+  const ChewieVideoWidget({Key? key, required this.url, required this.autoPlayAndFullscreen, required this.file}) : super(key: key);
 
   @override
   VideoWidgetState createState() => VideoWidgetState();
@@ -17,15 +20,23 @@ class ChewieVideoWidget extends StatefulWidget {
 class VideoWidgetState extends State<ChewieVideoWidget> {
   late VideoPlayerController videoPlayerController ;
   late Future<void> _initializeVideoPlayerFuture;
+  double aspectRatio = 0.0;
 
   @override
   void initState() {
     super.initState();
-    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.url));
 
-    _initializeVideoPlayerFuture = videoPlayerController.initialize().then((_) {
+    if (widget.file != null){
+      videoPlayerController = VideoPlayerController.file(widget.file!);
+    }
+    else{
+      videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+    }
+    _initializeVideoPlayerFuture = videoPlayerController.initialize().then((value) {
       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-      setState(() {});
+      setState(() {
+        aspectRatio = videoPlayerController.value.aspectRatio;
+      });
     });
   }
 
@@ -45,7 +56,7 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
             key: PageStorageKey(widget.url),
             controller: ChewieController(
               videoPlayerController: videoPlayerController,
-              aspectRatio: 4 / 3,
+              aspectRatio: aspectRatio,
               showOptions: false,
               // Prepare the video to be played and display the first frame
               autoInitialize: true,

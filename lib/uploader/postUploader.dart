@@ -332,9 +332,9 @@ class PostUploaderState extends State<PostUploader> {
                     showAlert();
                   },
                   child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
-                  Flexible(child: AspectRatio(aspectRatio: 16/9,
-                     child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: videoFile!.path,)
-                  ))) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
+                  SizedBox.fromSize(size: const Size(500.0,  400), // Image border
+                      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: videoFile!.path, file: videoFile,)
+                  )) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
                   Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
