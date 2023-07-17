@@ -213,6 +213,24 @@ class UsersProfilePageState extends State<UsersProfilePage> {
         .update({'followers': widget.followers!,});
     sendNotification("Started following you");
     addFollowToActivityFeed();
+    handleFollowerPost2();
+  }
+  handleFollowerPost2(){
+    if (widget.following!= null && widget.following!.contains(widget.userId)) {
+      Fluttertoast.showToast(msg: "Has been removed from your following");
+      widget.following!.remove(widget.userId);
+    }
+    else {
+      Fluttertoast.showToast(msg: "Has been added to your following");
+      widget.following!.add(widget.userId!);
+    }
+
+    setState(() {
+      followingCount = widget.followers?.length ?? 0;
+    });
+
+    FirebaseFirestore.instance.collection('users').doc(myUserId)
+        .update({'following': widget.following!,});
   }
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: name,

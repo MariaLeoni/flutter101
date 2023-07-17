@@ -18,7 +18,7 @@ class GroupChatHome extends StatefulWidget {
 class _GroupChatHomeState extends State<GroupChatHome> {
   String email = "";
   String? userName;
-String? userImage;
+  String? userImage;
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
@@ -43,6 +43,7 @@ String? userImage;
   gettingUserData() async {
     await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
+      // groups = snapshot.get('groups');
       userName = snapshot.get('name');
       email = snapshot.get('email');
       userImage = snapshot.get('userImage');
@@ -68,7 +69,7 @@ String? userImage;
                   buildSearchBar(),
                   Expanded(
                       child: groups == null ? const Center(
-                        child: Text('Join a group...'),
+                        child: Text('You are not a part of any group yet...'),
                       ) : groupList()
                   )]
             )])),
@@ -172,7 +173,7 @@ String? userImage;
       builder: (context, AsyncSnapshot snapshot) {
         // make some checks
         if (snapshot.hasData) {
-          if (snapshot.data.toString().contains("groups") && snapshot.data['groups'] != null) {
+          if (snapshot.data['groups'] != null) {
             if (snapshot.data['groups'].length != 0) {
               return ListView.builder(
                 itemCount: snapshot.data['groups'].length,
@@ -183,7 +184,7 @@ String? userImage;
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
                       userName: snapshot.data['name'],
                       userId: snapshot.data['id'],
-                  userImage: snapshot.data['userImage']);
+                      userImage: snapshot.data['userImage']);
                 },
               );
             } else {
@@ -223,7 +224,7 @@ String? userImage;
             height: 20,
           ),
           const Text(
-           "Join your first group",
+            "You've not joined any groups, tap on the add icon to create a group or also search from top search button.",
             textAlign: TextAlign.center, style: TextStyle(color:Colors.white),
           )
         ],
@@ -245,12 +246,12 @@ String? userImage;
           const Icon(Icons.search, color: AppColors.white, size: Sizes.dimen_24,),
           const SizedBox(width: 5,),
           Expanded(
-            child: OutlinedButton(
-              onPressed: (){
-                nextScreen(context, const SearchPage());
-              }, style: OutlinedButton.styleFrom(side: BorderSide(width: 1.0, color: Colors.grey.shade700),),
-              child: const Text("Search here", style: TextStyle(color: AppColors.white)))
-            ),
+              child: OutlinedButton(
+                  onPressed: (){
+                    nextScreen(context, const SearchPage());
+                  }, style: OutlinedButton.styleFrom(side: BorderSide(width: 1.0, color: Colors.grey.shade700),),
+                  child: const Text("Search here...", style: TextStyle(color: AppColors.white)))
+          ),
         ],
       ),
     );
