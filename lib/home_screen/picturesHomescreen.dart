@@ -93,57 +93,57 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
-        color: Colors.black,
-        elevation: 16.0,
-        child: Column(
-              children: [
+          color: Colors.black,
+          elevation: 16.0,
+          child: Column(
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    updateViewAndNavigate(viewCount, postId, viewers, img,
+                        userImg, name, date, docId, userId, downloads, likes,
+                        description, downloaders);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Image border
+                    child: SizedBox.fromSize(
+                        size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image radius
+                        child: Image.network(img, fit: BoxFit.cover)
+                    ),
+                  )
+              ),
+              const SizedBox(height: 12.0,),
+              Row(children: [
                 GestureDetector(
                     onTap: () {
-                      updateViewAndNavigate(viewCount, postId, viewers, img,
-                          userImg, name, date, docId, userId, downloads, likes,
-                          description, downloaders);
+                      Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                          UsersSpecificPostsScreen(userId: docId, userName: name,)));
                     },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10), // Image border
-                      child: SizedBox.fromSize(
-                          size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image radius
-                          child: Image.network(img, fit: BoxFit.cover)
-                      ),
+                    child: CircleAvatar(
+                      radius: 35,
+                      backgroundImage: NetworkImage(userImg,),
                     )
                 ),
-                const SizedBox(height: 12.0,),
-                Row(children: [
-                  GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                            UsersSpecificPostsScreen(userId: docId, userName: name,)));
-                      },
-                      child: CircleAvatar(
-                        radius: 35,
-                        backgroundImage: NetworkImage(userImg,),
-                      )
+                Padding(padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(name, style: const TextStyle(color: Colors.white,
+                            fontWeight: FontWeight.bold)
+                        ),
+                        const SizedBox(height: 10.0),
+                        Text(
+                          DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
+                          style: const TextStyle(color: Colors.white54,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ]
                   ),
-                  Padding(padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(name, style: const TextStyle(color: Colors.white,
-                              fontWeight: FontWeight.bold)
-                          ),
-                          const SizedBox(height: 10.0),
-                          Text(
-                            DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
-                            style: const TextStyle(color: Colors.white54,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ]
-                    ),
-                  ),
-                ]
                 ),
-              ],
-            )
-        ),
+              ]
+              ),
+            ],
+          )
+      ),
     );
   }
 
@@ -182,128 +182,128 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-          floatingActionButton: Wrap(
-            direction: Axis.horizontal,
-            children: [
-              Container(
-                width: 100,
-                margin: const EdgeInsets.all(10.0),
-                child: FloatingActionButton(
-                  heroTag: "1",
-                  backgroundColor: Colors.transparent,
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                        PostUploader(postType: PostType.image,)));
-                  },
-                  child:
-                  const ImageIcon(AssetImage('assets/images/ttent.png'),
-                    size: 600, color: Colors.red,
-                  ),
-                  // const Icon(Icons.camera_enhance),
-                ),
+      floatingActionButton: Wrap(
+        direction: Axis.horizontal,
+        children: [
+          Container(
+            width: 100,
+            margin: const EdgeInsets.all(10.0),
+            child: FloatingActionButton(
+              heroTag: "1",
+              backgroundColor: Colors.transparent,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                    PostUploader(postType: PostType.image,)));
+              },
+              child:
+              const ImageIcon(AssetImage('assets/images/ttent.png'),
+                size: 600, color: Colors.red,
               ),
-            ],
+              // const Icon(Icons.camera_enhance),
+            ),
           ),
-          backgroundColor: Colors.black,
-          appBar: AppBar(
-              flexibleSpace: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.black],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    stops: [0.2],
-                  ),
-                ),
+        ],
+      ),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.2],
               ),
-              title: Text(widget.category),
-              centerTitle: true,
-              leading: IconButton(
-                onPressed: () {
-                  if (widget.user == null){
-                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                        VideoHomeScreen.forCategory(category: widget.category,),),);
-                  }
-                  else{
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
-                  }
-                },
-                icon: const Icon(Icons.play_circle_outlined),
-              ),
-              actions: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (_) => Search(postType: PostType.image,),),);
-                  },
-                  icon: const Icon(Icons.person_search),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
-                      userId:userIdx,
-                      userName:name,
-                      userImage: image,
-                    )));
-                  },
-                  icon: const Icon(Icons.person),
-                ),
-                activityBadgeView,
-                IconButton(
-                  onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => const SocialHomeScreen()));
-                  },
-                  icon: const Icon(Icons.message_sharp),
-                )
-              ]
+            ),
           ),
-          body: StreamBuilder(
-              stream: widget.user != null ? firestore.collection('wallpaper').
-              where("id", isEqualTo: widget.user!.userId).snapshots() :
+          title: Text(widget.category),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              if (widget.user == null){
+                Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                    VideoHomeScreen.forCategory(category: widget.category,),),);
+              }
+              else{
+                Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+              }
+            },
+            icon: const Icon(Icons.play_circle_outlined),
+          ),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => Search(postType: PostType.image,),),);
+              },
+              icon: const Icon(Icons.person_search),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                  userId:userIdx,
+                  userName:name,
+                  userImage: image,
+                )));
+              },
+              icon: const Icon(Icons.person),
+            ),
+            activityBadgeView,
+            IconButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => const SocialHomeScreen()));
+              },
+              icon: const Icon(Icons.message_sharp),
+            )
+          ]
+      ),
+      body: StreamBuilder(
+          stream: widget.user != null ? firestore.collection('wallpaper').
+          where("id", isEqualTo: widget.user!.userId).snapshots() :
 
-              widget.category == "random" ? firestore.collection('wallpaper')
-                  .orderBy('createdAt', descending: true).snapshots() :
+          widget.category == "random" ? firestore.collection('wallpaper')
+              .orderBy('createdAt', descending: true).snapshots() :
 
-              firestore.collection('wallpaper').
-              where("category", arrayContains: widget.category).snapshots(),
+          firestore.collection('wallpaper').
+          where("category", arrayContains: widget.category).snapshots(),
 
-              builder: (BuildContext context,
-                  AsyncSnapshot <QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(),);
-                }
-                else if (snapshot.connectionState == ConnectionState.active) {
-                  if (snapshot.data!.docs.isNotEmpty) {
-                    return PageView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      controller: _pageController,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (BuildContext context, int index) {
+          builder: (BuildContext context,
+              AsyncSnapshot <QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(),);
+            }
+            else if (snapshot.connectionState == ConnectionState.active) {
+              if (snapshot.data!.docs.isNotEmpty) {
+                return PageView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  controller: _pageController,
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (BuildContext context, int index) {
 
-                        Post post = Post.getPost(snapshot, index, PostType.image);
-                        return listViewWidget(post.id, post.source, post.userImage,
-                            post.userName, post.createdAt, post.email, post.downloads,
-                            post.viewCount, post.postId, post.likes, post.viewers,
-                            post.description, post.downloaders);
-                      },
-                    );
-                  }
-                  else {
-                    return const Center(
-                        child: Text("Be the first to post in this collection",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),)
-                    );
-                  }
-                }
-                return const Center(
-                  child: Text('Something went wrong', style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
-                  ),
+                    Post post = Post.getPost(snapshot, index, PostType.image);
+                    return listViewWidget(post.id, post.source, post.userImage,
+                        post.userName, post.createdAt, post.email, post.downloads,
+                        post.viewCount, post.postId, post.likes, post.viewers,
+                        post.description, post.downloaders);
+                  },
                 );
               }
-          ),
+              else {
+                return const Center(
+                    child: Text("Be the first to post in this collection",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),)
+                );
+              }
+            }
+            return const Center(
+              child: Text('Something went wrong', style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
+              ),
+            );
+          }
+      ),
     );
   }
 }

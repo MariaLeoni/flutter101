@@ -149,19 +149,9 @@ class MoodWidgetState extends State<MoodWidget> {
       padding: const EdgeInsets.all (8.0),
       child: Card(
         elevation: 16.0,
-        shadowColor: Colors.white10,
-        child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
+        color: Colors.black,
+        child: Column(
+          children: [
                 widget.moodModel.type == PostType.video.name ? Container(
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_10, top: Sizes.dimen_10),
@@ -222,7 +212,6 @@ class MoodWidgetState extends State<MoodWidget> {
               ],
             )
         ),
-      ),
     );
   }
 }
