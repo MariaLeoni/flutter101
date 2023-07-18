@@ -152,21 +152,18 @@ class _CredentialsState extends State<Credentials> {
                 obscureText: false,
                 textEditingController: _fullNameController,
               ),
-              const SizedBox(height: 10.0,),
               InputField(
                 hintText: "Enter Email",
                 icon: Icons.email_rounded,
                 obscureText: false,
                 textEditingController: _emailTextController,
               ),
-              const SizedBox(height: 10.0,),
               InputField(
                 hintText: "Enter Password",
                 icon: Icons.lock,
                 obscureText: true,
                 textEditingController: _passTextController,
               ),
-              const SizedBox(height: 10.0,),
               InputField(
                 hintText: "Enter Phone Number",
                 icon: Icons.phone,

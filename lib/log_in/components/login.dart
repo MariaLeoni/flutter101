@@ -44,7 +44,6 @@ class Credentials extends StatelessWidget {
                 obscureText: false,
                 textEditingController: _emailTextController,
               ),
-              const SizedBox(height: 8.0,),
               InputField(
                 hintText: "Enter Password",
                 icon: Icons.lock,
