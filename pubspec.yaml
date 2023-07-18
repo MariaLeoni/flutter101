@@ -45,6 +45,7 @@ dependencies:
   firebase_messaging: ^14.0.4
   firebase_database: ^10.0.10
   firebase_in_app_messaging: ^0.7.0+13
+  firebase_crashlytics: ^3.3.4
 
   uuid: ^3.0.6
 

@@ -1,17 +1,37 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import  'package:firebase_core/firebase_core.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
-
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'home_screen/home.dart';
 import 'notification/server.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Firebase.initializeApp().whenComplete(() {
-    runApp( const MyApp());
-  });
+  // Catch other errors e.g inside button press
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    Firebase.initializeApp().whenComplete(() {
+
+      // Pass all uncaught errors from the framework to Crashlytics.
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+      runApp(const MyApp());
+    });
+
+  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
+
+  // Catch errors outside Flutter
+  Isolate.current.addErrorListener(RawReceivePort((pair) async {
+    final List<dynamic> errorAndStacktrace = pair;
+    await FirebaseCrashlytics.instance.recordError(
+      errorAndStacktrace.first,
+      errorAndStacktrace.last,
+    );
+  }).sendPort);
 }
 final themeMode = ValueNotifier(2);
 
@@ -24,6 +44,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseAuth firebase = FirebaseAuth.instance;
+    FirebaseCrashlytics.instance.setUserIdentifier(firebase.currentUser?.uid ?? "NotRegistered");
     bool allowUser = false;
 
     return FutureBuilder(
