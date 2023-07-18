@@ -60,8 +60,7 @@ class Credentials extends StatelessWidget {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()));
                       },
                       child: const Text("Forgot Password?",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
+                          style: TextStyle(fontWeight: FontWeight.w400,
                               color: Colors.white,
                               fontSize: 17
                           )

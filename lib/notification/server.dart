@@ -46,7 +46,7 @@ class NotificationManager{
 
   void registerDevice() async {
     await FirebaseFirestore.instance.collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       deviceToken = snapshot.get('token');
     });
