@@ -13,6 +13,7 @@ import 'package:video_compress/video_compress.dart';
 import '../categoryView.dart';
 import '../misc/progressIndicator.dart';
 import '../vidlib/chewieVideoWidget.dart';
+import '../widgets/input_field.dart';
 
 class PostUploader extends StatefulWidget {
 
@@ -245,9 +246,9 @@ class PostUploaderState extends State<PostUploader> {
 
   void setVideo(){
     if(videoFile == null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Looks like no video was selected or captured")));
-        return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Looks like no video was selected or captured")));
+      return;
     }
   }
 
@@ -335,33 +336,40 @@ class PostUploaderState extends State<PostUploader> {
                 centerTitle: true, pinned: true, floating: true,),
               ];
             },
-            body: Column(
+            body: Container(color: Colors.black,
+              child: Column(
               children: <Widget>[
+                const SizedBox(height: 30.0,),
                 GestureDetector(
-                  onTap:() {
-                    showAlert();
-                  },
-                  child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
-                  SizedBox.fromSize(size: const Size(500.0,  400), // Image border
-                      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: videoFile!.path, file: videoFile,)
-                  )) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
-                  Image.file(imageFile!, height: 350,))),
+                    onTap:() {
+                      showAlert();
+                    },
+                    child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
+                    SizedBox.fromSize(size: const Size(500.0,  400), // Image border
+                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: videoFile!.path, file: videoFile,)
+                    )) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
+                    Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
                 }, isEditable: false,)
                 ),
-                Flexible(child: TextFormField(
-                      controller: commentController,
-                      decoration: const InputDecoration(labelText: "Add a title..."),
-                    )
+                SizedBox.fromSize(size: const Size(350.0,  80),
+                    child: InputField(
+                      textEditingController: commentController, hintText: "Add a title...", icon: Icons.post_add,
+                      obscureText: false,)
                 ),
                 const SizedBox(height: 10.0,),
-                OutlinedButton(
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
+                      minimumSize: MaterialStateProperty.all(const Size(150, 50))
+                  ),
                   onPressed: uploadPost,
-                  child: const Text("Post"),
-                )
+                  child: const Text('Post'),
+                ),
+                const SizedBox(height: 30.0,),
               ],
-            )
+            ),)
         )
     );
   }
