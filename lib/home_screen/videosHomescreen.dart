@@ -33,7 +33,6 @@ class VideoHomeScreen extends StatefulWidget {
 class VideoHomeScreenState extends State<VideoHomeScreen> {
   bool checkView = false;
   int activityCount  = 0;
-  //ReusableVideoListController videoListController = ReusableVideoListController();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final PageController _pageController = PageController(initialPage: 0, keepPage: true);
 
@@ -49,18 +48,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       padding: const EdgeInsets.all (8.0),
       child: Card(
         elevation: 16.0,
-        shadowColor: Colors.white10,
-        child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
+        color: Colors.black,
+        child: Column(
               children: [
                 GestureDetector(
                   onTap:() {
@@ -115,7 +104,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 )
               ],
             )
-        ),
       ),
     );
   }
@@ -177,16 +165,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
         }));
     size = MediaQuery.of(context).size;
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.black, Colors.black],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          stops: [0.2, 0.9],
-        ),
-      ),
-      child: Scaffold(
+    return Scaffold(
         floatingActionButton: Wrap(
           direction: Axis.horizontal,
           children: [
@@ -207,7 +186,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             ),
           ],
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         appBar: AppBar(
             flexibleSpace:Container(
               decoration: const BoxDecoration(
@@ -301,7 +280,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             );
           },
         ),
-      ),
     );
   }
 }

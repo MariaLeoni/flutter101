@@ -93,19 +93,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     return Padding(
       padding: const EdgeInsets.all (8.0),
       child: Card(
+        color: Colors.black,
         elevation: 16.0,
-        shadowColor: Colors.white10,
-        child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
+        child: Column(
               children: [
                 GestureDetector(
                     onTap: () {
@@ -154,7 +144,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               ],
             )
         ),
-      ),
     );
   }
 
@@ -192,16 +181,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
 
     size = MediaQuery.of(context).size;
 
-    return Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black, Colors.black],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            stops: [0.2, 0.9],
-          ),
-        ),
-        child: Scaffold(
+    return Scaffold(
           floatingActionButton: Wrap(
             direction: Axis.horizontal,
             children: [
@@ -224,7 +204,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               ),
             ],
           ),
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.black,
           appBar: AppBar(
               flexibleSpace: Container(
                 decoration: const BoxDecoration(
@@ -268,7 +248,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   },
                   icon: const Icon(Icons.person),
                 ),
-
                 activityBadgeView,
                 IconButton(
                   onPressed: (){
@@ -325,7 +304,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 );
               }
           ),
-        )
     );
   }
 }
