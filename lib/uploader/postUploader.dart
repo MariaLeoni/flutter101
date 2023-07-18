@@ -36,6 +36,7 @@ class PostUploaderState extends State<PostUploader> {
   String? postUrl;
   File? imageFile;
   String title = "";
+  File uploadVideoFile = File("");
 
 
   postVideo() {
@@ -267,21 +268,30 @@ class PostUploaderState extends State<PostUploader> {
 
       if (widget.postType == PostType.video){
         final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}.mp4');
-        MediaInfo? mediaInfo = await VideoCompress.compressVideo(videoFile!.path,
-          quality: VideoQuality.HighestQuality, deleteOrigin: false,);
 
-        if (mediaInfo != null && mediaInfo.file != null){
-          await ref.putFile(mediaInfo.file!);
-          String path = await ref.getDownloadURL();
-          setState(() {
-            postUrl = path;
-            postVideo();
-          });
+        if (Platform.isIOS) {
+          uploadVideoFile = videoFile!;
         }
-        else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Sorry, unknown error occurred")));
+        else{
+          MediaInfo? mediaInfo = await VideoCompress.compressVideo(videoFile!.path,
+            quality: VideoQuality.HighestQuality, deleteOrigin: false,);
+          if (mediaInfo != null && mediaInfo.file != null){
+            uploadVideoFile = mediaInfo.file!;
+          }
+          else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Sorry, unknown error occurred")));
+            return;
+          }
         }
+
+        await ref.putFile(uploadVideoFile);
+        String path = await ref.getDownloadURL();
+        setState(() {
+          postUrl = path;
+          postVideo();
+        });
+
       }
       else if (widget.postType == PostType.image){
         final ref = FirebaseStorage.instance.ref().child('userImages')
