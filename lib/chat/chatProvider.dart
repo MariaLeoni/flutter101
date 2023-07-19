@@ -70,6 +70,9 @@ class ChatProvider{
     FirebaseFirestore.instance.collection("users")
         .doc(userId).update({FirestoreConstants.chatWith: FieldValue.arrayUnion(users)
     });
+    List users1 =List.empty(growable:true);
+    users1.add(userId);
+    FirebaseFirestore.instance.collection("users").doc(peerId).update({FirestoreConstants.chatWith:FieldValue.arrayUnion(users1)});
     saved = true;
   }
 

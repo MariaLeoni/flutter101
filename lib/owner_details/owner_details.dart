@@ -59,6 +59,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   String? userImage;
   String?image;
   String? tokens;
+  String? token;
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String activityId = const Uuid().v4();
@@ -69,6 +70,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       setState(() {
         name = snapshot.data()!["name"];
         image = snapshot.data()!["userImage"];
+        token = snapshot.data()!["token"];
       });
     }
     });
@@ -86,12 +88,15 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   }
 
   void sendNotification(String action) {
-    NotificationModel model = NotificationModel(title: name,
-      body: "Liked your post", dataBody: widget.img,
-      // dataTitle: "Should be post description"
-    );
-    String? token = tokens;
-    notificationManager?.sendNotification(token!, model);
+    bool isNotPostOwner = token != tokens;
+    if (isNotPostOwner) {
+      NotificationModel model = NotificationModel(title: name,
+        body: "Liked your post", dataBody: widget.img,
+        // dataTitle: "Should be post description"
+      );
+      String? token = tokens;
+      notificationManager?.sendNotification(token!, model);
+    }
   }
 
   void getDataFromDatabase2() async {

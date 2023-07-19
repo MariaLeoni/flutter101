@@ -48,6 +48,7 @@ class CommentState extends State<SubComment> {
   List<String>? ids = List.empty(growable: true);
   NotificationManager? notificationManager;
   String? tokens;
+  String? token;
   addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.commentItem!.userId;
     if (isNotPostOwner) {
@@ -73,7 +74,7 @@ class CommentState extends State<SubComment> {
       });
     }
     addCommentTaggingToActivityFeed2();
-    sendNotification("replied to your comment");
+    commenterToken();
     commentController.clear();
   }
   addCommentTaggingToActivityFeed2() {
@@ -100,7 +101,7 @@ class CommentState extends State<SubComment> {
         "PostType": widget.commentItem!.postType
       });
     }
-    sendNotification("replied to your comment");
+   postownerToken();
     commentController.clear();
   }
   loadAndBuildComments(){
@@ -137,13 +138,15 @@ class CommentState extends State<SubComment> {
     }
   }
   void sendNotification(String action) {
+    bool isNotPostOwner = token != tokens;
+    if (isNotPostOwner) {
     NotificationModel model = NotificationModel(title: myName,
       body: action, dataBody: image,
       // dataTitle: "Should be post description"
     );
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
-  }
+  }}
   addComment() {
     widget.commentItem!.subCommentsIds?.add(commentId);
     setState(() {
@@ -199,7 +202,7 @@ class CommentState extends State<SubComment> {
         });
       }
       ids!.clear();
-      sendNotification(" tagged you in a post");
+      gettagToken();
     }
      addCommentTaggingToActivityFeed();
     addCommentTaggingToActivityFeed2();
@@ -215,8 +218,33 @@ class CommentState extends State<SubComment> {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
       id = snapshot.get('id');
+      token = snapshot.get('token');
     });
   }
+  void commenterToken() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.commentItem!.userId).get().then<dynamic>((DocumentSnapshot snapshot) {
+      tokens = snapshot.get('token');
+    });
+    sendNotification("replied to your comment");
+  }
+  void postownerToken() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.commentItem!.postOwnerId).get().then<dynamic>((DocumentSnapshot snapshot) {
+      tokens = snapshot.get('token');
+
+    });
+    sendNotification("Commented on your post");
+  }
+  void gettagToken() async {
+    for (var item in ids!) {
+      await FirebaseFirestore.instance.collection("users")
+          .doc(item).get().then<dynamic>((DocumentSnapshot snapshot) {
+        tokens = snapshot.get('token');
+      });
+      sendNotification("tagged you");
+      ids!.clear();
+    }}
 
   void loadPostInfo() async {
     FirebaseFirestore.instance.collection('wallpaper').doc(widget.commentItem!.postId)

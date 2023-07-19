@@ -49,6 +49,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
   bool amFollowingUser = false;
   String ActivityId = const Uuid().v4();
   String? tokens;
+  String? token;
   NotificationManager? notificationManager;
 
   @override
@@ -60,6 +61,8 @@ class UsersProfilePageState extends State<UsersProfilePage> {
     readUserInfo();
     readUserInfo2();
     getPosts();
+    getOPToken();
+    notificationManager = NotificationManager();
   }
 
   @override
@@ -165,6 +168,7 @@ class UsersProfilePageState extends State<UsersProfilePage> {
         .then<dynamic>((DocumentSnapshot snapshot) async {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
+      token = snapshot.get('token');
       widget.followers = List.from(snapshot.get('followers'));
       widget.following = List.from(snapshot.get('following'));
 
@@ -193,7 +197,13 @@ class UsersProfilePageState extends State<UsersProfilePage> {
       picturesCount;
     });
   }
+  void getOPToken() async {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(widget.userId).get().then<dynamic>((DocumentSnapshot snapshot) {
+      tokens = snapshot.get('token');
 
+    });
+  }
   handleFollowerPost() {
     if (widget.followers!= null && widget.followers!.contains(myUserId)) {
       Fluttertoast.showToast(msg: "You unfollowed this person");
@@ -233,12 +243,14 @@ class UsersProfilePageState extends State<UsersProfilePage> {
         .update({'following': widget.following!,});
   }
   void sendNotification(String action) {
+    bool isNotPostOwner = token != tokens;
+    if (isNotPostOwner) {
     NotificationModel model = NotificationModel(title: name,
       body: action, dataBody: image,
     );
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
-  }
+  }}
 
   addFollowToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;

@@ -3,9 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:sharedstudent1/chat/chatListScreen.dart';
 import 'package:sharedstudent1/chat/fullImageView.dart';
+import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/misc/progressIndicator.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:io';
@@ -100,6 +103,7 @@ class ChatScreenState extends State<ChatScreen> {
     }
     chatProvider.updateFirestoreData(FirestoreConstants.pathUserCollection,
         currentUserId, {FirestoreConstants.chattingWith: widget.peerId});
+
   }
 
   Future getImage(ImageSource source) async {
@@ -256,7 +260,14 @@ class ChatScreenState extends State<ChatScreen> {
       imageUrl = await snapshot.ref.getDownloadURL();
 
       String? thumbnail;
-      if (type == PostType.video) {
+
+      if (type == PostType.image) {
+        uploadTask = chatProvider.uploadImageFile(imageFile!, fileName);
+        snapshot = await uploadTask;
+        thumbnail = await snapshot.ref.getDownloadURL();
+        Fluttertoast.showToast(msg: "recognises an image!");
+      }
+      else{
         thumbnail = await VideoThumbnail.thumbnailFile(
             video: imageFile!.path,
             imageFormat: ImageFormat.PNG,
@@ -267,7 +278,9 @@ class ChatScreenState extends State<ChatScreen> {
         uploadTask = chatProvider.uploadImageFile(File(thumbnail!), fileName);
         snapshot = await uploadTask;
         thumbnail = await snapshot.ref.getDownloadURL();
+
       }
+
 
       setState(() {
         isLoading = false;
@@ -343,6 +356,13 @@ class ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.grey.shade900,
         centerTitle: true,
         title: Text('Chatting with ${widget.peerNickname}'.trim()),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (_) => SocialHomeScreen(),),);
+          },
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
         actions: const [
 
         ],

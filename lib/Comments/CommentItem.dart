@@ -46,6 +46,7 @@ class CommentItem extends StatelessWidget {
   String? postOwnerId;
   String? postOwnerImage;
   String? tokens;
+  String? token;
   String postType = "";
 
   CommentItem({super.key, required this.postType,this.userName, this.userId,
@@ -95,20 +96,31 @@ class CommentItem extends StatelessWidget {
         "postOwnerImage": postOwnerImage,
         "postOwnername": postOwnername,
         "Read Status": false,
-        "PostType": postType
+        "PostType": postType,
+
       });
     }
-  sendNotification();
-}
-  void sendNotification() {
-    NotificationModel model = NotificationModel(title: myName,
-      body: "Liked your comment", dataBody: Image,
-      // dataTitle: "Should be post description"
-    );
-    String? token = tokens;
-    notificationManager?.sendNotification(token!, model);
-  }
+  sendNotification("liked your comment");
 
+}
+  // void sendNotification() {
+  //   NotificationModel model = NotificationModel(title: myName,
+  //     body: "Liked your comment", dataBody: Image,
+  //     // dataTitle: "Should be post description"
+  //   );
+  //   String? token = tokens;
+  //   notificationManager?.sendNotification(token!, model);
+  // }
+  void sendNotification(String action) {
+    bool isNotPostOwner = token != tokens;
+    if (isNotPostOwner) {
+    NotificationModel model = NotificationModel(title: myName,
+      body: action,
+    );
+    if (tokens != null) {
+      notificationManager?.sendNotification(tokens!, model);
+    }
+  }}
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
       userName: doc.data().toString().contains('commenterName') ? doc.get(
@@ -205,13 +217,16 @@ class CommentItem extends StatelessWidget {
     likerUserId = _auth.currentUser?.uid;
     likesCount = likes?.length ?? 0;
 
+    notificationManager = NotificationManager();
+
     FirebaseFirestore.instance.collection('users').doc(_auth.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
+      token = snapshot.get('token');
     });
 
-    FirebaseFirestore.instance.collection("users").doc(userId).get()
+    FirebaseFirestore.instance.collection('users').doc(userId).get()
         .then<dynamic>((DocumentSnapshot snapshot) {
       tokens = snapshot.get('token');
     });

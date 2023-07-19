@@ -37,6 +37,7 @@ class CommentState extends State<Comment> {
   String? myName;
   String? id;
   String? token;
+  String? tokens;
   String commentId = const Uuid().v4();
   String activityId = const Uuid().v4();
   String? myUserId;
@@ -87,15 +88,27 @@ class CommentState extends State<Comment> {
       print("Token $token");
     });
   }
+  void gettagToken() async {
+    for (var item in ids!) {
+    await FirebaseFirestore.instance.collection("users")
+        .doc(item).get().then<dynamic>((DocumentSnapshot snapshot) {
+      token = snapshot.get('token');
+      print("Token $token");
+    });
+    sendNotification("tagged you");
+    ids!.clear();
+  }}
 
   void sendNotification(String action) {
+    bool isNotPostOwner = token != tokens;
+    if (isNotPostOwner) {
     NotificationModel model = NotificationModel(title: myName,
       body: action, dataBody: widget.image,
         );
     if (token != null) {
       notificationManager?.sendNotification(token!, model);
     }
-  }
+  }}
 
   addCommentTaggingToActivityFeed() {
     bool isNotPostOwner = _auth.currentUser!.uid != widget.userId;
@@ -175,9 +188,10 @@ class CommentState extends State<Comment> {
           "Activity Id": activityId,
           "PostType":widget.postType,
         });
+
       }
-      sendNotification("tagged you");
-      ids!.clear();
+      gettagToken();
+
     }
 
     addCommentTaggingToActivityFeed();
@@ -194,6 +208,7 @@ class CommentState extends State<Comment> {
       myImage = snapshot.get('userImage');
       myName = snapshot.get('name');
       id = snapshot.get('id');
+      tokens = snapshot.get('token');
     });
   }
   void commentLikes() async {
