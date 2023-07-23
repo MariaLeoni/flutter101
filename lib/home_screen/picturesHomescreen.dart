@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/notification/server.dart';
+import 'package:sharedstudent1/permissions.dart';
 import 'package:sharedstudent1/postUploader.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:uuid/uuid.dart';
@@ -277,10 +278,10 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                 IconButton(
                   onPressed: (){
                     Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => const SocialHomeScreen()));
+                        builder: (_) =>  const SocialHomeScreen()));
                   },
                   icon: const Icon(Icons.message_sharp),
-                )
+                ),
               ]
           ),
           body: StreamBuilder(
