@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,8 +11,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:uuid/uuid.dart';
-import 'categoryView.dart';
-import 'misc/progressIndicator.dart';
+import 'package:video_compress/video_compress.dart';
+import '../categoryView.dart';
+import '../misc/progressIndicator.dart';
+import '../vidlib/chewieVideoWidget.dart';
+import '../widgets/input_field.dart';
 
 class PostUploader extends StatefulWidget {
 
@@ -37,6 +39,7 @@ class PostUploaderState extends State<PostUploader> {
   String? postUrl;
   File? imageFile;
   String title = "";
+  File uploadVideoFile = File("");
 
   // void _checkPermission(BuildContext context) async {
   //   FocusScope.of(context).requestFocus(FocusNode());
@@ -139,7 +142,7 @@ class PostUploaderState extends State<PostUploader> {
           children: [
             InkWell(
               onTap: () {
-                cameraSource();
+                cameraSource(context);
               },
               child: const Row(
                 children: [
@@ -153,7 +156,7 @@ class PostUploaderState extends State<PostUploader> {
             ),
             InkWell(
               onTap: () {
-                gallerySource();
+                gallerySource(context);
               },
               child: const Row(
                 children: [
@@ -202,7 +205,7 @@ class PostUploaderState extends State<PostUploader> {
     });
   }
 
-  void getImageFromCamera() async {
+  void getImageFromCamera(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.camera);
     cropImage(pickedFile!.path);
@@ -210,7 +213,7 @@ class PostUploaderState extends State<PostUploader> {
     Navigator.pop(context);
   }
 
-  void getImageFromGallery() async {
+  void getImageFromGallery(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery);
     cropImage(pickedFile!.path);
@@ -219,21 +222,21 @@ class PostUploaderState extends State<PostUploader> {
     Navigator.pop(context);
   }
 
-  void cameraSource(){
+  void cameraSource(BuildContext context){
     if (widget.postType == PostType.video){
-      getVideoFromCamera();
+      getVideoFromCamera(context);
     }
     else {
-      getImageFromCamera();
+      getImageFromCamera(context);
     }
   }
 
-  void gallerySource(){
+  void gallerySource(BuildContext context){
     if (widget.postType == PostType.video){
-      getVideoFromGallery();
+      getVideoFromGallery(context);
     }
     else {
-      getImageFromGallery();
+      getImageFromGallery(context);
     }
   }
 
@@ -248,7 +251,7 @@ class PostUploaderState extends State<PostUploader> {
     }
   }
 
-  void getVideoFromCamera() async {
+  void getVideoFromCamera(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickVideo(
         source: ImageSource.camera);
     if (pickedFile != null) {
@@ -262,11 +265,11 @@ class PostUploaderState extends State<PostUploader> {
     }
   }
 
-  void getVideoFromGallery() async {
+  void getVideoFromGallery(BuildContext context) async {
     XFile? pickedFile = await ImagePicker().pickVideo(
         source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() async {
+      setState(() {
         videoFile = File(pickedFile.path);
         setVideo();
       });
@@ -278,9 +281,9 @@ class PostUploaderState extends State<PostUploader> {
 
   void setVideo(){
     if(videoFile == null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Looks like no video was selected or captured")));
-        return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Looks like no video was selected or captured")));
+      return;
     }
   }
 
@@ -300,13 +303,31 @@ class PostUploaderState extends State<PostUploader> {
       LoadingIndicatorDialog().show(context);
 
       if (widget.postType == PostType.video){
-        final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}mp4');
-        await ref.putFile(videoFile!);
+        final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}.mp4');
+
+        if (Platform.isIOS) {
+          uploadVideoFile = videoFile!;
+        }
+        else{
+          MediaInfo? mediaInfo = await VideoCompress.compressVideo(videoFile!.path,
+            quality: VideoQuality.HighestQuality, deleteOrigin: false,);
+          if (mediaInfo != null && mediaInfo.file != null){
+            uploadVideoFile = mediaInfo.file!;
+          }
+          else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Sorry, unknown error occurred")));
+            return;
+          }
+        }
+
+        await ref.putFile(uploadVideoFile);
         String path = await ref.getDownloadURL();
         setState(() {
           postUrl = path;
           postVideo();
         });
+
       }
       else if (widget.postType == PostType.image){
         final ref = FirebaseStorage.instance.ref().child('userImages')
@@ -324,6 +345,7 @@ class PostUploaderState extends State<PostUploader> {
       }
     }
     catch(error) {
+      print("Upload error ${error.toString()}");
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(error.toString())));
     }
@@ -349,39 +371,40 @@ class PostUploaderState extends State<PostUploader> {
                 centerTitle: true, pinned: true, floating: true,),
               ];
             },
-            body: Column(
+            body: Container(color: Colors.black,
+              child: Column(
               children: <Widget>[
+                const SizedBox(height: 30.0,),
                 GestureDetector(
-                  onTap:() {
-                    showAlert();
-                  },
-                  child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
-                  Flexible(child: AspectRatio(aspectRatio: 16/9,
-                    child: BetterPlayer.file(videoFile!.path,
-                      betterPlayerConfiguration: const BetterPlayerConfiguration(
-                        aspectRatio: 16 / 9,
-                      ),
-                    ),
-                  ))) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
-                  Image.file(imageFile!, height: 350,))),
+                    onTap:() {
+                      showAlert();
+                    },
+                    child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
+                    SizedBox.fromSize(size: const Size(500.0,  400), // Image border
+                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: videoFile!.path, file: videoFile,)
+                    )) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
+                    Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
                 }, isEditable: false,)
                 ),
-                Flexible(child: TextFormField(
-                      controller: commentController,
-                      decoration: const InputDecoration(labelText: "Add a title..."),
-                    )
+                SizedBox.fromSize(size: const Size(350.0,  80),
+                    child: InputField(
+                      textEditingController: commentController, hintText: "Add a title...", icon: Icons.post_add,
+                      obscureText: false,)
                 ),
                 const SizedBox(height: 10.0,),
-                OutlinedButton(
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
+                      minimumSize: MaterialStateProperty.all(const Size(150, 50))
+                  ),
                   onPressed: uploadPost,
-                  child: const Text("Post"),
-
-
-                )
+                  child: const Text('Post'),
+                ),
+                const SizedBox(height: 30.0,),
               ],
-            )
+            ),)
         )
     );
   }

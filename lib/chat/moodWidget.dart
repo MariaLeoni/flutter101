@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:sharedstudent1/chat/constants.dart';
 import 'package:sharedstudent1/chat/moodModel.dart';
 import '../misc/global.dart';
 import '../search_post/users_specifics_page.dart';
+import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/ssbadge.dart';
 import 'chatWidgets.dart';
 
@@ -149,28 +149,14 @@ class MoodWidgetState extends State<MoodWidget> {
       padding: const EdgeInsets.all (8.0),
       child: Card(
         elevation: 16.0,
-        shadowColor: Colors.white10,
-        child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
+        color: Colors.black,
+        child: Column(
+          children: [
                 widget.moodModel.type == PostType.video.name ? Container(
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_10, top: Sizes.dimen_10),
                     child: AspectRatio(aspectRatio: 4/3,
-                      child: BetterPlayer.network(widget.moodModel.content,
-                        betterPlayerConfiguration: const BetterPlayerConfiguration(
-                          aspectRatio: 4/3,
-                        ),
-                      ),
+                      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.moodModel.content, file: null,)
                     )
                 ) :
                 widget.moodModel.type == PostType.image.name ?
@@ -226,7 +212,6 @@ class MoodWidgetState extends State<MoodWidget> {
               ],
             )
         ),
-      ),
     );
   }
 }

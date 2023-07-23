@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +14,7 @@ import '../misc/global.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../search_post/users_specifics_page.dart';
+import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import '../widgets/ssbadge.dart';
@@ -288,11 +288,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                   Column(
                     children: [
                       AspectRatio(aspectRatio: 4/3,
-                        child: BetterPlayer.network(widget.vid!,
-                          betterPlayerConfiguration: const BetterPlayerConfiguration(
-                            aspectRatio: 4/3,
-                          ),
-                        ),
+                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
                       ),
                       const SizedBox(height: 30.0,),
                       Padding(

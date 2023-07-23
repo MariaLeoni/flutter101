@@ -243,8 +243,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                   userAvatar: userChat.photoUrl,
                 )));
           },
-          child: ListTile(leading: userChat.photoUrl.isNotEmpty
-              ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
+          child: ListTile(leading: userChat.photoUrl.isNotEmpty ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
             child: Image.network(userChat.photoUrl,
               fit: BoxFit.cover, width: 50, height: 50,
               loadingBuilder: (BuildContext ctx, Widget child,

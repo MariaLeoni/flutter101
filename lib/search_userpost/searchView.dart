@@ -7,8 +7,6 @@ import '../owner_details/owner_detailsvid.dart';
 import '../search_post/user.dart';
 import '../search_post/users_design_widget.dart';
 import '../search_post/users_post_widget.dart';
-import '../vidlib/ReusableVideoListController.dart';
-import '../vidlib/ReusableVideoListWidget.dart';
 
 
 class SearchScreen extends StatefulWidget {
@@ -27,7 +25,7 @@ class SearchScreenState extends State<SearchScreen> {
   Future<QuerySnapshot>? postDocumentsList;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   String userPostText = '';
-  ReusableVideoListController videoListController = ReusableVideoListController();
+  //ReusableVideoListController videoListController = ReusableVideoListController();
 
   void startSearch(String searchText) {
 
@@ -111,13 +109,14 @@ class SearchScreenState extends State<SearchScreen> {
 
                     if (widget.postType == PostType.video){
                       VideoListData videoListData = VideoListData(model);
+                      return Container();
 
-                      return ReusableVideoListWidget(videoListData: videoListData,
-                        videoListController: videoListController,
-                        canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
-                          videoSelected(videoListData);
-                        },
-                      );
+                      // return ReusableVideoListWidget(videoListData: videoListData,
+                      //   videoListController: videoListController,
+                      //   canBuildVideo: checkCanBuildVideo,videoSelected: (VideoListData videoListData){
+                      //     videoSelected(videoListData);
+                      //   },
+                      // );
                     }
                     else{
                       return UsersPostWidget(model: model, context: context);

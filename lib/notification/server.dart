@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 import 'notification.dart';
 
 
@@ -46,7 +43,7 @@ class NotificationManager{
 
   void registerDevice() async {
     await FirebaseFirestore.instance.collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
       deviceToken = snapshot.get('token');
     });

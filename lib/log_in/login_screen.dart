@@ -24,10 +24,10 @@ class LoginScreen extends StatelessWidget {
               children: [
                 const HeadText(),
                 Credentials(),
-            ],
-      ),
-      ),
-      ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,68 +1,34 @@
 {
   "project_info": {
-
-    "project_number": "212789154137",
-    "project_id": "campus100",
-    "storage_bucket": "campus100.appspot.com"
-
+    "project_number": "462259146837",
+    "firebase_url": "https://studentshared1-default-rtdb.firebaseio.com",
+    "project_id": "studentshared1",
+    "storage_bucket": "studentshared1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-
-        "mobilesdk_app_id": "1:212789154137:android:9de98339ca7853e42e7c48",
-
         "mobilesdk_app_id": "1:462259146837:android:6a692bf4ecfdc8e4fac4dc",
-
-        "android_client_info": {
-          "package_name": "com.example.campus"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBimuGYlA9DrppuQyKXetRkyOFnCV0p9dk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:212789154137:android:4b5a250e445006ae2e7c48",
         "android_client_info": {
           "package_name": "com.example.sharedstudent1"
         }
       },
       "oauth_client": [
         {
-          "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
+          "client_id": "462259146837-c8jqjh7t2uk9dmu9gncbe4ro4un4i7vc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBimuGYlA9DrppuQyKXetRkyOFnCV0p9dk"
+          "current_key": "AIzaSyBd9qT9isS9DdEgI91GrFBT73OzcShPek8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "212789154137-bkv6p30ands5gggjlkog3ttkaf828cq2.apps.googleusercontent.com",
+              "client_id": "462259146837-c8jqjh7t2uk9dmu9gncbe4ro4un4i7vc.apps.googleusercontent.com",
               "client_type": 3
             },
             {

@@ -13,7 +13,7 @@ class AccountCheck extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children:[
         Text(
-          login? "Don't have an account ?" : "Already have an Account?",
+          login? "No account?" : "Have an Account?",
           style: const TextStyle(fontSize: 16.0, color: Colors.white),
         ),
         const SizedBox(width: 10.0,),
@@ -21,12 +21,11 @@ class AccountCheck extends StatelessWidget {
           onTap:press,
           child:Text(
             login? "Create Account": "Log In",
-            style: const TextStyle( fontSize:16.0, color:Colors.blue, fontWeight: FontWeight.bold)
+            style: const TextStyle( fontSize:18.0, color:Colors.blue, fontWeight: FontWeight.bold)
           )
         ),
         const SizedBox(height: 50.0,),
       ],
     );
-
   }
 }
