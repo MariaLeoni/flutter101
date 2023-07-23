@@ -227,7 +227,7 @@ class MoodScreenState extends State<MoodScreen> {
   void uploadFile(PostType type) async {
     LoadingIndicatorDialog().show(context);
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    UploadTask uploadTask = chatProvider.uploadImageFile(imageFile!, fileName);
+    UploadTask uploadTask = chatProvider.uploadImageFile(imageFile!, fileName, "moodMedia");
     try {
       TaskSnapshot snapshot = await uploadTask;
       imageUrl = await snapshot.ref.getDownloadURL();
@@ -241,7 +241,7 @@ class MoodScreenState extends State<MoodScreen> {
             maxWidth: 300,
             maxHeight: 300);
 
-        uploadTask = chatProvider.uploadImageFile(File(thumbnail!), fileName);
+        uploadTask = chatProvider.uploadImageFile(File(thumbnail!), fileName, "moodMedia");
         snapshot = await uploadTask;
         thumbnail = await snapshot.ref.getDownloadURL();
       }

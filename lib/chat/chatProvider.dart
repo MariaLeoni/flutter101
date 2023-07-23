@@ -16,8 +16,13 @@ class ChatProvider{
         required this.firebaseStorage,
         required this.firebaseFirestore});
 
-  UploadTask uploadImageFile(File image, String filename) {
-    Reference reference = firebaseStorage.ref().child(filename);
+  UploadTask uploadImageFile(File image, String filename, String? dir) {
+    Reference reference;
+    if (dir == null) {
+      reference = firebaseStorage.ref().child(filename);
+    } else {
+      reference = firebaseStorage.ref().child(dir).child(filename);
+    }
     UploadTask uploadTask = reference.putFile(image);
     return uploadTask;
   }

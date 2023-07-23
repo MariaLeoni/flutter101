@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:sharedstudent1/chat/chatListScreen.dart';
 import 'package:sharedstudent1/chat/fullImageView.dart';
 import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/misc/progressIndicator.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:io';
 import '../notification/notification.dart';
@@ -148,8 +148,8 @@ class ChatScreenState extends State<ChatScreen> {
                 getImage(ImageSource.camera);
                 Navigator.pop(ctx);
               },
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Padding(
                     padding: EdgeInsets.all(4.0,),
                     child: Icon(Icons.camera, color: Colors.red,),
@@ -163,8 +163,8 @@ class ChatScreenState extends State<ChatScreen> {
                 getImage(ImageSource.gallery);
                 Navigator.pop(ctx);
               },
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Padding(
                     padding: EdgeInsets.all(4.0,),
                     child: Icon(Icons.browse_gallery, color: Colors.red,),
@@ -178,8 +178,8 @@ class ChatScreenState extends State<ChatScreen> {
                 getVideo(ImageSource.camera);
                 Navigator.pop(ctx);
               },
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Padding(
                     padding: EdgeInsets.all(4.0,),
                     child: Icon(Icons.video_call, color: Colors.red,),
@@ -193,8 +193,8 @@ class ChatScreenState extends State<ChatScreen> {
                 getVideo(ImageSource.gallery);
                 Navigator.pop(ctx);
               },
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Padding(
                     padding: EdgeInsets.all(4.0,),
                     child: Icon(Icons.image, color: Colors.redAccent,),
@@ -253,8 +253,32 @@ class ChatScreenState extends State<ChatScreen> {
 
   void uploadFile(PostType type) async {
     LoadingIndicatorDialog().show(context);
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    UploadTask uploadTask = chatProvider.uploadImageFile(imageFile!, fileName);
+    File uploadFile = File("");
+
+    String extension = "";
+    if (type == PostType.image){
+      extension = ".jpg";
+    }
+    else{
+      extension = ".mp4";
+
+      if (Platform.isIOS) {
+        uploadFile = imageFile!;
+      }
+      else{
+        MediaInfo? mediaInfo = await VideoCompress.compressVideo(imageFile!.path,
+          quality: VideoQuality.HighestQuality, deleteOrigin: false,);
+        if (mediaInfo != null && mediaInfo.file != null){
+          uploadFile = mediaInfo.file!;
+        }
+        else {
+          uploadFile = imageFile!;
+        }
+      }
+    }
+
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extension;
+    UploadTask uploadTask = chatProvider.uploadImageFile(uploadFile, fileName, "chatMedia");
     try {
       TaskSnapshot snapshot = await uploadTask;
       imageUrl = await snapshot.ref.getDownloadURL();
@@ -262,25 +286,24 @@ class ChatScreenState extends State<ChatScreen> {
       String? thumbnail;
 
       if (type == PostType.image) {
-        uploadTask = chatProvider.uploadImageFile(imageFile!, fileName);
-        snapshot = await uploadTask;
-        thumbnail = await snapshot.ref.getDownloadURL();
-        Fluttertoast.showToast(msg: "recognises an image!");
+        thumbnail = imageUrl;
+        // uploadTask = chatProvider.uploadImageFile(imageFile!, fileName, "chatMedia");
+        // snapshot = await uploadTask;
+        // thumbnail = await snapshot.ref.getDownloadURL();
       }
-      else{
+      else {
         thumbnail = await VideoThumbnail.thumbnailFile(
             video: imageFile!.path,
             imageFormat: ImageFormat.PNG,
             quality: 100,
             maxWidth: 300,
             maxHeight: 300);
+        fileName = "${DateTime.now().millisecondsSinceEpoch}.jpg";
 
-        uploadTask = chatProvider.uploadImageFile(File(thumbnail!), fileName);
+        uploadTask = chatProvider.uploadImageFile(File(thumbnail!), fileName, "chatMedia");
         snapshot = await uploadTask;
         thumbnail = await snapshot.ref.getDownloadURL();
-
       }
-
 
       setState(() {
         isLoading = false;
@@ -296,6 +319,7 @@ class ChatScreenState extends State<ChatScreen> {
           .showSnackBar(SnackBar(content: Text(e.message ?? e.toString())));
     }
   }
+
   void getDataFromDatabase2() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.peerId)
@@ -307,6 +331,7 @@ class ChatScreenState extends State<ChatScreen> {
     }
     });
   }
+
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: name,
       body: action,
@@ -315,6 +340,7 @@ class ChatScreenState extends State<ChatScreen> {
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
+
   void onSendMessage(String content, PostType type, String? thumbnail) {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
@@ -359,7 +385,7 @@ class ChatScreenState extends State<ChatScreen> {
         leading: IconButton(
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(
-              builder: (_) => SocialHomeScreen(),),);
+              builder: (_) => const SocialHomeScreen(),),);
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -501,8 +527,7 @@ class ChatScreenState extends State<ChatScreen> {
                               loadingProgress.expectedTotalBytes !=
                                   null
                               ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                              : null,
+                              loadingProgress.expectedTotalBytes! : null,
                         ),
                       );
                     },
@@ -629,8 +654,7 @@ class ChatScreenState extends State<ChatScreen> {
                     fontSize: Sizes.dimen_12,
                     fontStyle: FontStyle.italic),
               ),
-            )
-                : const SizedBox.shrink(),
+            ) : const SizedBox.shrink(),
           ],
         );
       }

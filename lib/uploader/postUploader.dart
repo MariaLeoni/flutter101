@@ -41,30 +41,6 @@ class PostUploaderState extends State<PostUploader> {
   String title = "";
   File uploadVideoFile = File("");
 
-  // void _checkPermission(BuildContext context) async {
-  //   FocusScope.of(context).requestFocus(FocusNode());
-  //   Map<Permission, PermissionStatus> statues = await [
-  //     Permission.camera,
-  //     Permission.storage,
-  //     Permission.photos
-  //   ].request();
-  //   PermissionStatus? statusCamera = statues[Permission.camera];
-  //   PermissionStatus? statusStorage = statues[Permission.storage];
-  //   PermissionStatus? statusPhotos = statues[Permission.photos];
-  //   bool isGranted = statusCamera == PermissionStatus.granted &&
-  //       statusStorage == PermissionStatus.granted &&
-  //       statusPhotos == PermissionStatus.granted;
-  //   if (isGranted) {
-  //    showAlert();
-  //   }
-  //   bool isPermanentlyDenied =
-  //       statusCamera == PermissionStatus.permanentlyDenied ||
-  //           statusStorage == PermissionStatus.permanentlyDenied ||
-  //           statusPhotos == PermissionStatus.permanentlyDenied;
-  //   if (isPermanentlyDenied) {
-  //     Text("go to Settings");
-  //   }
-  // }
   Future<void> getStoragePermission() async {
     if (await Permission.manageExternalStorage.request().isGranted) {
       setState(() {});
@@ -74,6 +50,7 @@ class PostUploaderState extends State<PostUploader> {
       setState(() {});
     }
   }
+
   postVideo() {
     FirebaseFirestore.instance.collection('wallpaper2').doc(postId).set({
       'id': _auth.currentUser!.uid,
@@ -188,10 +165,6 @@ class PostUploaderState extends State<PostUploader> {
     readUserInfo();
     title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
     getStoragePermission();
-    Fluttertoast.showToast(msg:"runnning current");
-    // Timer.run(() {
-    //
-    // });
   }
 
   void updateInterests(Map<String, List<String>?> interests) {
