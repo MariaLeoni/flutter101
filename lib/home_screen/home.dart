@@ -60,7 +60,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
     NotificationManager().initServer();
   }
 
-  skip(){
+  onSkip(){
     Navigator.push(context, MaterialPageRoute(
         builder: (_) => PictureHomeScreen.forCategory(category: "random")));
   }
@@ -105,26 +105,27 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                 icon: const Icon(Icons.message_sharp),
               )
             ]),
-        body: Container(color:Colors.black,child: CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-                delegate: SliverChildListDelegate([
-                  const SizedBox(height: 20.0,),
-                  //const Text('These are your selected interests'),
-                  const Padding(
-                    padding: EdgeInsets.all(20),
+        body: Container(color:Colors.black, width: double.infinity,
+          child: Column(
+              children: <Widget>[
+                const SizedBox(height: 20.0,),
+                const Text('These are your selected interests', style:TextStyle(color:Colors.white, fontSize: 20)),
+                const Padding(
+                  padding: EdgeInsets.all(20),
+                ),
+                categories,
+                const SizedBox(height:20.0),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                      minimumSize: MaterialStateProperty.all(const Size(100, 40))
                   ),
-                  categories,
-                  SizedBox(height:20.0),
-                  SizedBox( height: 300,
-                      child:
-                      OutlinedButton(
-                        onPressed: skip,
-                        child: const Text("skip", style:TextStyle(color:Colors.white, backgroundColor: Colors.red, fontSize: 30 )),
-                      )),
-                ])),
-          ],
-        )));
+                  onPressed: onSkip,
+                  child: const Text("Skip", style:TextStyle(color:Colors.white, fontSize: 20)),
+                )
+              ]
+          ),
+        ));
   }
 
   Widget get categories {

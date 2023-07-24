@@ -36,10 +36,10 @@ class _FLMessageState extends State<FLMessage> {
               ),),
             ),
             leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white,),
+                icon: const Icon(Icons.arrow_back, color: Colors.white,),
                 onPressed: () {
                   Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                      context, MaterialPageRoute(builder: (_) => const HomeScreen()));
                 }
             ),
                   actions: <Widget>[
