@@ -352,7 +352,13 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
                               child: IconButton(
                                 onPressed: () async {
-                                  Share.share(widget.vid!);
+                                  if (widget.vid == null) {
+                                    return;
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(content: Text("Please wait...")));
+                                    downloadAndShare(widget.vid!, widget.description ?? "Shared from TheGist App", PostType.video);
+                                  }
                                 },
                                 icon: const Icon(Icons.share, color: Colors.white),
                               ),

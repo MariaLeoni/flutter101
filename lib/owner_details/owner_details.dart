@@ -388,7 +388,13 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         child:
                         IconButton(
                           onPressed: () async {
-                            Share.share(widget.img!);
+                            if (widget.img == null) {
+                              return;
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(content: Text("Please wait...")));
+                            downloadAndShare(widget.img!, widget.description ?? "Shared from TheGist App", PostType.image);
+                            }
                           },
                           icon: const Icon(Icons.share, color: Colors.white),
                         ),

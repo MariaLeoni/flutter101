@@ -114,7 +114,8 @@ typedef VideoSelected = void Function(VideoListData);
 typedef GoToPageWithTypeAndId = void Function(dynamic type, String Id);
 
 void downloadAndShare(String fileUrl, String description, PostType type) async {
-  String typeString = type == PostType.image ? "image.jpeg" : "video.mp4";
+  const appName = "Shared from TheGist App";
+  String typeString = type == PostType.image ? "image.jpg" : "video.mp4";
   final url = Uri.parse(fileUrl);
   final response = await http.get(url);
   final bytes = response.bodyBytes;
@@ -123,7 +124,7 @@ void downloadAndShare(String fileUrl, String description, PostType type) async {
   final path = '${temp.path}/$typeString';
   File(path).writeAsBytesSync(bytes);
 
-  await Share.shareFiles([path], text: description);
+  await Share.shareXFiles([XFile(path)], text: description, subject: appName);
 }
 
 Future<File?> getProcessedFile(File? mediaFile) async {
