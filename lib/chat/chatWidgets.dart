@@ -11,73 +11,57 @@ Widget errorContainer() {
 }
 
 Widget chatImage({required String imageSrc}) {
-  return Container(
-    decoration: BoxDecoration(
-      border: Border.all(width: 2,),),
-    child: Image.network(
-      imageSrc, width: Sizes.dimen_200,
-      height: Sizes.dimen_200, fit: BoxFit.cover,
-      loadingBuilder: (BuildContext ctx, Widget child, ImageChunkEvent? loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.greyColor2,
-            borderRadius: BorderRadius.circular(Sizes.dimen_10),
+  return Image.network(
+    imageSrc, width: Sizes.dimen_200,
+    height: Sizes.dimen_200, fit: BoxFit.cover,
+    loadingBuilder: (BuildContext ctx, Widget child, ImageChunkEvent? loadingProgress) {
+      if (loadingProgress == null) return child;
+      return SizedBox(
+        width: Sizes.dimen_200,
+        height: Sizes.dimen_200,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: AppColors.burgundy,
+            value: loadingProgress.expectedTotalBytes != null &&
+                loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                loadingProgress.expectedTotalBytes!
+                : null,
           ),
-          width: Sizes.dimen_200,
-          height: Sizes.dimen_200,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: AppColors.burgundy,
-              value: loadingProgress.expectedTotalBytes != null &&
-                  loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                  loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          ),
-        );
-      },
-      errorBuilder: (context, object, stackTrace) => errorContainer(),
-    ),
+        ),
+      );
+    },
+    errorBuilder: (context, object, stackTrace) => errorContainer(),
   );
 }
 
 Widget chatVideoThumbnail({required String videoSrc}) {
-  return Container(
-    decoration: BoxDecoration(
-      border: Border.all(width: 2,),),
-    child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Image.network(videoSrc, width: Sizes.dimen_200,
-            height: Sizes.dimen_200, fit: BoxFit.cover,
-            loadingBuilder: (BuildContext ctx, Widget child, ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Container(
-                decoration: BoxDecoration(
-                  color: AppColors.greyColor2,
-                  borderRadius: BorderRadius.circular(Sizes.dimen_10),
+  return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Image.network(videoSrc, width: Sizes.dimen_200,
+          height: Sizes.dimen_200, fit: BoxFit.cover,
+          loadingBuilder: (BuildContext ctx, Widget child, ImageChunkEvent? loadingProgress) {
+            if (loadingProgress == null) return child;
+            return SizedBox(
+              width: Sizes.dimen_200,
+              height: Sizes.dimen_200,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.burgundy,
+                  value: loadingProgress.expectedTotalBytes != null &&
+                      loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                      : null,
                 ),
-                width: Sizes.dimen_200,
-                height: Sizes.dimen_200,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.burgundy,
-                    value: loadingProgress.expectedTotalBytes != null &&
-                        loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                ),
-              );
-            },
-            errorBuilder: (context, object, stackTrace) => errorContainer(),
-          ),
-          const Icon(Icons.play_arrow, color: Colors.green, size: Sizes.dimen_100,)
-        ]),
-  );
+              ),
+            );
+          },
+          errorBuilder: (context, object, stackTrace) => errorContainer(),
+        ),
+        const Icon(Icons.play_arrow, color: Colors.green, size: Sizes.dimen_50,)
+      ]);
 }
 
 Widget messageBubble({required String chatContent,
