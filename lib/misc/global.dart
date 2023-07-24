@@ -113,9 +113,6 @@ typedef VideoSelected = void Function(VideoListData);
 
 typedef GoToPageWithTypeAndId = void Function(dynamic type, String Id);
 
-List<String> images = ['jpeg', 'jpg', 'png', 'gif', 'tiff'];
-List<String> videos = ['mp4', 'mov', 'wmv', 'avi', 'mkv'];
-
 void downloadAndShare(String fileUrl, String description, PostType type) async {
   String typeString = type == PostType.image ? "image.jpeg" : "video.mp4";
   final url = Uri.parse(fileUrl);

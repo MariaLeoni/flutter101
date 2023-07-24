@@ -155,9 +155,10 @@ class MoodWidgetState extends State<MoodWidget> {
                 widget.moodModel.type == PostType.video.name ? Container(
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_10, top: Sizes.dimen_10),
-                    child: AspectRatio(aspectRatio: 4/3,
-                      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.moodModel.content, file: null,)
-                    )
+                    child: SizedBox.fromSize(
+                        size: Size(500.0, size == null ? 400 : size!.height * 0.5), // Image border
+                        child:  ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.moodModel.content, file: null,)
+                    ),
                 ) :
                 widget.moodModel.type == PostType.image.name ?
                 ClipRRect(
@@ -185,7 +186,8 @@ class MoodWidgetState extends State<MoodWidget> {
                               userName: widget.moodModel.displayName,
                               userImage: widget.moodModel.photoUrl,)));
                       },
-                      child: widget.moodModel.photoUrl == null ? Image.asset("assets/images/TheGist.png", width: 50, height: 50,) : CircleAvatar(
+                      child: widget.moodModel.photoUrl == null ? Image.asset("assets/images/TheGist.png", width: 50, height: 50,) :
+                      CircleAvatar(
                         radius: 35,
                         backgroundImage: NetworkImage(widget.moodModel.photoUrl!,),
                       )

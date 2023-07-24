@@ -240,7 +240,6 @@ class MoodScreenState extends State<MoodScreen> {
     }
     else{
       extension = ".mp4";
-
       uploadFile = await getProcessedFile(mediaFile) ?? uploadFile;
     }
 
@@ -260,6 +259,8 @@ class MoodScreenState extends State<MoodScreen> {
             quality: 100,
             maxWidth: 300,
             maxHeight: 300);
+
+        fileName = "${DateTime.now().millisecondsSinceEpoch}.jpg";
 
         uploadTask = chatProvider.uploadImageFile(File(thumbnail!), fileName, "moodMedia");
         snapshot = await uploadTask;

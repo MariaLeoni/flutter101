@@ -77,8 +77,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                               description: description,
                             )));
                           },
-                          child:
-                          CircleAvatar(
+                          child: CircleAvatar(
                             radius: 35,
                             backgroundImage: NetworkImage(
                               userImg,
