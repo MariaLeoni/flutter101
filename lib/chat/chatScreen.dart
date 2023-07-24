@@ -3,13 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/chat/fullImageView.dart';
 import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/misc/progressIndicator.dart';
-import 'package:video_compress/video_compress.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:io';
 import '../notification/notification.dart';
@@ -19,7 +17,6 @@ import 'chatProvider.dart';
 import 'chatWidgets.dart';
 import 'constants.dart';
 import 'package:sharedstudent1/misc/global.dart';
-
 import 'fullScreenVideo.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -50,7 +47,7 @@ class ChatScreenState extends State<ChatScreen> {
   final int _limitIncrement = 20;
   String groupChatId = '';
 
-  File? imageFile;
+  File? mediaFile;
   bool isLoading = false;
   bool isShowSticker = false;
   String imageUrl = "";
@@ -110,8 +107,8 @@ class ChatScreenState extends State<ChatScreen> {
     ImagePicker imagePicker = ImagePicker();
     XFile? pickedFile = await imagePicker.pickImage(source: source);
     if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
-      if (imageFile != null) {
+      mediaFile = File(pickedFile.path);
+      if (mediaFile != null) {
         setState(() {
           isLoading = true;
         });
@@ -124,8 +121,8 @@ class ChatScreenState extends State<ChatScreen> {
     ImagePicker imagePicker = ImagePicker();
     XFile? pickedFile = await imagePicker.pickVideo(source: source);
     if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
-      if (imageFile != null) {
+      mediaFile = File(pickedFile.path);
+      if (mediaFile != null) {
         setState(() {
           isLoading = true;
         });
@@ -250,31 +247,26 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
 
-
   void uploadFile(PostType type) async {
-    LoadingIndicatorDialog().show(context);
-    File uploadFile = File("");
+    if (mediaFile == null){
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Sorry, media not found")));
+      return;
+    }
 
+    LoadingIndicatorDialog().show(context);
+
+    File uploadFile = File("");
     String extension = "";
+
     if (type == PostType.image){
       extension = ".jpg";
+      uploadFile = mediaFile!;
     }
     else{
       extension = ".mp4";
 
-      if (Platform.isIOS) {
-        uploadFile = imageFile!;
-      }
-      else{
-        MediaInfo? mediaInfo = await VideoCompress.compressVideo(imageFile!.path,
-          quality: VideoQuality.HighestQuality, deleteOrigin: false,);
-        if (mediaInfo != null && mediaInfo.file != null){
-          uploadFile = mediaInfo.file!;
-        }
-        else {
-          uploadFile = imageFile!;
-        }
-      }
+      uploadFile = await getProcessedFile(mediaFile) ?? uploadFile;
     }
 
     String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extension;
@@ -287,13 +279,10 @@ class ChatScreenState extends State<ChatScreen> {
 
       if (type == PostType.image) {
         thumbnail = imageUrl;
-        // uploadTask = chatProvider.uploadImageFile(imageFile!, fileName, "chatMedia");
-        // snapshot = await uploadTask;
-        // thumbnail = await snapshot.ref.getDownloadURL();
       }
       else {
         thumbnail = await VideoThumbnail.thumbnailFile(
-            video: imageFile!.path,
+            video: uploadFile.path,
             imageFormat: ImageFormat.PNG,
             quality: 100,
             maxWidth: 300,
@@ -317,6 +306,16 @@ class ChatScreenState extends State<ChatScreen> {
       });
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message ?? e.toString())));
+    }
+    catch(error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Hmm, something doesn't seem right")));
+
+      print("Chat upload error $error");
+      setState(() {
+        isLoading = false;
+        LoadingIndicatorDialog().dismiss();
+      });
     }
   }
 

@@ -32,7 +32,7 @@ class MoodScreenState extends State<MoodScreen> {
   final PageController _pageController = PageController(initialPage: 0,
       keepPage: true);
 
-  File? imageFile;
+  File? mediaFile;
   bool isLoading = false;
   bool isShowSticker = false;
   String imageUrl = "";
@@ -57,8 +57,8 @@ class MoodScreenState extends State<MoodScreen> {
     ImagePicker imagePicker = ImagePicker();
     XFile? pickedFile = await imagePicker.pickImage(source: source);
     if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
-      if (imageFile != null) {
+      mediaFile = File(pickedFile.path);
+      if (mediaFile != null) {
         setState(() {
           isLoading = true;
         });
@@ -71,8 +71,8 @@ class MoodScreenState extends State<MoodScreen> {
     ImagePicker imagePicker = ImagePicker();
     XFile? pickedFile = await imagePicker.pickVideo(source: source);
     if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
-      if (imageFile != null) {
+      mediaFile = File(pickedFile.path);
+      if (mediaFile != null) {
         setState(() {
           isLoading = true;
         });
@@ -225,9 +225,29 @@ class MoodScreenState extends State<MoodScreen> {
   }
 
   void uploadFile(PostType type) async {
+    if (mediaFile == null){
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Sorry, media not found")));
+      return;
+    }
     LoadingIndicatorDialog().show(context);
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    UploadTask uploadTask = chatProvider.uploadImageFile(imageFile!, fileName, "moodMedia");
+
+    File uploadFile = File("");
+    String extension = "";
+    if (type == PostType.image){
+      extension = ".jpg";
+      uploadFile = mediaFile!;
+    }
+    else{
+      extension = ".mp4";
+
+      uploadFile = await getProcessedFile(mediaFile) ?? uploadFile;
+    }
+
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString() + extension;
+
+    UploadTask uploadTask = chatProvider.uploadImageFile(mediaFile!, fileName, "moodMedia");
+
     try {
       TaskSnapshot snapshot = await uploadTask;
       imageUrl = await snapshot.ref.getDownloadURL();
@@ -235,7 +255,7 @@ class MoodScreenState extends State<MoodScreen> {
       String? thumbnail;
       if (type == PostType.video) {
         thumbnail = await VideoThumbnail.thumbnailFile(
-            video: imageFile!.path,
+            video: uploadFile.path,
             imageFormat: ImageFormat.PNG,
             quality: 100,
             maxWidth: 300,
@@ -244,6 +264,9 @@ class MoodScreenState extends State<MoodScreen> {
         uploadTask = chatProvider.uploadImageFile(File(thumbnail!), fileName, "moodMedia");
         snapshot = await uploadTask;
         thumbnail = await snapshot.ref.getDownloadURL();
+      }
+      else{
+        thumbnail = imageUrl;
       }
 
       setState(() {
@@ -258,6 +281,15 @@ class MoodScreenState extends State<MoodScreen> {
       });
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message ?? e.toString())));
+    }
+    catch(error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Hmm, something doesn't seem right")));
+
+      setState(() {
+        isLoading = false;
+        LoadingIndicatorDialog().dismiss();
+      });
     }
   }
 

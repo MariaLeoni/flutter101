@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/vidlib/VideoListData.dart';
+import 'package:video_compress/video_compress.dart';
 import '../search_post/user.dart';
 import 'package:http/http.dart' as http;
 
@@ -126,5 +127,27 @@ void downloadAndShare(String fileUrl, String description, PostType type) async {
   File(path).writeAsBytesSync(bytes);
 
   await Share.shareFiles([path], text: description);
+}
+
+Future<File?> getProcessedFile(File? mediaFile) async {
+  File processedFile;
+  if (mediaFile == null) {
+    return null;
+  }
+  if (Platform.isIOS) {
+    processedFile = mediaFile;
+  }
+  else{
+    MediaInfo? mediaInfo = await VideoCompress.compressVideo(mediaFile.path,
+      quality: VideoQuality.HighestQuality, deleteOrigin: false,);
+    if (mediaInfo != null && mediaInfo.file != null){
+      processedFile = mediaInfo.file!;
+    }
+    else {
+      processedFile = mediaFile;
+    }
+  }
+
+  return processedFile;
 }
 

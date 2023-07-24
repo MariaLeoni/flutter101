@@ -11,6 +11,6 @@ class FullScreenVideoView extends StatelessWidget {
 
     return SizedBox.fromSize(
       size: Size(screen.width, screen.height * 0.65), // Image border
-      child: ChewieVideoWidget(autoPlayAndFullscreen: true, url: url, file: null,),);
+      child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: url, file: null,),);
   }
 }
