@@ -217,63 +217,66 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
           handleLikePost();
         },
             icon: const Icon(Icons.thumb_up_sharp, color: Colors.white, size: 25,)),
-    ),
+      ),
     );
 
     var downloadText = SSBadge(top:0, right:2, value: total.toString(),
       child: GestureDetector(
-        onTap:(){},
-        onDoubleTap: (){
-          if (widget.downloaders!.isNotEmpty){
-            Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
-              users: widget.downloaders,
-            )));
-          }
-        },
-        child: IconButton(onPressed: () async {
-        try {
-          Dio dio = Dio();
-          var fileNameDecoded = getFileName(widget.vid!, PostType.video);
-          var dir = await getExternalStorageDirectory();
-          final String savePath = "${dir?.path}/$fileNameDecoded.mp4";
+          onTap:(){},
+          onDoubleTap: (){
+            if (widget.downloaders!.isNotEmpty){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
+                users: widget.downloaders,
+              )));
+            }
+          },
+          child: IconButton(onPressed: () async {
+            try {
+              Dio dio = Dio();
+              var fileNameDecoded = getFileName(widget.vid!, PostType.video);
+              var dir = await getTemporaryDirectory();
+              final String savePath = "${dir.path}/$fileNameDecoded.mp4";
 
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Downloading video...")));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Downloading video...")));
 
-          await dio.download(widget.vid!, savePath,
-              onReceiveProgress: (received, total) {
-                if (total != -1) {
-                   print("Downloaded ${(received / total * 100).toStringAsFixed(0)}%");
-                 }
-          });
-          await ImageGallerySaver.saveFile(savePath);
+              await dio.download(widget.vid!, savePath,
+                  onReceiveProgress: (received, total) {
+                    if (total != -1) {
+                      print("Downloaded ${(received / total * 100).toStringAsFixed(0)}%");
+                    }
+                  });
+              await ImageGallerySaver.saveFile(savePath);
 
-          Fluttertoast.showToast(msg: "Video saved to Video Gallery");
-          handleDownloadComplete();
-        } on PlatformException catch (error) {
-          print(error);
-        }
-      },
-      icon: const Icon (Icons.download,
-        color: Colors.white, size: 25,
-      ),
-    )),);
-    
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Video saved to Video Gallery")));
+              handleDownloadComplete();
+            } on PlatformException catch (error) {
+              print(error);
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Sorry, am unknown error occurred.")));
+            }
+          },
+            icon: const Icon (Icons.download,
+              color: Colors.white, size: 25,
+            ),
+          )),);
+
     followersCount = (widget.followers?.length ?? 0);
     return Scaffold(
         appBar: AppBar(
-            flexibleSpace: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.black],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: [0.2],
-                ),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: [0.2],
               ),
             ),
+          ),
 
-            ),
+        ),
         body: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -288,7 +291,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                   Column(
                     children: [
                       AspectRatio(aspectRatio: 4/3,
-                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
+                          child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
                       ),
                       const SizedBox(height: 30.0,),
                       Padding(
@@ -349,7 +352,13 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
                               child: IconButton(
                                 onPressed: () async {
-                                  Share.share(widget.vid!);
+                                  if (widget.vid == null) {
+                                    return;
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(content: Text("Please wait...")));
+                                    downloadAndShare(widget.vid!, widget.description ?? "Shared from TheGist App", PostType.video);
+                                  }
                                 },
                                 icon: const Icon(Icons.share, color: Colors.white),
                               ),

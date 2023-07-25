@@ -17,7 +17,6 @@ import '../notification/notification.dart';
 import '../notification/server.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
-import '../search_userpost/searchView.dart';
 import '../widgets/button_square.dart';
 
 
@@ -146,7 +145,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
         "postOwnerImage": widget.img,
         "postOwnername": widget.name,
         "Read Status": false,
-         "PostType" : "image",
+        "PostType" : "image",
       });
     }
   }
@@ -205,7 +204,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       title: Container(color:Colors.black,child:Text("Description", style: TextStyle(color:Colors.red.shade900))),
       content: Container(color:Colors.black,
           child:Text(widget.description!,
-          style:const TextStyle(color:Colors.white, fontWeight: FontWeight.bold))),
+              style:const TextStyle(color:Colors.white, fontWeight: FontWeight.bold))),
       actions: [
         okButton,
       ],
@@ -242,10 +241,9 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     );
 
     var downloadText = SSBadge(top:0, right:2, value: total.toString(),
-        child: GestureDetector(
+      child: GestureDetector(
           onTap:(){},
           onDoubleTap: (){
-            print("Handle doubleTap ${widget.downloaders!.isNotEmpty}");
             if (widget.downloaders!.isNotEmpty){
               Navigator.push(context, MaterialPageRoute(builder: (_) => UserListScreen(
                 users: widget.downloaders,
@@ -253,50 +251,54 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
             }
           },
           child:  IconButton(onPressed: () async {
-        try{
-          Dio dio = Dio();
-          var fileNameDecoded = getFileName(widget.img!, PostType.image);
-          var dir = await getExternalStorageDirectory();
-          final String savePath = "${dir?.path}/$fileNameDecoded.jpg";
+            try{
+              Dio dio = Dio();
+              var fileNameDecoded = getFileName(widget.img!, PostType.image);
+              var dir = await getTemporaryDirectory();
+              final String savePath = "${dir.path}/$fileNameDecoded.jpg";
 
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Downloading image...")));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Downloading image...")));
 
-          await dio.download(widget.img!, savePath,
-              onReceiveProgress: (received, total) {
-                if (total != -1) {
-                  print("Downloaded ${(received / total * 100).toStringAsFixed(0)}%");
-                }
-              });
-          await ImageGallerySaver.saveFile(savePath);
+              await dio.download(widget.img!, savePath,
+                  onReceiveProgress: (received, total) {
+                    if (total != -1) {
+                      print("Downloaded ${(received / total * 100).toStringAsFixed(0)}%");
+                    }
+                  });
+              await ImageGallerySaver.saveFile(savePath);
 
-          Fluttertoast.showToast(msg: "Image saved to Image Gallery");
-          handleDownloadCompleted();
-        } on PlatformException catch (error) {
-          print(error);
-        }
-      },
-      icon: const Icon (
-        Icons.download,
-        color: Colors.white,
-        size: 25,
-      ),
-    )),
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Image saved to Image Gallery")));
+
+              handleDownloadCompleted();
+            } on PlatformException catch (error) {
+              print(error);
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Sorry, am unknown error occurred.")));
+            }
+          },
+            icon: const Icon (
+              Icons.download,
+              color: Colors.white,
+              size: 25,
+            ),
+          )),
     );
 
     return Scaffold(
       appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2],
-              ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.black],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              stops: [0.2],
             ),
           ),
-   ),
+        ),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -310,10 +312,10 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
           children: [
             Column(
               children: [
-                      Image.network(
-                        widget.img!,
-                        width: MediaQuery.of(context).size.width,
-                      ),
+                Image.network(
+                  widget.img!,
+                  width: MediaQuery.of(context).size.width,
+                ),
                 const SizedBox(height: 7.0,),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
@@ -386,7 +388,13 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         child:
                         IconButton(
                           onPressed: () async {
-                            Share.share(widget.img!);
+                            if (widget.img == null) {
+                              return;
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(content: Text("Please wait...")));
+                            downloadAndShare(widget.img!, widget.description ?? "Shared from TheGist App", PostType.image);
+                            }
                           },
                           icon: const Icon(Icons.share, color: Colors.white),
                         ),
