@@ -81,14 +81,20 @@ class ChatProvider{
     saved = true;
   }
 
-  Stream<QuerySnapshot> getMoods(List<String>? followingList) {
+  // Stream<QuerySnapshot> getMoods(List<String>? followingList) {
+  //   return firebaseFirestore.collection(FirestoreConstants.pathMoodCollection)
+  //       .where(FirestoreConstants.idFrom, whereIn: followingList)
+  //       .where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: todayDate.add(const Duration(days: -1)))
+  //       .orderBy(FirestoreConstants.timestamp, descending: true)
+  //       .snapshots();
+  // }
+  Stream<QuerySnapshot> getMoods() {
     return firebaseFirestore.collection(FirestoreConstants.pathMoodCollection)
-        .where(FirestoreConstants.idFrom, whereIn: followingList)
+       // .where(FirestoreConstants.idFrom, whereIn: followingList)
         .where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: todayDate.add(const Duration(days: -1)))
         .orderBy(FirestoreConstants.timestamp, descending: true)
         .snapshots();
   }
-
   void sendMood(String content, PostType type, String currentUserId,
       String name, String imageURL) {
 

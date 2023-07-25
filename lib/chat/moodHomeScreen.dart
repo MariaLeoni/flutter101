@@ -317,7 +317,7 @@ class MoodScreenState extends State<MoodScreen> {
             ),
           ),
           child: StreamBuilder<QuerySnapshot>(
-            stream: chatProvider.getMoods(myFollowing),
+            stream: chatProvider.getMoods(),
             builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator(),);
