@@ -33,10 +33,6 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>TheGist need access to your Camera to take picture or video</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>TheGist need access to your Gallery if you want to pick photo or video</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -54,5 +50,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>TheGist need access to your Camera to take picture or video</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>TheGist need access to your Gallery if you want to pick photo or video</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>TheGist need access to your Gallery if you want to pick photo or video</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>TheGist need access to your Microphone if you want to record video</string>
 </dict>
 </plist>

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,16 +37,6 @@ class PostUploaderState extends State<PostUploader> {
   File? imageFile;
   String title = "";
   File uploadVideoFile = File("");
-
-  Future<void> getStoragePermission() async {
-    if (await Permission.manageExternalStorage.request().isGranted) {
-      setState(() {});
-    } else if (await Permission.storage.request().isPermanentlyDenied) {
-      await openAppSettings();
-    } else if (await Permission.storage.request().isDenied) {
-      setState(() {});
-    }
-  }
 
   postVideo() {
     FirebaseFirestore.instance.collection('wallpaper2').doc(postId).set({
@@ -162,7 +151,6 @@ class PostUploaderState extends State<PostUploader> {
     super.initState();
     readUserInfo();
     title = widget.postType == PostType.video ? "Post A Video" : "Post A Picture";
-    getStoragePermission();
   }
 
   void updateInterests(Map<String, List<String>?> interests) {
@@ -177,20 +165,34 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void getImageFromCamera(BuildContext context) async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.camera);
-    cropImage(pickedFile!.path);
-    if (!mounted) return;
-    Navigator.pop(context);
+    await requestPermission(Permission.camera, (permissionStatus) async {
+      if (permissionGranted(permissionStatus)) {
+        XFile? pickedFile = await ImagePicker().pickImage(
+            source: ImageSource.camera);
+        cropImage(pickedFile!.path);
+        if (!mounted) return;
+        Navigator.pop(context);
+      }
+      else{
+        openAppSettings();
+      }
+    });
   }
 
   void getImageFromGallery(BuildContext context) async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery);
-    cropImage(pickedFile!.path);
+    await requestPermission(Permission.storage, (permissionStatus) async {
+      if (permissionGranted(permissionStatus)) {
+        XFile? pickedFile = await ImagePicker().pickImage(
+            source: ImageSource.gallery);
+        cropImage(pickedFile!.path);
 
-    if (!mounted) return;
-    Navigator.pop(context);
+        if (!mounted) return;
+        Navigator.pop(context);
+      }
+      else{
+        openAppSettings();
+      }
+    });
   }
 
   void cameraSource(BuildContext context){
@@ -223,31 +225,43 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void getVideoFromCamera(BuildContext context) async {
-    XFile? pickedFile = await ImagePicker().pickVideo(
-        source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        videoFile = File(pickedFile.path);
-        setVideo();
-      });
+    await requestPermission(Permission.camera, (permissionStatus) async{
+      if (permissionGranted(permissionStatus)){
+        XFile? pickedFile = await ImagePicker().pickVideo(source: ImageSource.camera);
+        if (pickedFile != null) {
+          setState(() {
+            videoFile = File(pickedFile.path);
+            setVideo();
+          });
 
-      if (!mounted) return;
-      Navigator.pop(context);
-    }
+          if (!mounted) return;
+          Navigator.pop(context);
+        }
+      }
+      else{
+        openAppSettings();
+      }
+    });
   }
 
   void getVideoFromGallery(BuildContext context) async {
-    XFile? pickedFile = await ImagePicker().pickVideo(
-        source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        videoFile = File(pickedFile.path);
-        setVideo();
-      });
+    await requestPermission(Permission.storage, (permissionStatus) async {
+      if (permissionGranted(permissionStatus)){
+        XFile? pickedFile = await ImagePicker().pickVideo(source: ImageSource.gallery);
+        if (pickedFile != null) {
+          setState(() {
+            videoFile = File(pickedFile.path);
+            setVideo();
+          });
 
-      if (!mounted) return;
-      Navigator.pop(context);
-    }
+          if (!mounted) return;
+          Navigator.pop(context);
+        }
+      }
+      else{
+        openAppSettings();
+      }
+    });
   }
 
   void setVideo(){
