@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -398,6 +400,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                           },
                           icon: const Icon(Icons.share, color: Colors.white),
                         ),
+
                       ),
                       Padding(padding: const EdgeInsets.only(left: 8.0, ),
                         child: likeText,

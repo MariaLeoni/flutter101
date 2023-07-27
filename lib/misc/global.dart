@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -126,6 +127,12 @@ void downloadAndShare(String fileUrl, String description, PostType type) async {
 
   await Share.shareXFiles([XFile(path)], text: description, subject: appName);
 }
+// void Snackbar(String message) async{
+//   ScaffoldMessenger.of(context as BuildContext)
+//       .showSnackBar(const SnackBar(content: Text('$message')));
+//   return;
+// }
+
 
 Future<File?> getProcessedFile(File? mediaFile) async {
   File processedFile;
