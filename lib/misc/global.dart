@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/vidlib/VideoListData.dart';
 import 'package:video_compress/video_compress.dart';
@@ -111,6 +112,8 @@ typedef InterestCallback = void Function(Map<String, List<String>?> interests);
 
 typedef VideoSelected = void Function(VideoListData);
 
+typedef PermissionCallback = void Function(PermissionStatus permissionStatus);
+
 typedef GoToPageWithTypeAndId = void Function(dynamic type, String Id);
 
 void downloadAndShare(String fileUrl, String description, PostType type) async {
@@ -147,5 +150,20 @@ Future<File?> getProcessedFile(File? mediaFile) async {
   }
 
   return processedFile;
+}
+
+Future<void> requestPermission(Permission permission, PermissionCallback callback) async {
+  final status = await permission.request();
+  callback(status);
+}
+
+bool permissionGranted(PermissionStatus permissionStatus){
+  if (permissionStatus == PermissionStatus.granted || permissionStatus == PermissionStatus.provisional ||
+      permissionStatus == PermissionStatus.limited){
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
