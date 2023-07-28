@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     borderRadius: BorderRadius.circular(10), // Image border
                     child: SizedBox.fromSize(
                         size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image radius
-                        child: Image.network(img, fit: BoxFit.cover)
+                        child: Image(image: CachedNetworkImageProvider(img), fit: BoxFit.cover)
+                        //Image.network(img, fit: BoxFit.cover)
                     ),
                   )
               ),
@@ -120,7 +122,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     },
                     child: CircleAvatar(
                       radius: 35,
-                      backgroundImage: NetworkImage(userImg,),
+                      backgroundImage: CachedNetworkImageProvider(userImg)
+                      //NetworkImage(userImg,),
                     )
                 ),
                 Padding(padding: const EdgeInsets.all(10.0),
@@ -280,6 +283,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   scrollDirection: Axis.vertical,
                   controller: _pageController,
                   itemCount: snapshot.data!.docs.length,
+                  allowImplicitScrolling: true,
                   itemBuilder: (BuildContext context, int index) {
 
                     Post post = Post.getPost(snapshot, index, PostType.image);
