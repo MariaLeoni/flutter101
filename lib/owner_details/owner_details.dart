@@ -116,8 +116,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
 
     userId = _auth.currentUser!.uid;
 
-    print("Downloaders ${widget.downloaders}");
-
     getDataFromDatabase();
     getDataFromDatabase2();
     notificationManager = NotificationManager();
@@ -250,7 +248,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
               )));
             }
           },
-          child:  IconButton(onPressed: () async {
+          child: IconButton(onPressed: () async {
             try{
               Dio dio = Dio();
               var fileNameDecoded = getFileName(widget.img!, PostType.image);

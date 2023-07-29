@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   String? name;
   String? image;
 
-  Widget listViewWidget1 (String docId, String vid, String userImg, String name,
+  Widget pageViewWidget (String docId, String vid, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
 
@@ -79,9 +80,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                           },
                           child: CircleAvatar(
                             radius: 35,
-                            backgroundImage: NetworkImage(
-                              userImg,
-                            ),
+                            backgroundImage: CachedNetworkImageProvider(userImg),
                           )),
                       const SizedBox(width: 10.0,),
                       Column(
@@ -255,10 +254,11 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 scrollDirection: Axis.vertical,
                 controller: _pageController,
                 itemCount: snapshot.data!.docs.length,
+                allowImplicitScrolling: true,
                 itemBuilder: (BuildContext context, int index) {
 
                   Post post = Post.getPost(snapshot, index, PostType.video);
-                  return listViewWidget1(post.id, post.source, post.userImage,
+                  return pageViewWidget(post.id, post.source, post.userImage,
                       post.userName, post.createdAt, post.email,
                       post.downloads, post.postId, post.likes, post.description);
                 },

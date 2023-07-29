@@ -48,12 +48,11 @@ dependencies:
   firebase_crashlytics: ^3.3.4
 
   uuid: ^3.0.6
-
   fluttertoast: ^8.0.9
   flutter_staggered_grid_view: ^0.6.2
   transparent_image: ^2.0.0
   image_picker: ^0.8.6
-  flutter_3d_choice_chip: ^0.1.4
+
   video_thumbnail: ^0.5.0
   image_cropper: ^3.0.0
   intl: ^0.17.0
@@ -79,6 +78,7 @@ dependencies:
   permission_handler: ^10.4.3
   video_compress: ^3.1.0
   chewie: ^1.7.0
+  preload_page_view: ^0.2.0
 
 
 dev_dependencies:

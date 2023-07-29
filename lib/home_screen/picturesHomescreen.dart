@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/uploader/postUploader.dart';
@@ -43,8 +44,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   late String currentToken;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
   Size? size;
-  final PageController _pageController = PageController(initialPage: 0, keepPage: true);
-
+  
   @override
   void initState() {
     super.initState();
@@ -86,10 +86,13 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     });
   }
 
-  Widget listViewWidget(String docId, String img, String userImg, String name,
+  Widget pageViewWidget(String docId, String img, String userImg, String name,
       DateTime date, String userId, int downloads, int viewCount, String postId,
       List<String>? likes, List<String>? viewers, String description,
       List<String>? downloaders) {
+
+    Image image = Image(image: CachedNetworkImageProvider(img), fit: BoxFit.cover);
+    precacheImage(image.image, context);
 
     return Padding(
       padding: const EdgeInsets.all (8.0),
@@ -108,8 +111,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                     borderRadius: BorderRadius.circular(10), // Image border
                     child: SizedBox.fromSize(
                         size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image radius
-                        child: Image(image: CachedNetworkImageProvider(img), fit: BoxFit.cover)
-                        //Image.network(img, fit: BoxFit.cover)
+                        child: image
                     ),
                   )
               ),
@@ -120,10 +122,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                       Navigator.push(context, MaterialPageRoute(builder: (_) =>
                           UsersSpecificPostsScreen(userId: docId, userName: name,)));
                     },
-                    child: CircleAvatar(
-                      radius: 35,
+                    child: CircleAvatar(radius: 35,
                       backgroundImage: CachedNetworkImageProvider(userImg)
-                      //NetworkImage(userImg,),
                     )
                 ),
                 Padding(padding: const EdgeInsets.all(10.0),
@@ -278,16 +278,17 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
             }
             else if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.data!.docs.isNotEmpty) {
-                return PageView.builder(
+                return PreloadPageView.builder(
                   physics: const BouncingScrollPhysics(),
+                  preloadPagesCount: 5,
                   scrollDirection: Axis.vertical,
-                  controller: _pageController,
+                  controller: PreloadPageController(initialPage: 1),
                   itemCount: snapshot.data!.docs.length,
-                  allowImplicitScrolling: true,
                   itemBuilder: (BuildContext context, int index) {
 
                     Post post = Post.getPost(snapshot, index, PostType.image);
-                    return listViewWidget(post.id, post.source, post.userImage,
+
+                    return pageViewWidget(post.id, post.source, post.userImage,
                         post.userName, post.createdAt, post.email, post.downloads,
                         post.viewCount, post.postId, post.likes, post.viewers,
                         post.description, post.downloaders);
