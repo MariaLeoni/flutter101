@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
-import 'package:sharedstudent1/home_screen/videoProvider.dart';
+import 'package:sharedstudent1/vidlib/videoProvider.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import '../chat/socialHomeScreen.dart';
 import '../notification/server.dart';

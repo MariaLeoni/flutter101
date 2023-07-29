@@ -9,7 +9,6 @@ import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../search_post/users_specifics_page.dart';
-import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/ssbadge.dart';
 import 'home.dart';
 import 'post.dart';
@@ -33,7 +32,6 @@ class VideoHomeScreen extends StatefulWidget {
 }
 
 class VideoHomeScreenState extends State<VideoHomeScreen> {
-  bool checkView = false;
   int activityCount  = 0;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -62,7 +60,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 children: [
                   SizedBox.fromSize(
                       size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image border
-                      child:  ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
+                      child: buildVideoPlayer(vid)
+                      //ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
                   ),
                   const SizedBox(height: 15.0,),
                   Padding(
@@ -247,6 +246,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
           else if (snapshot.connectionState == ConnectionState.active) {
             if(snapshot.data!.docs.isNotEmpty) {
 
+
               return PreloadPageView.builder(
                 preloadPagesCount: 5,
                 physics: const BouncingScrollPhysics(),
@@ -256,6 +256,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 itemBuilder: (BuildContext context, int index) {
 
                   Post post = Post.getPost(snapshot, index, PostType.video);
+
                   return pageViewWidget(post.id, post.source, post.userImage,
                       post.userName, post.createdAt, post.email,
                       post.downloads, post.postId, post.likes, post.description);

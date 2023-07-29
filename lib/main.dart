@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:isolate';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import  'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:sharedstudent1/vidlib/blocWork/appBloc.dart';
 import 'home_screen/home.dart';
 import 'notification/server.dart';
 
@@ -16,9 +17,10 @@ void main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
     Firebase.initializeApp().whenComplete(() {
-
       // Pass all uncaught errors from the framework to Crashlytics.
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+      Bloc.observer = const AppBlocObserver();
       runApp(const MyApp());
     });
 

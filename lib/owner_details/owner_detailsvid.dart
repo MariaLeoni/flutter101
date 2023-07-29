@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/owner_details/userListScreen.dart';
 import 'package:uuid/uuid.dart';
 import '../home_screen/home.dart';
@@ -14,7 +13,6 @@ import '../misc/global.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../search_post/users_specifics_page.dart';
-import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import '../widgets/ssbadge.dart';
@@ -86,7 +84,6 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     else {
       Fluttertoast.showToast(msg: "You liked this video!");
       addLikeToActivityFeed();
-      //sendNotification("Liked your post");
       widget.likes!.add(userId!);
     }
 
@@ -128,9 +125,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
 
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: name,
-      body: "Liked your post",
-      // dataTitle: "Should be post description"
-    );
+      body: "Liked your post",);
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
@@ -140,7 +135,6 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
       child: const Text("OK"),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
-        print('tap negative button');
       },
     );
 
@@ -175,6 +169,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     }
     });
   }
+
   void getDataFromDatabase2() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId)
@@ -291,7 +286,8 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                   Column(
                     children: [
                       AspectRatio(aspectRatio: 4/3,
-                          child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
+                          child: buildVideoPlayer(widget.vid!)
+                          //ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
                       ),
                       const SizedBox(height: 30.0,),
                       Padding(
