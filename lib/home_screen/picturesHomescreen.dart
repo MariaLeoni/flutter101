@@ -44,7 +44,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   late String currentToken;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
   Size? size;
-  
+
   @override
   void initState() {
     super.initState();

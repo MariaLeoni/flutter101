@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -166,7 +167,7 @@ class MoodWidgetState extends State<MoodWidget> {
                   child: SizedBox.fromSize(
                       size: Size(500.0, size == null ? 400 : size!.height * 0.5),
                       // Image radius
-                      child: Image.network(widget.moodModel.content, fit: BoxFit.cover)
+                      child: Image(image: CachedNetworkImageProvider(widget.moodModel.content), fit: BoxFit.cover)
                   ),
                 ) :
                 messageBubble(chatContent: widget.moodModel.content,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -244,8 +245,7 @@ class ChatListScreenState extends State<ChatListScreen> {
                 )));
           },
           child: ListTile(leading: userChat.photoUrl.isNotEmpty ? ClipRRect(borderRadius: BorderRadius.circular(Sizes.dimen_30),
-            child: Image.network(userChat.photoUrl,
-              fit: BoxFit.cover, width: 50, height: 50,
+            child: Image(image: CachedNetworkImageProvider(userChat.photoUrl), fit: BoxFit.cover, width: 50, height: 50,
               loadingBuilder: (BuildContext ctx, Widget child,
                   ImageChunkEvent? loadingProgress) {
                 if (loadingProgress == null) {
