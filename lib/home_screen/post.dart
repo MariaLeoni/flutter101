@@ -75,4 +75,15 @@ class Post {
         downloaders: List.empty(),
     );
   }
+
+  static String getPostUrl(PostType type, QuerySnapshot snapshot){
+    String postSource = "";
+    if (type == PostType.image){
+      postSource = snapshot.docs.first.get("Image");
+    }
+    else {
+      postSource = snapshot.docs.first.get('video');
+    }
+    return postSource;
+  }
 }

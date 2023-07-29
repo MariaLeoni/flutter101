@@ -1,24 +1,22 @@
-import 'dart:io';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class ChewieVideoWidget extends StatefulWidget {
+class ChewieVideoWidgetWithController extends StatefulWidget {
 
+  final VideoPlayerController videoPlayerController;
   final bool autoPlayAndFullscreen;
-  final String url;
-  final File? file;
 
-  const ChewieVideoWidget({Key? key, required this.url, required this.autoPlayAndFullscreen, required this.file}) : super(key: key);
+  const ChewieVideoWidgetWithController({Key? key, required this.videoPlayerController,
+    required this.autoPlayAndFullscreen}) : super(key: key);
 
   @override
   VideoWidgetState createState() => VideoWidgetState();
 }
 
 
-class VideoWidgetState extends State<ChewieVideoWidget> {
-  late VideoPlayerController videoPlayerController ;
+class VideoWidgetState extends State<ChewieVideoWidgetWithController> {
+  late VideoPlayerController videoPlayerController;
   late Future<void> _initializeVideoPlayerFuture;
   late ChewieController _chewieController;
   double aspectRatio = 0.0;
@@ -26,12 +24,8 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
   @override
   void initState() {
 
-    if (widget.file != null){
-      videoPlayerController = VideoPlayerController.file(widget.file!);
-    }
-    else{
-      videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.url));
-    }
+    videoPlayerController = widget.videoPlayerController;
+
     _initializeVideoPlayerFuture = videoPlayerController.initialize().then((value) {
       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
       setState(() {
@@ -79,7 +73,6 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Chewie(
-            key: PageStorageKey(widget.url),
             controller: _chewieController,
           );
         }
