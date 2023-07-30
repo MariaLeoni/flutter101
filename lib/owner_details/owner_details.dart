@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -56,12 +57,13 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
   String? userId;
   String? name;
   String? userImage;
-  String?image;
+  String? image;
   String? tokens;
   String? token;
   NotificationManager? notificationManager;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String activityId = const Uuid().v4();
+  late Image photo;
 
   void getDataFromDatabase() async {
     await FirebaseFirestore.instance.collection("users").doc(userId)
@@ -119,6 +121,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
     getDataFromDatabase();
     getDataFromDatabase2();
     notificationManager = NotificationManager();
+    photo = Image(image: CachedNetworkImageProvider(widget.img!), fit: BoxFit.cover);
   }
 
   addLikeToActivityFeed() {
@@ -192,7 +195,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       child: const Text("OK"),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
-        print('tap negative button');
       },
     );
 
@@ -310,10 +312,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
           children: [
             Column(
               children: [
-                Image.network(
-                  widget.img!,
-                  width: MediaQuery.of(context).size.width,
-                ),
+                photo,
                 const SizedBox(height: 7.0,),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
@@ -328,8 +327,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                               )));
                             },
                             child: CircleAvatar(radius:35,
-                              backgroundImage: NetworkImage(
-                                widget.userImg!,),
+                              backgroundImage: CachedNetworkImageProvider(widget.userImg!),
                             )
                         ),
                         Padding(padding: const EdgeInsets.all(10.0),
