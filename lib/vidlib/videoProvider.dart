@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:sharedstudent1/home_screen/post.dart';
 import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/vidlib/videoControllerService.dart';
 
 class VideoProvider{
 
   final FirebaseFirestore firebaseFirestore;
+  final cacheSystem = CachedVideoControllerService(DefaultCacheManager());
 
   VideoProvider({required this.firebaseFirestore});
 
@@ -19,6 +22,7 @@ class VideoProvider{
     else {
       videoStream.forEach((element) {
         String postUrl = Post.getPostUrl(PostType.video, element);
+        cacheSystem.cacheFileForUrl(postUrl);
         print("Video Url $postUrl");
       });
     }
