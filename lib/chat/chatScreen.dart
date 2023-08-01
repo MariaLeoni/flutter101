@@ -148,19 +148,6 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  // Future getVideo(ImageSource source) async {
-  //   ImagePicker imagePicker = ImagePicker();
-  //   XFile? pickedFile = await imagePicker.pickVideo(source: source);
-  //   if (pickedFile != null) {
-  //     mediaFile = File(pickedFile.path);
-  //     if (mediaFile != null) {
-  //       setState(() {
-  //         isLoading = true;
-  //       });
-  //       uploadFile(PostType.video);
-  //     }
-  //   }
-  // }
   Future getVideo(ImageSource source) async {
     if(source == ImageSource.camera) {
       await requestPermission(Permission.camera, (permissionStatus) async{

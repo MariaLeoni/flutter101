@@ -14,7 +14,6 @@ import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../search.dart';
 import '../owner_details/owner_details.dart';
-import '../search_post/users_specific_posts.dart';
 import '../search_post/users_specifics_page.dart';
 import '../widgets/ssbadge.dart';
 
