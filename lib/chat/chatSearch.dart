@@ -65,11 +65,11 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.black,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.red.shade800, Colors.red,],
+              colors: [Colors.black, Colors.black,],
             ),
           ),
         ),
@@ -83,7 +83,7 @@ class _SearchPageState extends State<SearchPage> {
             hintStyle: const TextStyle(color: Colors.white54),
             border: InputBorder.none,
             suffixIcon: IconButton(icon: const Icon(Icons.search, color: Colors.white,),
-              onPressed: () {  },
+              onPressed: () {},
             ),
           ),
         ),
@@ -102,7 +102,7 @@ class _SearchPageState extends State<SearchPage> {
               }).toList();
             }
 
-            return snapshot.hasData ? Container(color: Colors.red,
+            return snapshot.hasData ? Container(color: Colors.black,
                 child: ListView.builder(itemCount: groupDocumentList?.length, itemBuilder: (context, index) {
                   Groups model = Groups.fromJson(snapshot.data!.docs[index].data()! as Map<String, dynamic>);
                   return SearchGroupTile(model: model, context: context,);
@@ -124,15 +124,15 @@ class _SearchPageState extends State<SearchPage> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       leading: CircleAvatar(
         radius: 30,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.red.shade900,
         child: Text(
           model.groupName!.substring(0, 1).toUpperCase(),
           style: const TextStyle(color: Colors.white),
         ),
       ),
       title:
-      Text(model.groupName!, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text("Admin: ${getName(model.admin!)}"),
+      Text(model.groupName!, style: const TextStyle(fontWeight: FontWeight.w600, color:Colors.white)),
+      subtitle: Text("Admin: ${getName(model.admin!)}", style: TextStyle(color:Colors.white),),
       trailing: InkWell(
         onTap: () async {
           await databaseService.toggleGroupJoin(model.groupId!, userName, model.groupName!);
@@ -157,13 +157,13 @@ class _SearchPageState extends State<SearchPage> {
         },
         child: isJoined ? Container(decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.black, border: Border.all(color: Colors.white, width: 1),
+          color: Colors.red.shade900, border: Border.all(color: Colors.white, width: 1),
         ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: const Text("Joined", style: TextStyle(color: Colors.white),),
         ) : Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).primaryColor,
+            color: Colors.blue.shade900,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: const Text("Join Now", style: TextStyle(color: Colors.white)),

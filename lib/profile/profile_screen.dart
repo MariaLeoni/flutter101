@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import '../categoryView.dart';
 import '../home_screen/home.dart';
@@ -107,21 +108,35 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   void getFromCamera() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.camera);
-    cropImage(pickedFile!.path);
+    await requestPermission(Permission.camera, (permissionStatus) async{
+      if (permissionGranted(permissionStatus)) {
+        XFile? pickedFile = await ImagePicker().pickImage(
+            source: ImageSource.camera);
+        cropImage(pickedFile!.path);
 
-    if (!mounted) return;
-    Navigator.pop(context);
+        if (!mounted) return;
+        Navigator.pop(context);
+      }
+      else{
+        openAppSettings();
+      }
+    });
   }
 
   void getFromGallery() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery);
-    cropImage(pickedFile!.path);
+    await requestPermission(Permission.storage, (permissionStatus) async {
+      if (permissionGranted(permissionStatus)) {
+        XFile? pickedFile = await ImagePicker().pickImage(
+            source: ImageSource.gallery);
+        cropImage(pickedFile!.path);
 
-    if (!mounted) return;
-    Navigator.pop(context);
+        if (!mounted) return;
+        Navigator.pop(context);
+      }
+      else{
+        openAppSettings();
+      }
+    });
   }
 
   void cropImage(filePath) async {
@@ -221,6 +236,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       if (value == null || value.isEmpty) {
         interests.remove(key);
       }
+      Fluttertoast.showToast(msg: 'Your selected interests has been updated');
     });
     this.interests = interests;
   }

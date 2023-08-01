@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags_x/flutter_tags_x.dart';
+import 'package:sharedstudent1/vidlib/videoProvider.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import '../chat/socialHomeScreen.dart';
 import '../notification/server.dart';
@@ -33,6 +34,8 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
 
   Random random = Random();
 
+  late VideoProvider videoProvider;
+
   readUserInfo() async {
     fireStore.collection('users').doc(auth.currentUser!.uid).get()
         .then<dynamic>((DocumentSnapshot snapshot) {
@@ -57,6 +60,9 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
     super.initState();
     readUserInfo();
 
+    videoProvider = VideoProvider(firebaseFirestore: fireStore);
+    videoProvider.getAndCacheVideos("random");
+
     NotificationManager().initServer();
   }
 
@@ -68,6 +74,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
+
     return (myInterests == null || myInterests!.isEmpty) ? PictureHomeScreen.forCategory(category: "random",) :
     Scaffold(
         appBar: AppBar(
@@ -154,6 +161,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
             textStyle: TextStyle(fontSize: fontSize),
             onPressed: (item) {
               selectedInterest = item.title!;
+              videoProvider.getAndCacheVideos(selectedInterest);
               Navigator.push(context, MaterialPageRoute(builder: (_) =>
                   PictureHomeScreen.forCategory(category: selectedInterest,)));
             }

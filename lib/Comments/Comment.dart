@@ -193,7 +193,6 @@ class CommentState extends State<Comment> {
       gettagToken();
 
     }
-
     addCommentTaggingToActivityFeed();
 
     sendNotification("commented on your post");

@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
@@ -12,6 +15,12 @@ import 'package:sharedstudent1/vidlib/VideoListData.dart';
 import 'package:video_compress/video_compress.dart';
 import '../search_post/user.dart';
 import 'package:http/http.dart' as http;
+
+import '../vidlib/blocWork/video_player_bloc.dart';
+import '../vidlib/blocWork/video_player_events.dart';
+import '../vidlib/blocWork/video_player_state.dart';
+import '../vidlib/chewieVideoWidgetWithController.dart';
+import '../vidlib/videoControllerService.dart';
 
 Future<File> getImageFileFromAssets(String path) async {
   Directory tempDir = await getTemporaryDirectory();
@@ -172,5 +181,34 @@ bool permissionGranted(PermissionStatus permissionStatus){
   else {
     return false;
   }
+}
+
+Widget buildVideoPlayer(String video) {
+  return BlocProvider<VideoPlayerBloc>(
+    create: (context) => VideoPlayerBloc(videoControllerService: CachedVideoControllerService(DefaultCacheManager()))..add(VideoSelectedEvent(video)),
+    child: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(
+      builder: (context, state){
+        if (state is VideoPlayerStateLoaded) {
+          return ChewieVideoWidgetWithController(videoPlayerController: state.controller, autoPlayAndFullscreen: false,);
+        }
+
+        if (state is VideoPlayerStateError){
+          return const Center(
+              child: Text('Something went wrong',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
+              )
+          );
+        }
+        return Container(height: 200,
+          color: Colors.grey,
+          child: const Center(
+            child: Text('Loading video...',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }
 

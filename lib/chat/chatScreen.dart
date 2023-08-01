@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sharedstudent1/chat/fullImageView.dart';
 import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/misc/progressIndicator.dart';
@@ -103,31 +104,103 @@ class ChatScreenState extends State<ChatScreen> {
 
   }
 
+
   Future getImage(ImageSource source) async {
-    ImagePicker imagePicker = ImagePicker();
-    XFile? pickedFile = await imagePicker.pickImage(source: source);
-    if (pickedFile != null) {
-      mediaFile = File(pickedFile.path);
-      if (mediaFile != null) {
-        setState(() {
-          isLoading = true;
-        });
-        uploadFile(PostType.image);
-      }
+    if(source == ImageSource.camera) {
+      await requestPermission(Permission.camera, (permissionStatus) async{
+        if (permissionGranted(permissionStatus)){
+          ImagePicker imagePicker = ImagePicker();
+          XFile? pickedFile = await imagePicker.pickImage(source: source);
+          if (pickedFile != null) {
+            mediaFile = File(pickedFile.path);
+            if (mediaFile != null) {
+              setState(() {
+                isLoading = true;
+              });
+              uploadFile(PostType.image);
+            }
+          }
+        }
+        else{
+          openAppSettings();
+        }
+      });
+    }
+    else{
+      await requestPermission(Permission.storage, (permissionStatus) async {
+        if (permissionGranted(permissionStatus)) {
+          ImagePicker imagePicker = ImagePicker();
+          XFile? pickedFile = await imagePicker.pickImage(source: source);
+          if (pickedFile != null) {
+            mediaFile = File(pickedFile.path);
+            if (mediaFile != null) {
+              setState(() {
+                isLoading = true;
+              });
+              uploadFile(PostType.image);
+            }
+          }
+        }
+        else{
+          openAppSettings();
+        }
+      });
     }
   }
 
+  // Future getVideo(ImageSource source) async {
+  //   ImagePicker imagePicker = ImagePicker();
+  //   XFile? pickedFile = await imagePicker.pickVideo(source: source);
+  //   if (pickedFile != null) {
+  //     mediaFile = File(pickedFile.path);
+  //     if (mediaFile != null) {
+  //       setState(() {
+  //         isLoading = true;
+  //       });
+  //       uploadFile(PostType.video);
+  //     }
+  //   }
+  // }
   Future getVideo(ImageSource source) async {
-    ImagePicker imagePicker = ImagePicker();
-    XFile? pickedFile = await imagePicker.pickVideo(source: source);
-    if (pickedFile != null) {
-      mediaFile = File(pickedFile.path);
-      if (mediaFile != null) {
-        setState(() {
-          isLoading = true;
-        });
-        uploadFile(PostType.video);
-      }
+    if(source == ImageSource.camera) {
+      await requestPermission(Permission.camera, (permissionStatus) async{
+        if (permissionGranted(permissionStatus)){
+          ImagePicker imagePicker = ImagePicker();
+          XFile? pickedFile = await imagePicker.pickVideo(source: source);
+          if (pickedFile != null) {
+            mediaFile = File(pickedFile.path);
+            if (mediaFile != null) {
+              setState(() {
+                isLoading = true;
+              });
+              uploadFile(PostType.video);
+            }
+          }
+        }
+        else{
+          openAppSettings();
+        }
+      });
+    }
+    else{
+      await requestPermission(Permission.storage, (permissionStatus) async {
+        if (permissionGranted(permissionStatus)) {
+          ImagePicker imagePicker = ImagePicker();
+          XFile? pickedFile = await imagePicker.pickVideo(source: source);
+          if (pickedFile != null) {
+            mediaFile = File(pickedFile.path);
+            if (mediaFile != null) {
+              setState(() {
+                isLoading = true;
+              });
+              uploadFile(PostType.video);
+            }
+          }
+        }
+        else{
+          openAppSettings();
+        }
+      });
     }
   }
 

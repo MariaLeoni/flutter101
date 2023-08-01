@@ -1,4 +1,5 @@
-import 'dart:html';
+
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -118,8 +119,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
 
     userId = _auth.currentUser!.uid;
 
-    print("Downloaders ${widget.downloaders}");
-
     getDataFromDatabase();
     getDataFromDatabase2();
     notificationManager = NotificationManager();
@@ -219,7 +218,47 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
       },
     );
   }
+  showAlertDialog1(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel"),
+      onPressed:  () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Ok"),
+      onPressed:  () {
+        FirebaseFirestore.instance.collection('wallpaper')
+            .doc(widget.postId).delete().then((value) {
+          Fluttertoast.showToast(msg: 'Your post has been deleted');
+          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> UsersProfilePage(
+            userId:widget.docId,
+            userName:widget.name,
+            userImage: widget.userImg,
+          )));
+        });
+      },
+    );
 
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      //title: Text("AlertDialog"),
+      content: const Text("Are you sure you want your post to be permanently deleted ?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     likesCount = (widget.likes?.length ?? 0);
@@ -252,7 +291,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
               )));
             }
           },
-          child:  IconButton(onPressed: () async {
+          child: IconButton(onPressed: () async {
             try{
               Dio dio = Dio();
               var fileNameDecoded = getFileName(widget.img!, PostType.image);
@@ -277,7 +316,7 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
             } on PlatformException catch (error) {
               print(error);
               ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(content: Text("Sorry, am unknown error occurred.")));
+                  .showSnackBar(const SnackBar(content: Text("Sorry, an unknown error occurred.")));
             }
           },
             icon: const Icon (
@@ -340,9 +379,18 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children:[
-                                  Text(widget.name!,
-                                    style: const TextStyle(color: Colors.white,
-                                        fontWeight: FontWeight.bold),),
+                                  GestureDetector(
+                                      onTap:(){
+                                        Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                                          userId:widget.docId,
+                                          userName:widget.name,
+                                          userImage: widget.userImg,
+                                        )));
+                                      },
+                                      child: Text(widget.name!,
+                                        style: const TextStyle(color: Colors.white,
+                                            fontWeight: FontWeight.bold),),
+                                  ),
                                   const SizedBox(height: 10.0),
                                   Text(
                                     DateFormat("dd MMM, yyyy - hh:mm a").format(widget.date!).toString(),
@@ -390,12 +438,21 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                         child:
                         IconButton(
                           onPressed: () async {
-                            if (widget.img == null) {
-                              return;
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(content: Text("Please wait...")));
-                            downloadAndShare(widget.img!, widget.description ?? "Shared from TheGist App", PostType.image);
+                            if (Platform.isIOS) {
+                              Share.share(widget.img!);
+                            }
+                            else {
+                              if (widget.img == null) {
+                                return;
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                    content: Text("Please wait...")));
+                                downloadAndShare(widget.img!,
+                                    widget.description ??
+                                        "Shared from TheGist App",
+                                    PostType.image);
+                              }
                             }
                           },
                           icon: const Icon(Icons.share, color: Colors.white),
@@ -405,26 +462,38 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                       Padding(padding: const EdgeInsets.only(left: 8.0, ),
                         child: likeText,
                       ),
+                      FirebaseAuth.instance.currentUser!.uid == widget.docId
+                          ?
+                      Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                        child:
+                        IconButton(
+                          onPressed: () async {
+                            showAlertDialog1(context);
+                          },
+                          icon: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                      ):
+                      Container(),
                     ],
                   ),
                 ),
-                const SizedBox(height: 50.0,),
-                FirebaseAuth.instance.currentUser!.uid == widget.docId
-                    ?
-                Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                    child: ButtonSquare(text:"Delete",
-                        colors1: Colors.black, colors2: Colors.black,
-                        press: () async {
-                          FirebaseFirestore.instance.collection('wallpaper')
-                              .doc(widget.postId).delete().then((value) {
-                            Fluttertoast.showToast(msg: 'Your post has been deleted');
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
-                          });
-                        }
-                    )
-                ):
-                Container(),
+                // const SizedBox(height: 50.0,),
+                // FirebaseAuth.instance.currentUser!.uid == widget.docId
+                //     ?
+                // Padding(
+                //     padding: const EdgeInsets.only(left: 8.0, right:8.0,),
+                //     child: ButtonSquare(text:"Delete",
+                //         colors1: Colors.black, colors2: Colors.black,
+                //         press: () async {
+                //           FirebaseFirestore.instance.collection('wallpaper')
+                //               .doc(widget.postId).delete().then((value) {
+                //             Fluttertoast.showToast(msg: 'Your post has been deleted');
+                //             Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
+                //           });
+                //         }
+                //     )
+                // ):
+                // Container(),
               ],
             ),
           ],

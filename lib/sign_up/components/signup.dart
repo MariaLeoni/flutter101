@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sharedstudent1/account_check/account_check.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:sharedstudent1/widgets/button_square.dart';
@@ -97,21 +98,32 @@ class _CredentialsState extends State<Credentials> {
   }
 
   void _getFromCamera() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.camera);
-    _cropImage(pickedFile!.path);
-    if (!mounted) return;
-    Navigator.pop(context);
+    await requestPermission(Permission.camera, (permissionStatus) async{
+      if (permissionGranted(permissionStatus)) {
+        XFile? pickedFile = await ImagePicker().pickImage(
+            source: ImageSource.camera);
+        _cropImage(pickedFile!.path);
+        if (!mounted) return;
+        Navigator.pop(context);
+      }
+      else{
+        openAppSettings();
+      }
+      });
   }
+
 
   void _getFromGallery() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery);
-    _cropImage(pickedFile!.path);
-    if (!mounted) return;
-    Navigator.pop(context);
+    await requestPermission(Permission.storage, (permissionStatus) async {
+      if (permissionGranted(permissionStatus)) {
+        XFile? pickedFile = await ImagePicker().pickImage(
+            source: ImageSource.gallery);
+        _cropImage(pickedFile!.path);
+        if (!mounted) return;
+        Navigator.pop(context);
+      }
+    });
   }
-
   void _cropImage(filePath) async {
     CroppedFile? croppedImage = await ImageCropper().cropImage
       (sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);

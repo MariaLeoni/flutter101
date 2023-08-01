@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../home_screen/home.dart';
+import '../home_screen/videosHomescreen.dart';
+import '../misc/userModel.dart';
 import '../profile/profile_screen.dart';
 import 'chatListScreen.dart';
 import 'groupChatHome.dart';
@@ -55,6 +57,13 @@ class SocialHomeScreenState extends State<SocialHomeScreen> {
                   Tab(icon: Icon(Icons.emoji_emotions_rounded),)
                 ],),
                 title: Text(pageTitle),
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) =>
+                        HomeScreen()));
+                  },
+                  icon: const Icon(Icons.arrow_back_ios),
+                ),
                 actions: [
                   IconButton(
                       onPressed: () {

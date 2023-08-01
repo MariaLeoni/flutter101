@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../search_post/users_specifics_page.dart';
-import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/ssbadge.dart';
 import 'home.dart';
 import 'post.dart';
@@ -31,80 +32,76 @@ class VideoHomeScreen extends StatefulWidget {
 }
 
 class VideoHomeScreenState extends State<VideoHomeScreen> {
-  bool checkView = false;
   int activityCount  = 0;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final PageController _pageController = PageController(initialPage: 0, keepPage: true);
 
   Size? size;
   String? name;
   String? image;
 
-  Widget listViewWidget1 (String docId, String vid, String userImg, String name,
+  Widget pageViewWidget (String docId, String vid, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
 
     return Padding(
-      padding: const EdgeInsets.all (8.0),
-      child: Card(
-          elevation: 16.0,
-          color: Colors.black,
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap:() {
-                  Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
-                    vid: vid, userImg: userImg, name: name, date: date, docId: docId,
-                    userId: userId, downloads: downloads, postId: postId, likes: likes,
-                    description: description,
-                  )));
-                },
-                child: SizedBox.fromSize(
-                    size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image border
-                    child:  ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
-                ),
-              ),
-              const SizedBox(height: 15.0,),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                child: Row(
-                    children:[
-                      GestureDetector(
-                          onTap:() {
-                            Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
-                              vid: vid, userImg: userImg, name: name, date: date, docId: docId,
-                              userId: userId, downloads: downloads, postId: postId, likes: likes,
-                              description: description,
-                            )));
-                          },
-                          child: CircleAvatar(
-                            radius: 35,
-                            backgroundImage: NetworkImage(
-                              userImg,
-                            ),
-                          )),
-                      const SizedBox(width: 10.0,),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children:[
-                            Text(
-                              name,
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10.0),
-                            Text(
-                              DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
-                              style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                            )
-                          ]
-                      )
-                    ]
-                ),
+        padding: const EdgeInsets.all (8.0),
+        child: GestureDetector(
+          onTap:() {
+            Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+              vid: vid, userImg: userImg, name: name, date: date, docId: docId,
+              userId: userId, downloads: downloads, postId: postId, likes: likes,
+              description: description,
+            )));
+          },
+          child: Card(
+              elevation: 16.0,
+              color: Colors.black,
+              child: Column(
+                children: [
+                  SizedBox.fromSize(
+                      size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image border
+                      child: buildVideoPlayer(vid)
+                      //ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
+                  ),
+                  const SizedBox(height: 15.0,),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                    child: Row(
+                        children:[
+                          GestureDetector(
+                              onTap:() {
+                                Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+                                  vid: vid, userImg: userImg, name: name, date: date, docId: docId,
+                                  userId: userId, downloads: downloads, postId: postId, likes: likes,
+                                  description: description,
+                                )));
+                              },
+                              child: CircleAvatar(
+                                radius: 35,
+                                backgroundImage: CachedNetworkImageProvider(userImg),
+                              )),
+                          const SizedBox(width: 10.0,),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:[
+                                Text(
+                                  name,
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 10.0),
+                                Text(
+                                  DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
+                                  style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                                )
+                              ]
+                          )
+                        ]
+                    ),
+                  )
+                ],
               )
-            ],
-          )
-      ),
-    );
+          ),
+        ));
   }
 
   @override
@@ -137,7 +134,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     final query = collection.where("Read Status", isEqualTo: false);
     final countQuery = query.count();
     final AggregateQuerySnapshot snapshot = await countQuery.get();
-    debugPrint("Count: ${snapshot.count}");
     activityCount = snapshot.count;
   }
 
@@ -175,7 +171,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               heroTag: "1",
               backgroundColor: Colors.transparent,
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video)));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video, user:widget.user, category: widget.category)));
               },
               child:
               const ImageIcon(AssetImage('assets/images/ttent.png'),
@@ -250,15 +246,18 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
           else if (snapshot.connectionState == ConnectionState.active) {
             if(snapshot.data!.docs.isNotEmpty) {
 
-              return PageView.builder(
+
+              return PreloadPageView.builder(
+                preloadPagesCount: 5,
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.vertical,
-                controller: _pageController,
+                controller: PreloadPageController(initialPage: 1),
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (BuildContext context, int index) {
 
                   Post post = Post.getPost(snapshot, index, PostType.video);
-                  return listViewWidget1(post.id, post.source, post.userImage,
+
+                  return pageViewWidget(post.id, post.source, post.userImage,
                       post.userName, post.createdAt, post.email,
                       post.downloads, post.postId, post.likes, post.description);
                 },

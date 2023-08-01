@@ -1,3 +1,6 @@
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +17,6 @@ import '../misc/global.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import '../search_post/users_specifics_page.dart';
-import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/button_square.dart';
 import 'package:sharedstudent1/Comments/Comment.dart';
 import '../widgets/ssbadge.dart';
@@ -86,7 +88,6 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     else {
       Fluttertoast.showToast(msg: "You liked this video!");
       addLikeToActivityFeed();
-      //sendNotification("Liked your post");
       widget.likes!.add(userId!);
     }
 
@@ -128,9 +129,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
 
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: name,
-      body: "Liked your post",
-      // dataTitle: "Should be post description"
-    );
+      body: "Liked your post",);
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
@@ -140,7 +139,6 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
       child: const Text("OK"),
       onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
-        print('tap negative button');
       },
     );
 
@@ -175,6 +173,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     }
     });
   }
+
   void getDataFromDatabase2() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId)
@@ -186,7 +185,47 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
     }
     });
   }
+  showAlertDialog1(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel"),
+      onPressed:  () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Ok"),
+      onPressed:  () {
+        FirebaseFirestore.instance.collection('wallpaper2')
+            .doc(widget.postId).delete().then((value) {
+          Fluttertoast.showToast(msg: 'Your post has been deleted');
+          Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> UsersProfilePage(
+            userId:widget.docId,
+            userName:widget.name,
+            userImage: widget.userImg,
+          )));
+        });
+      },
+    );
 
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      //title: Text("AlertDialog"),
+      content: const Text("Are you sure you want your post to be permanently deleted ?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -291,7 +330,8 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                   Column(
                     children: [
                       AspectRatio(aspectRatio: 4/3,
-                          child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
+                          child: buildVideoPlayer(widget.vid!)
+                          //ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
                       ),
                       const SizedBox(height: 30.0,),
                       Padding(
@@ -314,13 +354,23 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                                     child:Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children:[
-                                        Text(widget.name!,
-                                          style: const TextStyle(
-                                            fontSize: 18.0,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                        GestureDetector(
+                                            onTap:(){
+                                              Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                                                userId:widget.docId,
+                                                userName:widget.name,
+                                                userImage: widget.userImg,
+                                              )));
+                                            },
+                                            child:  Text(widget.name!,
+                                              style: const TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            ),
+
                                         const SizedBox(height: 10.0,),
                                         Text(DateFormat("dd MMM, yyyy - hh:mm a"). format(widget.date!).toString(),
                                             style: const TextStyle( color: Colors.white, fontWeight: FontWeight.bold,)
@@ -352,12 +402,21 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
                               child: IconButton(
                                 onPressed: () async {
-                                  if (widget.vid == null) {
-                                    return;
-                                  } else {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(const SnackBar(content: Text("Please wait...")));
-                                    downloadAndShare(widget.vid!, widget.description ?? "Shared from TheGist App", PostType.video);
+                                  if (Platform.isIOS) {
+                                    Share.share(widget.vid!);
+                                  }
+                                  else {
+                                    if (widget.vid == null) {
+                                      return;
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                          content: Text("Please wait...")));
+                                      downloadAndShare(widget.vid!,
+                                          widget.description ??
+                                              "Shared from TheGist App",
+                                          PostType.video);
+                                    }
                                   }
                                 },
                                 icon: const Icon(Icons.share, color: Colors.white),
@@ -377,26 +436,21 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                             ),
                             Padding(padding: const EdgeInsets.only(left: 8.0, ),
                               child:
-                              likeText,)
+                              likeText,),
+                            FirebaseAuth.instance.currentUser!.uid == widget.docId
+                                ?
+                            Padding(padding: const EdgeInsets.only(left: 8.0, ),
+                              child:
+                              IconButton(
+                                onPressed: () async {
+                                  showAlertDialog1(context);
+                                },
+                                icon: const Icon(Icons.delete, color: Colors.white),
+                              ),
+                            ):
+                            Container(),
                           ],
                         ),),
-                      const SizedBox(height: 50.0,),
-                      FirebaseAuth.instance.currentUser!.uid == widget.docId  ?
-                      Padding(padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                          child: ButtonSquare(text:"Delete",
-                              colors1: Colors.black,
-                              colors2: Colors.black,
-
-                              press: () async {
-                                FirebaseFirestore.instance.collection('wallpaper')
-                                    .doc(widget.postId).delete().then((value) {
-                                  Fluttertoast.showToast(msg: 'Your post has been deleted');
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
-                                });
-                              }
-                          )
-                      ):
-                      Container(),
                     ],
                   ),
                 ])

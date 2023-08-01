@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sharedstudent1/chat/socialHomeScreen.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
 import 'DatabasService.dart';
 import '../chat/groupChatHome.dart';
@@ -84,7 +85,7 @@ class _GroupInfoState extends State<GroupInfo> {
                                   getName(widget.adminName!),
                                   widget.groupName!)
                                   .whenComplete(() {
-                                nextScreenReplace(context,  GroupChatHome());
+                                nextScreenReplace(context,  SocialHomeScreen());
                               });
                             },
                             icon: const Icon(

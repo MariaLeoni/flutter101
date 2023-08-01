@@ -10,14 +10,20 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:uuid/uuid.dart';
 import '../categoryView.dart';
+import '../chat/chatWidgets.dart';
+import '../home_screen/picturesHomescreen.dart';
+import '../home_screen/videosHomescreen.dart';
 import '../misc/progressIndicator.dart';
+import '../misc/userModel.dart';
 import '../vidlib/chewieVideoWidget.dart';
 import '../widgets/input_field.dart';
 
 class PostUploader extends StatefulWidget {
 
   PostType? postType;
-  PostUploader({super.key, this.postType,});
+  String category = "";
+  UserWithNameAndId? user;
+  PostUploader({super.key, this.postType, required this.category, this.user });
 
   @override
   State<PostUploader> createState() => PostUploaderState();
@@ -273,6 +279,7 @@ class PostUploaderState extends State<PostUploader> {
   }
 
   void uploadPost() async {
+
     interests.forEach((key, value) {
       if (value != null) {
         selectedInterests.addAll(value);
@@ -288,6 +295,16 @@ class PostUploaderState extends State<PostUploader> {
       LoadingIndicatorDialog().show(context);
 
       if (widget.postType == PostType.video){
+        if (widget.user == null){
+          Navigator.push(context, MaterialPageRoute(builder: (_) =>
+              VideoHomeScreen.forCategory(category: widget.category,),),);
+        }
+        else{
+          Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+        }
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Your video is being uploaded...")));
+
         final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}.mp4');
         uploadVideoFile = await getProcessedFile(videoFile) ?? uploadVideoFile;
 
@@ -297,8 +314,27 @@ class PostUploaderState extends State<PostUploader> {
           postUrl = path;
           postVideo();
         });
+        if (widget.user == null){
+          Navigator.push(context, MaterialPageRoute(builder: (_) =>
+              VideoHomeScreen.forCategory(category: widget.category,),),);
+        }
+        else{
+          Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+        }
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Your video has been uploaded")));
+
       }
       else if (widget.postType == PostType.image){
+        if (widget.user == null){
+          Navigator.push(context, MaterialPageRoute(builder: (_) =>
+              PictureHomeScreen.forCategory(category: widget.category,),),);
+        }
+        else{
+          Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: widget.user,)));
+        }
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Your image is being uploaded...")));
         final ref = FirebaseStorage.instance.ref().child('userImages')
             .child('${DateTime.now()}jpg');
         await ref.putFile(imageFile!);
@@ -307,6 +343,15 @@ class PostUploaderState extends State<PostUploader> {
           postUrl = path;
           postPicture();
         });
+        if (widget.user == null){
+          Navigator.push(context, MaterialPageRoute(builder: (_) =>
+              PictureHomeScreen.forCategory(category: widget.category,),),);
+        }
+        else{
+          Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: widget.user,)));
+        }
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Your image has been uploaded")));
       }
       else {
         ScaffoldMessenger.of(context)
@@ -348,24 +393,26 @@ class PostUploaderState extends State<PostUploader> {
                     onTap:() {
                       showAlert();
                     },
-                    child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/Capuss.png")) :
+                    child: widget.postType == PostType.video ? (videoFile == null ? SizedBox (height: 100, child: Image.asset("assets/images/TheGist.png")) :
                     SizedBox.fromSize(size: const Size(500.0,  400), // Image border
                         child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: videoFile!.path, file: videoFile,)
-                    )) : (imageFile == null ? Image.asset("assets/images/Capuss.png", height:410,) :
+                    )) : (imageFile == null ? Image.asset("assets/images/TheGist.png", height:410,) :
                     Image.file(imageFile!, height: 350,))),
                 Flexible(child: CategoryView(interestCallback: (Map<String, List<String>?> interests) {
                   updateInterests(interests);
                 }, isEditable: false,)
                 ),
                 SizedBox.fromSize(size: const Size(350.0,  80),
-                    child: InputField(
-                      textEditingController: commentController, hintText: "Add a title...", icon: Icons.post_add,
-                      obscureText: false,)
+                    child:
+                    InputField(
+                      textEditingController: commentController, hintText: "Add a description...", icon: Icons.post_add,
+                       obscureText: false,
+                    )
                 ),
                 const SizedBox(height: 10.0,),
                 ElevatedButton(
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red.shade900),
                       minimumSize: MaterialStateProperty.all(const Size(150, 50))
                   ),
                   onPressed: uploadPost,

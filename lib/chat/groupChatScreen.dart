@@ -190,6 +190,7 @@ class _ChatPageState extends State<ChatPage> {
 
   sendMessage() {
     if (messageController.text.isNotEmpty) {
+
       Map<String, dynamic> chatMessageMap = {
         "message": messageController.text,
         "sender": widget.userName,
@@ -197,13 +198,12 @@ class _ChatPageState extends State<ChatPage> {
         "senderImg": widget.userImage,
         "senderId": widget.userId,
       };
-
+      sendNotification(messageController.text);
+      messageController.clear();
       DatabaseService().sendMessage(widget.groupId, chatMessageMap);
       sendNotification(messageController.text);
-      setState(() {
-        messageController.clear();
-      });
 
     }
+    messageController.clear();
   }
 }
