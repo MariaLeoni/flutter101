@@ -10,7 +10,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:uuid/uuid.dart';
 import '../categoryView.dart';
-import '../chat/chatWidgets.dart';
 import '../home_screen/picturesHomescreen.dart';
 import '../home_screen/videosHomescreen.dart';
 import '../misc/progressIndicator.dart';
@@ -295,6 +294,9 @@ class PostUploaderState extends State<PostUploader> {
       LoadingIndicatorDialog().show(context);
 
       if (widget.postType == PostType.video){
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Your video is being uploaded...")));
+
         if (widget.user == null){
           Navigator.push(context, MaterialPageRoute(builder: (_) =>
               VideoHomeScreen.forCategory(category: widget.category,),),);
@@ -302,8 +304,6 @@ class PostUploaderState extends State<PostUploader> {
         else{
           Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
         }
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Your video is being uploaded...")));
 
         final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}.mp4');
         uploadVideoFile = await getProcessedFile(videoFile) ?? uploadVideoFile;
@@ -314,18 +314,11 @@ class PostUploaderState extends State<PostUploader> {
           postUrl = path;
           postVideo();
         });
-        if (widget.user == null){
-          Navigator.push(context, MaterialPageRoute(builder: (_) =>
-              VideoHomeScreen.forCategory(category: widget.category,),),);
-        }
-        else{
-          Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
-        }
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Your video has been uploaded")));
-
       }
       else if (widget.postType == PostType.image){
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Your image is being uploaded...")));
+
         if (widget.user == null){
           Navigator.push(context, MaterialPageRoute(builder: (_) =>
               PictureHomeScreen.forCategory(category: widget.category,),),);
@@ -333,8 +326,7 @@ class PostUploaderState extends State<PostUploader> {
         else{
           Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: widget.user,)));
         }
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Your image is being uploaded...")));
+
         final ref = FirebaseStorage.instance.ref().child('userImages')
             .child('${DateTime.now()}jpg');
         await ref.putFile(imageFile!);
@@ -343,15 +335,6 @@ class PostUploaderState extends State<PostUploader> {
           postUrl = path;
           postPicture();
         });
-        if (widget.user == null){
-          Navigator.push(context, MaterialPageRoute(builder: (_) =>
-              PictureHomeScreen.forCategory(category: widget.category,),),);
-        }
-        else{
-          Navigator.push(context, MaterialPageRoute(builder: (_) => PictureHomeScreen.forUser(user: widget.user,)));
-        }
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Your image has been uploaded")));
       }
       else {
         ScaffoldMessenger.of(context)
