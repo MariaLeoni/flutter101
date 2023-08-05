@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +14,6 @@ import 'package:sharedstudent1/vidlib/VideoListData.dart';
 import 'package:video_compress/video_compress.dart';
 import '../search_post/user.dart';
 import 'package:http/http.dart' as http;
-
 import '../vidlib/blocWork/video_player_bloc.dart';
 import '../vidlib/blocWork/video_player_events.dart';
 import '../vidlib/blocWork/video_player_state.dart';
@@ -139,11 +137,6 @@ void downloadAndShare(String fileUrl, String description, PostType type) async {
 
   await Share.shareXFiles([XFile(path)], text: description, subject: appName);
 }
-// void Snackbar(String message) async{
-//   ScaffoldMessenger.of(context as BuildContext)
-//       .showSnackBar(const SnackBar(content: Text('$message')));
-//   return;
-// }
 
 
 Future<File?> getProcessedFile(File? mediaFile) async {
