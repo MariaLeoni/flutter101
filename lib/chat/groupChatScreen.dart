@@ -127,8 +127,6 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void getGroupMembersAndTokens() async {
-
-    print("GroupId ${widget.groupId}");
     FirebaseFirestore.instance.collection('groups').doc(widget.groupId).get()
         .then<dynamic>((DocumentSnapshot snapshot) async {
       List<String>? local = List.from(snapshot.get('members'));
@@ -136,11 +134,12 @@ class _ChatPageState extends State<ChatPage> {
         members?.add(mem.split("_")[0]);
       }
 
+      members?.removeWhere((element) => element == widget.userId);
       members?.forEach((member) async {
         await FirebaseFirestore.instance.collection("users").doc(member).get().then((snapshot) async {
           if (snapshot.exists && snapshot.data() != null && snapshot.data()!.containsKey("token")) {
             String token = snapshot.data()!["token"];
-            tokens?.add(snapshot.data()!["token"]);
+            tokens?.add(token);
           }
         });
       });
