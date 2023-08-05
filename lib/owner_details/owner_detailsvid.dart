@@ -329,7 +329,7 @@ class _VideoDetailsScreenState extends State<VideoDetailsScreen> {
                 children: [
                   Column(
                     children: [
-                      AspectRatio(aspectRatio: 4/3,
+                      AspectRatio(aspectRatio: 2/3,
                           child: buildVideoPlayer(widget.vid!)
                           //ChewieVideoWidget(autoPlayAndFullscreen: false, url: widget.vid!, file: null,)
                       ),

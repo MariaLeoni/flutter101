@@ -58,29 +58,29 @@ class CategoryViewState extends State<CategoryView> with SingleTickerProviderSta
     );
   }
 
-  readUserInfo() async {
-    fireStore.collection('users').doc(auth.currentUser!.uid).get()
-        .then<dynamic>((DocumentSnapshot snapshot) {
-      var data = jsonDecode(jsonEncode(snapshot.get('interests')));
-      data.forEach((key, value) {
-        List<String> subList = List.empty(growable: true);
-        value.forEach((subCategory){
-          subList.add(subCategory);
-        });
-        myInterests[key] = subList;
-      });
-      setState(() {
-        selectedInterests = myInterests;
-      });
-    });
-  }
+  // readUserInfo() async {
+  //   fireStore.collection('users').doc(auth.currentUser!.uid).get()
+  //       .then<dynamic>((DocumentSnapshot snapshot) {
+  //     var data = jsonDecode(jsonEncode(snapshot.get('interests')));
+  //     data.forEach((key, value) {
+  //       List<String> subList = List.empty(growable: true);
+  //       value.forEach((subCategory){
+  //         subList.add(subCategory);
+  //       });
+  //       myInterests[key] = subList;
+  //     });
+  //     setState(() {
+  //       selectedInterests = myInterests;
+  //     });
+  //   });
+  // }
 
   @override
   void initState() {
     super.initState();
 
     loadInterests();
-    readUserInfo();
+    //readUserInfo();
   }
 
   @override

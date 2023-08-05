@@ -59,7 +59,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               child: Column(
                 children: [
                   SizedBox.fromSize(
-                      size: Size(500.0, size == null ? 400 : size!.height * 0.65), // Image border
+                      size: Size(1200.0, size == null ? 1000 : size!.height * 0.65), // Image border
                       child: buildVideoPlayer(vid)
                       //ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
                   ),
@@ -237,7 +237,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
             .orderBy('createdAt', descending: true).snapshots() :
 
         firestore.collection('wallpaper2')
-            .where("category", arrayContains: widget.category).snapshots(),
+            .where("category", arrayContains: widget.category).orderBy('createdAt', descending: true).snapshots(),
 
         builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting) {

@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:preload_page_view/preload_page_view.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/owner_details/owner_detailsvid.dart';
 import '../home_screen/post.dart';
@@ -43,7 +45,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
   int followersCount = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool amFollowingUser = false;
-
+  Size? size;
   void getUserToken() async {
     await FirebaseFirestore.instance.collection("users")
         .doc(widget.docId).get().then((snapshot) async { if (snapshot.exists) {
@@ -253,78 +255,70 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
       ),
     );
   }
-  Widget listViewWidget1 (String docId, String vid, String userImg, String name,
+  Widget pageViewWidget (String docId, String vid, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description) {
 
     return Padding(
-      padding: const EdgeInsets.all (8.0),
-      child: Card(
-        elevation: 16.0,
-        shadowColor: Colors.white10,
-        child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap:() {
-                    Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
-                      vid: vid, userImg: userImg, name: name, date: date, docId: docId,
-                      userId: userId, downloads: downloads, postId: postId, likes: likes,
-                      description: description,
-                    )));
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10), // Image border
-                    child: SizedBox.fromSize(
-                        size: const Size(500.0, 400.0), // Image radius
-                        child: ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
+        padding: const EdgeInsets.all (8.0),
+        child: GestureDetector(
+          onTap:() {
+            Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+              vid: vid, userImg: userImg, name: name, date: date, docId: docId,
+              userId: userId, downloads: downloads, postId: postId, likes: likes,
+              description: description,
+            )));
+          },
+          child: Card(
+              elevation: 16.0,
+              color: Colors.black,
+              child: Column(
+                children: [
+                  SizedBox.fromSize(
+                      size: Size(800.0, size == null ? 600 : size!.height * 0.65), // Image border
+                      child: buildVideoPlayer(vid)
+                  ),
+                  const SizedBox(height: 15.0,),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                    child: Row(
+                        children:[
+                          GestureDetector(
+                              onTap:() {
+                                Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
+                                  vid: vid, userImg: userImg, name: name, date: date, docId: docId,
+                                  userId: userId, downloads: downloads, postId: postId, likes: likes,
+                                  description: description,
+                                )));
+                              },
+                              child: CircleAvatar(
+                                radius: 35,
+                                backgroundImage: CachedNetworkImageProvider(userImg),
+                              )),
+                          const SizedBox(width: 10.0,),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:[
+                                Text(
+                                  name,
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 10.0),
+                                Text(
+                                  DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
+                                  style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+                                )
+                              ]
+                          )
+                        ]
                     ),
-                  ),
-                ),
-                const SizedBox(height: 15.0,),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                  child: Row(
-                      children:[
-                        CircleAvatar(
-                          radius: 35,
-                          backgroundImage: NetworkImage(
-                            userImg,
-                          ),
-                        ),
-                        const SizedBox(width: 10.0,),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:[
-                              Text(
-                                name,
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                DateFormat("dd MMM, yyyy - hh:mn a").format(date).toString(),
-                                style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                              )
-                            ]
-                        )
-                      ]
-                  ),
-                )
-              ],
-            )
-        ),
-      ),
-    );
+                  )
+                ],
+              )
+          ),
+        ));
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -405,16 +399,48 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
              else if (snapshot.connectionState == ConnectionState.active) {
                if(snapshot.data!.docs.isNotEmpty)
                {
-                 return ListView.builder(itemCount: snapshot.data!.docs.length,
+                 return PreloadPageView.builder(
+                   preloadPagesCount: 5,
+                   physics: const BouncingScrollPhysics(),
+                   scrollDirection: Axis.vertical,
+                   controller: PreloadPageController(initialPage: 1),
+                   itemCount: snapshot.data!.docs.length,
                    itemBuilder: (BuildContext context, int index) {
 
                      Post post = Post.getPost(snapshot, index, PostType.video);
-                     return listViewWidget1(post.id, post.source, post.userImage,
+
+                     return pageViewWidget(post.id, post.source, post.userImage,
                          post.userName, post.createdAt, post.email,
                          post.downloads, post.postId, post.likes, post.description);
                    },
                  );
                }
+               //   return ListView.builder(itemCount: snapshot.data!.docs.length,
+               //     itemBuilder: (BuildContext context, int index) {
+               //
+               //       return PreloadPageView.builder(
+               //         preloadPagesCount: 5,
+               //         physics: const BouncingScrollPhysics(),
+               //         scrollDirection: Axis.vertical,
+               //         controller: PreloadPageController(initialPage: 1),
+               //         itemCount: snapshot.data!.docs.length,
+               //         itemBuilder: (BuildContext context, int index) {
+               //
+               //           Post post = Post.getPost(snapshot, index, PostType.video);
+               //
+               //           return pageViewWidget(post.id, post.source, post.userImage,
+               //               post.userName, post.createdAt, post.email,
+               //               post.downloads, post.postId, post.likes, post.description);
+               //         },
+               //       );
+               //       // Post post = Post.getPost(snapshot, index, PostType.video);
+               //       // return pageViewWidget(post.id, post.source, post.userImage,
+               //       //     post.userName, post.createdAt, post.email,
+               //       //     post.downloads, post.postId, post.likes, post.description);
+               //     },
+               //   );
+               // }
+
                else{
                  return const Center(child: Text("This user has  no Posts.",
                      style: TextStyle(fontSize: 20, color: Colors.white))

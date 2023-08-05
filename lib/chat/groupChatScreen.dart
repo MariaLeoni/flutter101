@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sharedstudent1/widgets/message_tile.dart';
-
 import 'package:sharedstudent1/widgets/widgets.dart';
 
 import '../notification/notification.dart';
@@ -187,23 +187,26 @@ class _ChatPageState extends State<ChatPage> {
     String? token = tokens;
     notificationManager?.sendNotification(token!, model);
   }
-
   sendMessage() {
     if (messageController.text.isNotEmpty) {
-
       Map<String, dynamic> chatMessageMap = {
         "message": messageController.text,
         "sender": widget.userName,
-        "time": DateTime.now().millisecondsSinceEpoch,
+        "time": DateTime
+            .now()
+            .millisecondsSinceEpoch,
         "senderImg": widget.userImage,
         "senderId": widget.userId,
       };
       sendNotification(messageController.text);
       messageController.clear();
       DatabaseService().sendMessage(widget.groupId, chatMessageMap);
-      sendNotification(messageController.text);
+      messageController.clear();
+
+      // setState(() {
+      //   messageController.clear();
+      // });
 
     }
-    messageController.clear();
   }
 }
