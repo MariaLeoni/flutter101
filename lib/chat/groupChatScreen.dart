@@ -127,15 +127,19 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void getGroupMembersAndTokens() async {
+
+    print("GroupId ${widget.groupId}");
     FirebaseFirestore.instance.collection('groups').doc(widget.groupId).get()
         .then<dynamic>((DocumentSnapshot snapshot) async {
-      members = List.from(snapshot.get('members'.substring(0, 'members'.indexOf("_"))));
-      print("Members $members");
+      List<String>? local = List.from(snapshot.get('members'));
+      for (var mem in local) {
+        members?.add(mem.split("_")[0]);
+      }
+
       members?.forEach((member) async {
         await FirebaseFirestore.instance.collection("users").doc(member).get().then((snapshot) async {
-          if (snapshot.exists) {
+          if (snapshot.exists && snapshot.data() != null && snapshot.data()!.containsKey("token")) {
             String token = snapshot.data()!["token"];
-            print("Member $member token $token");
             tokens?.add(snapshot.data()!["token"]);
           }
         });
@@ -167,13 +171,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void sendNotification(String action) {
-    NotificationModel model = NotificationModel(title: widget.userName,
-      body: action,);
-
-    print("Send Notif for $action");
+    NotificationModel model = NotificationModel(title: widget.userName, body: action,);
 
     tokens?.forEach((token){
-      print("Token $token");
       notificationManager?.sendNotification(token, model);
     });
   }

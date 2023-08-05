@@ -68,8 +68,6 @@ class NotificationManager{
         dataTitle: message.data['title'],
         dataBody: message.data['body'],
       );
-
-      print("Inside App Messages ${notification.title}");
     });
 
     // For handling notification when the app is in background but not terminated
@@ -80,7 +78,6 @@ class NotificationManager{
         dataTitle: message.data['title'],
         dataBody: message.data['body'],
       );
-      print("Opened App Messages ${notification.title}");
     });
 
     // For handling notification refresh - probably reinstall of app
@@ -117,7 +114,7 @@ class NotificationManager{
     }
   }
 
-  Future<void> sendPush(String token, NotificationModel model)async {
+  Future<void> sendPush(String token, NotificationModel model) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'sendByFCMAdmin',
         options: HttpsCallableOptions(
@@ -131,7 +128,7 @@ class NotificationManager{
       });
       print("FCM function results ${result.data as String}");
     } catch (e) {
-      print("FCM function  ERROR: ${e.toString()}");
+      print("FCM function ERROR: ${e.toString()}");
     }
   }
 }
