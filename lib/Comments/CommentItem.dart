@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,14 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-import '../misc/alertbox.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
-import '../search_post/users_specific_posts.dart';
 import '../search_post/users_specifics_page.dart';
 import '../widgets/ssbadge.dart';
 import 'SubComment.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class CommentItem extends StatelessWidget {
 
@@ -103,14 +99,7 @@ class CommentItem extends StatelessWidget {
   sendNotification("liked your comment");
 
 }
-  // void sendNotification() {
-  //   NotificationModel model = NotificationModel(title: myName,
-  //     body: "Liked your comment", dataBody: Image,
-  //     // dataTitle: "Should be post description"
-  //   );
-  //   String? token = tokens;
-  //   notificationManager?.sendNotification(token!, model);
-  // }
+
   void sendNotification(String action) {
     bool isNotPostOwner = token != tokens;
     if (isNotPostOwner) {
@@ -121,6 +110,7 @@ class CommentItem extends StatelessWidget {
       notificationManager?.sendNotification(tokens!, model);
     }
   }}
+
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
       userName: doc.data().toString().contains('commenterName') ? doc.get(
@@ -157,7 +147,6 @@ class CommentItem extends StatelessWidget {
           'postOwnername') : '',
       postType: doc.data().toString().contains('postType') ? doc.get(
           'postType') : '',
-
     );
   }
 

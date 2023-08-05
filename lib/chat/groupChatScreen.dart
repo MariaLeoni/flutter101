@@ -1,14 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sharedstudent1/widgets/message_tile.dart';
 import 'package:sharedstudent1/widgets/widgets.dart';
-
 import '../notification/notification.dart';
 import '../notification/server.dart';
-
-import '../widgets/widgets.dart';
-
 import 'DatabasService.dart';
 import 'chatWidgets.dart';
 import 'group_info.dart';
@@ -19,15 +14,10 @@ class ChatPage extends StatefulWidget {
   final String userName;
   final String userImage;
   String? userId;
-   ChatPage(
-      {Key? key,
-        required this.groupId,
-        required this.groupName,
-        required this.userName,
-        required this.userImage,
-         this.userId,
-      })
-      : super(key: key);
+
+  ChatPage({Key? key, required this.groupId, required this.groupName,
+    required this.userName, required this.userImage,
+    this.userId,}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -37,18 +27,19 @@ class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
   TextEditingController messageController = TextEditingController();
   String admin = "";
-  String? tokens;
   NotificationManager? notificationManager;
   List<String>? members = List.empty(growable: true);
+  List<String>? tokens = List.empty(growable: true);
+
   @override
   void initState() {
-    getChatandAdmin();
+    getGroupChatsAndAdmin();
     super.initState();
-    readUserInfo();
+    getGroupMembersAndTokens();
     notificationManager = NotificationManager();
   }
 
-  getChatandAdmin() {
+  getGroupChatsAndAdmin() {
     DatabaseService().getChats(widget.groupId).then((val) {
       setState(() {
         chats = val;
@@ -61,7 +52,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  Widget chatbox() {
+  Widget buildChatbox() {
     var screen = MediaQuery.of(context).size;
     return SizedBox(
         width: screen.width,
@@ -75,18 +66,18 @@ class _ChatPageState extends State<ChatPage> {
               ),
               child: Row(
                 children: [
-                  Flexible(child: TextField(
-                    textInputAction: TextInputAction.send,
-                    keyboardType: TextInputType.text,
-                    textCapitalization: TextCapitalization.sentences,
-                    controller: messageController,
-                    decoration: const InputDecoration.collapsed(
-                        hintText: 'Type here...',
-                        hintStyle: TextStyle(color: AppColors.white)),
-
-                    style: const TextStyle(
-                        color: Colors.white),
-                  )),
+                  Flexible(child: Padding(padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_10),
+                      child: TextField(
+                        textInputAction: TextInputAction.send,
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
+                        controller: messageController,
+                        decoration: const InputDecoration.collapsed(
+                            hintText: 'Type here...',
+                            hintStyle: TextStyle(color: AppColors.white)),
+                        style: const TextStyle(
+                            color: Colors.white),
+                      ))),
                   IconButton(
                     onPressed: () {
                       sendMessage();
@@ -100,36 +91,34 @@ class _ChatPageState extends State<ChatPage> {
         ));
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        title: Text(widget.groupName),
-        backgroundColor: Colors.grey.shade900,
-        actions: [
-          IconButton(
-              onPressed: () {
-                nextScreen(
-                    context,
-                    GroupInfo(
-                      groupId: widget.groupId,
-                      groupName: widget.groupName,
-                      adminName: admin,
-                    ));
-              },
-              icon: const Icon(Icons.info))
-        ],
-      ),
+        appBar: AppBar(
+          centerTitle: true,
+          elevation: 0,
+          title: Text(widget.groupName),
+          backgroundColor: Colors.grey.shade900,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  nextScreen(
+                      context,
+                      GroupInfo(
+                        groupId: widget.groupId,
+                        groupName: widget.groupName,
+                        adminName: admin,
+                      ));
+                },
+                icon: const Icon(Icons.info))
+          ],
+        ),
         body: Container( color: Colors.grey.shade800,child:SafeArea(
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
                 child: Column(children: [
-                  chatMessages(),
-                  chatbox(),
+                  buildChatMessages(),
+                  buildChatbox(),
                 ])
             )
         )
@@ -137,31 +126,29 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void readUserInfo() async {
+  void getGroupMembersAndTokens() async {
     FirebaseFirestore.instance.collection('groups').doc(widget.groupId).get()
         .then<dynamic>((DocumentSnapshot snapshot) async {
-      members = List.from(snapshot.get('members'.substring(0,'members'.indexOf("_"))));
-      for(var item in members!){
-        await FirebaseFirestore.instance.collection("users")
-            .doc(item)
-            .get()
-            .then((snapshot) async { if (snapshot.exists) {
-          setState(() {
-            tokens = snapshot.data()!["token"];
-          });
-        }
+      members = List.from(snapshot.get('members'.substring(0, 'members'.indexOf("_"))));
+      print("Members $members");
+      members?.forEach((member) async {
+        await FirebaseFirestore.instance.collection("users").doc(member).get().then((snapshot) async {
+          if (snapshot.exists) {
+            String token = snapshot.data()!["token"];
+            print("Member $member token $token");
+            tokens?.add(snapshot.data()!["token"]);
+          }
         });
-      }
+      });
     });
   }
 
-  chatMessages() {
+  Widget buildChatMessages() {
     return Flexible(
         child: StreamBuilder(
           stream: chats,
           builder: (context, AsyncSnapshot snapshot) {
-            return snapshot.hasData
-                ? ListView.builder(
+            return snapshot.hasData ? ListView.builder(
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
                 return MessageTile(
@@ -173,8 +160,7 @@ class _ChatPageState extends State<ChatPage> {
                     senderId: snapshot.data.docs[index]['senderId']
                 );
               },
-            )
-                : Container();
+            ) : Container();
           },
         )
     );
@@ -182,19 +168,22 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendNotification(String action) {
     NotificationModel model = NotificationModel(title: widget.userName,
-      body: action,
-    );
-    String? token = tokens;
-    notificationManager?.sendNotification(token!, model);
+      body: action,);
+
+    print("Send Notif for $action");
+
+    tokens?.forEach((token){
+      print("Token $token");
+      notificationManager?.sendNotification(token, model);
+    });
   }
+
   sendMessage() {
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "message": messageController.text,
         "sender": widget.userName,
-        "time": DateTime
-            .now()
-            .millisecondsSinceEpoch,
+        "time": DateTime.now().millisecondsSinceEpoch,
         "senderImg": widget.userImage,
         "senderId": widget.userId,
       };
@@ -202,11 +191,6 @@ class _ChatPageState extends State<ChatPage> {
       messageController.clear();
       DatabaseService().sendMessage(widget.groupId, chatMessageMap);
       messageController.clear();
-
-      // setState(() {
-      //   messageController.clear();
-      // });
-
     }
   }
 }
