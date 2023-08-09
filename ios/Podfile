@@ -60,10 +60,7 @@ post_install do |installer|
             'PERMISSION_PHOTOS=1',
               
             ## dart: PermissionGroup.notification
-            'PERMISSION_NOTIFICATIONS=1',
-      
-            ## dart: PermissionGroup.mediaLibrary
-            'PERMISSION_MEDIA_LIBRARY=1',
+            'PERMISSION_NOTIFICATIONS=1'
           ]
       
         end
