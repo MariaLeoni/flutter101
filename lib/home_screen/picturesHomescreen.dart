@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:sharedstudent1/home_screen/posterView.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/uploader/postUploader.dart';
@@ -43,6 +44,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   late String currentToken;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
   Size? size;
+  Post? classPost;
 
   @override
   void initState() {
@@ -115,40 +117,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   )
               ),
               const SizedBox(height: 12.0,),
-              Row(children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                          UsersProfilePage(userId: docId, userName: name, userImage: userImg,)));
-                    },
-                    child: CircleAvatar(radius: 35,
-                      backgroundImage: CachedNetworkImageProvider(userImg)
-                    )
-                ),
-                Padding(padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) =>
-                                  UsersProfilePage(userId: docId, userName: name, userImage: userImg,)));
-                            },
-                            child: Text(name, style: const TextStyle(color: Colors.white,
-                                fontWeight: FontWeight.bold)
-                            ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Text(
-                          DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
-                          style: const TextStyle(color: Colors.white54,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ]
-                  ),
-                ),
-              ]
-              ),
+              PosterView(context, classPost!).buildPosterView(),
             ],
           )
       ),
@@ -292,6 +261,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   itemBuilder: (BuildContext context, int index) {
 
                     Post post = Post.getPost(snapshot, index, PostType.image);
+                    classPost = post;
 
                     return pageViewWidget(post.id, post.source, post.userImage,
                         post.userName, post.createdAt, post.email, post.downloads,

@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/vidlib/VideoListData.dart';
 import 'package:video_compress/video_compress.dart';
+import '../home_screen/post.dart';
 import '../search_post/user.dart';
 import 'package:http/http.dart' as http;
 import '../vidlib/blocWork/video_player_bloc.dart';
@@ -117,6 +118,8 @@ enum FeedType{
 }
 
 typedef InterestCallback = void Function(Map<String, List<String>?> interests);
+
+typedef PostSelectedCallback = void Function(Post post);
 
 typedef VideoSelected = void Function(VideoListData);
 

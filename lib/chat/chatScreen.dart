@@ -437,95 +437,93 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey.shade900,
-        centerTitle: true,
-        title: Text('Chatting with ${widget.peerNickname}'.trim()),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (_) => const SocialHomeScreen(),),);
-          },
-          icon: const Icon(Icons.arrow_back_ios),
-        ),
-        actions: const [
+        appBar: AppBar(
+          backgroundColor: Colors.grey.shade900,
+          centerTitle: true,
+          title: Text('Chatting with ${widget.peerNickname}'.trim()),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => const SocialHomeScreen(),),);
+            },
+            icon: const Icon(Icons.arrow_back_ios),
+          ),
+          actions: const [
 
-        ],
-      ),
-      body: Container( color: Colors.grey.shade800,child:SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
-          child: Column(
-            children: [
-              buildListMessage(),
-              buildMessageInput(),
-            ],
+          ],
+        ),
+        body: Container( color: Colors.grey.shade800,child:SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
+            child: Column(
+              children: [
+                buildListMessage(),
+                buildMessageInput(),
+              ],
+            ),
           ),
         ),
-      ),
-    ));
+        ));
   }
 
   Widget buildMessageInput() {
     var screen = MediaQuery.of(context).size;
-    return SizedBox(
-        width: screen.width,
-        height: 70,
+    return SizedBox(width: screen.width, height: 70,
         child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_8),
-    child:Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Sizes.dimen_30),
-            color: Colors.grey.shade700,
-          ),
-          child: Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(right: Sizes.dimen_4),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(Sizes.dimen_20),
-                ),
-                child: IconButton(
-                  onPressed: showAlert,
-                  icon: const Icon(Icons.add_a_photo, size: Sizes.dimen_18,
+            padding: const EdgeInsets.symmetric(vertical: Sizes.dimen_8),
+            child:Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Sizes.dimen_30),
+                color: Colors.grey.shade700,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: Sizes.dimen_4),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                    ),
+                    child: IconButton(
+                      onPressed: showAlert,
+                      icon: const Icon(Icons.add_a_photo, size: Sizes.dimen_18,
+                      ),
+                      color: AppColors.white,
+                    ),
                   ),
-                  color: AppColors.white,
-                ),
+                  Flexible(child: TextField(
+                    focusNode: focusNode,
+                    textInputAction: TextInputAction.send,
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: textEditingController,
+                    decoration: const InputDecoration.collapsed(
+                        hintText: 'Type here...',
+                        hintStyle: TextStyle(color: AppColors.white)),
+                    onSubmitted: (value) {
+                      onSendMessage(textEditingController.text, PostType.text, "");
+                    },
+                    style: const TextStyle(backgroundColor: Colors.transparent,
+                        color: AppColors.white),
+                  )),
+                  Container(
+                    margin: const EdgeInsets.only(left: Sizes.dimen_4),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(Sizes.dimen_20),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        onSendMessage(textEditingController.text, PostType.text, "");
+                      },
+                      icon: const Icon(Icons.send_rounded),
+                      color: AppColors.white,
+                    ),
+                  ),
+                ],
               ),
-              Flexible(child: TextField(
-                focusNode: focusNode,
-                textInputAction: TextInputAction.send,
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.sentences,
-                controller: textEditingController,
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Type here...',
-                  hintStyle: TextStyle(color: AppColors.white)),
-                onSubmitted: (value) {
-                  onSendMessage(textEditingController.text, PostType.text, "");
-                },
-                style: const TextStyle(backgroundColor: Colors.transparent,
-                color: AppColors.white),
-              )),
-              Container(
-                margin: const EdgeInsets.only(left: Sizes.dimen_4),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(Sizes.dimen_20),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    onSendMessage(textEditingController.text, PostType.text, "");
-                  },
-                  icon: const Icon(Icons.send_rounded),
-                  color: AppColors.white,
-                ),
-              ),
-            ],
-          ),
-        )
-    ));
+            )
+        ));
   }
 
   Widget buildItem(int index, DocumentSnapshot? documentSnapshot) {
@@ -546,7 +544,7 @@ class ChatScreenState extends State<ChatScreen> {
                   margin: const EdgeInsets.only(right: Sizes.dimen_10, bottom: 5),)
                     : chatMessages.type == PostType.image.name ? Container(
                   margin: const EdgeInsets.only(
-                      right: Sizes.dimen_10, top: Sizes.dimen_10, ),
+                    right: Sizes.dimen_10, top: Sizes.dimen_10, ),
                   child: GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(

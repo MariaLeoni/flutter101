@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:sharedstudent1/home_screen/posterView.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
@@ -38,6 +39,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   Size? size;
   String? name;
   String? image;
+  Post? classPost;
 
   Widget pageViewWidget (String docId, String vid, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
@@ -61,43 +63,9 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   SizedBox.fromSize(
                       size: Size(1200.0, size == null ? 1000 : size!.height * 0.65), // Image border
                       child: buildVideoPlayer(vid)
-                      //ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
                   ),
                   const SizedBox(height: 15.0,),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                    child: Row(
-                        children:[
-                          GestureDetector(
-                              onTap:() {
-                                Navigator.push(context, MaterialPageRoute(builder:(_)  => VideoDetailsScreen(
-                                  vid: vid, userImg: userImg, name: name, date: date, docId: docId,
-                                  userId: userId, downloads: downloads, postId: postId, likes: likes,
-                                  description: description,
-                                )));
-                              },
-                              child: CircleAvatar(
-                                radius: 35,
-                                backgroundImage: CachedNetworkImageProvider(userImg),
-                              )),
-                          const SizedBox(width: 10.0,),
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children:[
-                                Text(
-                                  name,
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 10.0),
-                                Text(
-                                  DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
-                                  style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                                )
-                              ]
-                          )
-                        ]
-                    ),
-                  )
+                  PosterView(context, classPost!).buildPosterView()
                 ],
               )
           ),
@@ -256,6 +224,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 itemBuilder: (BuildContext context, int index) {
 
                   Post post = Post.getPost(snapshot, index, PostType.video);
+                  classPost = post;
 
                   return pageViewWidget(post.id, post.source, post.userImage,
                       post.userName, post.createdAt, post.email,

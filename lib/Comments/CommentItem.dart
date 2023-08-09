@@ -67,7 +67,7 @@ class CommentItem extends StatelessWidget {
     }).then((value) {
       likesCount = (likes?.length ?? 0);
     });
-   AddLike();
+    AddLike();
   }
 
   AddLike(){
@@ -96,20 +96,20 @@ class CommentItem extends StatelessWidget {
 
       });
     }
-  sendNotification("liked your comment");
+    sendNotification("liked your comment");
 
-}
+  }
 
   void sendNotification(String action) {
     bool isNotPostOwner = token != tokens;
     if (isNotPostOwner) {
-    NotificationModel model = NotificationModel(title: myName,
-      body: action,
-    );
-    if (tokens != null) {
-      notificationManager?.sendNotification(tokens!, model);
-    }
-  }}
+      NotificationModel model = NotificationModel(title: myName,
+        body: action,
+      );
+      if (tokens != null) {
+        notificationManager?.sendNotification(tokens!, model);
+      }
+    }}
 
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
@@ -135,8 +135,8 @@ class CommentItem extends StatelessWidget {
           'Image') : '',
       postdescription: doc.data().toString().contains('description') ? doc.get(
           'description') : '',
-       postdownloads: doc.data().toString().contains('downloads') ? doc.get(
-           'downloads') : '',
+      postdownloads: doc.data().toString().contains('downloads') ? doc.get(
+          'downloads') : '',
       postlikes: doc.data().toString().contains('postlikes') ? List
           .from(doc.get('postlikes')) : List.empty(growable: true),
       postOwnerId: doc.data().toString().contains('postOwnerId') ? doc.get(
@@ -200,6 +200,7 @@ class CommentItem extends StatelessWidget {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
 
@@ -227,57 +228,60 @@ class CommentItem extends StatelessWidget {
           handleLikeComment();
         }));
     return
-        Column(
-      children: <Widget>[
-        Container(
-          color:Colors.grey.shade900,
-    child:
-        ListTile(
-          selectedColor: Colors.grey,
-          hoverColor: Colors.black,
-          title: Column(crossAxisAlignment: CrossAxisAlignment.start,children:[Text(userName!, style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,)),Text(comment!, style: TextStyle(color: Colors.white),),
-    ],),     subtitle: Text(
-          DateFormat("dd MMM, yyyy ").format(timestamp!).toString(),
-          style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-        ),
-          trailing: FirebaseAuth.instance.currentUser!.uid == userId
-              ? Wrap(children:[
+      Column(
+        children: <Widget>[
+          Container(
+            color:Colors.grey.shade900,
+            child: ListTile(
+              selectedColor: Colors.grey,
+              hoverColor: Colors.black,
+              title: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                  Text(userName!, style:const TextStyle(color:Colors.white, fontWeight: FontWeight.bold,)),
+                  Text(comment!, style: const TextStyle(color: Colors.white),),
+              ],),
+              subtitle: Text(
+              DateFormat("dd MMM, yyyy ").format(timestamp!).toString(),
+              style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+            ),
+              trailing: FirebaseAuth.instance.currentUser!.uid == userId
+                  ? Wrap(children:[
                 likeBadgeView,
-              PopupMenuButton(
-                icon: const Icon(Icons.more_vert, color: Colors.white,),
+                PopupMenuButton(
+                  icon: const Icon(Icons.more_vert, color: Colors.white,),
                   color: Colors.white,
                   itemBuilder: (context)
-              {
-                return[
-                  const PopupMenuItem<int>( value: 0, child: Text("Delete Comment"),),
-                ];
-              },
-              onSelected: (value){
-                if(value == 0){
-                  showAlertDialog(context);
-                }
-              },)]):
-          likeBadgeView,
-          onTap: () {
-            showSubcomments(context);
-          },
-          leading: GestureDetector(
+                  {
+                    return[
+                      const PopupMenuItem<int>( value: 0, child: Text("Delete Comment"),),
+                    ];
+                  },
+                  onSelected: (value){
+                    if(value == 0){
+                      showAlertDialog(context);
+                    }
+                  },)]):
+              likeBadgeView,
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
-                  userId:userId,
-                  userName:userName,
-                  userImage: userImage,
-                )));
+                showSubcomments(context);
               },
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: CachedNetworkImageProvider(userImage!),
-              )
+              leading: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                      userId:userId,
+                      userName:userName,
+                      userImage: userImage,
+                    )));
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: CachedNetworkImageProvider(userImage!),
+                  )
+              ),
+            ),
           ),
-        ),
-        ),
-        const Divider(),
-      ],
-    );
+          const Divider(),
+        ],
+      );
   }
 }
