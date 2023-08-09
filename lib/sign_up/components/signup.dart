@@ -27,17 +27,14 @@ class _CredentialsState extends State<Credentials> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final TextEditingController _fullNameController = TextEditingController(
-      text: "");
-  final TextEditingController _emailTextController = TextEditingController(
-      text: "");
-  final TextEditingController _passTextController = TextEditingController(
-      text: "");
-  final TextEditingController _phoneNumController = TextEditingController(
-      text: "");
+  final TextEditingController _fullNameController = TextEditingController(text: "");
+  final TextEditingController _emailTextController = TextEditingController(text: "");
+  final TextEditingController _passTextController = TextEditingController(text: "");
+  final TextEditingController _phoneNumController = TextEditingController(text: "");
 
   File? imageFile;
   String? imageUrl;
+  bool agreed = false;
 
   final Map<String, List<String>?> interests = {};
 
@@ -112,7 +109,6 @@ class _CredentialsState extends State<Credentials> {
       });
   }
 
-
   void _getFromGallery() async {
     await requestPermission(Permission.storage, (permissionStatus) async {
       if (permissionGranted(permissionStatus)) {
@@ -124,6 +120,7 @@ class _CredentialsState extends State<Credentials> {
       }
     });
   }
+
   void _cropImage(filePath) async {
     CroppedFile? croppedImage = await ImageCropper().cropImage
       (sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
@@ -159,7 +156,7 @@ class _CredentialsState extends State<Credentials> {
               ),
               const SizedBox(height: 10.0,),
               InputField(
-                hintText: " Enter username",
+                hintText: "Enter username",
                 icon: Icons.person,
                 obscureText: false,
                 textEditingController: _fullNameController,
@@ -183,9 +180,43 @@ class _CredentialsState extends State<Credentials> {
                 textEditingController: _phoneNumController,
               ),
               const SizedBox(height: 15.0,),
+              const Center(
+                child: Text("Read our EULA", style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Bebas",
+                ),),
+              ),
+              const SizedBox(height: 10.0,),
+              Center(child: CheckboxListTile(
+                  title: const Text("Agreed to our EULA?", style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Bebas",
+                  ),),
+                  value: agreed,
+                  onChanged: (newValue) {
+                    setState(() {
+                      agreed = newValue ?? false;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  tileColor: Colors.redAccent,
+                  checkColor: Colors.cyan,
+                  checkboxShape: const BeveledRectangleBorder(),
+                ),
+              ),
+              const SizedBox(height: 15.0,),
               ButtonSquare(text: "Create Account",
                   colors1: Colors.red, colors2: Colors.redAccent,
                   press: () async {
+                    if (agreed == false){
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text("You need to read and agreed to our EULA to continue")));
+                      return;
+                    }
                     if (_fullNameController.text.isEmpty){
                       ScaffoldMessenger.of(context)
                           .showSnackBar(const SnackBar(content: Text("User name is required")));

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class HeadText extends StatelessWidget {
 
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -12,7 +11,7 @@ class HeadText extends StatelessWidget {
         children: [
           SizedBox(height: size.height * 0.05),
           const Center(
-            child: Text("Gist", style: TextStyle(
+            child: Text("TheGist", style: TextStyle(
               fontSize: 55,
               color: Colors.white,
               fontWeight: FontWeight.bold,
