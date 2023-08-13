@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/chat/constants.dart';
-import 'package:sharedstudent1/chat/contactListScreen.dart';
 import 'package:sharedstudent1/chat/userModel.dart';
 import '../log_in/login_screen.dart';
 import '../misc/keyboardUtil.dart';
@@ -13,6 +11,8 @@ import '../misc/loadingView.dart';
 import 'chatScreen.dart';
 import 'chatUsersProvider.dart';
 import 'chatWidgets.dart';
+import 'constants.dart';
+import 'contactListScreen.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});

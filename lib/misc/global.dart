@@ -7,14 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sharedstudent1/vidlib/VideoListData.dart';
 import 'package:video_compress/video_compress.dart';
 import '../home_screen/post.dart';
 import '../search_post/user.dart';
 import 'package:http/http.dart' as http;
+import '../vidlib/VideoListData.dart';
 import '../vidlib/blocWork/video_player_bloc.dart';
 import '../vidlib/blocWork/video_player_events.dart';
 import '../vidlib/blocWork/video_player_state.dart';
@@ -208,3 +209,20 @@ Widget buildVideoPlayer(String video) {
   );
 }
 
+List<String> resourceSchemes = [
+  'http', 'https', 'file', 'chrome', 'data',
+  'javascript', 'about', 'fb'];
+
+launchBrowser(String url, ChromeSafariBrowser browser) async {
+  await browser.open(
+      url: Uri.parse(url),
+      options: ChromeSafariBrowserClassOptions(
+          android: AndroidChromeCustomTabsOptions(
+              shareState: CustomTabsShareState.SHARE_STATE_OFF),
+          ios: IOSSafariOptions(barCollapsingEnabled: true)));
+}
+
+enum UserIssueType{
+  report,
+  block
+}

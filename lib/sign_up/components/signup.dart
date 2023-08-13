@@ -4,16 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sharedstudent1/account_check/account_check.dart';
-import 'package:sharedstudent1/log_in/login_screen.dart';
-import 'package:sharedstudent1/widgets/button_square.dart';
-import 'package:sharedstudent1/widgets/input_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../VerifyEmail/VerifyEmail.dart';
+import '../../account_check/account_check.dart';
+import '../../log_in/login_screen.dart';
 import '../../misc/global.dart';
 import '../../search_post/user.dart';
+import '../../widgets/button_square.dart';
+import '../../widgets/inappwebview.dart';
+import '../../widgets/input_field.dart';
 
 class Credentials extends StatefulWidget {
   const Credentials({super.key});
@@ -180,13 +181,19 @@ class _CredentialsState extends State<Credentials> {
                 textEditingController: _phoneNumController,
               ),
               const SizedBox(height: 15.0,),
-              const Center(
-                child: Text("Read our EULA", style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Bebas",
-                ),),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => InAppWebViewPage("https://campus100.web.app/thegisteula.html", "TheGist EULA")));
+                  },
+                  child: const Text("Read our EULA", style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Bebas",
+                  ),),
+                ),
               ),
               const SizedBox(height: 10.0,),
               Center(child: CheckboxListTile(
@@ -202,9 +209,8 @@ class _CredentialsState extends State<Credentials> {
                       agreed = newValue ?? false;
                     });
                   },
-                  controlAffinity: ListTileControlAffinity.leading,
                   tileColor: Colors.redAccent,
-                  checkColor: Colors.cyan,
+                  checkColor: Colors.black,
                   checkboxShape: const BeveledRectangleBorder(),
                 ),
               ),
@@ -214,7 +220,7 @@ class _CredentialsState extends State<Credentials> {
                   press: () async {
                     if (agreed == false){
                       ScaffoldMessenger.of(context)
-                          .showSnackBar(const SnackBar(content: Text("You need to read and agreed to our EULA to continue")));
+                          .showSnackBar(const SnackBar(content: Text("You need to read and agree to our EULA to continue")));
                       return;
                     }
                     if (_fullNameController.text.isEmpty){

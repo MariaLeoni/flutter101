@@ -242,7 +242,6 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   void showDeletionAlert(){
-    print("show delete alert");
     showGeneralDialog(
       barrierDismissible: false,
       barrierLabel: '',

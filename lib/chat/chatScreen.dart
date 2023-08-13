@@ -6,18 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sharedstudent1/chat/fullImageView.dart';
 import 'package:sharedstudent1/chat/socialHomeScreen.dart';
-import 'package:sharedstudent1/misc/progressIndicator.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:io';
+import '../misc/global.dart';
+import '../misc/progressIndicator.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
 import 'chatModel.dart';
 import 'chatProvider.dart';
 import 'chatWidgets.dart';
 import 'constants.dart';
-import 'package:sharedstudent1/misc/global.dart';
+import 'fullImageView.dart';
 import 'fullScreenVideo.dart';
 
 class ChatScreen extends StatefulWidget {
