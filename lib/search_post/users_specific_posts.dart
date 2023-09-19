@@ -403,7 +403,7 @@ class UsersSpecificPostsScreenState extends State<UsersSpecificPostsScreen> {
                    preloadPagesCount: 5,
                    physics: const BouncingScrollPhysics(),
                    scrollDirection: Axis.vertical,
-                   controller: PreloadPageController(initialPage: 1),
+                   controller: PreloadPageController(initialPage: 0),
                    itemCount: snapshot.data!.docs.length,
                    itemBuilder: (BuildContext context, int index) {
 

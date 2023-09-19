@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sharedstudent1/InitialCategories.dart';
 import 'package:sharedstudent1/log_in/login_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sharedstudent1/sign_up/sign_up_screen.dart';
 
 
 class VerifyEmail extends StatefulWidget {
@@ -90,7 +91,8 @@ class VerifyEmailState extends State<VerifyEmail> {
                         'Cancel',
                         style: TextStyle(fontSize: 24, color:Colors.white,),
                       ),
-                      onPressed: () => FirebaseAuth.instance.signOut(),
+                      onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder:(_)  => SignUpScreen(
+                      )))
                     )
                   ]
               )

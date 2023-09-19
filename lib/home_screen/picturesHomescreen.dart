@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:preload_page_view/preload_page_view.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/home_screen/videosHomescreen.dart';
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/uploader/postUploader.dart';
@@ -36,7 +37,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   int? total;
   String? name;
   String? image;
-  int? viewCount = 0;
   String postId = const Uuid().v4();
   Map<String, List<String>?> interests = {};
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -240,6 +240,12 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
           ),
           actions: <Widget>[
             IconButton(
+              onPressed: () async {
+                Share.share("Join me on TheGist: https://apps.apple.com/gb/app/thegistapp/id6451065035");
+              },
+              icon: const Icon(Icons.share, color: Colors.white),
+            ),
+            IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (_) => Search(postType: PostType.image,),),);
@@ -271,8 +277,8 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
           where("id", isEqualTo: widget.user!.userId).snapshots() :
 
           widget.category == "random" ? firestore.collection('wallpaper')
-              .orderBy('createdAt', descending: true).snapshots() :
-
+             // .orderBy('createdAt', descending: true).snapshots() :
+           .orderBy('viewcount', descending: true).snapshots() :
           firestore.collection('wallpaper').
           where("category", arrayContains: widget.category).snapshots(),
 
@@ -287,7 +293,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   physics: const BouncingScrollPhysics(),
                   preloadPagesCount: 5,
                   scrollDirection: Axis.vertical,
-                  controller: PreloadPageController(initialPage: 1),
+                  controller: PreloadPageController(initialPage: 0),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
 

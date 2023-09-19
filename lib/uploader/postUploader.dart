@@ -8,6 +8,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sharedstudent1/misc/global.dart';
+import 'package:sharedstudent1/search_post/users_specific_posts.dart';
+import 'package:sharedstudent1/search_post/users_specifics_page.dart';
 import 'package:uuid/uuid.dart';
 import '../categoryView.dart';
 import '../home_screen/picturesHomescreen.dart';
@@ -64,6 +66,8 @@ class PostUploaderState extends State<PostUploader> {
 
     if (!mounted) return;
     Navigator.canPop(context) ? Navigator.pop(context) : null;
+    Navigator.push(context, MaterialPageRoute(builder: (_) =>  UsersSpecificPostsScreen(userId: _auth.currentUser!.uid, userName: myName!, postType: PostType.video,),),);
+
   }
 
   postPicture() {
@@ -302,7 +306,7 @@ class PostUploaderState extends State<PostUploader> {
               VideoHomeScreen.forCategory(category: widget.category,),),);
         }
         else{
-          Navigator.push(context, MaterialPageRoute(builder: (_) => VideoHomeScreen.forUser(user: widget.user,)));
+          Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage()));
         }
 
         final ref = FirebaseStorage.instance.ref().child('userVideos').child('${DateTime.now()}.mp4');
