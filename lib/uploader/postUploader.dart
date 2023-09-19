@@ -7,12 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-<<<<<<< HEAD
 import 'package:sharedstudent1/misc/global.dart';
 import 'package:sharedstudent1/search_post/users_specific_posts.dart';
 import 'package:sharedstudent1/search_post/users_specifics_page.dart';
-=======
->>>>>>> 5bd3561a36ea025e6bb3952fff7dc6c4e5f1abea
 import 'package:uuid/uuid.dart';
 import '../categoryView.dart';
 import '../home_screen/picturesHomescreen.dart';
@@ -71,7 +68,8 @@ class PostUploaderState extends State<PostUploader> {
     if (!mounted) return;
     Navigator.canPop(context) ? Navigator.pop(context) : null;
     Navigator.push(context, MaterialPageRoute(builder: (_) =>  UsersSpecificPostsScreen(userId: _auth.currentUser!.uid, userName: myName!, postType: PostType.video,),),);
-
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Your post has been uploaded")));
   }
 
   postPicture() {
@@ -95,6 +93,9 @@ class PostUploaderState extends State<PostUploader> {
 
     if (!mounted) return;
     Navigator.canPop(context) ? Navigator.pop(context) : null;
+    Navigator.push(context, MaterialPageRoute(builder: (_) =>  UsersSpecificPostsScreen(userId: _auth.currentUser!.uid, userName: myName!, postType: PostType.image,),),);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Your post has been uploaded")));
   }
 
   void readUserInfo() async {
