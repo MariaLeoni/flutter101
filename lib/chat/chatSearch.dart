@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sharedstudent1/widgets/widgets.dart';
 import '../groupInfo.dart';
+import '../widgets/widgets.dart';
 import 'DatabasService.dart';
 import 'groupChatScreen.dart';
 
@@ -148,7 +148,7 @@ class _SearchPageState extends State<SearchPage> {
             Future.delayed(const Duration(seconds: 2), () {
               nextScreen(context, ChatPage(groupId: model.groupId!,
                 groupName: model.groupName!, userName: userName,
-                userImage: userImage!, userId:userId));
+                userImage: userImage!, userId: userId));
             });
           }
           else{

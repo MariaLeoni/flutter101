@@ -43,18 +43,16 @@ class _GroupChatHomeState extends State<GroupChatHome> {
   gettingUserData() async {
     await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid)
         .get().then<dynamic>((DocumentSnapshot snapshot) {
-      // groups = snapshot.get('groups');
       userName = snapshot.get('name');
       email = snapshot.get('email');
       userImage = snapshot.get('userImage');
     });
 
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-        .getUserGroups()
-        .then((snapshot) {
-      setState(() {
-        groups = snapshot;
-      });
+        .getUserGroups().then((snapshot) {
+            setState(() {
+              groups = snapshot;
+            });
     });
   }
 

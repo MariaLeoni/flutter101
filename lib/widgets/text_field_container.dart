@@ -23,7 +23,7 @@ class  TextFieldContainer extends StatelessWidget {
             offset: Offset(-2,-2),
             spreadRadius: 1,
             blurRadius: 2,
-            color: Colors.redAccent ,
+            color: Colors.redAccent,
           ),
           BoxShadow(
             offset: Offset(2,2),

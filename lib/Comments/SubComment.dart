@@ -332,18 +332,13 @@ class CommentState extends State<SubComment> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(Sizes.dimen_30),
                       color: AppColors.greyColor,
-                    ),child:Row(
-                    children: [
+                    ),child:Row(children: [
                       Container(
                         margin: const EdgeInsets.only(right: Sizes.dimen_4),
                         decoration: BoxDecoration(
                           color: AppColors.greyColor,
                           borderRadius: BorderRadius.circular(Sizes.dimen_20),
                         ),
-                        // child: CircleAvatar(
-                        //   radius: 20,
-                        //   backgroundImage: CachedNetworkImageProvider(myImage!),
-                        // ),
                       ),
                       Flexible(child: TextField(
                         textInputAction: TextInputAction.send,

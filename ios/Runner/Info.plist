@@ -51,12 +51,10 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>TheGist need access to your Camera to take picture or video</string>
+	<string>Want to take picture or video with your Camera to post? You need to grant Camera access to TheGist app</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>TheGist need access to your Gallery if you want to pick photo or video</string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>TheGist need access to your Gallery if you want to pick photo or video</string>
+	<string>Want to select picture or video from your Gallery  to post? You need to grant Photo Library access to TheGist app</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>TheGist need access to your Microphone if you want to record video</string>
+	<string>Want to take a video with your Camera to post? You need to grant Microphone access to TheGist app</string>
 </dict>
 </plist>

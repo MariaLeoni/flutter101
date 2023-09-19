@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,14 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-import '../misc/alertbox.dart';
 import '../notification/notification.dart';
 import '../notification/server.dart';
-import '../search_post/users_specific_posts.dart';
 import '../search_post/users_specifics_page.dart';
 import '../widgets/ssbadge.dart';
 import 'SubComment.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class CommentItem extends StatelessWidget {
 
@@ -71,7 +67,7 @@ class CommentItem extends StatelessWidget {
     }).then((value) {
       likesCount = (likes?.length ?? 0);
     });
-   AddLike();
+    AddLike();
   }
 
   AddLike(){
@@ -100,27 +96,21 @@ class CommentItem extends StatelessWidget {
 
       });
     }
-  sendNotification("liked your comment");
+    sendNotification("liked your comment");
 
-}
-  // void sendNotification() {
-  //   NotificationModel model = NotificationModel(title: myName,
-  //     body: "Liked your comment", dataBody: Image,
-  //     // dataTitle: "Should be post description"
-  //   );
-  //   String? token = tokens;
-  //   notificationManager?.sendNotification(token!, model);
-  // }
+  }
+
   void sendNotification(String action) {
     bool isNotPostOwner = token != tokens;
     if (isNotPostOwner) {
-    NotificationModel model = NotificationModel(title: myName,
-      body: action,
-    );
-    if (tokens != null) {
-      notificationManager?.sendNotification(tokens!, model);
-    }
-  }}
+      NotificationModel model = NotificationModel(title: myName,
+        body: action,
+      );
+      if (tokens != null) {
+        notificationManager?.sendNotification(tokens!, model);
+      }
+    }}
+
   factory CommentItem.fromDocument(DocumentSnapshot doc){
     return CommentItem(
       userName: doc.data().toString().contains('commenterName') ? doc.get(
@@ -145,8 +135,8 @@ class CommentItem extends StatelessWidget {
           'Image') : '',
       postdescription: doc.data().toString().contains('description') ? doc.get(
           'description') : '',
-       postdownloads: doc.data().toString().contains('downloads') ? doc.get(
-           'downloads') : '',
+      postdownloads: doc.data().toString().contains('downloads') ? doc.get(
+          'downloads') : '',
       postlikes: doc.data().toString().contains('postlikes') ? List
           .from(doc.get('postlikes')) : List.empty(growable: true),
       postOwnerId: doc.data().toString().contains('postOwnerId') ? doc.get(
@@ -157,7 +147,6 @@ class CommentItem extends StatelessWidget {
           'postOwnername') : '',
       postType: doc.data().toString().contains('postType') ? doc.get(
           'postType') : '',
-
     );
   }
 
@@ -211,6 +200,7 @@ class CommentItem extends StatelessWidget {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
 
@@ -238,57 +228,60 @@ class CommentItem extends StatelessWidget {
           handleLikeComment();
         }));
     return
-        Column(
-      children: <Widget>[
-        Container(
-          color:Colors.grey.shade900,
-    child:
-        ListTile(
-          selectedColor: Colors.grey,
-          hoverColor: Colors.black,
-          title: Column(crossAxisAlignment: CrossAxisAlignment.start,children:[Text(userName!, style:TextStyle(color:Colors.white, fontWeight: FontWeight.bold,)),Text(comment!, style: TextStyle(color: Colors.white),),
-    ],),     subtitle: Text(
-          DateFormat("dd MMM, yyyy ").format(timestamp!).toString(),
-          style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-        ),
-          trailing: FirebaseAuth.instance.currentUser!.uid == userId
-              ? Wrap(children:[
+      Column(
+        children: <Widget>[
+          Container(
+            color:Colors.grey.shade900,
+            child: ListTile(
+              selectedColor: Colors.grey,
+              hoverColor: Colors.black,
+              title: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                  Text(userName!, style:const TextStyle(color:Colors.white, fontWeight: FontWeight.bold,)),
+                  Text(comment!, style: const TextStyle(color: Colors.white),),
+              ],),
+              subtitle: Text(
+              DateFormat("dd MMM, yyyy ").format(timestamp!).toString(),
+              style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+            ),
+              trailing: FirebaseAuth.instance.currentUser!.uid == userId
+                  ? Wrap(children:[
                 likeBadgeView,
-              PopupMenuButton(
-                icon: const Icon(Icons.more_vert, color: Colors.white,),
+                PopupMenuButton(
+                  icon: const Icon(Icons.more_vert, color: Colors.white,),
                   color: Colors.white,
                   itemBuilder: (context)
-              {
-                return[
-                  const PopupMenuItem<int>( value: 0, child: Text("Delete Comment"),),
-                ];
-              },
-              onSelected: (value){
-                if(value == 0){
-                  showAlertDialog(context);
-                }
-              },)]):
-          likeBadgeView,
-          onTap: () {
-            showSubcomments(context);
-          },
-          leading: GestureDetector(
+                  {
+                    return[
+                      const PopupMenuItem<int>( value: 0, child: Text("Delete Comment"),),
+                    ];
+                  },
+                  onSelected: (value){
+                    if(value == 0){
+                      showAlertDialog(context);
+                    }
+                  },)]):
+              likeBadgeView,
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
-                  userId:userId,
-                  userName:userName,
-                  userImage: userImage,
-                )));
+                showSubcomments(context);
               },
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: CachedNetworkImageProvider(userImage!),
-              )
+              leading: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                      userId:userId,
+                      userName:userName,
+                      userImage: userImage,
+                    )));
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: CachedNetworkImageProvider(userImage!),
+                  )
+              ),
+            ),
           ),
-        ),
-        ),
-        const Divider(),
-      ],
-    );
+          const Divider(),
+        ],
+      );
   }
 }

@@ -78,7 +78,7 @@
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug-prod">
+      buildConfiguration = "Release-prod">
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release-prod"

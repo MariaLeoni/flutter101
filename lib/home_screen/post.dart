@@ -25,7 +25,7 @@ class Post {
     required this.createdAt, required this.userName, required this.email,
     required this.postId, required this.description, required this.downloads,
     required this.viewCount, required this.likes, required this.viewers,
-    required this.category, required this.downloaders,
+    required this.category, required this.downloaders, this.postType
   });
 
   static Post getPost(AsyncSnapshot <QuerySnapshot> snapshot, int index, PostType type){
@@ -52,7 +52,8 @@ class Post {
         category: snapshot.data!.docs[index].data().toString().contains("category") ?
         List.from(snapshot.data!.docs[index]['category']) : List.empty(),
         downloaders: snapshot.data!.docs[index].data().toString().contains("downloaders") ?
-        List.from(snapshot.data!.docs[index]['downloaders']) : List.empty()
+        List.from(snapshot.data!.docs[index]['downloaders']) : List.empty(),
+        postType: type
     );
   }
 
@@ -73,6 +74,7 @@ class Post {
         viewers: List.empty(),
         category: List.empty(),
         downloaders: List.empty(),
+        postType: type
     );
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:sharedstudent1/home_screen/posterView.dart';
 import '../Activity Feed/activityFeedScreen.dart';
 import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
@@ -42,6 +43,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   int? total;
   int? viewCount = 0;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
+  Post? classPost;
+
   Widget pageViewWidget (String docId, String vid, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
       List<String>? likes, String description,int viewCount, List<String>? viewers,List<String>? downloaders) {
@@ -62,8 +65,8 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   SizedBox.fromSize(
                       size: Size(1200.0, size == null ? 1000 : size!.height * 0.65), // Image border
                       child: buildVideoPlayer(vid)
-                      //ChewieVideoWidget(autoPlayAndFullscreen: false, url: vid, file: null,)
                   ),
+
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                     child: Row(
@@ -95,7 +98,11 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                           )
                         ]
                     ),
-                  )
+                  ),
+
+                  const SizedBox(height: 15.0,),
+                  PosterView(context, classPost!).buildPosterView()
+
                 ],
               )
           ),
@@ -275,6 +282,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 itemBuilder: (BuildContext context, int index) {
 
                   Post post = Post.getPost(snapshot, index, PostType.video);
+                  classPost = post;
 
                   return pageViewWidget(post.id, post.source, post.userImage,
                       post.userName, post.createdAt, post.email,

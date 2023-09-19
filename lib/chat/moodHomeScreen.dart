@@ -73,7 +73,7 @@ class MoodScreenState extends State<MoodScreen> {
         else{
           openAppSettings();
         }
-    });
+      });
     }
     else{
       await requestPermission(Permission.storage, (permissionStatus) async {
@@ -95,7 +95,7 @@ class MoodScreenState extends State<MoodScreen> {
         }
       });
     }
-          }
+  }
 
   Future getVideo(ImageSource source) async {
     if(source == ImageSource.camera) {
@@ -244,7 +244,7 @@ class MoodScreenState extends State<MoodScreen> {
       barrierLabel: '', barrierColor: Colors.black38,
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (ctx, anim1, anim2) => AlertDialog(
-        title: null,
+        title: const Text("What is your update?"),
         content: buildMessageInput(ctx),
       ),
       transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
@@ -436,21 +436,22 @@ class MoodScreenState extends State<MoodScreen> {
               ),
               child: Row(
                 children: [
-                  Flexible(child: TextField(
-                    textInputAction: TextInputAction.send,
-                    keyboardType: TextInputType.text,
-                    textCapitalization: TextCapitalization.sentences,
-                    controller: textEditingController,
-                    decoration: const InputDecoration.collapsed(
-                        hintText: "Your Mood...",
-                        hintStyle: TextStyle(color: AppColors.white)),
-                    onSubmitted: (value) {
-                      onSendMood(textEditingController.text, PostType.text);
-                      Navigator.pop(ctx);
-                    },
-                    style: const TextStyle(backgroundColor: AppColors.greyColor,
-                        color: AppColors.white),
-                  )),
+                  Flexible(child: Padding(padding: const EdgeInsets.only(left: 10),
+                      child:TextField(
+                        textInputAction: TextInputAction.send,
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
+                        controller: textEditingController,
+                        decoration: const InputDecoration.collapsed(
+                            hintText: "Your Mood...",
+                            hintStyle: TextStyle(color: AppColors.white)),
+                        onSubmitted: (value) {
+                          onSendMood(textEditingController.text, PostType.text);
+                          Navigator.pop(ctx);
+                        },
+                        style: const TextStyle(backgroundColor: AppColors.greyColor,
+                            color: AppColors.white),
+                      ))),
                   Container(
                     margin: const EdgeInsets.only(left: Sizes.dimen_4),
                     decoration: BoxDecoration(
@@ -480,5 +481,4 @@ class MoodScreenState extends State<MoodScreen> {
       return const SizedBox.shrink();
     }
   }
-
 }
