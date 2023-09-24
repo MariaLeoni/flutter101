@@ -473,23 +473,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
                     ],
                   ),
                 ),
-                // const SizedBox(height: 50.0,),
-                // FirebaseAuth.instance.currentUser!.uid == widget.docId
-                //     ?
-                // Padding(
-                //     padding: const EdgeInsets.only(left: 8.0, right:8.0,),
-                //     child: ButtonSquare(text:"Delete",
-                //         colors1: Colors.black, colors2: Colors.black,
-                //         press: () async {
-                //           FirebaseFirestore.instance.collection('wallpaper')
-                //               .doc(widget.postId).delete().then((value) {
-                //             Fluttertoast.showToast(msg: 'Your post has been deleted');
-                //             Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=> const HomeScreen()));
-                //           });
-                //         }
-                //     )
-                // ):
-                // Container(),
               ],
             ),
           ],

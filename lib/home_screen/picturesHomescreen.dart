@@ -256,7 +256,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   physics: const BouncingScrollPhysics(),
                   preloadPagesCount: 5,
                   scrollDirection: Axis.vertical,
-                  controller: PreloadPageController(initialPage: 1),
+                  controller: PreloadPageController(initialPage: 0),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
 

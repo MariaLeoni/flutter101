@@ -1,8 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:sharedstudent1/home_screen/posterView.dart';
 import '../Activity Feed/activityFeedScreen.dart';
@@ -219,7 +217,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 preloadPagesCount: 5,
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.vertical,
-                controller: PreloadPageController(initialPage: 1),
+                controller: PreloadPageController(initialPage: 0),
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (BuildContext context, int index) {
 
