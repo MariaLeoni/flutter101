@@ -98,6 +98,7 @@ class Credentials extends StatelessWidget {
                         }
                       }
                     } on FirebaseAuthException catch (e) {
+                      print("Login error - ${e.message}");
                       if (e.code == 'wrong-password') {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(const SnackBar(content: Text("The password provided is wrong.")));
@@ -116,6 +117,7 @@ class Credentials extends StatelessWidget {
                       }
                     }
                     catch(error) {
+                      print("Catch Login error - ${error.toString()}");
                       ScaffoldMessenger.of(context)
                           .showSnackBar(const SnackBar(content: Text("An error has occurred. Please check details and try again.")));
                     }
