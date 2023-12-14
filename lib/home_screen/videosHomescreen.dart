@@ -66,7 +66,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                       size: Size(1200.0, size == null ? 1000 : size!.height * 0.65), // Image border
                       child: buildVideoPlayer(vid)
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                     child: Row(
@@ -99,15 +98,14 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                         ]
                     ),
                   ),
-
                   const SizedBox(height: 15.0,),
                   PosterView(context, classPost!).buildPosterView()
-
                 ],
               )
           ),
         ));
   }
+  
   void updateViewAndNavigate(int viewCount, String postId, List<String>? viewers, String img,
       String userImg, String name, DateTime date, String docId, String userId,
       int downloads, List<String>? likes, String description, List<String>? downloaders) {
