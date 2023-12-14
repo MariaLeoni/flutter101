@@ -74,38 +74,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                       size: Size(1200.0, size == null ? 1000 : size!.height * 0.65), // Image border
                       child: buildVideoPlayer(vid)
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-                    child: Row(
-                        children:[
-                          GestureDetector(
-                              onTap:() {
-                                updateViewAndNavigate(viewCount, postId, viewers, vid,
-                                    userImg, name, date, docId, userId, downloads, likes,
-                                    description, downloaders);
-                              },
-                              child: CircleAvatar(
-                                radius: 35,
-                                backgroundImage: CachedNetworkImageProvider(userImg),
-                              )),
-                          const SizedBox(width: 10.0,),
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children:[
-                                Text(
-                                  name,
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 10.0),
-                                Text(
-                                  DateFormat("dd MMM, yyyy - hh:mm a").format(date).toString(),
-                                  style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-                                )
-                              ]
-                          )
-                        ]
-                    ),
-                  ),
                   const SizedBox(height: 15.0,),
                   PosterView(context, classPost!).buildPosterView()
                 ],
