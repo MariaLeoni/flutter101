@@ -292,84 +292,40 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
               )
             ]
         ),
-        body: LazyLoadScrollView(
-                  isLoading: isLoadingList,
-                  onEndOfPage: () => getPosts(),
-                  child: PreloadPageView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    preloadPagesCount: 5,
-                    scrollDirection: Axis.vertical,
-                    controller: PreloadPageController(initialPage: 0),
-                    itemCount: postList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      debugPrint("Post loaded ${postList.length}");
-                      Post post = postList[index];
-                      classPost = post;
+        body: isLoadingList && postList.isEmpty ? const Center(child: CircularProgressIndicator()) :
+              postList.isNotEmpty ? LazyLoadScrollView(
+                        isLoading: isLoadingList,
+                        onEndOfPage: () => getPosts(),
+                        child: PreloadPageView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          preloadPagesCount: 5,
+                          scrollDirection: Axis.vertical,
+                          controller: PreloadPageController(initialPage: 0),
+                          itemCount: postList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            debugPrint("Post loaded ${postList.length}");
+                            Post post = postList[index];
+                            classPost = post;
 
-                      return pageViewWidget(
-                          post.id,
-                          post.source,
-                          post.userImage,
-                          post.userName,
-                          post.createdAt,
-                          post.email,
-                          post.downloads,
-                          post.viewCount,
-                          post.postId,
-                          post.likes,
-                          post.viewers,
-                          post.description,
-                          post.downloaders);
-                    },
-                  )
-              )
+                            return pageViewWidget(
+                                post.id,
+                                post.source,
+                                post.userImage,
+                                post.userName,
+                                post.createdAt,
+                                post.email,
+                                post.downloads,
+                                post.viewCount,
+                                post.postId,
+                                post.likes,
+                                post.viewers,
+                                post.description,
+                                post.downloaders);
+                          },
+                        )
+                    ) :
+              const Center(child: Text('Something went wrong', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),))
     );
-  }
-
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadPictureStream() {
-    debugPrint("==== Loading firstLoad? $firstLoad ====");
-    setState(() {
-      isLoadingList = true;
-    });
-
-    if (firstLoad) {
-      debugPrint("==== Loading first 15 set ====");
-
-      setState(() {
-        firstLoad = false;
-      });
-
-      return widget.user != null ? firestore.collection('wallpaper').where(
-          "id", isEqualTo: widget.user!.userId).limit(15).snapshots() :
-      widget.category == "random" ? firestore.collection('wallpaper').orderBy(
-          'viewcount', descending: true).limit(15).snapshots() :
-      firestore.collection('wallpaper').where(
-          "category", arrayContains: widget.category).limit(15).snapshots();
-    }
-    else {
-      return widget.user != null ? firestore.collection('wallpaper').where(
-          "id", isEqualTo: widget.user!.userId).limit(15).snapshots() :
-      widget.category == "random" ? firestore.collection('wallpaper').orderBy(
-          'viewcount', descending: true).limit(15).snapshots() :
-      firestore.collection('wallpaper').where(
-          "category", arrayContains: widget.category).limit(15).snapshots();
-    }
-
-    // else {
-    //   if (collectionState != null && collectionState!.docs.isNotEmpty) {
-    //     debugPrint("==== Loading next 10 set ====");
-    //
-    //     var lastVisible = collectionState!.docs[collectionState!.docs.length - 1];
-    //     return widget.user != null ? firestore.collection('wallpaper').where("id", isEqualTo: widget.user!.userId).startAfterDocument(lastVisible).limit(10).snapshots() :
-    //     widget.category == "random" ? firestore.collection('wallpaper').orderBy('viewcount', descending: true).startAfterDocument(lastVisible).limit(10).snapshots() :
-    //     firestore.collection('wallpaper').where("category", arrayContains: widget.category).startAfterDocument(lastVisible).limit(10).snapshots();
-    //   } else {
-    //     setState(() {
-    //       isLoadingList = false;
-    //     });
-    //     return const Stream.empty();
-    //   }
-    // }
   }
 
   Future<void> getPosts() async {

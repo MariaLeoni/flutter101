@@ -105,7 +105,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
           ),
         ));
   }
-  
+
   void updateViewAndNavigate(int viewCount, String postId, List<String>? viewers, String img,
       String userImg, String name, DateTime date, String docId, String userId,
       int downloads, List<String>? likes, String description, List<String>? downloaders) {
@@ -147,8 +147,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   }
 
   getAllProducts() async {
-    final collection = firestore.collection("Activity Feed")
-        .doc(FirebaseAuth.instance.currentUser!.uid).collection('FeedItems');
+    final collection = firestore.collection("Activity Feed").doc(FirebaseAuth.instance.currentUser!.uid).collection('FeedItems');
     final query = collection.where("Read Status", isEqualTo: false);
     final countQuery = query.count();
     final AggregateQuerySnapshot snapshot = await countQuery.get();
@@ -269,7 +268,6 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
           }
           else if (snapshot.connectionState == ConnectionState.active) {
             if(snapshot.data!.docs.isNotEmpty) {
-
 
               return PreloadPageView.builder(
                 preloadPagesCount: 5,
