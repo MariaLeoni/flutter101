@@ -11,6 +11,7 @@ import '../Search.dart';
 import '../chat/socialHomeScreen.dart';
 import '../misc/userModel.dart';
 import '../search_post/users_specifics_page.dart';
+import '../widgets/lazy_load_scrollview.dart';
 import '../widgets/ssbadge.dart';
 import 'home.dart';
 import 'post.dart';
@@ -44,6 +45,13 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
   int? viewCount = 0;
   String userIdx = FirebaseAuth.instance.currentUser!.uid;
   Post? classPost;
+
+  bool isLoadingList = false;
+  QuerySnapshot? collectionState;
+  bool firstLoad = true;
+  List<Post> postList = [];
+  int initialLoads = 10;
+  int nextLoads = 20;
 
   Widget pageViewWidget (String docId, String vid, String userImg, String name,
       DateTime date, String userId, int downloads, String postId,
@@ -122,9 +130,12 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     goToDetails(img, userImg, name, date, docId, userId, downloads,
         postId, likes, description, downloaders, viewCount, viewers);
   }
+
   @override
   void initState() {
     super.initState();
+
+    getVideoPosts();
     getAllProducts();
     getDataFromDatabase();
   }
@@ -178,129 +189,145 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-      floatingActionButton: Wrap(
-        direction: Axis.horizontal,
-        children: [
-          Container(
-            width: 100,
-            margin: const EdgeInsets.all(10.0),
-            child: FloatingActionButton(
-              heroTag: "1",
-              backgroundColor: Colors.transparent,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video, user:widget.user, category: widget.category)));
-              },
-              child:
-              const ImageIcon(AssetImage('assets/images/ttent.png'),
-                size: 600, color: Colors.red,
-              ),
-            ),
-          ),
-        ],
-      ),
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-          flexibleSpace:Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.black],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.2, 0.9],
-              ),
-            ),
-          ),
-          title: Text(widget.category),
-          centerTitle: true,
-          leading:
-          IconButton(
-            onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
-            },
-            icon: const Icon(Icons.home),
-          ),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () async {
-                  Share.share("Join me on TheGist: https://apps.apple.com/gb/app/thegistapp/id6451065035");
-                  },
-              icon: const Icon(Icons.share, color: Colors.white),
-            ),
-            IconButton(
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.video,),),);
-              },
-              icon: const Icon(Icons.person_search),
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
-                  userId:FirebaseAuth.instance.currentUser!.uid,
-                  userName:name,
-                  userImage: image,
-                )));
-              },
-              icon: const Icon(Icons.person),
-            ),
-            activityBadgeView,
-            IconButton(
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => const SocialHomeScreen()));
-              },
-              icon: const Icon(Icons.message_sharp),
-            ),
-          ]
-      ),
-      body: StreamBuilder(
-        stream: widget.user != null ? firestore.collection('wallpaper2')
-            .where("id", isEqualTo: widget.user!.userId).snapshots() :
-
-        widget.category == "random" ? firestore.collection('wallpaper2')
-            .orderBy('createdAt', descending: true).snapshots() :
-
-        firestore.collection('wallpaper2')
-            .where("category", arrayContains: widget.category).snapshots(),
-
-        builder: (BuildContext context, AsyncSnapshot <QuerySnapshot> snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(),);
-          }
-          else if (snapshot.connectionState == ConnectionState.active) {
-            if(snapshot.data!.docs.isNotEmpty) {
-
-              return PreloadPageView.builder(
-                preloadPagesCount: 5,
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                controller: PreloadPageController(initialPage: 0),
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (BuildContext context, int index) {
-
-                  Post post = Post.getPost(snapshot, index, PostType.video);
-                  classPost = post;
-
-                  return pageViewWidget(post.id, post.source, post.userImage,
-                      post.userName, post.createdAt, post.email,
-                      post.downloads, post.postId, post.likes, post.description,post.viewCount, post.viewers, post.downloaders);
+        floatingActionButton: Wrap(
+          direction: Axis.horizontal,
+          children: [
+            Container(
+              width: 100,
+              margin: const EdgeInsets.all(10.0),
+              child: FloatingActionButton(
+                heroTag: "1",
+                backgroundColor: Colors.transparent,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => PostUploader(postType: PostType.video, user:widget.user, category: widget.category)));
                 },
-              );
-            }
-            else{
-              return const Center(
-                  child: Text("Be the first to post in this collection",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,
-                        color: Colors.white),)
-              );
-            }
-          }
-          return const Center(
-            child: Text('Something went wrong',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
+                child: const ImageIcon(AssetImage('assets/images/ttent.png'),
+                  size: 600, color: Colors.red,
+                ),
+              ),
             ),
-          );
-        },
-      ),
+          ],
+        ),
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+            flexibleSpace:Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black, Colors.black],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2, 0.9],
+                ),
+              ),
+            ),
+            title: Text(widget.category),
+            centerTitle: true,
+            leading:
+            IconButton(
+              onPressed: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
+              },
+              icon: const Icon(Icons.home),
+            ),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () async {
+                  Share.share("Join me on TheGist: https://apps.apple.com/gb/app/thegistapp/id6451065035");
+                },
+                icon: const Icon(Icons.share, color: Colors.white),
+              ),
+              IconButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.video,),),);
+                },
+                icon: const Icon(Icons.person_search),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => UsersProfilePage(
+                    userId:FirebaseAuth.instance.currentUser!.uid,
+                    userName:name,
+                    userImage: image,
+                  )));
+                },
+                icon: const Icon(Icons.person),
+              ),
+              activityBadgeView,
+              IconButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (_) => const SocialHomeScreen()));
+                },
+                icon: const Icon(Icons.message_sharp),
+              ),
+            ]
+        ),
+        body: isLoadingList && postList.isEmpty ? const Center(child: CircularProgressIndicator()) :
+        postList.isNotEmpty ? LazyLoadScrollView(
+            isLoading: isLoadingList,
+            onEndOfPage: () => getVideoPosts(),
+            child: PreloadPageView.builder(
+              preloadPagesCount: 5,
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              controller: PreloadPageController(initialPage: 0),
+              itemCount: postList.length,
+              itemBuilder: (BuildContext context, int index) {
+
+                Post post = postList[index];
+                classPost = post;
+
+                return pageViewWidget(post.id, post.source, post.userImage,
+                    post.userName, post.createdAt, post.email,
+                    post.downloads, post.postId, post.likes, post.description,post.viewCount, post.viewers, post.downloaders);
+              },
+            )
+        ) :
+        const Center(child: Text('Something went wrong', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),))
     );
+  }
+
+  Future<void> getVideoPosts() async {
+    setState(() {
+      isLoadingList = true;
+    });
+
+    if (firstLoad) {
+      firstLoad = false;
+      var posts = widget.user != null ? firestore.collection('wallpaper2').where("id", isEqualTo: widget.user!.userId).limit(initialLoads) :
+      widget.category == "random" ? firestore.collection('wallpaper2').orderBy('createdAt', descending: true).limit(initialLoads) :
+      firestore.collection('wallpaper2').where("category", arrayContains: widget.category).limit(initialLoads);
+
+      posts.get().then((value) {
+        appendPosts(value);
+        setState(() {
+          isLoadingList = false;
+        });
+      });
+    }
+    else {
+      if (collectionState != null && collectionState!.docs.isNotEmpty) {
+        var lastVisible = collectionState!.docs[collectionState!.docs.length - 1];
+        var posts = widget.user != null ? firestore.collection('wallpaper2').where("id", isEqualTo: widget.user!.userId).startAfterDocument(lastVisible).limit(nextLoads) :
+        widget.category == "random" ? firestore.collection('wallpaper2').orderBy('createdAt', descending: true).startAfterDocument(lastVisible).limit(nextLoads) :
+        firestore.collection('wallpaper2').where("category", arrayContains: widget.category).startAfterDocument(lastVisible).limit(nextLoads);
+
+        posts.get().then((value) {
+          appendPosts(value);
+          setState(() {
+            isLoadingList = false;
+          });
+        });
+      }
+    }
+  }
+
+  void appendPosts(QuerySnapshot<Map<String, dynamic>> value) {
+    collectionState = value;
+    for (var element in value.docs) {
+      Post post = Post.getPostSnapshot(element.data(), PostType.video);
+      postList.add(post);
+    }
+    debugPrint("Loaded posts == ${postList.length}");
   }
 }

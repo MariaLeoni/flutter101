@@ -56,7 +56,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
   @override
   void initState() {
     super.initState();
-    getPosts();
+    getPicturePosts();
     getAllProducts();
     getDataFromDatabase();
   }
@@ -65,6 +65,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
       String docId, String userId, int downloads, int viewCount, String postId,
       List<String>? likes, List<String>? viewers, String description,
       List<String>? downloaders) {
+
     Navigator.push(context, MaterialPageRoute(builder: (_) =>
         OwnerDetails(
           img: img,
@@ -123,6 +124,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
             children: [
               GestureDetector(
                   onTap: () {
+                    debugPrint("Picture tapped");
                     updateViewAndNavigate(
                         viewCount,
                         postId,
@@ -161,6 +163,9 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
       String userImg, String name, DateTime date, String docId, String userId,
       int downloads, List<String>? likes, String description,
       List<String>? downloaders) {
+
+    debugPrint("Show picture details");
+
     total = viewCount + 1;
 
     if (viewers != null && !viewers.contains(userIdx)) {
@@ -295,7 +300,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         body: isLoadingList && postList.isEmpty ? const Center(child: CircularProgressIndicator()) :
               postList.isNotEmpty ? LazyLoadScrollView(
                         isLoading: isLoadingList,
-                        onEndOfPage: () => getPosts(),
+                        onEndOfPage: () => getPicturePosts(),
                         child: PreloadPageView.builder(
                           physics: const BouncingScrollPhysics(),
                           preloadPagesCount: 5,
@@ -303,7 +308,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                           controller: PreloadPageController(initialPage: 0),
                           itemCount: postList.length,
                           itemBuilder: (BuildContext context, int index) {
-                            debugPrint("Post loaded ${postList.length}");
                             Post post = postList[index];
                             classPost = post;
 
@@ -328,7 +332,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     );
   }
 
-  Future<void> getPosts() async {
+  Future<void> getPicturePosts() async {
     setState(() {
       isLoadingList = true;
     });

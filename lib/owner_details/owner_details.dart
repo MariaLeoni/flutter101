@@ -243,7 +243,6 @@ class _OwnerDetailsState extends State<OwnerDetails> with TickerProviderStateMix
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      //title: Text("AlertDialog"),
       content: const Text("Are you sure you want your post to be permanently deleted ?"),
       actions: [
         cancelButton,
