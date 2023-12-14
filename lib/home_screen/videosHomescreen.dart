@@ -1,8 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sharedstudent1/home_screen/posterView.dart';
@@ -266,12 +264,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
       widget.category == "random" ? firestore.collection('wallpaper2').orderBy('createdAt', descending: true).limit(initialLoads) :
       firestore.collection('wallpaper2').where("category", arrayContains: widget.category).limit(initialLoads);
 
-      posts.get().then((value) {
-        appendPosts(value);
-        setState(() {
-          isLoadingList = false;
-        });
-      });
+      getPost(posts);
     }
     else {
       if (collectionState != null && collectionState!.docs.isNotEmpty) {
@@ -280,14 +273,20 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
         widget.category == "random" ? firestore.collection('wallpaper2').orderBy('createdAt', descending: true).startAfterDocument(lastVisible).limit(nextLoads) :
         firestore.collection('wallpaper2').where("category", arrayContains: widget.category).startAfterDocument(lastVisible).limit(nextLoads);
 
-        posts.get().then((value) {
-          appendPosts(value);
-          setState(() {
-            isLoadingList = false;
-          });
-        });
+        getPost(posts);
       }
     }
+  }
+
+  void getPost(Query<Map<String, dynamic>> posts) {
+    posts.get().then((value) {
+      appendPosts(value);
+      if (mounted) {
+        setState(() {
+          isLoadingList = false;
+        });
+      }
+    });
   }
 
   void appendPosts(QuerySnapshot<Map<String, dynamic>> value) {

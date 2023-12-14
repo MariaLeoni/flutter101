@@ -343,12 +343,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
       widget.category == "random" ? firestore.collection('wallpaper').orderBy('viewcount', descending: true).limit(initialLoads) :
       firestore.collection('wallpaper').where("category", arrayContains: widget.category).limit(initialLoads);
 
-      posts.get().then((value) {
-        appendPosts(value);
-        setState(() {
-          isLoadingList = false;
-        });
-      });
+      getPost(posts);
     }
     else {
       if (collectionState != null && collectionState!.docs.isNotEmpty) {
@@ -357,14 +352,20 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
         widget.category == "random" ? firestore.collection('wallpaper').orderBy('viewcount', descending: true).startAfterDocument(lastVisible).limit(nextLoads) :
         firestore.collection('wallpaper').where("category", arrayContains: widget.category).startAfterDocument(lastVisible).limit(nextLoads);
 
-        posts.get().then((value) {
-          appendPosts(value);
-          setState(() {
-            isLoadingList = false;
-          });
-        });
+        getPost(posts);
       }
     }
+  }
+
+  void getPost(Query<Map<String, dynamic>> posts) {
+    posts.get().then((value) {
+      appendPosts(value);
+      if (mounted) {
+        setState(() {
+          isLoadingList = false;
+        });
+      }
+    });
   }
 
   void appendPosts(QuerySnapshot<Map<String, dynamic>> value) {

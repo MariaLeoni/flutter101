@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sharedstudent1/home_screen/flagPost.dart';
@@ -15,8 +14,6 @@ class PosterView{
 
   BuildContext context;
   Post post;
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final firebase = FirebaseFirestore.instance;
 
   final TextEditingController textEditingController = TextEditingController();
