@@ -95,21 +95,21 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => PictureHomeScreen.forCategory(category: "random")));
                 },
-                icon: const Icon(Icons.photo),
+                icon: const Icon(Icons.photo, color:Colors.white),
               ),
               IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) =>
                       VideoHomeScreen.forCategory(category: "random"),),);
                 },
-                icon: const Icon(Icons.play_circle_outlined),
+                icon: const Icon(Icons.play_circle_outlined, color:Colors.white),
               ),
               IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => const SocialHomeScreen(),),);
                 },
-                icon: const Icon(Icons.message_sharp),
+                icon: const Icon(Icons.message_sharp, color:Colors.white),
               )
             ]),
         body: Container(color:Colors.black, width: double.infinity,

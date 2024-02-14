@@ -452,7 +452,7 @@ class ChatScreenState extends State<ChatScreen> {
 
           ],
         ),
-        body: Container( color: Colors.grey.shade800,child:SafeArea(
+        body: Container( color: Colors.grey.shade800, child:SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_8),
             child: Column(

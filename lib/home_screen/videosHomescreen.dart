@@ -149,7 +149,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
     var activityBadgeView = SSBadge(top: 0, right: 2,
         value: activityCount.toString(),
         child: IconButton(
-            icon: const Icon(Icons.doorbell_outlined), onPressed: () {
+            icon: const Icon(Icons.doorbell_outlined, color:Colors.white), onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityFeed()));
         }));
     size = MediaQuery.of(context).size;
@@ -193,7 +193,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
               onPressed: (){
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen(),),);
               },
-              icon: const Icon(Icons.home),
+              icon: const Icon(Icons.home, color:Colors.white),
             ),
             actions: <Widget>[
               IconButton(
@@ -206,7 +206,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(builder: (_) => Search(postType: PostType.video,),),);
                 },
-                icon: const Icon(Icons.person_search),
+                icon: const Icon(Icons.person_search, color:Colors.white),
               ),
               IconButton(
                 onPressed: () {
@@ -216,7 +216,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                     userImage: image,
                   )));
                 },
-                icon: const Icon(Icons.person),
+                icon: const Icon(Icons.person, color:Colors.white),
               ),
               activityBadgeView,
               IconButton(
@@ -224,7 +224,7 @@ class VideoHomeScreenState extends State<VideoHomeScreen> {
                   Navigator.push(context, MaterialPageRoute(
                       builder: (_) => const SocialHomeScreen()));
                 },
-                icon: const Icon(Icons.message_sharp),
+                icon: const Icon(Icons.message_sharp, color:Colors.white),
               ),
             ]
         ),

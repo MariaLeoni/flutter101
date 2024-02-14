@@ -203,7 +203,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
     var activityBadgeView = SSBadge(top: 0, right: 2,
         value: activityCount.toString(),
         child: IconButton(
-            icon: const Icon(Icons.doorbell_outlined), onPressed: () {
+            icon: const Icon(Icons.doorbell_outlined, color:Colors.white), onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (_) => ActivityFeed()));
         }));
@@ -259,7 +259,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                       VideoHomeScreen.forUser(user: widget.user,)));
                 }
               },
-              icon: const Icon(Icons.play_circle_outlined),
+              icon: const Icon(Icons.play_circle_outlined, color:Colors.white),
             ),
             actions: <Widget>[
               IconButton(
@@ -274,7 +274,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => Search(postType: PostType.image,),),);
                 },
-                icon: const Icon(Icons.person_search),
+                icon: const Icon(Icons.person_search, color:Colors.white),
               ),
               IconButton(
                 onPressed: () {
@@ -285,7 +285,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                         userImage: image,
                       )));
                 },
-                icon: const Icon(Icons.person),
+                icon: const Icon(Icons.person, color:Colors.white),
               ),
               activityBadgeView,
               IconButton(
@@ -293,7 +293,7 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
                   Navigator.push(context, MaterialPageRoute(
                       builder: (_) => const SocialHomeScreen()));
                 },
-                icon: const Icon(Icons.message_sharp),
+                icon: const Icon(Icons.message_sharp, color:Colors.white),
               )
             ]
         ),
@@ -374,7 +374,6 @@ class PictureHomeScreenState extends State<PictureHomeScreen> {
       Post post = Post.getPostSnapshot(element.data(), PostType.image);
       postList.add(post);
     }
-    debugPrint("Loaded posts == ${postList.length}");
   }
 }
 

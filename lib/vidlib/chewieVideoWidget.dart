@@ -20,8 +20,8 @@ class ChewieVideoWidget extends StatefulWidget {
 class VideoWidgetState extends State<ChewieVideoWidget> {
   late VideoPlayerController videoPlayerController ;
   late Future<void> _initializeVideoPlayerFuture;
-  late ChewieController _chewieController;
-  double aspectRatio = 0.0;
+  ChewieController? _chewieController;
+  double aspectRatio = 1.78;
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
     _initializeVideoPlayerFuture = videoPlayerController.initialize().then((value) {
       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
       setState(() {
-        aspectRatio = videoPlayerController.value.aspectRatio;
+        aspectRatio = videoPlayerController.value.aspectRatio > 0 ? videoPlayerController.value.aspectRatio : 1.78;
         initChewieController();
       });
     });
@@ -43,8 +43,12 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
     super.initState();
   }
 
-  void initChewieController(){
-    _chewieController = ChewieController(
+  void initChewieController() {
+    _chewieController = getChewieController();
+  }
+
+  ChewieController getChewieController() {
+    return ChewieController(
       videoPlayerController: videoPlayerController,
       aspectRatio: aspectRatio,
       showOptions: false,
@@ -56,9 +60,9 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
       allowFullScreen: widget.autoPlayAndFullscreen,
       // Errors can occur for example when trying to play a video from a non-existent URL
       errorBuilder: (context, errorMessage) {
-        return Center(
-          child: Text(errorMessage,
-            style: const TextStyle(color: Colors.red),
+        return const Center(
+          child: Text("Sorry, there seems to be an issue with this video",
+              style: TextStyle(color: Colors.red), textAlign: TextAlign.center
           ),
         );
       },
@@ -68,7 +72,7 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
   @override
   void dispose() {
     videoPlayerController.dispose();
-    _chewieController.dispose();
+    _chewieController?.dispose();
     super.dispose();
   }
 
@@ -80,7 +84,7 @@ class VideoWidgetState extends State<ChewieVideoWidget> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Chewie(
             key: PageStorageKey(widget.url),
-            controller: _chewieController,
+            controller: _chewieController ?? getChewieController(),
           );
         }
         else {
